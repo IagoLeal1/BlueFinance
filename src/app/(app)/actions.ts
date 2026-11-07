@@ -55,3 +55,26 @@ export async function criarLancamento(_anterior: EstadoLancamento, form: FormDat
   refresh();
   return { ok: true };
 }
+
+/** Altera valor e descrição de um lançamento do usuário (aporte ajusta o investimento junto). */
+export async function editarLancamento(_anterior: EstadoLancamento, form: FormData): Promise<EstadoLancamento> {
+  const id = String(form.get('id') ?? '');
+  const valor = Number(form.get('valor_centavos'));
+  const descricao = String(form.get('descricao') ?? '').trim();
+  if (!Number.isSafeInteger(valor) || valor <= 0) return { erro: 'Digite um valor maior que zero.' };
+
+  const supabase = await supabaseServidor();
+  const { error } = await supabase.rpc('editar_lancamento', { p_id: id, p_valor: valor, p_descricao: descricao });
+  if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
+  refresh();
+  return { ok: true };
+}
+
+/** Exclui um lançamento do usuário (aporte estorna o valor do investimento). */
+export async function excluirLancamento(_anterior: EstadoLancamento, form: FormData): Promise<EstadoLancamento> {
+  const supabase = await supabaseServidor();
+  const { error } = await supabase.rpc('excluir_lancamento', { p_id: String(form.get('id') ?? '') });
+  if (error) return { erro: 'Não foi possível excluir. Tente de novo.' };
+  refresh();
+  return { ok: true };
+}

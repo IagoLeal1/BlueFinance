@@ -10,10 +10,11 @@ const COR = {
 } as const;
 
 /** Linha de um lançamento (design kit: TransactionRow). */
-export function TransactionRow({ l, meta }: { l: LancamentoListado; meta: string }) {
+export function TransactionRow({ l, meta, como = 'li' }: { l: LancamentoListado; meta: string; como?: 'li' | 'div' }) {
+  const Tag = como;
   const cor = COR[l.tipo];
   return (
-    <li className="flex min-h-16 items-center gap-3 py-3 not-first:border-t not-first:border-border">
+    <Tag className={cn('flex min-h-16 items-center gap-3 py-3', como === 'li' && 'not-first:border-t not-first:border-border')}>
       <span className={cn('grid size-10 shrink-0 place-items-center rounded-[12px]', cor.tile)}>
         <IconeCategoria nome={l.icone} className="size-5" />
       </span>
@@ -22,6 +23,6 @@ export function TransactionRow({ l, meta }: { l: LancamentoListado; meta: string
         <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">{meta}</p>
       </div>
       <span className={cn('font-bold whitespace-nowrap tabular-nums', cor.valor)}>{formatSigned(l.valor, l.tipo)}</span>
-    </li>
+    </Tag>
   );
 }

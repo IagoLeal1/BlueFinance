@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
+import type { Database } from '../../src/lib/supabase/database.types';
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
@@ -33,7 +34,7 @@ export async function apagarUsuario(u: Usuario) {
 
 /** Cliente do Supabase com a sessão do usuário — o mesmo acesso (com RLS) que o app tem. */
 export function clienteDe(usuario: Usuario) {
-  return createClient(url, publishableKey, {
+  return createClient<Database>(url, publishableKey, {
     auth: { persistSession: false },
     global: { headers: { Authorization: `Bearer ${usuario.sessao}` } },
   });

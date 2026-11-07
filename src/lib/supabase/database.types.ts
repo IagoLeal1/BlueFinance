@@ -97,7 +97,13 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "registrar_aporte":
+            "editar_lancamento":
+{ Args: { "p_descricao": string,"p_id": string,"p_valor": number }; Returns: undefined
+                           },
+"excluir_lancamento":
+{ Args: { "p_id": string }; Returns: undefined
+                           },
+"registrar_aporte":
 { Args: { "p_descricao": string,"p_investimento": string,"p_valor": number }; Returns: string
                            }
           }
