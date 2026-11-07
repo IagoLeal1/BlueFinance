@@ -1,4 +1,8 @@
+import { existsSync } from 'node:fs';
 import { defineConfig, devices } from '@playwright/test';
+
+// Mesmas variáveis que o Next usa (Supabase local). Gere com: pnpm db:env
+if (existsSync('.env.local')) process.loadEnvFile('.env.local');
 
 const WEB_PORT = 3100; // porta própria para não reaproveitar outro servidor rodando na 3000
 

@@ -18,7 +18,7 @@
 
 Infra já validada: `tests/e2e/infra.spec.ts` abre o app (Next) no WebKit com perfil de iPhone 16 ✅
 
-Progresso: fatias 1–9 ✅
+Progresso: fatias 1–16 ✅
 
 ## As costuras (para confirmar)
 
@@ -62,31 +62,34 @@ Cada linha é **um** teste. O nome do teste é o comportamento.
 8. ignora lançamentos de outro mês, respeitando o fuso de São Paulo (31/10 23h30 não entra em novembro)
 9. agrupa gastos por categoria, do maior para o menor, e junta da 7ª em diante em "Outros"
 
-**Costura 3 — API do Atalho** (`api`)
-10. lista as categorias de despesa para o Atalho
-11. cria um gasto com token válido e devolve o lançamento criado
-12. recusa sem token ou com token inválido (401) e não cria nada
-13. recusa valor inválido — zero, negativo, texto (400, mensagem em português)
-14. recusa categoria que não existe (422)
-15. um usuário não enxerga os lançamentos de outro
+**Costura 3 — API do Atalho** (`api`) — `tests/api`
+10. ✅ gera um token pessoal para quem está logado (`POST /api/tokens`); sem login → 401 *(fatia que faltava no plano original)*
+11. ✅ lista as categorias de despesa para o Atalho (`GET /api/quick-add/categorias`)
+12. ✅ cria um gasto com token válido e devolve a confirmação ("Gasto salvo: Mercado · − R$ 32,90")
+13. ✅ recusa sem token ou com token inválido (401) e não cria nada
+14. ✅ recusa valor inválido — zero, negativo, fração, texto (400, mensagem em português)
+15. ✅ recusa categoria que não existe entre as de despesa (422)
+16. ✅ um usuário não enxerga nem altera os dados de outro (RLS)
 
 **Costura 4 — Jornadas no iPhone** (`e2e-iphone`)
-16. entra com e-mail e senha do usuário de teste
-17. sem lançamentos, a tela Início explica como lançar o primeiro
-18. lança um gasto pelo botão + e ele aparece em Lançamentos, em "Hoje", como `− R$ 32,90`
-19. depois do gasto, a tela Início atualiza "Saiu", "Sobrou" e a barra de categorias
-20. lança uma receita (salário) e ela aparece como `+ R$ 8.500,00`
-21. cadastra um investimento e ele aparece em Investimentos, agrupado pela instituição
-22. registra um aporte e o "Investiu" do mês aumenta
-23. filtra Lançamentos por Saiu / Entrou / Investiu
-24. edita e exclui um lançamento
-25. um gasto feito pelo Atalho (API) aparece no app
+17. entra com e-mail e senha do usuário de teste
+18. sem lançamentos, a tela Início explica como lançar o primeiro
+19. lança um gasto pelo botão + e ele aparece em Lançamentos, em "Hoje", como `− R$ 32,90`
+20. depois do gasto, a tela Início atualiza "Saiu", "Sobrou" e a barra de categorias
+21. lança uma receita (salário) e ela aparece como `+ R$ 8.500,00`
+22. cadastra um investimento e ele aparece em Investimentos, agrupado pela instituição
+23. registra um aporte e o "Investiu" do mês aumenta
+24. filtra Lançamentos por Saiu / Entrou / Investiu
+25. edita e exclui um lançamento
+26. gera o token do Atalho em Ajustes (mostrado uma única vez, com botão de copiar)
+27. um gasto feito pelo Atalho (API) aparece no app
 
 ## Dados de teste
 
-- **Supabase local** (Docker) com banco recriado e semeado antes das suítes `api` e `e2e-iphone`.
-- Usuários de teste e token pessoal ficam em `supabase/seed.sql` (valores só de teste).
-- Precisa do **Docker Desktop aberto** a partir da fatia 10. Ele está instalado neste Mac, mas parado.
+- **Supabase local** (Docker): `pnpm db:start`, depois `pnpm db:env` para gerar o `.env.local`.
+- Cada teste cria os próprios usuários (fixture `usuario` / `outroUsuario` em `tests/api/fixtures.ts`) e apaga no fim — sem seed compartilhado, testes independentes.
+- O token pessoal é gerado pelo mesmo caminho do app (`POST /api/tokens`).
+- Banco do zero a partir das migrations: `pnpm db:reset`.
 
 ## Comandos
 
