@@ -1,8 +1,8 @@
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useState } from 'react';
 import { Check, Plus, X } from 'lucide-react';
-import { criarLancamento } from '@/app/(app)/actions';
+import { criarLancamento, type EstadoLancamento } from '@/app/(app)/actions';
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
@@ -32,14 +32,15 @@ export function NovoLancamento({ categorias }: { categorias: CategoriaOpcao[] })
   const [tipo, setTipo] = useState<TipoLancamento>('despesa');
   const [centavos, setCentavos] = useState(0);
   const [categoria, setCategoria] = useState<string[]>([]);
-  const [estado, acao, salvando] = useActionState(criarLancamento, {});
-
-  useEffect(() => {
-    if (!estado.ok) return;
-    setAberto(false);
-    setCentavos(0);
-    setCategoria([]);
-  }, [estado]);
+  const [estado, acao, salvando] = useActionState(async (anterior: EstadoLancamento, form: FormData) => {
+    const resultado = await criarLancamento(anterior, form);
+    if (resultado.ok) {
+      setAberto(false);
+      setCentavos(0);
+      setCategoria([]);
+    }
+    return resultado;
+  }, {});
 
   const opcoes = categorias.filter((c) => c.tipo === tipo);
 
