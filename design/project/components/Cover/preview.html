@@ -1,0 +1,39 @@
+<!-- @dsCard height=288 -->
+<div class="cover">
+  <style>
+    .cover { position: relative; width: 960px; height: 288px; overflow: hidden; background: var(--bg); }
+    .cover svg { position: absolute; inset: 0; }
+    .cover .brand { fill: var(--brand); }
+    .cover .ink { fill: var(--ink); }
+    .cover .invest { fill: var(--invest); }
+    .cover .positive { fill: var(--positive); }
+    .cover .cut { fill: var(--bg); }
+    .cover .r-lg { rx: var(--radius-lg); }
+    .cover .r-sm { rx: var(--radius-sm); }
+    .cover .name { position: absolute; left: 40px; bottom: 64px; margin: 0; font: 800 64px/0.95 var(--font-sans); letter-spacing: -0.02em; color: var(--ink); }
+    .cover .tag { position: absolute; left: 40px; bottom: 32px; margin: 0; max-width: 440px; font: 600 14px/20px var(--font-sans); color: var(--ink-muted); }
+  </style>
+  <svg viewBox="0 0 960 288" width="960" height="288" aria-hidden="true">
+    <!-- blocks: brand 200×328 (bleeds top+bottom), ink 264×120, invest 128×148, positive 120×148 — corners radius-lg
+         arrangement: one tall brand slab with three satellites to its right, bleeding off top, right and bottom
+         pattern: pills cut out of the brand slab in rows of unequal length — "Gastos por categoria" bar and the category chips; soft radii, numeric
+         scales: gaps space-4 (16), pill height 16 with rx radius-sm (8), row pitch space-8 (32) -->
+    <rect class="brand r-lg" x="496" y="-20" width="200" height="328"/>
+    <rect class="ink r-lg" x="712" y="24" width="264" height="120"/>
+    <rect class="invest r-lg" x="712" y="160" width="128" height="148"/>
+    <rect class="positive r-lg" x="856" y="160" width="120" height="148"/>
+    <rect class="cut r-sm" x="520" y="48" width="104" height="16"/>
+    <rect class="cut r-sm" x="632" y="48" width="40" height="16"/>
+    <rect class="cut r-sm" x="520" y="80" width="64" height="16"/>
+    <rect class="cut r-sm" x="592" y="80" width="80" height="16"/>
+    <rect class="cut r-sm" x="520" y="112" width="136" height="16"/>
+    <rect class="cut r-sm" x="520" y="144" width="40" height="16"/>
+    <rect class="cut r-sm" x="568" y="144" width="56" height="16"/>
+    <rect class="cut r-sm" x="520" y="176" width="88" height="16"/>
+    <rect class="cut r-sm" x="616" y="176" width="56" height="16"/>
+    <rect class="cut r-sm" x="520" y="208" width="152" height="16"/>
+    <rect class="cut r-sm" x="520" y="240" width="72" height="16"/>
+  </svg>
+  <h1 class="name">BlueFinance</h1>
+  <p class="tag">Suas finanças em um toque: lance, acompanhe, invista.</p>
+</div>

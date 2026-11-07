@@ -1,0 +1,93 @@
+/* BlueFinance — generated from tokens.json */
+:root, [data-theme="light"] {
+  --bg: #f3f5f9;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-sunken: #e9edf3;
+  --line: #dce1e9;
+  --line-strong: #7d8799;
+  --ink: #0c1220;
+  --ink-muted: #556074;
+  --brand: #1846c8;
+  --brand-pressed: #12379f;
+  --on-brand: #ffffff;
+  --brand-soft: #e2eaff;
+  --on-brand-soft: #12379f;
+  --positive: #06784c;
+  --positive-soft: #dcf4e8;
+  --negative: #b93e0b;
+  --negative-soft: #fce8dd;
+  --invest: #855700;
+  --invest-soft: #faefd6;
+  --focus: #1846c8;
+  --scrim: rgba(8, 12, 20, 0.45);
+  --chart-1: #2a78d6;
+  --chart-2: #eb6834;
+  --chart-3: #1baf7a;
+  --chart-4: #eda100;
+  --chart-5: #e87ba4;
+  --chart-6: #008300;
+  --chart-other: #a3abb8;
+  --shadow-card: 0 1px 2px rgba(12, 18, 32, 0.06), 0 2px 8px rgba(12, 18, 32, 0.04);
+  --shadow-sheet: 0 -8px 32px rgba(12, 18, 32, 0.16);
+}
+[data-theme="dark"] {
+  --bg: #0a0e15;
+  --surface: #131925;
+  --surface-raised: #1b2231;
+  --surface-sunken: #0e131c;
+  --line: #242d3d;
+  --line-strong: #66738a;
+  --ink: #edf1f7;
+  --ink-muted: #9aa5b8;
+  --brand: #6e9bff;
+  --brand-pressed: #8db1ff;
+  --on-brand: #07112a;
+  --brand-soft: #172548;
+  --on-brand-soft: #b9cdff;
+  --positive: #45d394;
+  --positive-soft: #0f2c21;
+  --negative: #ff9466;
+  --negative-soft: #35190d;
+  --invest: #f0b54a;
+  --invest-soft: #30240c;
+  --focus: #8db1ff;
+  --scrim: rgba(0, 0, 0, 0.6);
+  --chart-1: #3987e5;
+  --chart-2: #d95926;
+  --chart-3: #199e70;
+  --chart-4: #c98500;
+  --chart-5: #d55181;
+  --chart-6: #008300;
+  --chart-other: #4a5466;
+  --shadow-card: none;
+  --shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.5);
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+  --tap-min: 44px;
+  --control-h: 52px;
+  --icon-tile: 40px;
+  --tabbar-h: 84px;
+  --font-sans: Manrope, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.amount-hero { font-family: var(--font-sans); font-size: 40px; line-height: 44px; font-weight: 800; letter-spacing: -0.02em; }
+.amount-lg { font-family: var(--font-sans); font-size: 24px; line-height: 30px; font-weight: 800; letter-spacing: -0.01em; }
+.amount { font-family: var(--font-sans); font-size: 16px; line-height: 22px; font-weight: 700; }
+.title { font-family: var(--font-sans); font-size: 28px; line-height: 34px; font-weight: 800; letter-spacing: -0.01em; }
+.headline { font-family: var(--font-sans); font-size: 18px; line-height: 24px; font-weight: 700; }
+.body { font-family: var(--font-sans); font-size: 16px; line-height: 22px; font-weight: 500; }
+.body-strong { font-family: var(--font-sans); font-size: 16px; line-height: 22px; font-weight: 700; }
+.caption { font-family: var(--font-sans); font-size: 13px; line-height: 18px; font-weight: 600; }
+.label { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.02em; }
