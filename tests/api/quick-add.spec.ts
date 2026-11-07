@@ -24,7 +24,7 @@ test.describe('lançamento rápido (Atalho do iOS)', () => {
     const body = await res.json();
     // O Atalho mostra sempre o campo "mensagem": no sucesso e nos erros.
     expect(body.mensagem).toBe('Gasto salvo: Mercado · \u2212 R$ 32,90');
-    expect(body.lancamento).toMatchObject({ tipo: 'despesa', categoria: 'Mercado', descricao: 'Mercado do bairro', valor: 3290 });
+    expect(body.lancamento).toMatchObject({ tipo: 'despesa', categoria: 'Mercado', descricao: 'Mercado do bairro', valor: 3290, origem: 'atalho' });
 
     // O gasto aparece para o dono, pelo mesmo acesso que o app usa.
     const { data } = await clienteDe(usuario).from('lancamentos').select('descricao, valor, tipo');

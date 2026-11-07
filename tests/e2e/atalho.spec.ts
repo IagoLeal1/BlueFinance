@@ -15,8 +15,8 @@ test.describe('Atalho do iOS', () => {
     await entrar(page, usuario);
     await expect(page.getByRole('region', { name: /^Resumo de / }).getByRole('group', { name: 'Saiu' })).toContainText('R$ 18');
     await page.getByRole('link', { name: 'Lançamentos' }).click();
-    await expect(page.getByRole('region', { name: /^Hoje/ }).getByRole('listitem').filter({ hasText: 'Uber para o trabalho' })).toContainText(
-      '− R$ 18,40',
-    );
+    const linha = page.getByRole('region', { name: /^Hoje/ }).getByRole('listitem').filter({ hasText: 'Uber para o trabalho' });
+    await expect(linha).toContainText('− R$ 18,40');
+    await expect(linha).toContainText('Transporte · pelo Atalho');
   });
 });

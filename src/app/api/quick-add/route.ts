@@ -66,8 +66,9 @@ export async function POST(request: Request) {
       valor,
       categoria_id: categoria.id,
       descricao: descricao || categoria.nome,
+      origem: 'atalho',
     })
-    .select('id, tipo, valor, descricao, data')
+    .select('id, tipo, valor, descricao, data, origem')
     .single();
   if (error) throw error;
 

@@ -53,14 +53,14 @@ export type Database = {
                   ]
                 },"lancamentos": {
                   Row: {
-                    "categoria_id": string | null,"criado_em": string,"data": string,"descricao": string,"id": string,"investimento_id": string | null,"tipo": string,"user_id": string,"valor": number
+                    "categoria_id": string | null,"criado_em": string,"data": string,"descricao": string,"id": string,"investimento_id": string | null,"origem": string,"tipo": string,"user_id": string,"valor": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "categoria_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"id"?: string,"investimento_id"?: string | null,"tipo": string,"user_id": string,"valor": number
+                    "categoria_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"id"?: string,"investimento_id"?: string | null,"origem"?: string,"tipo": string,"user_id": string,"valor": number
                   }
                   Update: {
-                    "categoria_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"id"?: string,"investimento_id"?: string | null,"tipo"?: string,"user_id"?: string,"valor"?: number
+                    "categoria_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"id"?: string,"investimento_id"?: string | null,"origem"?: string,"tipo"?: string,"user_id"?: string,"valor"?: number
                   }
                   Relationships: [
                     {

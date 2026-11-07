@@ -40,7 +40,7 @@ export function LinhaEditavel({ l }: { l: LancamentoListado }) {
         }}
         gatilho={
           <button type="button" className="w-full text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-md">
-            <TransactionRow l={l} meta={l.categoria} como="div" />
+            <TransactionRow l={l} meta={l.origem === 'atalho' ? `${l.categoria} · pelo Atalho` : l.categoria} como="div" />
           </button>
         }
       >
