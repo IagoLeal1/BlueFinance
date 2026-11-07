@@ -21,3 +21,23 @@ export function limitesDoMes(mes: string): { inicio: string; fim: string } {
   const prox = m === 12 ? `${ano + 1}-01` : `${ano}-${String(m + 1).padStart(2, '0')}`;
   return { inicio: `${mes}-01T00:00:00-03:00`, fim: `${prox}-01T00:00:00-03:00` };
 }
+
+const diaSP = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' });
+const MESES_CURTOS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+
+/** Dia em São Paulo no formato "2026-11-07". */
+export function diaDe(data: string | Date): string {
+  return diaSP.format(new Date(data));
+}
+
+/** Rótulo do dia para agrupar a lista: "Hoje · 7 nov", "Ontem · 6 nov", "5 nov", "24 dez 2025". */
+export function rotuloDoDia(data: string, agora: Date = new Date()): string {
+  const dia = diaDe(data);
+  const [ano, mes, d] = dia.split('-').map(Number) as [number, number, number];
+  const curto = `${d} ${MESES_CURTOS[mes - 1]}`;
+  const hoje = diaDe(agora);
+  const ontem = diaDe(new Date(new Date(`${hoje}T12:00:00-03:00`).getTime() - 86_400_000));
+  if (dia === hoje) return `Hoje · ${curto}`;
+  if (dia === ontem) return `Ontem · ${curto}`;
+  return ano === Number(hoje.slice(0, 4)) ? curto : `${curto} ${ano}`;
+}

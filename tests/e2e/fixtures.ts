@@ -18,4 +18,19 @@ export async function entrar(page: Page, usuario: Usuario) {
   await page.waitForURL('/');
 }
 
+/** Abre o sheet pelo botão +, preenche e salva — o caminho de quem lança com o app aberto. */
+export async function lancarPeloApp(
+  page: Page,
+  { tipo = 'Despesa', digitos, categoria, descricao }: { tipo?: string; digitos: string; categoria?: string; descricao: string },
+) {
+  await page.getByRole('button', { name: 'Novo lançamento' }).click();
+  const sheet = page.getByRole('dialog', { name: 'Novo lançamento' });
+  await sheet.getByText(tipo, { exact: true }).click();
+  await sheet.getByLabel('Valor').pressSequentially(digitos);
+  if (categoria) await sheet.getByRole('button', { name: categoria }).click();
+  await sheet.getByLabel('Com o quê').fill(descricao);
+  await sheet.getByRole('button', { name: /^Salvar/ }).click();
+  await sheet.waitFor({ state: 'hidden' });
+}
+
 export { expect } from '@playwright/test';

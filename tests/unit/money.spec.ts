@@ -47,4 +47,10 @@ test.describe('dinheiro', () => {
     expect(formatReais(363165)).toBe('R$ 3.632');
     expect(formatReais(0)).toBe('R$ 0');
   });
+
+  test('mostra valor negativo com o sinal de menos na frente', () => {
+    expect(formatBRL(-3290)).toBe('\u2212 R$ 32,90');
+    expect(formatBRL(-123456)).toBe('\u2212 R$ 1.234,56');
+    expect(formatReais(-363165)).toBe('\u2212 R$ 3.632');
+  });
 });

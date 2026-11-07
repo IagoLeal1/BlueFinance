@@ -17,8 +17,8 @@ export function BalanceCard({ resumo, nomeMes }: { resumo: ResumoDoMes; nomeMes:
       </p>
       <div className="grid grid-cols-3 gap-2">
         {stats.map(({ rotulo, valor, Icone, cor }) => (
-          <div key={rotulo} className="rounded-md bg-muted p-3">
-            <p className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
+          <div key={rotulo} role="group" aria-label={rotulo} className="rounded-md bg-muted p-3">
+            <p aria-hidden className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
               <Icone className={`size-3.5 ${cor}`} aria-hidden />
               {rotulo}
             </p>

@@ -18,7 +18,7 @@
 
 Infra já validada: `tests/e2e/infra.spec.ts` abre o app (Next) no WebKit com perfil de iPhone 16 ✅
 
-Progresso: fatias 1–16 ✅
+Progresso: fatias 1–20 ✅
 
 ## As costuras (para confirmar)
 
@@ -72,10 +72,10 @@ Cada linha é **um** teste. O nome do teste é o comportamento.
 16. ✅ um usuário não enxerga nem altera os dados de outro (RLS)
 
 **Costura 4 — Jornadas no iPhone** (`e2e-iphone`)
-17. entra com e-mail e senha do usuário de teste
-18. sem lançamentos, a tela Início explica como lançar o primeiro
-19. lança um gasto pelo botão + e ele aparece em Lançamentos, em "Hoje", como `− R$ 32,90`
-20. depois do gasto, a tela Início atualiza "Saiu", "Sobrou" e a barra de categorias
+17. ✅ entra com e-mail e senha do usuário de teste
+18. ✅ sem lançamentos, a tela Início explica como lançar o primeiro
+19. ✅ lança um gasto pelo botão + e ele aparece em Lançamentos, em "Hoje", como `− R$ 32,90`
+20. ✅ depois do gasto, a tela Início atualiza "Saiu", "Sobrou" e a barra de categorias
 21. lança uma receita (salário) e ela aparece como `+ R$ 8.500,00`
 22. cadastra um investimento e ele aparece em Investimentos, agrupado pela instituição
 23. registra um aporte e o "Investiu" do mês aumenta

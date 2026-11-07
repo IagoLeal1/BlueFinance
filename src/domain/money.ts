@@ -3,10 +3,13 @@ export type Centavos = number;
 
 export type TipoLancamento = 'despesa' | 'receita' | 'investimento';
 
+const MENOS = '\u2212 ';
+
 export function formatBRL(centavos: Centavos): string {
-  const reais = String(Math.floor(centavos / 100)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  const cents = String(centavos % 100).padStart(2, '0');
-  return `R$ ${reais},${cents}`;
+  const abs = Math.abs(centavos);
+  const reais = String(Math.floor(abs / 100)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const cents = String(abs % 100).padStart(2, '0');
+  return `${centavos < 0 ? MENOS : ''}R$ ${reais},${cents}`;
 }
 
 const VALOR_BR = /^(\d{1,3}(?:\.\d{3})+|\d+)(?:,(\d{1,2}))?$/;
@@ -39,5 +42,6 @@ const milhar = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
 /** Valor arredondado para reais inteiros, para cards pequenos: "R$ 9.350". */
 export function formatReais(centavos: Centavos): string {
-  return `R$ ${milhar(Math.round(centavos / 100))}`;
+  const reais = Math.round(Math.abs(centavos) / 100);
+  return `${centavos < 0 && reais > 0 ? MENOS : ''}R$ ${milhar(reais)}`;
 }
