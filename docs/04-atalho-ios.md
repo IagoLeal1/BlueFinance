@@ -2,6 +2,8 @@
 
 O Atalho "Gasto rápido" roda pelo toque duplo nas costas (Ajustes › Acessibilidade › Toque › Toque traseiro) e lança um gasto sem abrir o app.
 
+Endereço de produção: **https://bluefinance-chi.vercel.app** — as rotas abaixo são relativas a ele.
+
 ## Autenticação
 
 Todo pedido leva o **token pessoal** no header:

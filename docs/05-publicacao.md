@@ -1,5 +1,10 @@
 # Publicação — Supabase na nuvem + Vercel
 
+## Endereço do app
+
+**https://bluefinance-chi.vercel.app** (produção; os endereços de cada deploy ficam atrás do login da Vercel e não servem para o Atalho).
+As funções rodam em São Paulo (`gru1`, via `vercel.json`), ao lado do banco.
+
 ## O que já está pronto
 
 - **Supabase** `bluefinance` (organização Projetos, região São Paulo `sa-east-1`, plano grátis)
@@ -33,7 +38,7 @@ No [painel do projeto](https://supabase.com/dashboard/project/msjgdgmhfvkjmhloog
 3. **Deploy**. Se a instalação reclamar da versão do pnpm, adicione também `ENABLE_EXPERIMENTAL_COREPACK` = `1` e faça redeploy.
 
 ### 3. Supabase — avisar qual é o endereço do app
-**Authentication › URL Configuration › Site URL** → o endereço que a Vercel deu (ex.: `https://bluefinance.vercel.app`).
+**Authentication › URL Configuration › Site URL** → o endereço que a Vercel deu (`https://bluefinance-chi.vercel.app`).
 
 ### 4. iPhone
 1. Abra o endereço no **Safari**, entre com o usuário do passo 1.2.
