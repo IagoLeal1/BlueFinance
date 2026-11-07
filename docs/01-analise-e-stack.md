@@ -2,6 +2,9 @@
 
 > Status: **decidido — Opção B, com caminho aberto para C** · 07/11/2026
 >
+> **Atualização (07/11/2026):** UI em **Next.js + TypeScript + Tailwind + shadcn/ui**; Swift liberado para a parte nativa.
+> A API do Atalho virou rota do próprio Next (`/api/quick-add`) em vez de Edge Function do Supabase. Ver a tabela da seção 4.
+>
 > Premissas assumidas até segunda ordem: uso individual, só BRL, sem importação de extrato na v1.
 
 ## 1. O que o app precisa fazer
@@ -66,15 +69,15 @@ e não desperdiça nada se depois quisermos o Dynamic Island — o mesmo backend
 
 | Camada | Escolha | Por quê |
 |---|---|---|
-| UI | **React + Vite + TypeScript** | SPA simples, roda igual no navegador e dentro do Capacitor (Next.js com SSR atrapalha no Capacitor) |
-| Estilo | **Tailwind CSS** + tokens do design kit | Fase 2 vira tokens → código sem tradução manual |
-| PWA | vite-plugin-pwa | Ícone na tela inicial, abre em tela cheia, cache offline |
-| Dados / Auth | **Supabase** (Postgres + Auth + Row Level Security) | Já conectado aqui; RLS garante que só você vê seus dados |
-| Lançamento rápido | Edge Function `POST /quick-add` com token pessoal | O Atalho do iOS chama via "Obter conteúdo de URL" |
-| Hospedagem | Vercel (ou Netlify) | Já conectados; deploy por push |
-| Testes E2E/UI | **Playwright** — projeto WebKit com perfil de iPhone | É o motor do Safari, o mais fiel ao celular |
-| Testes de API | **Playwright `request`** | O fluxo do Atalho (`/quick-add`) também nasce em TDD |
-| Regras puras | Vitest (opcional) | Cálculos de saldo/rentabilidade ficam mais rápidos em teste unitário |
+| App | **Next.js 16 (App Router) + TypeScript** | Escolha sua; front e API no mesmo projeto, deploy direto na Vercel |
+| Estilo | **Tailwind CSS v4** com os tokens do design kit | `design/scripts/build-tokens.mjs` gera `src/app/tokens.css` a partir de `design/project/tokens.json` |
+| Componentes | **shadcn/ui** (base Base UI, ícones Lucide) | Variáveis do shadcn apontam para os tokens do kit em `src/app/globals.css` |
+| Dados / Auth | **Supabase** (Postgres + Auth + Row Level Security) | RLS garante que só você vê seus dados |
+| Lançamento rápido | **Rota do Next** `POST /api/quick-add` com token pessoal | O Atalho do iOS chama via "Obter conteúdo de URL"; sem Deno nem Edge Function à parte |
+| Hospedagem | **Vercel** | Casa natural do Next |
+| PWA | manifest + service worker do Next | Ícone na tela inicial, tela cheia |
+| Nativo (fase C) | **Swift** — App Intent, Live Activity (Dynamic Island), widget | Embrulhando o app com Capacitor (apontando para a URL publicada) ou um app SwiftUI com WebView; precisa do Xcode |
+| Testes | **Playwright**: `unit` (Node), `api` (rotas `/api`), `e2e-iphone` (WebKit, iPhone 16) | Um runner só para tudo |
 
 Regra de ouro de dinheiro: **guardar valores em centavos (inteiro)**, nunca `float`.
 
@@ -95,7 +98,7 @@ Toque duplo nas costas
     → Escolher categoria (lista)
     → Descrição (texto)
     → Valor (número)
-    → POST /quick-add  { categoria, descricao, valor_centavos }  + token
+    → POST /api/quick-add  { categoria, descricao, valor_centavos }  + token
   → Notificação "R$ 32,90 · Mercado ✓"
 ```
 

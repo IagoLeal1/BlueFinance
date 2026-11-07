@@ -1,6 +1,6 @@
 # BlueFinance — Fase 3: Plano de testes (TDD com Playwright)
 
-> Status: **aguardando confirmação das costuras** · 07/11/2026
+> Status: **costuras confirmadas — em execução** · 07/11/2026 · stack: Next.js + Tailwind + shadcn/ui
 
 ## Como vamos trabalhar
 
@@ -13,10 +13,12 @@
 | Projeto | Pasta | Roda onde | Para quê |
 |---|---|---|---|
 | `unit` | `tests/unit` | Node, sem navegador | Regras puras: dinheiro e resumo do mês |
-| `api` | `tests/api` | `request` do Playwright → Supabase local | Contrato que o Atalho do iOS chama |
+| `api` | `tests/api` | `request` do Playwright → rotas `/api` do Next (Supabase local por trás) | Contrato que o Atalho do iOS chama |
 | `e2e-iphone` | `tests/e2e` | WebKit (motor do Safari), perfil iPhone 16 | Jornadas reais na interface |
 
-Infra já validada: `tests/e2e/infra.spec.ts` abre o app no WebKit com perfil de iPhone 16 ✅
+Infra já validada: `tests/e2e/infra.spec.ts` abre o app (Next) no WebKit com perfil de iPhone 16 ✅
+
+Progresso: fatias 1–6 ✅
 
 ## As costuras (para confirmar)
 
@@ -28,13 +30,14 @@ Por que aqui: todo valor da tela passa por aqui; erro de vírgula/centavo é o b
 Interface: `summarizeMonth(lançamentos, mês)` → entrou, saiu, investiu, sobrou, gastos por categoria.
 Por que aqui: é a conta que a tela Início mostra; tem fronteira de mês e fuso (America/Sao_Paulo).
 
-### 3. API do lançamento rápido — `POST /functions/v1/quick-add`, `GET /functions/v1/quick-add/categories`
+### 3. API do lançamento rápido — `POST /api/quick-add`, `GET /api/quick-add/categorias`
 Interface: HTTP com token pessoal no header, corpo `{ categoria, descricao, valor_centavos }`.
 Por que aqui: é o que o Atalho do iOS chama sem abrir o app, e fica exposto na internet.
 Inclui o isolamento entre usuários (Row Level Security).
 
 ### 4. Jornadas no iPhone — a interface no WebKit
 Interface: o que você vê e toca — papéis e textos acessíveis (`getByRole`, `getByLabel`), nunca classes CSS.
+Componentes de UI vêm do shadcn/ui, que já entrega papéis acessíveis.
 Por que aqui: garante que as telas do design kit funcionam de ponta a ponta com dados reais.
 
 ### Fora do Playwright (de propósito)

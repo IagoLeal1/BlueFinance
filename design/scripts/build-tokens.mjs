@@ -31,6 +31,26 @@ for (const g of t.type.groups) {
 }
 writeFileSync(join(root, 'tokens.css'), lines.join('\n') + '\n');
 
+// ---------- src/app/tokens.css (tema do app: Tailwind v4 + shadcn) ----------
+// Cores e sombras viram variáveis por tema (o escuro segue o ajuste do iPhone);
+// raios entram no @theme do Tailwind; cada cor vira utilitário (bg-surface, text-positive...).
+const app = [`/* ${t.name} — generated from design/project/tokens.json by design/scripts/build-tokens.mjs */`, '', '@theme {'];
+for (const tok of t.radius.tokens) app.push(`  --${tok.name}: ${tok.value};`);
+app.push('}', '');
+const vars = (theme, indent) => [
+  ...t.color.tokens.map((tok) => `${indent}--${tok.name}: ${val(tok, theme)};`),
+  ...(t.shadow?.tokens ?? []).map((tok) => `${indent}--bf-${tok.name}: ${val(tok, theme)};`),
+];
+app.push(':root {', `  color-scheme: ${themes[0]};`, ...vars(themes[0], '  '), '}', '');
+for (const theme of themes.slice(1)) {
+  app.push('@media (prefers-color-scheme: dark) {', '  :root {', `    color-scheme: ${theme};`, ...vars(theme, '    '), '  }', '}', '');
+}
+app.push('@theme inline {');
+for (const tok of t.color.tokens) app.push(`  --color-${tok.name}: var(--${tok.name});`);
+for (const tok of t.shadow?.tokens ?? []) app.push(`  --${tok.name}: var(--bf-${tok.name});`);
+app.push('}');
+writeFileSync(join(root, '..', '..', 'src', 'app', 'tokens.css'), app.join('\n') + '\n');
+
 // ---------- contraste ----------
 const hex = (h) => { h = h.replace('#', ''); if (h.length === 3) h = [...h].map((c) => c + c).join(''); return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16) / 255); };
 const lum = (h) => { const [r, g, b] = hex(h).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };

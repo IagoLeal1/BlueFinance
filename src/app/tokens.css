@@ -1,0 +1,112 @@
+/* BlueFinance — generated from design/project/tokens.json by design/scripts/build-tokens.mjs */
+
+@theme {
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+}
+
+:root {
+  color-scheme: light;
+  --bg: #f3f5f9;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-sunken: #e9edf3;
+  --line: #dce1e9;
+  --line-strong: #7d8799;
+  --ink: #0c1220;
+  --ink-muted: #556074;
+  --brand: #1846c8;
+  --brand-pressed: #12379f;
+  --on-brand: #ffffff;
+  --brand-soft: #e2eaff;
+  --on-brand-soft: #12379f;
+  --positive: #06784c;
+  --positive-soft: #dcf4e8;
+  --negative: #b93e0b;
+  --negative-soft: #fce8dd;
+  --invest: #855700;
+  --invest-soft: #faefd6;
+  --focus: #1846c8;
+  --scrim: rgba(8, 12, 20, 0.45);
+  --chart-1: #2a78d6;
+  --chart-2: #eb6834;
+  --chart-3: #1baf7a;
+  --chart-4: #eda100;
+  --chart-5: #e87ba4;
+  --chart-6: #008300;
+  --chart-other: #a3abb8;
+  --bf-shadow-card: 0 1px 2px rgba(12, 18, 32, 0.06), 0 2px 8px rgba(12, 18, 32, 0.04);
+  --bf-shadow-sheet: 0 -8px 32px rgba(12, 18, 32, 0.16);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #0a0e15;
+    --surface: #131925;
+    --surface-raised: #1b2231;
+    --surface-sunken: #0e131c;
+    --line: #242d3d;
+    --line-strong: #66738a;
+    --ink: #edf1f7;
+    --ink-muted: #9aa5b8;
+    --brand: #6e9bff;
+    --brand-pressed: #8db1ff;
+    --on-brand: #07112a;
+    --brand-soft: #172548;
+    --on-brand-soft: #b9cdff;
+    --positive: #45d394;
+    --positive-soft: #0f2c21;
+    --negative: #ff9466;
+    --negative-soft: #35190d;
+    --invest: #f0b54a;
+    --invest-soft: #30240c;
+    --focus: #8db1ff;
+    --scrim: rgba(0, 0, 0, 0.6);
+    --chart-1: #3987e5;
+    --chart-2: #d95926;
+    --chart-3: #199e70;
+    --chart-4: #c98500;
+    --chart-5: #d55181;
+    --chart-6: #008300;
+    --chart-other: #4a5466;
+    --bf-shadow-card: none;
+    --bf-shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.5);
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-brand: var(--brand);
+  --color-brand-pressed: var(--brand-pressed);
+  --color-on-brand: var(--on-brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-on-brand-soft: var(--on-brand-soft);
+  --color-positive: var(--positive);
+  --color-positive-soft: var(--positive-soft);
+  --color-negative: var(--negative);
+  --color-negative-soft: var(--negative-soft);
+  --color-invest: var(--invest);
+  --color-invest-soft: var(--invest-soft);
+  --color-focus: var(--focus);
+  --color-scrim: var(--scrim);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-other: var(--chart-other);
+  --shadow-card: var(--bf-shadow-card);
+  --shadow-sheet: var(--bf-shadow-sheet);
+}

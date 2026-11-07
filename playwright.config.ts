@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const WEB_PORT = 5173;
+const WEB_PORT = 3100; // porta própria para não reaproveitar outro servidor rodando na 3000
 
 export default defineConfig({
   fullyParallel: true,
@@ -11,12 +11,8 @@ export default defineConfig({
   projects: [
     // Regras puras (dinheiro, resumo do mês): rodam no runner do Playwright, sem navegador.
     { name: 'unit', testDir: 'tests/unit' },
-    // Contrato HTTP que o Atalho do iOS usa. Roda contra o Supabase local.
-    {
-      name: 'api',
-      testDir: 'tests/api',
-      use: { baseURL: process.env.SUPABASE_URL ?? 'http://127.0.0.1:54321' },
-    },
+    // Contrato HTTP que o Atalho do iOS usa: rotas /api do Next, com o Supabase local por trás.
+    { name: 'api', testDir: 'tests/api', use: { baseURL: `http://localhost:${WEB_PORT}` } },
     // Jornadas na interface, no motor do Safari com perfil de iPhone 16.
     {
       name: 'e2e-iphone',
@@ -25,7 +21,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `pnpm vite --port ${WEB_PORT} --strictPort`,
+    command: `pnpm next dev --port ${WEB_PORT}`,
     url: `http://localhost:${WEB_PORT}`,
     reuseExistingServer: !process.env.CI,
   },
