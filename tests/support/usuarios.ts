@@ -39,3 +39,26 @@ export function clienteDe(usuario: Usuario) {
     global: { headers: { Authorization: `Bearer ${usuario.sessao}` } },
   });
 }
+
+export interface LancamentoSemente {
+  tipo?: 'despesa' | 'receita';
+  valor: number;
+  categoria: string;
+  descricao: string;
+  /** ISO 8601; padrão: agora. */
+  data?: string;
+}
+
+/** Prepara lançamentos do usuário pelo mesmo acesso (com RLS) que o app usa. */
+export async function semearLancamentos(usuario: Usuario, lancamentos: LancamentoSemente[]) {
+  const db = clienteDe(usuario);
+  const { data: categorias } = await db.from('categorias').select('id, nome, tipo');
+  const linhas = lancamentos.map((l) => {
+    const tipo = l.tipo ?? 'despesa';
+    const cat = categorias?.find((c) => c.nome === l.categoria && c.tipo === tipo);
+    if (!cat) throw new Error(`categoria não encontrada: ${l.categoria}`);
+    return { user_id: usuario.id, tipo, valor: l.valor, categoria_id: cat.id, descricao: l.descricao, data: l.data ?? new Date().toISOString() };
+  });
+  const { error } = await db.from('lancamentos').insert(linhas);
+  if (error) throw error;
+}
