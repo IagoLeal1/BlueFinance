@@ -1,6 +1,6 @@
 # BlueFinance — Fase 3: Plano de testes (TDD com Playwright)
 
-> Status: **costuras confirmadas — em execução** · 07/11/2026 · stack: Next.js + Tailwind + shadcn/ui
+> Status: **fatias 1–27 concluídas** · 07/11/2026 · stack: Next.js + Tailwind + shadcn/ui
 
 ## Como vamos trabalhar
 
@@ -18,7 +18,7 @@
 
 Infra já validada: `tests/e2e/infra.spec.ts` abre o app (Next) no WebKit com perfil de iPhone 16 ✅
 
-Progresso: fatias 1–20 ✅
+Progresso: fatias 1–27 ✅ — 35 testes (unit 12 · api 10 · e2e 13)
 
 ## As costuras (para confirmar)
 
@@ -76,13 +76,19 @@ Cada linha é **um** teste. O nome do teste é o comportamento.
 18. ✅ sem lançamentos, a tela Início explica como lançar o primeiro
 19. ✅ lança um gasto pelo botão + e ele aparece em Lançamentos, em "Hoje", como `− R$ 32,90`
 20. ✅ depois do gasto, a tela Início atualiza "Saiu", "Sobrou" e a barra de categorias
-21. lança uma receita (salário) e ela aparece como `+ R$ 8.500,00`
-22. cadastra um investimento e ele aparece em Investimentos, agrupado pela instituição
-23. registra um aporte e o "Investiu" do mês aumenta
-24. filtra Lançamentos por Saiu / Entrou / Investiu
-25. edita e exclui um lançamento
-26. gera o token do Atalho em Ajustes (mostrado uma única vez, com botão de copiar)
-27. um gasto feito pelo Atalho (API) aparece no app
+21. ✅ lança uma receita (salário) e ela aparece como `+ R$ 8.500,00`
+22. ✅ cadastra um investimento e ele aparece em Investimentos, agrupado pela instituição
+23. ✅ registra um aporte e o "Investiu" do mês aumenta
+24. ✅ filtra Lançamentos por Saiu / Entrou / Investiu
+25. ✅ edita e exclui um lançamento
+26. ✅ gera o token do Atalho em Ajustes (mostrado uma única vez, com botão de copiar)
+27. ✅ um gasto feito pelo Atalho (API) aparece no app
+
+### Testes que entraram além do plano
+- **Datas** (`unit`): rótulo do dia — "Hoje · 7 nov", "Ontem", "5 nov", "24 dez 2025".
+- **Dinheiro** (`unit`): reais inteiros nos cards (`R$ 9.350`) e valores negativos (`− R$ 32,90`).
+- **Aportes** (`api`): aporte soma no investimento, editar ajusta a diferença, excluir estorna. Escrito depois do código e conferido com mutação.
+- **Token** (`api`): gerar um token novo invalida o anterior.
 
 ## Dados de teste
 

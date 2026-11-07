@@ -10,7 +10,8 @@ Todo pedido leva o **token pessoal** no header:
 Authorization: Bearer bf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-O token é gerado em Ajustes (`POST /api/tokens`, com o login do app) e aparece uma única vez. No banco fica só o hash.
+O token é gerado no app em **Ajustes › Atalho do iPhone** e aparece uma única vez (botão Copiar). No banco fica só o hash.
+Só existe um token ativo: gerar outro desliga o anterior — use isso se o iPhone for perdido.
 
 ## `GET /api/quick-add/categorias`
 

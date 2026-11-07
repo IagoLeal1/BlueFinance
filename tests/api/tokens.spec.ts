@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { test, expect, tokenDe } from './fixtures';
 
 test.describe('token pessoal do Atalho', () => {
   test('gera um token pessoal para quem está logado', async ({ request, usuario }) => {
@@ -15,5 +15,15 @@ test.describe('token pessoal do Atalho', () => {
       expect(res.status(), JSON.stringify(headers)).toBe(401);
       expect(await res.json()).toEqual({ erro: 'Faça login para gerar um token.' });
     }
+  });
+
+  test('gerar um token novo invalida o anterior', async ({ request, usuario }) => {
+    const antigo = await tokenDe(request, usuario);
+    const novo = await tokenDe(request, usuario);
+    const categorias = (token: string) =>
+      request.get('/api/quick-add/categorias', { headers: { Authorization: `Bearer ${token}` } });
+
+    expect((await categorias(antigo)).status()).toBe(401);
+    expect((await categorias(novo)).status()).toBe(200);
   });
 });
