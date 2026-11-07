@@ -96,4 +96,28 @@ test.describe('lançamento rápido (Atalho do iOS)', () => {
     const { data } = await clienteDe(usuario).from('lancamentos').select('descricao, valor');
     expect(data).toEqual([{ descricao: 'mercado do bairro', valor: 3290 }]);
   });
+
+  test('aceita o valor em reais, como vem do teclado numérico do Atalho', async ({ request, usuario }) => {
+    const token = await tokenDe(request, usuario);
+    const enviar = (data: object) =>
+      request.post('/api/quick-add', { headers: { Authorization: `Bearer ${token}` }, data: { categoria: 'Mercado', ...data } });
+
+    // 32,9 no teclado chega como 32.9; 0,1 + 0,2 não pode virar 0,30000000000000004.
+    const res = await enviar({ valor: 32.9, descricao: 'padaria' });
+    expect(res.status()).toBe(201);
+    expect((await res.json()).lancamento).toMatchObject({ valor: 3290, descricao: 'padaria' });
+    expect((await enviar({ valor: 0.1 + 0.2, descricao: '' })).status()).toBe(201);
+
+    for (const valor of [0, -5, 0.001, '32,90']) {
+      const r = await enviar({ valor, descricao: '' });
+      expect(r.status(), String(valor)).toBe(400);
+    }
+
+    const { data } = await clienteDe(usuario).from('lancamentos').select('descricao, valor').order('valor');
+    // Descrição vazia usa o nome da categoria.
+    expect(data).toEqual([
+      { descricao: 'Mercado', valor: 30 },
+      { descricao: 'padaria', valor: 3290 },
+    ]);
+  });
 });

@@ -23,14 +23,15 @@ Só existe um token ativo: gerar outro desliga o anterior — use isso se o iPho
 
 ## `POST /api/quick-add`
 
-Pedido (Atalho de 2 passos):
+Pedido (Atalho com teclado numérico):
 
 ```json
-{ "categoria": "Mercado", "texto": "32,90 mercado do bairro" }
+{ "categoria": "Mercado", "valor": 32.9, "descricao": "mercado do bairro" }
 ```
 
-- `texto`: o primeiro número é o valor ("32,90", "32.90", "1.250", "41"); o resto é a descrição. Sem descrição, usa o nome da categoria.
-- Formato antigo, ainda aceito: `{ "categoria", "descricao", "valor_centavos" }`.
+- `valor`: em reais, como vem do "Pedir Número" (32.9). A API arredonda para centavos.
+- `descricao`: opcional; vazia usa o nome da categoria.
+- Também aceitos: `{ "categoria", "texto": "32,90 mercado do bairro" }` (valor + descrição num campo) e `{ "categoria", "descricao", "valor_centavos" }`.
 
 Respostas — **toda resposta traz `mensagem`**, que o Atalho mostra numa notificação:
 
@@ -46,9 +47,10 @@ Respostas — **toda resposta traz `mensagem`**, que o Atalho mostra numa notifi
 1. **Texto** → o token pessoal.
 2. **Obter Conteúdo de URL** → `GET /api/quick-add/categorias`, cabeçalho `Authorization: Bearer` + Texto.
 3. **Obter Valor do Dicionário** `categorias` → **Escolher na Lista**.
-4. **Pedir Entrada** (texto) → "Quanto e com o quê?".
-5. **Obter Conteúdo de URL** → `POST /api/quick-add`, mesmo cabeçalho, JSON: `categoria` = Item Selecionado, `texto` = Entrada Fornecida.
-6. **Obter Valor do Dicionário** `mensagem` → **Mostrar Notificação**.
+4. **Pedir Entrada** (Número) → "Quanto?" — abre o teclado numérico.
+5. **Pedir Entrada** (Texto) → "Com o quê?" — pode deixar vazio.
+6. **Obter Conteúdo de URL** → `POST /api/quick-add`, mesmo cabeçalho, JSON: `categoria` (Texto) = Item Selecionado, `valor` (Número) = resposta de "Quanto?", `descricao` (Texto) = resposta de "Com o quê?".
+7. **Obter Valor do Dicionário** `mensagem` → **Mostrar Notificação**.
 
 No iPhone: Ajustes › Botão de Ação › Atalho › Gasto rápido (o Toque Traseiro falha com capinha).
 

@@ -9,22 +9,31 @@ interface Corpo {
   categoria?: unknown;
   /** Atalho de 2 passos: "32,90 mercado do bairro" (valor + descrição num campo só). */
   texto?: unknown;
-  /** Formato antigo, ainda aceito: descrição e valor em centavos separados. */
+  /** Teclado numérico do Atalho: valor em reais (32.9) + descrição opcional. */
+  valor?: unknown;
   descricao?: unknown;
+  /** Formato antigo, ainda aceito: valor em centavos. */
   valor_centavos?: unknown;
 }
 
-/** Valor e descrição a partir de `texto` ou do par `valor_centavos` + `descricao`. */
+/** Valor e descrição a partir de `texto`, de `valor` (reais) ou de `valor_centavos`, + `descricao`. */
 function valorEDescricao(corpo: Corpo): { valor: number; descricao: string } | Response {
   if (typeof corpo.texto === 'string') {
     const lido = lerTextoRapido(corpo.texto);
     return lido ?? erro(400, 'Não achei o valor. Escreva assim: 32,90 mercado');
   }
+  const descricao = typeof corpo.descricao === 'string' ? corpo.descricao.trim() : '';
+  if (corpo.valor !== undefined) {
+    // Teclado numérico do Atalho: reais com casas decimais (32.9). Arredonda para centavos.
+    const centavos = typeof corpo.valor === 'number' && Number.isFinite(corpo.valor) ? Math.round(corpo.valor * 100) : NaN;
+    if (!Number.isSafeInteger(centavos) || centavos <= 0) return erro(400, 'O valor precisa ser maior que zero.');
+    return { valor: centavos, descricao };
+  }
   const valor = corpo.valor_centavos;
   if (typeof valor !== 'number' || !Number.isSafeInteger(valor) || valor <= 0) {
     return erro(400, 'O valor precisa ser um número inteiro de centavos maior que zero.');
   }
-  return { valor, descricao: typeof corpo.descricao === 'string' ? corpo.descricao.trim() : '' };
+  return { valor, descricao };
 }
 
 /** Cria um gasto a partir do Atalho do iOS. Autentica com o token pessoal (Bearer bf_…). */
