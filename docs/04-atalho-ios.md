@@ -23,33 +23,33 @@ Só existe um token ativo: gerar outro desliga o anterior — use isso se o iPho
 
 ## `POST /api/quick-add`
 
-Pedido:
+Pedido (Atalho de 2 passos):
 
 ```json
-{ "categoria": "Mercado", "descricao": "Mercado do bairro", "valor_centavos": 3290 }
+{ "categoria": "Mercado", "texto": "32,90 mercado do bairro" }
 ```
 
-- `valor_centavos`: número inteiro maior que zero. No Atalho: valor digitado × 100, arredondado.
-- `descricao`: opcional; vazio usa o nome da categoria.
+- `texto`: o primeiro número é o valor ("32,90", "32.90", "1.250", "41"); o resto é a descrição. Sem descrição, usa o nome da categoria.
+- Formato antigo, ainda aceito: `{ "categoria", "descricao", "valor_centavos" }`.
 
-Respostas:
+Respostas — **toda resposta traz `mensagem`**, que o Atalho mostra numa notificação:
 
-| Status | Quando | Corpo |
+| Status | Quando | `mensagem` |
 |---|---|---|
-| 201 | gasto criado | `{ "mensagem": "Gasto salvo: Mercado · − R$ 32,90", "lancamento": { … } }` |
-| 400 | valor inválido | `{ "erro": "O valor precisa…", "mensagem": "O valor precisa…" }` |
-| 401 | sem token / token inválido | `{ "erro": "Token inválido…", "mensagem": "Token inválido…" }` |
-| 422 | categoria não existe | `{ "erro": "Categoria de despesa…", "mensagem": "Categoria de despesa…" }` |
+| 201 | gasto criado | "Gasto salvo: Mercado · − R$ 32,90" |
+| 400 | texto sem valor | "Não achei o valor. Escreva assim: 32,90 mercado" |
+| 401 | sem token / token inválido | "Token inválido. Gere um novo em Ajustes." |
+| 422 | categoria não existe | "Categoria de despesa não encontrada. Atualize a lista no Atalho." |
 
-Toda resposta traz `mensagem` (sucesso ou erro): o Atalho só precisa mostrar esse campo numa notificação.
+## Passos do Atalho (disparado pelo Botão de Ação)
 
-## Passos do Atalho
+1. **Texto** → o token pessoal.
+2. **Obter Conteúdo de URL** → `GET /api/quick-add/categorias`, cabeçalho `Authorization: Bearer` + Texto.
+3. **Obter Valor do Dicionário** `categorias` → **Escolher na Lista**.
+4. **Pedir Entrada** (texto) → "Quanto e com o quê?".
+5. **Obter Conteúdo de URL** → `POST /api/quick-add`, mesmo cabeçalho, JSON: `categoria` = Item Selecionado, `texto` = Entrada Fornecida.
+6. **Obter Valor do Dicionário** `mensagem` → **Mostrar Notificação**.
 
-1. Obter conteúdo de URL → `GET /api/quick-add/categorias` com o header de autorização.
-2. Escolher da lista → `categorias`.
-3. Pedir entrada (texto) → "Com o quê?".
-4. Pedir entrada (número) → "Quanto?"; Calcular × 100; Arredondar.
-5. Obter conteúdo de URL → `POST /api/quick-add` (JSON) com os três campos.
-6. Obter Valor do Dicionário `mensagem` → Mostrar Notificação.
+No iPhone: Ajustes › Botão de Ação › Atalho › Gasto rápido (o Toque Traseiro falha com capinha).
 
 Contrato coberto por `tests/api/quick-add.spec.ts`.

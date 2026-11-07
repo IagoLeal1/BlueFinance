@@ -8,7 +8,7 @@ test.describe('lançamento rápido (Atalho do iOS)', () => {
 
     expect(res.status()).toBe(200);
     expect(await res.json()).toEqual({
-      categorias: ['Moradia', 'Mercado', 'Transporte', 'Comer fora', 'Lazer', 'Saúde'],
+      categorias: ['Moradia', 'Mercado', 'Transporte', 'Alimentação', 'Lazer', 'Saúde', 'Outros'],
     });
   });
 
@@ -75,5 +75,25 @@ test.describe('lançamento rápido (Atalho do iOS)', () => {
 
     const { data } = await clienteDe(usuario).from('lancamentos').select('id');
     expect(data).toEqual([]);
+  });
+
+  test('aceita valor e descrição num texto só, como o Atalho de 2 passos manda', async ({ request, usuario }) => {
+    const token = await tokenDe(request, usuario);
+    const enviar = (texto: string) =>
+      request.post('/api/quick-add', { headers: { Authorization: `Bearer ${token}` }, data: { categoria: 'Mercado', texto } });
+
+    const res = await enviar('32,90 mercado do bairro');
+    expect(res.status()).toBe(201);
+    const body = await res.json();
+    expect(body.mensagem).toBe('Gasto salvo: Mercado · \u2212 R$ 32,90');
+    expect(body.lancamento).toMatchObject({ valor: 3290, descricao: 'mercado do bairro' });
+
+    const semValor = await enviar('uber');
+    expect(semValor.status()).toBe(400);
+    const msg = 'Não achei o valor. Escreva assim: 32,90 mercado';
+    expect(await semValor.json()).toEqual({ erro: msg, mensagem: msg });
+
+    const { data } = await clienteDe(usuario).from('lancamentos').select('descricao, valor');
+    expect(data).toEqual([{ descricao: 'mercado do bairro', valor: 3290 }]);
   });
 });
