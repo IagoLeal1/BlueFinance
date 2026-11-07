@@ -11,6 +11,7 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "BlueFinance",
   description: "Suas finanças em um toque.",
+  appleWebApp: { capable: true, title: "BlueFinance", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {

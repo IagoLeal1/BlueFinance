@@ -29,6 +29,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Fora: rotas /api (usam token próprio), arquivos estáticos e imagens.
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+  // Fora: rotas /api (usam token próprio), estáticos, imagens e o que o iPhone busca sem login
+  // para "Adicionar à Tela de Início" (manifest e ícones).
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|manifest.webmanifest|icon|apple-icon|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
 };
