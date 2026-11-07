@@ -225,7 +225,7 @@ tela("TelaAjustes", "11 · Ajustes: Atalho no Botão de Ação, token e sair",
             + '<section class="bf-card" style="display:grid;gap:14px"><h3 class="bf-card__title">Lançar sem abrir o app</h3>'
               '<ol class="bf-steps"><li>Instale o Atalho "Gasto rápido" (botão abaixo).</li>'
               '<li>Ajustes do iPhone › Botão de Ação › Atalho › Gasto rápido.</li>'
-              '<li>Aperte o botão, escolha a categoria e digite "32,90 mercado do bairro".</li></ol>'
+              '<li>Aperte o botão, escolha a categoria, digite o valor e (se quiser) com o quê.</li></ol>'
               f'<button class="bf-btn bf-btn--primary bf-btn--block">{i("download")}Instalar o Atalho</button></section>'
             + '<section class="bf-card" style="display:grid;gap:10px"><h3 class="bf-card__title">Token do Atalho</h3>'
               '<div class="caption">Criado em 07/11/2026 · usado hoje às 17:20</div>'
@@ -243,32 +243,33 @@ CHECK_BRANCO = i("check", ' style="color:#fff"')
 LISTA = "".join(
     f'<div style="display:flex;align-items:center;gap:10px;padding:10px 4px;border-top:1px solid var(--line)">{i(ic)}<span class="body">{nome}</span></div>'
     for ic, nome in CATS)
-tela("FluxoAtalho", "12 · Atalho no Botão de Ação: categoria → quanto e com o quê → pronto",
+TECLADO = ('<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px">'
+           + "".join(f'<span style="text-align:center;padding:8px 0;border-radius:8px;background:var(--surface-sunken);font:600 17px/22px var(--font-sans)">{k}</span>' for k in "123456789,0⌫")
+           + "</div>")
+cabeca = lambda sub: (f'<div class="bf-ios-prompt__titulo"><span class="bf-ios-notif__icone" style="width:22px;height:22px;border-radius:6px"></span>Gasto rápido{sub}</div>')
+tela("FluxoAtalho", "12 · Atalho no Botão de Ação: categoria → quanto (teclado numérico) → com o quê → pronto",
      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:16px">'
      + painel("1 · Aperta o Botão de Ação e escolhe",
-              f'<div class="bf-ios-prompt" style="gap:4px"><div class="bf-ios-prompt__titulo"><span class="bf-ios-notif__icone" style="width:22px;height:22px;border-radius:6px"></span>Gasto rápido</div>'
+              f'<div class="bf-ios-prompt" style="gap:4px">{cabeca("")}'
               f'<div class="bf-ios-prompt__pergunta" style="margin:4px 0 6px">Categoria</div>{LISTA}</div>',
-              "A lista vem do app (~0,35 s): categoria nova ou renomeada aparece sozinha. Um toque e já vai para a próxima.")
-     + painel("2 · Quanto e com o quê?",
-              '<div class="bf-ios-prompt"><div class="bf-ios-prompt__titulo"><span class="bf-ios-notif__icone" style="width:22px;height:22px;border-radius:6px"></span>Gasto rápido · Mercado</div>'
-              '<div class="bf-ios-prompt__pergunta">Quanto e com o quê?</div><div class="bf-ios-prompt__campo">32,90 mercado do bairro</div>'
+              "A lista vem do app (~0,35 s): categoria nova ou renomeada aparece sozinha.")
+     + painel("2 · Quanto?",
+              f'<div class="bf-ios-prompt">{cabeca(" · Mercado")}'
+              '<div class="bf-ios-prompt__pergunta">Quanto?</div><div class="bf-ios-prompt__campo">32,90</div>'
+              f'{TECLADO}</div>',
+              "Abre direto o teclado numérico. O Atalho manda em reais (32,9); o app converte para centavos.")
+     + painel("3 · Com o quê? (opcional)",
+              f'<div class="bf-ios-prompt">{cabeca(" · Mercado · R$ 32,90")}'
+              '<div class="bf-ios-prompt__pergunta">Com o quê?</div><div class="bf-ios-prompt__campo">mercado do bairro</div>'
               '<div class="bf-ios-prompt__acoes"><span>Cancelar</span><span>OK</span></div></div>',
-              "Um campo só: o número é o valor, o resto é a descrição. Vírgula ou ponto, tanto faz.")
-     + painel("3 · Notificação de volta",
+              "Pode dar OK vazio: a descrição vira o nome da categoria.")
+     + painel("4 · Notificação de volta",
               f'<div class="bf-ios-notif"><span class="bf-ios-notif__icone">{CHECK_BRANCO}</span>'
               '<div style="flex:1"><div class="body-strong">BlueFinance</div><div class="caption">Gasto salvo: Mercado · − R$ 32,90</div></div><span class="caption muted">agora</span></div>',
-              "Uma chamada de rede, no fim. Se algo der errado, a notificação diz o quê (ex.: \"Não achei o valor\").")
-     + painel("Como o app lê o texto",
-              '<div class="bf-card" style="display:grid;gap:8px">'
-              '<div class="caption"><span class="body-strong">32,90 mercado do bairro</span> → R$ 32,90 · "mercado do bairro"</div>'
-              '<div class="caption"><span class="body-strong">almoço 41</span> → R$ 41,00 · "almoço"</div>'
-              '<div class="caption"><span class="body-strong">1.250 aluguel</span> → R$ 1.250,00 · "aluguel"</div>'
-              '<div class="caption"><span class="body-strong">18,40</span> → R$ 18,40 · descrição = categoria</div>'
-              '<div class="caption"><span class="body-strong">uber</span> → "Não achei o valor"</div></div>',
-              "Presente, doação, coisa avulsa: escolha \"Outros\" na lista.")
+              "Uma chamada de rede para salvar, no fim. Se algo der errado, a notificação diz o quê.")
      + "</div>",
-     """Atalho em 2 passos no Botão de Ação (o Toque Traseiro falha com capinha): escolher a categoria e digitar "32,90 mercado do bairro".
-A categoria vem sempre certa (você escolhe); valor e descrição saem de um campo só. Uma chamada de rede para salvar, no fim.""",
+     """Atalho no Botão de Ação (o Toque Traseiro falha com capinha): escolher a categoria, digitar o valor no teclado numérico
+e, se quiser, dizer com o quê. Uma chamada de rede para salvar, no fim.""",
      altura=530, largura=1100)
 
 print("telas geradas em", RAIZ)

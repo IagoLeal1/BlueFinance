@@ -12,9 +12,9 @@
   },
   "groups": [],
   "lastChange": {
-    "at": "2026-11-07T20:49:21Z",
+    "at": "2026-11-07T21:07:22Z",
     "by": "Claude",
-    "note": "Atalho em 2 passos (categoria → \"32,90 mercado do bairro\"); Comer fora vira Alimentação; nova categoria Outros.",
+    "note": "Atalho: categoria → Quanto? (teclado numérico) → Com o quê? (opcional) → notificação.",
     "via": "Claude Code"
   },
   "layout": "files",

@@ -66,5 +66,5 @@ Ainda não há logo. Escreva o nome "BlueFinance" em Manrope 800, `ink`.
 ## Telas e navegação
 
 - Abas: Início, Lançamentos, (+), Investir, Ajustes. O + central abre o sheet de novo lançamento.
-- Fora do app, o lançamento rápido é o Atalho do iOS no **Botão de Ação** (o Toque Traseiro falha com capinha): escolher a categoria e digitar "32,90 mercado do bairro"; uma notificação de volta (card FluxoAtalho).
+- Fora do app, o lançamento rápido é o Atalho do iOS no **Botão de Ação** (o Toque Traseiro falha com capinha): escolher a categoria, digitar o valor no teclado numérico e, opcionalmente, com o quê; uma notificação de volta (card FluxoAtalho).
 - Layout pensado para iPhone 16 (393 × 852 pt). No computador, a mesma coluna centralizada com largura máxima de 480px.
