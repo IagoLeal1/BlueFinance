@@ -12,9 +12,9 @@
   },
   "groups": [],
   "lastChange": {
-    "at": "2026-11-07T20:29:31Z",
+    "at": "2026-11-07T20:49:21Z",
     "by": "Claude",
-    "note": "Todas as telas para aprovação (12), fluidez (esqueleto, aviso com Desfazer, linha salvando) e Atalho de 1 pergunta no Botão de Ação.",
+    "note": "Atalho em 2 passos (categoria → \"32,90 mercado do bairro\"); Comer fora vira Alimentação; nova categoria Outros.",
     "via": "Claude Code"
   },
   "layout": "files",

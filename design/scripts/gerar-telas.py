@@ -60,7 +60,7 @@ def chips(itens, marcado=None):
         for ic, nome in itens) + "</div>"
 
 
-CATS = [("house", "Moradia"), ("shopping-cart", "Mercado"), ("car", "Transporte"), ("utensils", "Comer fora"), ("ticket", "Lazer"), ("heart-pulse", "Saúde")]
+CATS = [("house", "Moradia"), ("shopping-cart", "Mercado"), ("car", "Transporte"), ("utensils", "Alimentação"), ("ticket", "Lazer"), ("heart-pulse", "Saúde"), ("circle-ellipsis", "Outros")]
 
 
 def tela(nome, subtitulo, corpo, readme, altura=900, largura=None):
@@ -142,7 +142,7 @@ tela("TelaLancamentos", "5 · Lançamentos: filtro e lista por dia",
             + linha("despesa", "car", "Uber para o trabalho", "Transporte · pelo Atalho", "− R$ 18,40") + "</ul>"
             + '<div class="bf-list__day">Ontem · 6 nov</div><ul class="bf-list">'
             + linha("receita", "sparkles", "Freela site da padaria", "Renda extra", "+ R$ 850,00")
-            + linha("despesa", "utensils", "Almoço", "Comer fora", "− R$ 41,00") + "</ul>"
+            + linha("despesa", "utensils", "Almoço", "Alimentação", "− R$ 41,00") + "</ul>"
             + '<div class="bf-list__day">5 nov</div><ul class="bf-list">'
             + linha("investimento", "piggy-bank", "Aporte mensal", "Tesouro Selic 2029", "R$ 1.500,00") + "</ul></section>", aba=1),
      """Lançamentos do mês, do mais novo ao mais antigo, agrupados por dia. O filtro troca na hora (sem ir ao servidor).
@@ -225,7 +225,7 @@ tela("TelaAjustes", "11 · Ajustes: Atalho no Botão de Ação, token e sair",
             + '<section class="bf-card" style="display:grid;gap:14px"><h3 class="bf-card__title">Lançar sem abrir o app</h3>'
               '<ol class="bf-steps"><li>Instale o Atalho "Gasto rápido" (botão abaixo).</li>'
               '<li>Ajustes do iPhone › Botão de Ação › Atalho › Gasto rápido.</li>'
-              '<li>Aperte o botão, digite "32,90 mercado" e pronto.</li></ol>'
+              '<li>Aperte o botão, escolha a categoria e digite "32,90 mercado do bairro".</li></ol>'
               f'<button class="bf-btn bf-btn--primary bf-btn--block">{i("download")}Instalar o Atalho</button></section>'
             + '<section class="bf-card" style="display:grid;gap:10px"><h3 class="bf-card__title">Token do Atalho</h3>'
               '<div class="caption">Criado em 07/11/2026 · usado hoje às 17:20</div>'
@@ -236,32 +236,39 @@ tela("TelaAjustes", "11 · Ajustes: Atalho no Botão de Ação, token e sair",
      """Ajustes ensina o caminho mais confiável (Botão de Ação, que funciona com capinha) e mostra o estado do token.
 "Instalar o Atalho" abre um link do iCloud com o Atalho pronto; o token é colocado sozinho na instalação.""")
 
-# 12 · Fluxo do Atalho v2
-CHECK_BRANCO = i("check", ' style="color:#fff"')
+# 12 · Fluxo do Atalho (2 passos)
 painel = lambda titulo_, conteudo, legenda: (f'<figure style="margin:0;display:grid;gap:10px;align-content:start"><span class="label muted">{titulo_}</span>{conteudo}'
                                               f'<figcaption class="caption muted">{legenda}</figcaption></figure>')
-tela("FluxoAtalho", "12 · Atalho com 1 pergunta: Botão de Ação → digita → pronto",
-     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:16px">'
-     + painel("1 · Aperta o Botão de Ação",
-              f'<div class="bf-ios-prompt"><div class="bf-ios-prompt__titulo"><span class="bf-ios-notif__icone" style="width:22px;height:22px;border-radius:6px"></span>Gasto rápido</div>'
+CHECK_BRANCO = i("check", ' style="color:#fff"')
+LISTA = "".join(
+    f'<div style="display:flex;align-items:center;gap:10px;padding:10px 4px;border-top:1px solid var(--line)">{i(ic)}<span class="body">{nome}</span></div>'
+    for ic, nome in CATS)
+tela("FluxoAtalho", "12 · Atalho no Botão de Ação: categoria → quanto e com o quê → pronto",
+     '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:16px">'
+     + painel("1 · Aperta o Botão de Ação e escolhe",
+              f'<div class="bf-ios-prompt" style="gap:4px"><div class="bf-ios-prompt__titulo"><span class="bf-ios-notif__icone" style="width:22px;height:22px;border-radius:6px"></span>Gasto rápido</div>'
+              f'<div class="bf-ios-prompt__pergunta" style="margin:4px 0 6px">Categoria</div>{LISTA}</div>',
+              "A lista vem do app (~0,35 s): categoria nova ou renomeada aparece sozinha. Um toque e já vai para a próxima.")
+     + painel("2 · Quanto e com o quê?",
+              '<div class="bf-ios-prompt"><div class="bf-ios-prompt__titulo"><span class="bf-ios-notif__icone" style="width:22px;height:22px;border-radius:6px"></span>Gasto rápido · Mercado</div>'
               '<div class="bf-ios-prompt__pergunta">Quanto e com o quê?</div><div class="bf-ios-prompt__campo">32,90 mercado do bairro</div>'
               '<div class="bf-ios-prompt__acoes"><span>Cancelar</span><span>OK</span></div></div>',
-              "Uma pergunta só, sem esperar internet antes. Funciona com capinha. Também dá para chamar pela Siri ou pela Central de Controle.")
-     + painel("2 · Notificação de volta",
+              "Um campo só: o número é o valor, o resto é a descrição. Vírgula ou ponto, tanto faz.")
+     + painel("3 · Notificação de volta",
               f'<div class="bf-ios-notif"><span class="bf-ios-notif__icone">{CHECK_BRANCO}</span>'
-              '<div style="flex:1"><div class="body-strong">BlueFinance</div><div class="caption">Mercado · − R$ 32,90 · Mercado do bairro</div></div><span class="caption muted">agora</span></div>',
-              "Em ~1 s. A categoria foi adivinhada pela palavra \"mercado\". Errou? Corrige no app tocando no lançamento.")
-     + painel("3 · Como o app entende",
+              '<div style="flex:1"><div class="body-strong">BlueFinance</div><div class="caption">Gasto salvo: Mercado · − R$ 32,90</div></div><span class="caption muted">agora</span></div>',
+              "Uma chamada de rede, no fim. Se algo der errado, a notificação diz o quê (ex.: \"Não achei o valor\").")
+     + painel("Como o app lê o texto",
               '<div class="bf-card" style="display:grid;gap:8px">'
-              '<div class="caption"><span class="body-strong">32,90 mercado</span> → R$ 32,90 · Mercado</div>'
-              '<div class="caption"><span class="body-strong">uber 18,40</span> → R$ 18,40 · Transporte</div>'
-              '<div class="caption"><span class="body-strong">almoço 41</span> → R$ 41,00 · Comer fora</div>'
-              '<div class="caption"><span class="body-strong">farmácia 27,50</span> → R$ 27,50 · Saúde</div>'
-              '<div class="caption"><span class="body-strong">presente mãe 120</span> → R$ 120,00 · <span class="body-strong">A revisar</span></div></div>',
-              "O valor é o número; o resto é a descrição. Categoria: palavra-chave, depois o que você usou antes para a mesma palavra. Sem pista, vai como \"A revisar\".")
+              '<div class="caption"><span class="body-strong">32,90 mercado do bairro</span> → R$ 32,90 · "mercado do bairro"</div>'
+              '<div class="caption"><span class="body-strong">almoço 41</span> → R$ 41,00 · "almoço"</div>'
+              '<div class="caption"><span class="body-strong">1.250 aluguel</span> → R$ 1.250,00 · "aluguel"</div>'
+              '<div class="caption"><span class="body-strong">18,40</span> → R$ 18,40 · descrição = categoria</div>'
+              '<div class="caption"><span class="body-strong">uber</span> → "Não achei o valor"</div></div>',
+              "Presente, doação, coisa avulsa: escolha \"Outros\" na lista.")
      + "</div>",
-     """Proposta de Atalho mais fluido: uma pergunta ("32,90 mercado do bairro") e uma chamada de rede, no fim.
-Substitui as 3 perguntas + a busca de categorias no começo. Disparo recomendado: Botão de Ação (Toque Traseiro falha com capinha).""",
-     altura=420, largura=1100)
+     """Atalho em 2 passos no Botão de Ação (o Toque Traseiro falha com capinha): escolher a categoria e digitar "32,90 mercado do bairro".
+A categoria vem sempre certa (você escolhe); valor e descrição saem de um campo só. Uma chamada de rede para salvar, no fim.""",
+     altura=530, largura=1100)
 
 print("telas geradas em", RAIZ)

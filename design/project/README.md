@@ -26,7 +26,7 @@ BlueFinance é um app pessoal de finanças para iPhone: lançar um gasto em segu
 - `brand` é para **uma** ação principal por tela, a aba ativa e links. Texto sobre ela é `on-brand`.
 - Semântica fixa por tipo de lançamento: despesa `negative` / `negative-soft`, receita `positive` / `positive-soft`, investimento `invest` / `invest-soft`. Não use essas cores para mais nada.
 - `negative` é laranja-queimado, não vermelho, e `positive` é verde-escuro: diferem em matiz **e** contam com o sinal, por isso funcionam para daltonismo.
-- Gráficos usam `chart-1` … `chart-6` em ordem fixa por categoria (Moradia, Mercado, Transporte, Comer fora, Lazer, Saúde); a 7ª em diante vira "Outros" em `chart-other`. A cor segue a categoria, nunca o ranking. Paleta validada para daltonismo (ΔE ≥ 8 entre vizinhas); `chart-3`, `chart-4`, `chart-5` ficam abaixo de 3:1 no tema claro, então gráfico sempre tem legenda com valores.
+- Gráficos usam `chart-1` … `chart-6` em ordem fixa por categoria (Moradia, Mercado, Transporte, Alimentação, Lazer, Saúde); a categoria "Outros" e qualquer uma além da 6ª usam `chart-other`. A cor segue a categoria, nunca o ranking. Paleta validada para daltonismo (ΔE ≥ 8 entre vizinhas); `chart-3`, `chart-4`, `chart-5` ficam abaixo de 3:1 no tema claro, então gráfico sempre tem legenda com valores.
 - Tema escuro é escolhido, não invertido: segue o ajuste do iPhone.
 
 ## Tipografia
@@ -55,7 +55,7 @@ BlueFinance é um app pessoal de finanças para iPhone: lançar um gasto em segu
 ## Iconografia
 
 - **Lucide** (traço 2px, cantos arredondados), 20px em linhas e botões, 24px nas abas, 16px em chips.
-- No app: `lucide-react`. Ícones de categoria: Moradia `house`, Mercado `shopping-cart`, Transporte `car`, Comer fora `utensils`, Lazer `ticket`, Saúde `heart-pulse`, Salário `briefcase`, Renda extra `sparkles`, Investimento `piggy-bank`, Renda fixa `landmark`, FII `building-2`, Transferência `arrow-left-right`.
+- No app: `lucide-react`. Ícones de categoria: Moradia `house`, Mercado `shopping-cart`, Transporte `car`, Alimentação `utensils`, Lazer `ticket`, Saúde `heart-pulse`, Outros `circle-ellipsis`, Salário `briefcase`, Renda extra `sparkles`, Investimento `piggy-bank`, Renda fixa `landmark`, FII `building-2`, Transferência `arrow-left-right`.
 - Direção: entrou `arrow-down-left`, saiu `arrow-up-right`.
 - Ícone sempre ao lado de texto, exceto botões só-ícone, que levam `aria-label`.
 
@@ -66,5 +66,5 @@ Ainda não há logo. Escreva o nome "BlueFinance" em Manrope 800, `ink`.
 ## Telas e navegação
 
 - Abas: Início, Lançamentos, (+), Investir, Ajustes. O + central abre o sheet de novo lançamento.
-- Fora do app, o lançamento rápido é o Atalho do iOS no **Botão de Ação** (o Toque Traseiro falha com capinha): uma pergunta, "32,90 mercado", e uma notificação de volta (card FluxoAtalho).
+- Fora do app, o lançamento rápido é o Atalho do iOS no **Botão de Ação** (o Toque Traseiro falha com capinha): escolher a categoria e digitar "32,90 mercado do bairro"; uma notificação de volta (card FluxoAtalho).
 - Layout pensado para iPhone 16 (393 × 852 pt). No computador, a mesma coluna centralizada com largura máxima de 480px.
