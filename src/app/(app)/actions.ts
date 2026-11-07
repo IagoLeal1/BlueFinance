@@ -56,7 +56,7 @@ export async function criarLancamento(_anterior: EstadoLancamento, form: FormDat
   return { ok: true, id: criado.id };
 }
 
-/** Altera valor e descrição de um lançamento do usuário (aporte ajusta o investimento junto). */
+/** Altera valor, descrição e categoria de um lançamento do usuário (aporte ajusta o investimento junto). */
 export async function editarLancamento(_anterior: EstadoLancamento, form: FormData): Promise<EstadoLancamento> {
   const id = String(form.get('id') ?? '');
   const valor = Number(form.get('valor_centavos'));
@@ -64,7 +64,15 @@ export async function editarLancamento(_anterior: EstadoLancamento, form: FormDa
   if (!Number.isSafeInteger(valor) || valor <= 0) return { erro: 'Digite um valor maior que zero.' };
 
   const supabase = await supabaseServidor();
-  const { error } = await supabase.rpc('editar_lancamento', { p_id: id, p_valor: valor, p_descricao: descricao });
+  // Categoria nova (opcional): só vale se for do próprio usuário — o RLS de categorias garante.
+  const categoriaId = String(form.get('categoria_id') ?? '');
+  let p_categoria: string | undefined;
+  if (categoriaId) {
+    const { data } = await supabase.from('categorias').select('id').eq('id', categoriaId).maybeSingle();
+    if (!data) return { erro: 'Categoria não encontrada.' };
+    p_categoria = data.id;
+  }
+  const { error } = await supabase.rpc('editar_lancamento', { p_id: id, p_valor: valor, p_descricao: descricao, p_categoria });
   if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
   refresh();
   return { ok: true };

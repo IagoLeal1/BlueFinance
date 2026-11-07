@@ -98,7 +98,7 @@ isOneToOne: false
           }
           Functions: {
             "editar_lancamento":
-{ Args: { "p_descricao": string,"p_id": string,"p_valor": number }; Returns: undefined
+{ Args: { "p_categoria"?: string,"p_descricao": string,"p_id": string,"p_valor": number }; Returns: undefined
                            },
 "excluir_lancamento":
 { Args: { "p_id": string }; Returns: undefined

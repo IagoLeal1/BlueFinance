@@ -30,4 +30,21 @@ test.describe('editar e excluir', () => {
 
     await expect(page.getByText('Nenhum lançamento neste mês.')).toBeVisible();
   });
+
+  test('troca a categoria de um gasto (quando o Atalho foi para a errada)', async ({ page, usuario }) => {
+    await entrar(page, usuario);
+    await lancarPeloApp(page, { digitos: '4100', categoria: 'Mercado', descricao: 'Almoço' });
+    await page.getByRole('link', { name: 'Lançamentos' }).click();
+
+    await page.getByRole('button', { name: /Almoço/ }).click();
+    const sheet = page.getByRole('dialog', { name: 'Editar lançamento' });
+    await expect(sheet.getByRole('button', { name: 'Mercado' })).toHaveAttribute('aria-pressed', 'true');
+    await sheet.getByRole('button', { name: 'Alimentação' }).click();
+    await sheet.getByRole('button', { name: 'Salvar alterações' }).click();
+    await expect(sheet).toBeHidden();
+
+    await expect(page.getByRole('listitem').filter({ hasText: 'Almoço' })).toContainText('Alimentação');
+    await page.getByRole('link', { name: 'Início' }).click();
+    await expect(page.getByRole('region', { name: 'Gastos por categoria' })).toContainText('Alimentação');
+  });
 });

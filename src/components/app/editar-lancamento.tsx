@@ -6,14 +6,27 @@ import { editarLancamento, excluirLancamento, type EstadoLancamento } from '@/ap
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import type { LancamentoListado } from '@/server/lancamentos';
 import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
+import { CHIP } from './estilos';
+import { IconeCategoria } from './icone-categoria';
 import { TransactionRow } from './transaction-row';
 
-/** Linha de lançamento que, ao tocar, abre o sheet para editar ou excluir. */
-export function LinhaEditavel({ l }: { l: LancamentoListado }) {
+export interface CategoriaEditavel {
+  id: string;
+  nome: string;
+  tipo: string;
+  icone: string;
+}
+
+/** Linha de lançamento que, ao tocar, abre o sheet para editar (valor, categoria, descrição) ou excluir. */
+export function LinhaEditavel({ l, categorias }: { l: LancamentoListado; categorias: CategoriaEditavel[] }) {
   const [aberto, setAberto] = useState(false);
+  const opcoes = l.tipo === 'investimento' ? [] : categorias.filter((c) => c.tipo === l.tipo);
+  const atual = opcoes.find((c) => c.nome === l.categoria)?.id;
+  const [categoria, setCategoria] = useState<string[]>(atual ? [atual] : []);
   const [centavos, setCentavos] = useState(l.valor);
   const [confirmando, setConfirmando] = useState(false);
 
@@ -35,6 +48,7 @@ export function LinhaEditavel({ l }: { l: LancamentoListado }) {
           setAberto(v);
           if (v) {
             setCentavos(l.valor);
+            setCategoria(atual ? [atual] : []);
             setConfirmando(false);
           }
         }}
@@ -47,6 +61,25 @@ export function LinhaEditavel({ l }: { l: LancamentoListado }) {
         <form action={salvar} className="grid gap-4">
           <input type="hidden" name="id" value={l.id} />
           <AmountInput nome="valor_centavos" centavos={centavos} onChange={setCentavos} />
+          {opcoes.length > 0 && (
+            <div className="grid gap-2">
+              <Label id={`rotulo-cat-${l.id}`}>Categoria</Label>
+              <ToggleGroup
+                aria-labelledby={`rotulo-cat-${l.id}`}
+                value={categoria}
+                onValueChange={(v) => setCategoria(v as string[])}
+                className="flex w-full flex-wrap gap-2"
+              >
+                {opcoes.map((c) => (
+                  <ToggleGroupItem key={c.id} value={c.id} className={CHIP}>
+                    <IconeCategoria nome={c.icone} className="size-4" />
+                    {c.nome}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
+              <input type="hidden" name="categoria_id" value={categoria[0] ?? ''} />
+            </div>
+          )}
           <div className="grid gap-2">
             <Label htmlFor={`descricao-${l.id}`}>Com o quê</Label>
             <Input id={`descricao-${l.id}`} name="descricao" defaultValue={l.descricao} />

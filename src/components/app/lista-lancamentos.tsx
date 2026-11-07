@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { TipoLancamento } from '@/domain/money';
 import type { LancamentoListado } from '@/server/lancamentos';
 import { Segmented } from './segmented';
-import { LinhaEditavel } from './editar-lancamento';
+import { LinhaEditavel, type CategoriaEditavel } from './editar-lancamento';
 import { useFeedback } from './feedback';
 import { TransactionRow } from './transaction-row';
 
@@ -22,7 +22,7 @@ export interface DiaDeLancamentos {
 }
 
 /** Lista do mês agrupada por dia, com filtro por tipo (design kit: TelaLancamentos). */
-export function ListaLancamentos({ dias }: { dias: DiaDeLancamentos[] }) {
+export function ListaLancamentos({ dias, categorias }: { dias: DiaDeLancamentos[]; categorias: CategoriaEditavel[] }) {
   const [filtro, setFiltro] = useState<Filtro>('tudo');
   const { pendentes } = useFeedback();
   const visiveis = dias
@@ -50,7 +50,7 @@ export function ListaLancamentos({ dias }: { dias: DiaDeLancamentos[] }) {
               <h2 className="pt-4 pb-1 text-xs font-bold tracking-[0.02em] text-muted-foreground">{d.rotulo}</h2>
               <ul>
                 {d.lancamentos.map((l) => (
-                  <LinhaEditavel key={l.id} l={l} />
+                  <LinhaEditavel key={l.id} l={l} categorias={categorias} />
                 ))}
               </ul>
             </section>
