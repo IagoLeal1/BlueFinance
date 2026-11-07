@@ -1,6 +1,7 @@
 import { connection } from 'next/server';
 import Link from 'next/link';
 import { Suspense } from 'react';
+import { EsqueletoInicio } from '@/components/app/esqueleto';
 import { BalanceCard } from '@/components/app/balance-card';
 import { SpendingBar } from '@/components/app/spending-bar';
 import { TransactionRow } from '@/components/app/transaction-row';
@@ -12,7 +13,7 @@ import { lancamentosDoMes } from '@/server/lancamentos';
 
 export default function Inicio({ searchParams }: PageProps<'/'>) {
   return (
-    <Suspense fallback={<p className="mt-4 text-muted-foreground">Carregando…</p>}>
+    <Suspense fallback={<EsqueletoInicio />}>
       <ResumoDoMes searchParams={searchParams} />
     </Suspense>
   );

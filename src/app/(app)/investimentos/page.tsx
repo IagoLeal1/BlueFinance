@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
+import { EsqueletoCarteira } from '@/components/app/esqueleto';
 import { LinhaInvestimento } from '@/components/app/linha-investimento';
 import { NovoInvestimento } from '@/components/app/novo-investimento';
 import { formatBRL, formatReais } from '@/domain/money';
@@ -11,7 +12,7 @@ export default function Investimentos() {
   return (
     <>
       <h1 className="mt-2 text-[28px] leading-[34px] font-extrabold tracking-tight">Investimentos</h1>
-      <Suspense fallback={<p className="text-muted-foreground">Carregando…</p>}>
+      <Suspense fallback={<EsqueletoCarteira />}>
         <Carteira />
       </Suspense>
     </>

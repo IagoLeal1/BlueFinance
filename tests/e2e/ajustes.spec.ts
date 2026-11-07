@@ -18,4 +18,14 @@ test.describe('ajustes', () => {
     await expect(page.getByLabel('Token do Atalho')).toHaveCount(0);
     await expect(page.getByText(/^Token criado em /)).toBeVisible();
   });
+
+  test('ensina a lançar sem abrir o app pelo Botão de Ação', async ({ page, usuario }) => {
+    await entrar(page, usuario);
+    await page.getByRole('link', { name: 'Ajustes' }).click();
+
+    const secao = page.getByRole('region', { name: 'Lançar sem abrir o app' });
+    await expect(secao.getByRole('listitem')).toHaveCount(3);
+    await expect(secao).toContainText('Botão de Ação');
+    await expect(page.getByRole('region', { name: 'Conta' })).toContainText(usuario.email);
+  });
 });

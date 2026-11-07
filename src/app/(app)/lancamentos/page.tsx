@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { connection } from 'next/server';
 import { Suspense } from 'react';
+import { EsqueletoLista } from '@/components/app/esqueleto';
 import { ListaLancamentos } from '@/components/app/lista-lancamentos';
 import { MesPicker } from '@/components/app/mes-picker';
 import { mesAtual, mesDaUrl, opcoesDeMes, rotuloDoDia, tituloDoMes } from '@/domain/datas';
@@ -11,7 +12,7 @@ export const metadata: Metadata = { title: 'Lançamentos · BlueFinance' };
 
 export default function Lancamentos({ searchParams }: PageProps<'/lancamentos'>) {
   return (
-    <Suspense fallback={<h1 className="mt-2 text-[28px] leading-[34px] font-extrabold tracking-tight">Lançamentos</h1>}>
+    <Suspense fallback={<EsqueletoLista titulo="Lançamentos" />}>
       <ListaDoMes searchParams={searchParams} />
     </Suspense>
   );

@@ -63,3 +63,34 @@
     @apply font-sans;
   }
 }
+
+/* Esqueleto de carregamento (design kit: Fluidez · bf-skel). */
+.esqueleto {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--surface-sunken);
+}
+.esqueleto::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.45), transparent);
+  transform: translateX(-100%);
+  animation: brilho-esqueleto 1.2s ease-in-out infinite;
+}
+@media (prefers-color-scheme: dark) {
+  .esqueleto::after {
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.06), transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .esqueleto::after {
+    animation: none;
+  }
+}
+@keyframes brilho-esqueleto {
+  to {
+    transform: translateX(100%);
+  }
+}
