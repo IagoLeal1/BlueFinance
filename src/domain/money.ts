@@ -34,3 +34,10 @@ export function formatSigned(centavos: Centavos, tipo: TipoLancamento): string {
 export function pushDigit(centavos: Centavos, digito: string): Centavos {
   return centavos * 10 + Number(digito);
 }
+
+const milhar = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+/** Valor arredondado para reais inteiros, para cards pequenos: "R$ 9.350". */
+export function formatReais(centavos: Centavos): string {
+  return `R$ ${milhar(Math.round(centavos / 100))}`;
+}

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { formatBRL, formatSigned, parseBRL, pushDigit } from '../../src/domain/money';
+import { formatBRL, formatReais, formatSigned, parseBRL, pushDigit } from '../../src/domain/money';
 
 test.describe('dinheiro', () => {
   test('formata centavos em reais', () => {
@@ -40,5 +40,11 @@ test.describe('dinheiro', () => {
       telas.push(formatBRL(valor));
     }
     expect(telas).toEqual(['R$ 0,03', 'R$ 0,32', 'R$ 3,29', 'R$ 32,90']);
+  });
+
+  test('arredonda para reais inteiros nos cards pequenos', () => {
+    expect(formatReais(935000)).toBe('R$ 9.350');
+    expect(formatReais(363165)).toBe('R$ 3.632');
+    expect(formatReais(0)).toBe('R$ 0');
   });
 });
