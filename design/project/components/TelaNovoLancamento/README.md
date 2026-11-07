@@ -1,4 +1,2 @@
-Sheet de novo lançamento aberto pelo botão +: tipo, valor, categoria, descrição e conta, com um único botão de salvar.
-
-- A ordem segue a do Atalho rápido: categoria, o quê, quanto — só que com o valor em destaque.
-- O rótulo do botão muda com o tipo: "Salvar gasto", "Salvar receita", "Salvar aporte".
+O sheet abre já com o teclado numérico no valor. A última categoria usada vem marcada; "Com o quê" é opcional
+(vazio usa o nome da categoria). Salvar fecha na hora — o gasto aparece na lista sem esperar o servidor (tela 7).

@@ -1,1 +1,2 @@
-Tela Lançamentos: todos os lançamentos do mês, filtráveis por tipo, agrupados por dia, do mais novo ao mais antigo.
+Lançamentos do mês, do mais novo ao mais antigo, agrupados por dia. O filtro troca na hora (sem ir ao servidor).
+Lançamentos feitos pelo Atalho mostram "pelo Atalho" no metadado. Tocar numa linha abre a edição.

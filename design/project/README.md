@@ -17,7 +17,7 @@ BlueFinance é um app pessoal de finanças para iPhone: lançar um gasto em segu
 - Totais em cards pequenos podem cortar centavos: `R$ 9.350`.
 - Datas curtas e relativas: "Hoje", "Ontem", "5 nov", "Novembro". Ano só quando não é o atual.
 - Porcentagens com vírgula: "9,8% no ano".
-- Vazio fala o próximo passo: "Nenhum gasto ainda. Toque em + ou dê dois toques nas costas do iPhone."
+- Vazio fala o próximo passo: "Nenhum lançamento ainda. Toque em + ou aperte o Botão de Ação do iPhone."
 
 ## Cor
 
@@ -44,6 +44,14 @@ BlueFinance é um app pessoal de finanças para iPhone: lançar um gasto em segu
 - Foco: anel sólido de 2px em `focus`, afastado 2px, em todo controle.
 - Movimento: curto e funcional — botão encolhe a 98% ao pressionar, sheet sobe em ~250ms. Nada pisca exceto o cursor do valor.
 
+## Fluidez
+
+- **Nada espera o servidor para responder ao toque.** Salvar fecha o sheet na hora e a linha entra na lista com `bf-row--pending` ("salvando…"); quando o servidor confirma, ela fica normal. Se falhar, a linha sai e o aviso diz "Não salvou. Tentar de novo".
+- **Aviso com Desfazer** (`bf-toast`, 5 s, acima da barra de abas) depois de salvar, editar ou excluir.
+- **Esqueleto, nunca "Carregando…".** `bf-skel` tem o formato do conteúdo final, para nada pular quando os dados chegam. Sem brilho com "Reduzir movimento".
+- A barra de abas e o botão + nunca esperam dados; cada aba mostra o esqueleto dela.
+- O filtro de Lançamentos troca no aparelho, sem ir ao servidor.
+
 ## Iconografia
 
 - **Lucide** (traço 2px, cantos arredondados), 20px em linhas e botões, 24px nas abas, 16px em chips.
@@ -58,5 +66,5 @@ Ainda não há logo. Escreva o nome "BlueFinance" em Manrope 800, `ink`.
 ## Telas e navegação
 
 - Abas: Início, Lançamentos, (+), Investir, Ajustes. O + central abre o sheet de novo lançamento.
-- Fora do app, o lançamento rápido é o Atalho do iOS disparado por toque duplo nas costas (ver o card FluxoAtalho).
+- Fora do app, o lançamento rápido é o Atalho do iOS no **Botão de Ação** (o Toque Traseiro falha com capinha): uma pergunta, "32,90 mercado", e uma notificação de volta (card FluxoAtalho).
 - Layout pensado para iPhone 16 (393 × 852 pt). No computador, a mesma coluna centralizada com largura máxima de 480px.

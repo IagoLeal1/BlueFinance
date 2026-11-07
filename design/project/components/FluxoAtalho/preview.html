@@ -1,37 +1,3 @@
-<!-- @dsCard group="Telas" height=280 width=1100 subtitle="Lançamento rápido: toque duplo nas costas → Atalho → confirmação" -->
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:16px;align-items:start">
-  <figure style="margin:0;display:grid;gap:8px">
-    <div class="bf-card" style="display:grid;gap:10px">
-      <span class="label muted">1 · Categoria</span>
-      <div class="bf-list">
-        <div class="bf-row" style="min-height:44px;padding:6px 0"><i data-lucide="shopping-cart" class="bf-icon"></i><span class="body" style="flex:1">Mercado</span><i data-lucide="check" class="bf-icon" style="color:var(--brand)"></i></div>
-        <div class="bf-row" style="min-height:44px;padding:6px 0"><i data-lucide="car" class="bf-icon"></i><span class="body">Transporte</span></div>
-        <div class="bf-row" style="min-height:44px;padding:6px 0"><i data-lucide="utensils" class="bf-icon"></i><span class="body">Comer fora</span></div>
-      </div>
-    </div>
-    <figcaption class="caption muted">Toque duplo nas costas abre o Atalho “Gasto rápido”. A lista vem das categorias do app.</figcaption>
-  </figure>
-  <figure style="margin:0;display:grid;gap:8px">
-    <div class="bf-card" style="display:grid;gap:10px">
-      <span class="label muted">2 · Com o quê?</span>
-      <input class="bf-input" value="Mercado do bairro">
-    </div>
-    <figcaption class="caption muted">Texto livre. Pode ficar em branco: o app usa o nome da categoria.</figcaption>
-  </figure>
-  <figure style="margin:0;display:grid;gap:8px">
-    <div class="bf-card" style="display:grid;gap:10px">
-      <span class="label muted">3 · Quanto?</span>
-      <div class="bf-amount__value" style="font-size:32px;line-height:38px"><span class="bf-amount__currency">R$</span>32,90</div>
-    </div>
-    <figcaption class="caption muted">Teclado numérico. O Atalho envia em centavos (3290) para a API.</figcaption>
-  </figure>
-  <figure style="margin:0;display:grid;gap:8px">
-    <div class="bf-card" style="display:flex;gap:12px;align-items:center">
-      <span class="bf-cat bf-cat--expense"><i data-lucide="shopping-cart" class="bf-icon"></i></span>
-      <div style="flex:1"><div class="body-strong">Gasto salvo</div><div class="caption muted">Mercado · − R$ 32,90</div></div>
-      <i data-lucide="circle-check" class="bf-icon is-positive"></i>
-    </div>
-    <figcaption class="caption muted">Notificação de confirmação. Na fase C (app com Capacitor) ela vira um aviso no Dynamic Island.</figcaption>
-  </figure>
-</div>
+<!-- @dsCard group="Telas" height=420 width=1100 subtitle="12 · Atalho com 1 pergunta: Botão de Ação → digita → pronto" -->
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:16px"><figure style="margin:0;display:grid;gap:10px;align-content:start"><span class="label muted">1 · Aperta o Botão de Ação</span><div class="bf-ios-prompt"><div class="bf-ios-prompt__titulo"><span class="bf-ios-notif__icone" style="width:22px;height:22px;border-radius:6px"></span>Gasto rápido</div><div class="bf-ios-prompt__pergunta">Quanto e com o quê?</div><div class="bf-ios-prompt__campo">32,90 mercado do bairro</div><div class="bf-ios-prompt__acoes"><span>Cancelar</span><span>OK</span></div></div><figcaption class="caption muted">Uma pergunta só, sem esperar internet antes. Funciona com capinha. Também dá para chamar pela Siri ou pela Central de Controle.</figcaption></figure><figure style="margin:0;display:grid;gap:10px;align-content:start"><span class="label muted">2 · Notificação de volta</span><div class="bf-ios-notif"><span class="bf-ios-notif__icone"><i data-lucide="check" class="bf-icon " style="color:#fff"></i></span><div style="flex:1"><div class="body-strong">BlueFinance</div><div class="caption">Mercado · − R$ 32,90 · Mercado do bairro</div></div><span class="caption muted">agora</span></div><figcaption class="caption muted">Em ~1 s. A categoria foi adivinhada pela palavra "mercado". Errou? Corrige no app tocando no lançamento.</figcaption></figure><figure style="margin:0;display:grid;gap:10px;align-content:start"><span class="label muted">3 · Como o app entende</span><div class="bf-card" style="display:grid;gap:8px"><div class="caption"><span class="body-strong">32,90 mercado</span> → R$ 32,90 · Mercado</div><div class="caption"><span class="body-strong">uber 18,40</span> → R$ 18,40 · Transporte</div><div class="caption"><span class="body-strong">almoço 41</span> → R$ 41,00 · Comer fora</div><div class="caption"><span class="body-strong">farmácia 27,50</span> → R$ 27,50 · Saúde</div><div class="caption"><span class="body-strong">presente mãe 120</span> → R$ 120,00 · <span class="body-strong">A revisar</span></div></div><figcaption class="caption muted">O valor é o número; o resto é a descrição. Categoria: palavra-chave, depois o que você usou antes para a mesma palavra. Sem pista, vai como "A revisar".</figcaption></figure></div>
 <script>(function(){var s=document.createElement("script");s.src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js";s.onload=function(){lucide.createIcons()};document.head.appendChild(s);})();</script>
