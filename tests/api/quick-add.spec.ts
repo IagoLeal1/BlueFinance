@@ -22,6 +22,7 @@ test.describe('lançamento rápido (Atalho do iOS)', () => {
 
     expect(res.status()).toBe(201);
     const body = await res.json();
+    // O Atalho mostra sempre o campo "mensagem": no sucesso e nos erros.
     expect(body.mensagem).toBe('Gasto salvo: Mercado · \u2212 R$ 32,90');
     expect(body.lancamento).toMatchObject({ tipo: 'despesa', categoria: 'Mercado', descricao: 'Mercado do bairro', valor: 3290 });
 
@@ -36,7 +37,7 @@ test.describe('lançamento rápido (Atalho do iOS)', () => {
     for (const auth of [undefined, 'Bearer bf_inexistente', 'Bearer ', `Bearer ${usuario.sessao}`]) {
       const res = await request.post('/api/quick-add', { headers: auth ? { Authorization: auth } : {}, data: gasto });
       expect(res.status(), String(auth)).toBe(401);
-      expect(await res.json()).toEqual({ erro: 'Token inválido. Gere um novo em Ajustes.' });
+      expect(await res.json()).toEqual({ erro: 'Token inválido. Gere um novo em Ajustes.', mensagem: 'Token inválido. Gere um novo em Ajustes.' });
     }
 
     const { data } = await clienteDe(usuario).from('lancamentos').select('id');
@@ -52,7 +53,7 @@ test.describe('lançamento rápido (Atalho do iOS)', () => {
         data: { categoria: 'Mercado', descricao: 'Teste', valor_centavos: valor },
       });
       expect(res.status(), String(valor)).toBe(400);
-      expect(await res.json()).toEqual({ erro: 'O valor precisa ser um número inteiro de centavos maior que zero.' });
+      expect(await res.json()).toEqual({ erro: 'O valor precisa ser um número inteiro de centavos maior que zero.', mensagem: 'O valor precisa ser um número inteiro de centavos maior que zero.' });
     }
 
     const { data } = await clienteDe(usuario).from('lancamentos').select('id');
@@ -69,7 +70,7 @@ test.describe('lançamento rápido (Atalho do iOS)', () => {
         data: { categoria, descricao: 'Teste', valor_centavos: 1000 },
       });
       expect(res.status(), String(categoria)).toBe(422);
-      expect(await res.json()).toEqual({ erro: 'Categoria de despesa não encontrada. Atualize a lista no Atalho.' });
+      expect(await res.json()).toEqual({ erro: 'Categoria de despesa não encontrada. Atualize a lista no Atalho.', mensagem: 'Categoria de despesa não encontrada. Atualize a lista no Atalho.' });
     }
 
     const { data } = await clienteDe(usuario).from('lancamentos').select('id');

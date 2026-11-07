@@ -37,11 +37,11 @@ Respostas:
 | Status | Quando | Corpo |
 |---|---|---|
 | 201 | gasto criado | `{ "mensagem": "Gasto salvo: Mercado · − R$ 32,90", "lancamento": { … } }` |
-| 400 | valor inválido | `{ "erro": "O valor precisa ser um número inteiro de centavos maior que zero." }` |
-| 401 | sem token / token inválido | `{ "erro": "Token inválido. Gere um novo em Ajustes." }` |
-| 422 | categoria não existe | `{ "erro": "Categoria de despesa não encontrada. Atualize a lista no Atalho." }` |
+| 400 | valor inválido | `{ "erro": "O valor precisa…", "mensagem": "O valor precisa…" }` |
+| 401 | sem token / token inválido | `{ "erro": "Token inválido…", "mensagem": "Token inválido…" }` |
+| 422 | categoria não existe | `{ "erro": "Categoria de despesa…", "mensagem": "Categoria de despesa…" }` |
 
-O Atalho mostra `mensagem` (ou `erro`) numa notificação.
+Toda resposta traz `mensagem` (sucesso ou erro): o Atalho só precisa mostrar esse campo numa notificação.
 
 ## Passos do Atalho
 
@@ -50,6 +50,6 @@ O Atalho mostra `mensagem` (ou `erro`) numa notificação.
 3. Pedir entrada (texto) → "Com o quê?".
 4. Pedir entrada (número) → "Quanto?"; Calcular × 100; Arredondar.
 5. Obter conteúdo de URL → `POST /api/quick-add` (JSON) com os três campos.
-6. Mostrar notificação → `mensagem` ou `erro`.
+6. Obter Valor do Dicionário `mensagem` → Mostrar Notificação.
 
 Contrato coberto por `tests/api/quick-add.spec.ts`.

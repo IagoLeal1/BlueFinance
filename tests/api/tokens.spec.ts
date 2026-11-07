@@ -13,7 +13,7 @@ test.describe('token pessoal do Atalho', () => {
     for (const headers of [{}, { Authorization: 'Bearer sessao-falsa' }] as Record<string, string>[]) {
       const res = await request.post('/api/tokens', { headers });
       expect(res.status(), JSON.stringify(headers)).toBe(401);
-      expect(await res.json()).toEqual({ erro: 'Faça login para gerar um token.' });
+      expect(await res.json()).toEqual({ erro: 'Faça login para gerar um token.', mensagem: 'Faça login para gerar um token.' });
     }
   });
 
