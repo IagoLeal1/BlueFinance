@@ -7,6 +7,8 @@ import { supabaseServidor } from '@/lib/supabase/server';
 export interface EstadoLancamento {
   ok?: boolean;
   erro?: string;
+  /** Id do lançamento criado — usado pelo "Desfazer". */
+  id?: string;
 }
 
 const TIPOS: TipoLancamento[] = ['despesa', 'receita', 'investimento'];
@@ -29,10 +31,10 @@ export async function criarLancamento(_anterior: EstadoLancamento, form: FormDat
   if (tipo === 'investimento') {
     const investimento = String(form.get('investimento_id') ?? '');
     if (!investimento) return { erro: 'Escolha em qual investimento foi o aporte.' };
-    const { error } = await supabase.rpc('registrar_aporte', { p_investimento: investimento, p_valor: valor, p_descricao: descricao });
+    const { data: id, error } = await supabase.rpc('registrar_aporte', { p_investimento: investimento, p_valor: valor, p_descricao: descricao });
     if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
     refresh();
-    return { ok: true };
+    return { ok: true, id };
   }
 
   const { data: categoria } = await supabase
@@ -43,17 +45,15 @@ export async function criarLancamento(_anterior: EstadoLancamento, form: FormDat
     .maybeSingle();
   if (!categoria) return { erro: 'Escolha uma categoria.' };
 
-  const { error } = await supabase.from('lancamentos').insert({
-    user_id: userId,
-    tipo,
-    valor,
-    categoria_id: categoria.id,
-    descricao: descricao || categoria.nome,
-  });
+  const { data: criado, error } = await supabase
+    .from('lancamentos')
+    .insert({ user_id: userId, tipo, valor, categoria_id: categoria.id, descricao: descricao || categoria.nome })
+    .select('id')
+    .single();
   if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
 
   refresh();
-  return { ok: true };
+  return { ok: true, id: criado.id };
 }
 
 /** Altera valor e descrição de um lançamento do usuário (aporte ajusta o investimento junto). */

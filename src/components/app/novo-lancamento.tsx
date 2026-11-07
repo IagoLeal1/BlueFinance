@@ -1,16 +1,17 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useState, useTransition } from 'react';
 import { Check, Plus } from 'lucide-react';
-import { criarLancamento, type EstadoLancamento } from '@/app/(app)/actions';
+import { criarLancamento, excluirLancamento } from '@/app/(app)/actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import type { TipoLancamento } from '@/domain/money';
+import { formatSigned, type TipoLancamento } from '@/domain/money';
 import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { CHIP } from './estilos';
+import { useFeedback } from './feedback';
 import { IconeCategoria } from './icone-categoria';
 import { Segmented } from './segmented';
 
@@ -26,6 +27,7 @@ const TIPOS: { valor: TipoLancamento; rotulo: string }[] = [
   { valor: 'investimento', rotulo: 'Investimento' },
 ];
 const SALVAR: Record<TipoLancamento, string> = { despesa: 'Salvar gasto', receita: 'Salvar receita', investimento: 'Salvar aporte' };
+const SALVO: Record<TipoLancamento, string> = { despesa: 'Gasto salvo', receita: 'Receita salva', investimento: 'Aporte salvo' };
 
 /** Botão + da barra de abas e o sheet de novo lançamento (design kit: TelaNovoLancamento). */
 export interface InvestimentoOpcao {
@@ -38,21 +40,59 @@ export function NovoLancamento({ categorias, investimentos }: { categorias: Cate
   const [tipo, setTipo] = useState<TipoLancamento>('despesa');
   const [centavos, setCentavos] = useState(0);
   const [categoria, setCategoria] = useState<string[]>([]);
-  const [estado, acao, salvando] = useActionState(async (anterior: EstadoLancamento, form: FormData) => {
-    const resultado = await criarLancamento(anterior, form);
-    if (resultado.ok) {
-      setAberto(false);
-      setCentavos(0);
-      setCategoria([]);
-    }
-    return resultado;
-  }, {});
+  const [erro, setErro] = useState<string>();
+  const [, startTransition] = useTransition();
+  const { adicionarPendente, removerPendente, avisar } = useFeedback();
 
   // Despesa e receita escolhem categoria; investimento escolhe para qual investimento vai o aporte.
   const opcoes =
     tipo === 'investimento'
       ? investimentos.map((i) => ({ valor: i.id, nome: i.nome, icone: 'piggy-bank' }))
       : categorias.filter((c) => c.tipo === tipo).map((c) => ({ valor: c.nome, nome: c.nome, icone: c.icone }));
+
+  function desfazer(id: string) {
+    startTransition(async () => {
+      const form = new FormData();
+      form.set('id', id);
+      const r = await excluirLancamento({}, form);
+      avisar({ texto: r.ok ? 'Lançamento desfeito' : 'Não foi possível desfazer.' });
+    });
+  }
+
+  /**
+   * Interface otimista: valida aqui, fecha o sheet e mostra a linha "salvando…" na hora;
+   * o servidor confirma em seguida e o aviso oferece Desfazer.
+   */
+  function enviar(evento: React.FormEvent<HTMLFormElement>) {
+    evento.preventDefault();
+    const escolhido = opcoes.find((o) => o.valor === categoria[0]);
+    if (centavos <= 0) return setErro('Digite um valor maior que zero.');
+    if (!escolhido) return setErro(tipo === 'investimento' ? 'Escolha em qual investimento foi o aporte.' : 'Escolha uma categoria.');
+
+    const form = new FormData(evento.currentTarget);
+    const descricao = String(form.get('descricao') ?? '').trim();
+    const idTemporario = `pendente-${crypto.randomUUID()}`;
+    const valor = centavos;
+    const tipoSalvo = tipo;
+    adicionarPendente({
+      id: idTemporario, tipo, valor, data: new Date().toISOString(), origem: 'app',
+      descricao: descricao || escolhido.nome, categoria: escolhido.nome, icone: escolhido.icone,
+    });
+    setAberto(false);
+    setCentavos(0);
+    setCategoria([]);
+    setErro(undefined);
+
+    startTransition(async () => {
+      const r = await criarLancamento({}, form);
+      removerPendente(idTemporario);
+      if (!r.ok) return avisar({ texto: `Não salvou: ${r.erro ?? 'tente de novo.'}` });
+      avisar({
+        texto: `${SALVO[tipoSalvo]} · ${formatSigned(valor, tipoSalvo)}`,
+        acao: r.id ? { rotulo: 'Desfazer', fazer: () => desfazer(r.id!) } : undefined,
+      });
+    });
+  }
 
   return (
     <BottomSheet
@@ -69,7 +109,7 @@ export function NovoLancamento({ categorias, investimentos }: { categorias: Cate
         </button>
       }
     >
-      <form action={acao} className="grid gap-4">
+      <form onSubmit={enviar} className="grid gap-4">
           <Segmented
             nome="tipo"
             rotulo="Tipo"
@@ -115,13 +155,13 @@ export function NovoLancamento({ categorias, investimentos }: { categorias: Cate
             <Input id="descricao" name="descricao" placeholder="Ex.: Mercado do bairro" />
           </div>
 
-          {estado.erro && (
+          {erro && (
             <p role="alert" className="text-sm font-semibold text-negative">
-              {estado.erro}
+              {erro}
             </p>
           )}
 
-          <Button type="submit" disabled={salvando} className="w-full">
+          <Button type="submit" className="w-full">
             <Check aria-hidden />
             {SALVAR[tipo]}
           </Button>

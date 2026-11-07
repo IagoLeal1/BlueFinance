@@ -51,4 +51,18 @@ test.describe('lançar pelo app', () => {
     await filtro.getByText('Tudo', { exact: true }).click();
     await expect(linhas).toHaveCount(2);
   });
+
+  test('depois de salvar, avisa com Desfazer, e desfazer tira o gasto', async ({ page, usuario }) => {
+    await entrar(page, usuario);
+    await page.getByRole('link', { name: 'Lançamentos' }).click();
+    await lancarPeloApp(page, { digitos: '3290', categoria: 'Mercado', descricao: 'Mercado do bairro' });
+
+    const aviso = page.getByRole('status').filter({ hasText: 'Gasto salvo' });
+    await expect(aviso).toContainText('\u2212 R$ 32,90');
+    await expect(page.getByRole('listitem').filter({ hasText: 'Mercado do bairro' })).toBeVisible();
+
+    await aviso.getByRole('button', { name: 'Desfazer' }).click();
+    await expect(page.getByRole('status').filter({ hasText: 'Lançamento desfeito' })).toBeVisible();
+    await expect(page.getByRole('listitem').filter({ hasText: 'Mercado do bairro' })).toHaveCount(0);
+  });
 });

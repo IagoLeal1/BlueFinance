@@ -1,11 +1,12 @@
 import { Suspense } from 'react';
+import { FeedbackProvider } from '@/components/app/feedback';
 import { NovoLancamento } from '@/components/app/novo-lancamento';
 import { TabBar } from '@/components/app/tab-bar';
 import { supabaseServidor } from '@/lib/supabase/server';
 
 export default function AppLayout({ children }: LayoutProps<'/'>) {
   return (
-    <>
+    <FeedbackProvider>
       <main className="mx-auto flex w-full max-w-[480px] flex-1 flex-col gap-3 px-4 pt-[max(env(safe-area-inset-top),16px)] pb-[100px]">
         {children}
       </main>
@@ -16,7 +17,7 @@ export default function AppLayout({ children }: LayoutProps<'/'>) {
           </Suspense>
         }
       />
-    </>
+    </FeedbackProvider>
   );
 }
 
