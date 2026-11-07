@@ -18,7 +18,7 @@
 
 Infra já validada: `tests/e2e/infra.spec.ts` abre o app (Next) no WebKit com perfil de iPhone 16 ✅
 
-Progresso: fatias 1–6 ✅
+Progresso: fatias 1–9 ✅
 
 ## As costuras (para confirmar)
 
