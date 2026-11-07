@@ -65,4 +65,20 @@ test.describe('lançar pelo app', () => {
     await expect(page.getByRole('status').filter({ hasText: 'Lançamento desfeito' })).toBeVisible();
     await expect(page.getByRole('listitem').filter({ hasText: 'Mercado do bairro' })).toHaveCount(0);
   });
+
+  test('o + já vem com a última categoria usada e a descrição é opcional', async ({ page, usuario }) => {
+    await entrar(page, usuario);
+    await lancarPeloApp(page, { digitos: '1840', categoria: 'Transporte', descricao: 'Uber' });
+
+    await page.getByRole('button', { name: 'Novo lançamento' }).click();
+    const sheet = page.getByRole('dialog', { name: 'Novo lançamento' });
+    await expect(sheet.getByRole('button', { name: 'Transporte' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(sheet.getByLabel('Com o quê (opcional)')).toBeVisible();
+
+    await sheet.getByLabel('Valor').pressSequentially('950');
+    await sheet.getByRole('button', { name: 'Salvar gasto' }).click();
+    await page.getByRole('link', { name: 'Lançamentos' }).click();
+    // Sem descrição, vai o nome da categoria.
+    await expect(page.getByRole('listitem').filter({ hasText: '\u2212 R$ 9,50' })).toContainText('Transporte');
+  });
 });

@@ -29,6 +29,10 @@ const TIPOS: { valor: TipoLancamento; rotulo: string }[] = [
 const SALVAR: Record<TipoLancamento, string> = { despesa: 'Salvar gasto', receita: 'Salvar receita', investimento: 'Salvar aporte' };
 const SALVO: Record<TipoLancamento, string> = { despesa: 'Gasto salvo', receita: 'Receita salva', investimento: 'Aporte salvo' };
 
+// Última categoria usada por tipo, guardada no aparelho: o + já abre com ela marcada.
+const chaveUltima = (tipo: TipoLancamento) => `bf:ultima-categoria:${tipo}`;
+const lerUltima = (tipo: TipoLancamento) => (typeof localStorage === 'undefined' ? null : localStorage.getItem(chaveUltima(tipo)));
+
 /** Botão + da barra de abas e o sheet de novo lançamento (design kit: TelaNovoLancamento). */
 export interface InvestimentoOpcao {
   id: string;
@@ -45,10 +49,16 @@ export function NovoLancamento({ categorias, investimentos }: { categorias: Cate
   const { adicionarPendente, removerPendente, avisar } = useFeedback();
 
   // Despesa e receita escolhem categoria; investimento escolhe para qual investimento vai o aporte.
-  const opcoes =
-    tipo === 'investimento'
+  const opcoesDe = (t: TipoLancamento) =>
+    t === 'investimento'
       ? investimentos.map((i) => ({ valor: i.id, nome: i.nome, icone: 'piggy-bank' }))
-      : categorias.filter((c) => c.tipo === tipo).map((c) => ({ valor: c.nome, nome: c.nome, icone: c.icone }));
+      : categorias.filter((c) => c.tipo === t).map((c) => ({ valor: c.nome, nome: c.nome, icone: c.icone }));
+  const opcoes = opcoesDe(tipo);
+
+  const ultimaDe = (t: TipoLancamento, lista = opcoesDe(t)) => {
+    const ultima = lerUltima(t);
+    return ultima && lista.some((o) => o.valor === ultima) ? [ultima] : [];
+  };
 
   function desfazer(id: string) {
     startTransition(async () => {
@@ -74,6 +84,7 @@ export function NovoLancamento({ categorias, investimentos }: { categorias: Cate
     const idTemporario = `pendente-${crypto.randomUUID()}`;
     const valor = centavos;
     const tipoSalvo = tipo;
+    localStorage.setItem(chaveUltima(tipo), escolhido.valor);
     adicionarPendente({
       id: idTemporario, tipo, valor, data: new Date().toISOString(), origem: 'app',
       descricao: descricao || escolhido.nome, categoria: escolhido.nome, icone: escolhido.icone,
@@ -98,7 +109,10 @@ export function NovoLancamento({ categorias, investimentos }: { categorias: Cate
     <BottomSheet
       titulo="Novo lançamento"
       aberto={aberto}
-      onAbertoChange={setAberto}
+      onAbertoChange={(v) => {
+        setAberto(v);
+        if (v) setCategoria(ultimaDe(tipo));
+      }}
       gatilho={
         <button
           type="button"
@@ -117,7 +131,7 @@ export function NovoLancamento({ categorias, investimentos }: { categorias: Cate
             valor={tipo}
             onChange={(t) => {
               setTipo(t);
-              setCategoria([]);
+              setCategoria(ultimaDe(t));
             }}
           />
 
@@ -151,7 +165,7 @@ export function NovoLancamento({ categorias, investimentos }: { categorias: Cate
           )}
 
           <div className="grid gap-2">
-            <Label htmlFor="descricao">Com o quê</Label>
+            <Label htmlFor="descricao">Com o quê (opcional)</Label>
             <Input id="descricao" name="descricao" placeholder="Ex.: Mercado do bairro" />
           </div>
 

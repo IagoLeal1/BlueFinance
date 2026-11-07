@@ -29,7 +29,11 @@ export async function lancarPeloApp(
   const sheet = page.getByRole('dialog', { name: 'Novo lançamento' });
   await sheet.getByText(tipo, { exact: true }).click();
   await sheet.getByLabel('Valor').pressSequentially(digitos);
-  if (categoria) await sheet.getByRole('button', { name: categoria }).click();
+  if (categoria) {
+    const chip = sheet.getByRole('button', { name: categoria });
+    // A última categoria usada já vem marcada; tocar de novo desmarcaria.
+    if ((await chip.getAttribute('aria-pressed')) !== 'true') await chip.click();
+  }
   await sheet.getByLabel('Com o quê').fill(descricao);
   await sheet.getByRole('button', { name: /^Salvar/ }).click();
   await sheet.waitFor({ state: 'hidden' });
