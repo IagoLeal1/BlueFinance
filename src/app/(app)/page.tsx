@@ -4,37 +4,41 @@ import { Suspense } from 'react';
 import { BalanceCard } from '@/components/app/balance-card';
 import { SpendingBar } from '@/components/app/spending-bar';
 import { TransactionRow } from '@/components/app/transaction-row';
-import { mesAtual, nomeDoMes, rotuloDoDia } from '@/domain/datas';
+import { mesAtual, mesDaUrl, nomeDoMes, opcoesDeMes, rotuloDoDia, tituloDoMes } from '@/domain/datas';
+import { MesPicker } from '@/components/app/mes-picker';
 import { summarizeMonth } from '@/domain/summary';
 import { ordemDasCategorias } from '@/server/categorias';
 import { lancamentosDoMes } from '@/server/lancamentos';
 
-export default function Inicio() {
+export default function Inicio({ searchParams }: PageProps<'/'>) {
   return (
     <Suspense fallback={<p className="mt-4 text-muted-foreground">Carregando…</p>}>
-      <ResumoDoMesAtual />
+      <ResumoDoMes searchParams={searchParams} />
     </Suspense>
   );
 }
 
-async function ResumoDoMesAtual() {
+async function ResumoDoMes({ searchParams }: { searchParams: PageProps<'/'>['searchParams'] }) {
   await connection(); // o mês depende da hora da requisição, não do build
   const agora = new Date();
-  const mes = mesAtual(agora);
+  const mes = mesDaUrl((await searchParams).mes, agora);
   const nome = nomeDoMes(mes);
   const [lancamentos, ordem] = await Promise.all([lancamentosDoMes(mes), ordemDasCategorias()]);
   const resumo = summarizeMonth(lancamentos, mes);
 
   return (
     <>
-      <h1 className="mt-2 text-[28px] leading-[34px] font-extrabold tracking-tight capitalize">{nome}</h1>
+      <div className="mt-2 flex items-center justify-between">
+        <h1 className="text-[28px] leading-[34px] font-extrabold tracking-tight">{tituloDoMes(mes, agora)}</h1>
+        <MesPicker base="/" atual={mes} meses={opcoesDeMes(agora)} />
+      </div>
       <BalanceCard resumo={resumo} nomeMes={nome} />
       <SpendingBar gastos={resumo.porCategoria} ordemPorNome={ordem} />
       {lancamentos.length > 0 && (
         <section aria-label="Últimos" className="rounded-lg bg-card px-4 pt-3 pb-1 shadow-card">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold">Últimos</h2>
-            <Link href="/lancamentos" className="text-sm font-bold text-primary">
+            <Link href={mes === mesAtual(agora) ? '/lancamentos' : `/lancamentos?mes=${mes}`} className="text-sm font-bold text-primary">
               Ver todos
             </Link>
           </div>
