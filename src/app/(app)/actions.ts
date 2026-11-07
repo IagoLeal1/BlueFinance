@@ -26,24 +26,29 @@ export async function criarLancamento(_anterior: EstadoLancamento, form: FormDat
   const userId = claims?.claims.sub;
   if (!userId) return { erro: 'Sua sessão expirou. Entre de novo.' };
 
-  let categoria: { id: string; nome: string } | null = null;
-  if (tipo !== 'investimento') {
-    const { data } = await supabase
-      .from('categorias')
-      .select('id, nome')
-      .eq('tipo', tipo)
-      .eq('nome', nomeCategoria)
-      .maybeSingle();
-    if (!data) return { erro: 'Escolha uma categoria.' };
-    categoria = data;
+  if (tipo === 'investimento') {
+    const investimento = String(form.get('investimento_id') ?? '');
+    if (!investimento) return { erro: 'Escolha em qual investimento foi o aporte.' };
+    const { error } = await supabase.rpc('registrar_aporte', { p_investimento: investimento, p_valor: valor, p_descricao: descricao });
+    if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
+    refresh();
+    return { ok: true };
   }
+
+  const { data: categoria } = await supabase
+    .from('categorias')
+    .select('id, nome')
+    .eq('tipo', tipo)
+    .eq('nome', nomeCategoria)
+    .maybeSingle();
+  if (!categoria) return { erro: 'Escolha uma categoria.' };
 
   const { error } = await supabase.from('lancamentos').insert({
     user_id: userId,
     tipo,
     valor,
-    categoria_id: categoria?.id ?? null,
-    descricao: descricao || categoria?.nome || '',
+    categoria_id: categoria.id,
+    descricao: descricao || categoria.nome,
   });
   if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
 

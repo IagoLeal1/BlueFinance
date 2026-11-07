@@ -22,7 +22,10 @@ export default function AppLayout({ children }: LayoutProps<'/'>) {
 
 async function BotaoNovoLancamento() {
   const supabase = await supabaseServidor();
-  const { data } = await supabase.from('categorias').select('nome, tipo, icone').order('ordem');
-  const categorias = (data ?? []).map((c) => ({ ...c, tipo: c.tipo as 'despesa' | 'receita' }));
-  return <NovoLancamento categorias={categorias} />;
+  const [{ data: cats }, { data: invs }] = await Promise.all([
+    supabase.from('categorias').select('nome, tipo, icone').order('ordem'),
+    supabase.from('investimentos').select('id, nome').order('nome'),
+  ]);
+  const categorias = (cats ?? []).map((c) => ({ ...c, tipo: c.tipo as 'despesa' | 'receita' }));
+  return <NovoLancamento categorias={categorias} investimentos={invs ?? []} />;
 }

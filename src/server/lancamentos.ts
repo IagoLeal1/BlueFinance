@@ -16,7 +16,7 @@ export async function lancamentosDoMes(mes: string): Promise<LancamentoListado[]
   const supabase = await supabaseServidor();
   const { data, error } = await supabase
     .from('lancamentos')
-    .select('id, tipo, valor, data, descricao, categorias(nome, icone)')
+    .select('id, tipo, valor, data, descricao, categorias(nome, icone), investimentos(nome)')
     .gte('data', inicio)
     .lt('data', fim)
     .order('data', { ascending: false });
@@ -27,7 +27,7 @@ export async function lancamentosDoMes(mes: string): Promise<LancamentoListado[]
     valor: l.valor,
     data: l.data,
     descricao: l.descricao,
-    categoria: l.categorias?.nome ?? (l.tipo === 'investimento' ? 'Investimento' : 'Sem categoria'),
+    categoria: l.categorias?.nome ?? l.investimentos?.nome ?? 'Sem categoria',
     icone: l.categorias?.icone ?? (l.tipo === 'investimento' ? 'piggy-bank' : 'circle'),
   }));
 }

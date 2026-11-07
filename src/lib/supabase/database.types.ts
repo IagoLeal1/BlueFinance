@@ -37,16 +37,30 @@ export type Database = {
                   Relationships: [
                     
                   ]
-                },"lancamentos": {
+                },"investimentos": {
                   Row: {
-                    "categoria_id": string | null,"criado_em": string,"data": string,"descricao": string,"id": string,"tipo": string,"user_id": string,"valor": number
+                    "criado_em": string,"id": string,"instituicao": string,"nome": string,"tipo": string,"user_id": string,"valor_atual": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "categoria_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"id"?: string,"tipo": string,"user_id": string,"valor": number
+                    "criado_em"?: string,"id"?: string,"instituicao": string,"nome": string,"tipo": string,"user_id": string,"valor_atual"?: number
                   }
                   Update: {
-                    "categoria_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"id"?: string,"tipo"?: string,"user_id"?: string,"valor"?: number
+                    "criado_em"?: string,"id"?: string,"instituicao"?: string,"nome"?: string,"tipo"?: string,"user_id"?: string,"valor_atual"?: number
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"lancamentos": {
+                  Row: {
+                    "categoria_id": string | null,"criado_em": string,"data": string,"descricao": string,"id": string,"investimento_id": string | null,"tipo": string,"user_id": string,"valor": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "categoria_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"id"?: string,"investimento_id"?: string | null,"tipo": string,"user_id": string,"valor": number
+                  }
+                  Update: {
+                    "categoria_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"id"?: string,"investimento_id"?: string | null,"tipo"?: string,"user_id"?: string,"valor"?: number
                   }
                   Relationships: [
                     {
@@ -54,6 +68,12 @@ export type Database = {
       columns: ["categoria_id"]
 isOneToOne: false
       referencedRelation: "categorias"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lancamentos_investimento_id_fkey"
+      columns: ["investimento_id"]
+isOneToOne: false
+      referencedRelation: "investimentos"
       referencedColumns: ["id"]
     }
                   ]
@@ -77,7 +97,9 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            [_ in never]: never
+            "registrar_aporte":
+{ Args: { "p_descricao": string,"p_investimento": string,"p_valor": number }; Returns: string
+                           }
           }
           Enums: {
             [_ in never]: never

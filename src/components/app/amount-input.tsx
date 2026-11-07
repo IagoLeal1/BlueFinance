@@ -8,12 +8,22 @@ const MAX_DIGITOS = 11; // até R$ 999.999.999,99
  * Valor em reais digitado como em caixa de banco (design kit: AmountInput):
  * cada dígito entra pela direita; apagar tira o último. Guarda centavos inteiros.
  */
-export function AmountInput({ centavos, onChange, nome }: { centavos: number; onChange: (c: number) => void; nome: string }) {
+export function AmountInput({
+  centavos,
+  onChange,
+  nome,
+  rotulo = 'Valor',
+}: {
+  centavos: number;
+  onChange: (c: number) => void;
+  nome: string;
+  rotulo?: string;
+}) {
   return (
     <div className="grid justify-items-center gap-1 py-2">
       <input
-        id="valor"
-        aria-label="Valor"
+        id={nome}
+        aria-label={rotulo}
         inputMode="numeric"
         autoComplete="off"
         value={formatBRL(centavos)}

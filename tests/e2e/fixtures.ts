@@ -33,4 +33,4 @@ export async function lancarPeloApp(
   await sheet.waitFor({ state: 'hidden' });
 }
 
-export { expect } from '@playwright/test';
+export { expect, type Page } from '@playwright/test';
