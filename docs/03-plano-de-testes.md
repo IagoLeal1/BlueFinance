@@ -18,7 +18,7 @@
 
 Infra já validada: `tests/e2e/infra.spec.ts` abre o app (Next) no WebKit com perfil de iPhone 16 ✅
 
-Progresso: fatias 1–27 ✅ — 35 testes (unit 12 · api 10 · e2e 13)
+Progresso: fatias 1–27 ✅ + rodada 2 (telas aprovadas) ✅ — 51 testes (unit 18 · api 12 · e2e 21)
 
 ## As costuras (para confirmar)
 
@@ -89,6 +89,17 @@ Cada linha é **um** teste. O nome do teste é o comportamento.
 - **Dinheiro** (`unit`): reais inteiros nos cards (`R$ 9.350`) e valores negativos (`− R$ 32,90`).
 - **Aportes** (`api`): aporte soma no investimento, editar ajusta a diferença, excluir estorna. Escrito depois do código e conferido com mutação.
 - **Token** (`api`): gerar um token novo invalida o anterior.
+
+### Rodada 2 — telas aprovadas e Atalho com teclado numérico
+- Atalho: API aceita `valor` em reais (`32.9` → 3290) e `texto` livre ("32,90 mercado do bairro"); categorias Alimentação e Outros.
+- Início: seção Últimos (3 mais recentes) e tela vazia falando do Botão de Ação.
+- Lançamentos do Atalho mostram "pelo Atalho" (coluna `origem`).
+- Salvar na hora: linha "salvando…" e aviso com Desfazer.
+- Editar lançamento: trocar a categoria.
+- Trocar de mês (Início e Lançamentos) — unitários de `mesDaUrl`/`mesesRecentes` conferidos com mutação.
+- Investimentos: aportado, rendeu e atualizar valor atual; rendimento em %.
+- Botão +: última categoria usada pré-marcada; descrição opcional.
+- Ajustes: passo a passo do Botão de Ação e conta.
 
 ## Dados de teste
 
