@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { formatBRL, formatReais, formatSigned, parseBRL, pushDigit } from '../../src/domain/money';
+import { formatBRL, formatRendimento, formatReais, formatSigned, parseBRL, pushDigit } from '../../src/domain/money';
 
 test.describe('dinheiro', () => {
   test('formata centavos em reais', () => {
@@ -52,5 +52,12 @@ test.describe('dinheiro', () => {
     expect(formatBRL(-3290)).toBe('\u2212 R$ 32,90');
     expect(formatBRL(-123456)).toBe('\u2212 R$ 1.234,56');
     expect(formatReais(-363165)).toBe('\u2212 R$ 3.632');
+  });
+
+  test('mostra o rendimento em % com seta e vírgula', () => {
+    expect(formatRendimento(162000, 150000)).toBe('\u25b2 8,0%');
+    expect(formatRendimento(147000, 150000)).toBe('\u25bc 2,0%');
+    expect(formatRendimento(150000, 150000)).toBe('0,0%');
+    expect(formatRendimento(100, 0)).toBe('0,0%');
   });
 });

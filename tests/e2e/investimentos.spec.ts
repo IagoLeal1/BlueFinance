@@ -37,4 +37,32 @@ test.describe('investimentos', () => {
     await page.getByRole('link', { name: 'Início' }).click();
     await expect(page.getByRole('region', { name: /^Resumo de / }).getByRole('group', { name: 'Investiu' })).toContainText('R$ 500');
   });
+
+  test('atualiza o valor atual e mostra quanto rendeu', async ({ page, usuario }) => {
+    await entrar(page, usuario);
+    await page.getByRole('link', { name: 'Investir' }).click();
+    await cadastrar(page, { nome: 'Tesouro Selic 2029', tipo: 'Renda fixa', onde: 'XP', digitos: '150000' });
+
+    const patrimonio = page.getByRole('region', { name: 'Patrimônio investido' });
+    await expect(patrimonio.getByRole('group', { name: 'Aportado' })).toContainText('R$ 1.500');
+    await expect(patrimonio.getByRole('group', { name: 'Rendeu' })).toContainText('R$ 0');
+
+    await page.getByRole('button', { name: /Tesouro Selic 2029/ }).click();
+    const sheet = page.getByRole('dialog', { name: 'Atualizar investimento' });
+    const valor = sheet.getByLabel('Valor atual');
+    await valor.press('Backspace');
+    await valor.press('Backspace');
+    await valor.press('Backspace');
+    await valor.press('Backspace');
+    await valor.press('Backspace');
+    await valor.press('Backspace');
+    await valor.pressSequentially('162000');
+    await expect(valor).toHaveValue('R$ 1.620,00');
+    await sheet.getByRole('button', { name: 'Salvar valor' }).click();
+    await expect(sheet).toBeHidden();
+
+    await expect(patrimonio).toContainText('R$ 1.620,00');
+    await expect(patrimonio.getByRole('group', { name: 'Rendeu' })).toContainText('+ R$ 120');
+    await expect(page.getByRole('region', { name: 'XP' }).getByRole('listitem')).toContainText('\u25b2 8,0%');
+  });
 });

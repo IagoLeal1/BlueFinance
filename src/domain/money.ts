@@ -45,3 +45,11 @@ export function formatReais(centavos: Centavos): string {
   const reais = Math.round(Math.abs(centavos) / 100);
   return `${centavos < 0 && reais > 0 ? MENOS : ''}R$ ${milhar(reais)}`;
 }
+
+/** Rendimento em %: "▲ 8,0%", "▼ 2,0%", "0,0%". `base` é quanto foi aportado. */
+export function formatRendimento(atual: Centavos, base: Centavos): string {
+  if (base <= 0) return '0,0%';
+  const pct = Math.round(((atual - base) / base) * 1000) / 10;
+  const texto = `${Math.abs(pct).toFixed(1).replace('.', ',')}%`;
+  return pct > 0 ? `▲ ${texto}` : pct < 0 ? `▼ ${texto}` : texto;
+}

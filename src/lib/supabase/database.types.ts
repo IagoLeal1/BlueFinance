@@ -39,14 +39,14 @@ export type Database = {
                   ]
                 },"investimentos": {
                   Row: {
-                    "criado_em": string,"id": string,"instituicao": string,"nome": string,"tipo": string,"user_id": string,"valor_atual": number
+                    "aportado": number,"criado_em": string,"id": string,"instituicao": string,"nome": string,"tipo": string,"user_id": string,"valor_atual": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "criado_em"?: string,"id"?: string,"instituicao": string,"nome": string,"tipo": string,"user_id": string,"valor_atual"?: number
+                    "aportado"?: number,"criado_em"?: string,"id"?: string,"instituicao": string,"nome": string,"tipo": string,"user_id": string,"valor_atual"?: number
                   }
                   Update: {
-                    "criado_em"?: string,"id"?: string,"instituicao"?: string,"nome"?: string,"tipo"?: string,"user_id"?: string,"valor_atual"?: number
+                    "aportado"?: number,"criado_em"?: string,"id"?: string,"instituicao"?: string,"nome"?: string,"tipo"?: string,"user_id"?: string,"valor_atual"?: number
                   }
                   Relationships: [
                     

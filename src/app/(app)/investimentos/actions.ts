@@ -26,9 +26,23 @@ export async function criarInvestimento(_anterior: EstadoInvestimento, form: For
   const userId = claims?.claims.sub;
   if (!userId) return { erro: 'Sua sessão expirou. Entre de novo.' };
 
-  const { error } = await supabase.from('investimentos').insert({ user_id: userId, nome, tipo, instituicao, valor_atual: valor });
+  // O valor de quando você cadastra conta como aportado; o que mudar depois é rendimento.
+  const { error } = await supabase.from('investimentos').insert({ user_id: userId, nome, tipo, instituicao, valor_atual: valor, aportado: valor });
   if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
 
+  refresh();
+  return { ok: true };
+}
+
+/** Atualiza quanto o investimento vale hoje (o rendimento é a diferença para o aportado). */
+export async function atualizarValorInvestimento(_anterior: EstadoInvestimento, form: FormData): Promise<EstadoInvestimento> {
+  const id = String(form.get('id') ?? '');
+  const valor = Number(form.get('valor_atual'));
+  if (!Number.isSafeInteger(valor) || valor < 0) return { erro: 'Digite o valor atual.' };
+
+  const supabase = await supabaseServidor();
+  const { data, error } = await supabase.from('investimentos').update({ valor_atual: valor }).eq('id', id).select('id');
+  if (error || !data?.length) return { erro: 'Não foi possível salvar. Tente de novo.' };
   refresh();
   return { ok: true };
 }

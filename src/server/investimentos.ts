@@ -7,6 +7,7 @@ export interface Investimento {
   tipo: string;
   instituicao: string;
   valorAtual: number;
+  aportado: number;
 }
 
 export interface GrupoInstituicao {
@@ -16,18 +17,18 @@ export interface GrupoInstituicao {
 }
 
 /** Investimentos do usuário agrupados por instituição, do maior total para o menor. */
-export async function investimentosPorInstituicao(): Promise<{ total: number; grupos: GrupoInstituicao[] }> {
+export async function investimentosPorInstituicao(): Promise<{ total: number; aportado: number; grupos: GrupoInstituicao[] }> {
   const supabase = await supabaseServidor();
-  const { data, error } = await supabase.from('investimentos').select('id, nome, tipo, instituicao, valor_atual').order('valor_atual', { ascending: false });
+  const { data, error } = await supabase.from('investimentos').select('id, nome, tipo, instituicao, valor_atual, aportado').order('valor_atual', { ascending: false });
   if (error) throw error;
 
   const grupos = new Map<string, GrupoInstituicao>();
   for (const i of data) {
     const g = grupos.get(i.instituicao) ?? { instituicao: i.instituicao, total: 0, investimentos: [] };
     g.total += i.valor_atual;
-    g.investimentos.push({ id: i.id, nome: i.nome, tipo: i.tipo, instituicao: i.instituicao, valorAtual: i.valor_atual });
+    g.investimentos.push({ id: i.id, nome: i.nome, tipo: i.tipo, instituicao: i.instituicao, valorAtual: i.valor_atual, aportado: i.aportado });
     grupos.set(i.instituicao, g);
   }
   const lista = [...grupos.values()].sort((a, b) => b.total - a.total);
-  return { total: lista.reduce((t, g) => t + g.total, 0), grupos: lista };
+  return { total: lista.reduce((t, g) => t + g.total, 0), aportado: data.reduce((t, i) => t + i.aportado, 0), grupos: lista };
 }
