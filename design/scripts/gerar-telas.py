@@ -47,12 +47,14 @@ ONDA_HERO = ('<svg class="bf-hero__onda" viewBox="0 0 300 24" preserveAspectRati
              '<path d="M0 14 Q 25 4 50 14 T 100 14 T 150 14 T 200 14 T 250 14 T 300 14 V24 H0Z" fill="currentColor"/></svg>')
 
 
-def topo_inicio(sobrou, entrou, saiu, investiu, mes="novembro", trocar_mes=True):
+def topo_inicio(sobrou, entrou, saiu, investiu, mes="novembro", trocar_mes=True, depois=None):
     """Topo do Início na identidade BlueFin: título e saldo no degradê, linha d'água, e os três totais abaixo."""
     seta_in, seta_out, porco = i("arrow-down-left", cls="is-positive"), i("arrow-up-right", cls="is-negative"), i("piggy-bank", cls="is-invest")
     acao = f'<button class="bf-iconbtn" aria-label="Trocar mês">{i("calendar")}</button>' if trocar_mes else ""
     return (f'<section class="bf-hero" aria-label="Resumo de {mes}">{titulo(mes.capitalize(), acao)}'
-            f'<div class="bf-hero__label">Sobrou em {mes}</div><div class="bf-hero__value">{sobrou}</div>{ONDA_HERO}</section>'
+            f'<div class="bf-hero__label">Sobrou em {mes}</div><div class="bf-hero__value">{sobrou}</div>'
+            + (f'<div class="bf-hero__label" style="margin-top:6px">{depois}</div>' if depois else "")
+            + f'{ONDA_HERO}</section>'
             '<div class="bf-stats">'
             f'<div class="bf-stat"><div class="bf-stat__label">{seta_in}Entrou</div><div class="bf-stat__value">{entrou}</div></div>'
             f'<div class="bf-stat"><div class="bf-stat__label">{seta_out}Saiu</div><div class="bf-stat__value">{saiu}</div></div>'
@@ -343,14 +345,16 @@ fatura_linha = lambda titulo_, meta, valor: (
     f'<li class="bf-row" style="min-height:52px"><div class="bf-row__main"><div class="bf-row__title">{titulo_}</div>'
     f'<div class="bf-row__meta">{meta}</div></div><span class="bf-row__amount">{valor}</span>{i("chevron-right", cls="muted")}</li>')
 credito = ('<section class="bf-card" aria-label="Cartão de crédito" style="padding-bottom:4px">'
-           f'<div class="bf-card__head" style="margin:0"><h3 class="bf-card__title" style="display:flex;gap:8px;align-items:center">{i("credit-card")}Nubank</h3></div>'
+           f'<div class="bf-card__head" style="margin:0"><h3 class="bf-card__title" style="display:flex;gap:8px;align-items:center">{i("credit-card")}C6bank</h3></div>'
            '<ul class="bf-list">'
-           + fatura_linha("Fatura de novembro", "Fechada · vence dia 10", "R$ 1.234,56")
-           + fatura_linha("Fatura de dezembro", "Aberta · fecha dia 3", "R$ 418,40")
+           + fatura_linha("Fatura de novembro", "Fechada · vence dia 11", "R$ 1.234,56")
+           + fatura_linha("Fatura de dezembro", "Aberta · fecha dia 4", "R$ 418,40")
            + '</ul><div class="caption muted" style="padding:6px 0 10px">Mais R$ 800 em parcelas até fevereiro · R$ 55,80 por mês em assinaturas</div></section>')
 tela("TelaInicioCredito", "15 · Início: a fatura fechada (a pagar) e a aberta de cada cartão",
-     iphone(topo_inicio("R$ 4.218,35", "R$ 9.350", "R$ 3.632", "R$ 1.500") + credito + ultimos, aba=0),
-     """Cada cartão mostra a fatura que já fechou e ainda não venceu ("Fechada · vence dia 10") e a aberta, que está
+     iphone(topo_inicio("R$ 4.218,35", "R$ 9.350", "R$ 3.632", "R$ 1.500",
+                        depois="Depois da fatura do C6bank (dia 11): R$ 2.983,79") + credito + ultimos, aba=0),
+     """A fatura sai da conta no dia do vencimento: até lá ela não entra no "Saiu" nem no "Sobrou", e o topo mostra quanto
+sobra depois dela ("Depois da fatura do C6bank (dia 11)"). Cada cartão mostra a fatura que já fechou e ainda não venceu ("Fechada · vence dia 10") e a aberta, que está
 recebendo as compras de agora ("Aberta · fecha dia 3"). Tocar numa delas abre Lançamentos no mês dela. Depois do
 vencimento, a fechada sai e fica só a aberta. Embaixo, o que já está comprometido em parcelas e assinaturas.
 Só aparece no mês atual e se houver cartão.""")
@@ -452,5 +456,44 @@ tela("TelaRecorrente", "20 · No crédito: Todo mês para assinaturas que caem s
 até você parar. Em Lançamentos aparece como "Lazer · todo mês". Tocar abre a assinatura: mudar o valor vale daqui
 para frente, "Parar de repetir" tira dos próximos meses (o que já passou fica) e "Excluir" apaga todos.
 O app mantém os próximos 24 meses lançados e vai completando sozinho.""")
+
+def SEG(ativo):
+    opcoes = ""
+    for r in ("Débito", "Crédito"):
+        marcado = "true" if r == ativo else "false"
+        opcoes += f'<button class="bf-seg__opt" role="radio" aria-checked="{marcado}">{r}</button>'
+    return f'<div class="bf-seg" role="radiogroup" aria-label="Extrato">{opcoes}</div>'
+
+
+# 21 · Lançamentos › Débito: o extrato da conta
+tela("TelaExtratoDebito", "21 · Lançamentos › Débito: o extrato da conta, com a fatura no dia do vencimento",
+     iphone(titulo("Lançamentos", f'<button class="bf-iconbtn" aria-label="Trocar mês">{i("calendar")}</button>')
+            + SEG("Débito")
+            + '<section class="bf-card" style="padding-top:0;padding-bottom:4px"><div class="bf-list__day">A pagar</div><ul class="bf-list">'
+            + linha("despesa", "credit-card", "Fatura C6bank", "Crédito · vence 11 nov", "− R$ 1.234,56")
+            + '</ul><div class="bf-list__day">Hoje · 8 nov</div><ul class="bf-list">'
+            + linha("despesa", "car", "Uber", "Transporte · Pix", "− R$ 18,40")
+            + linha("despesa", "shopping-cart", "Mercado do bairro", "Mercado · Débito", "− R$ 32,90")
+            + '</ul><div class="bf-list__day">5 nov</div><ul class="bf-list">'
+            + linha("receita", "briefcase", "Salário", "Salário", "+ R$ 8.500,00")
+            + linha("investimento", "piggy-bank", "Tesouro Selic", "Aporte", "R$ 500,00")
+            + "</ul></section>", aba=1),
+     """Lançamentos abre no extrato da conta ("Débito"): o que entra e sai da conta, dia a dia — receitas, gastos no
+débito e no Pix, aportes e o pagamento de cada fatura, numa linha só, no dia do vencimento. Fatura que ainda não
+venceu fica em "A pagar", no topo. Tocar na fatura abre o "Crédito" daquele mês.""")
+
+# 22 · Lançamentos › Crédito: o cartão
+tela("TelaExtratoCredito", "22 · Lançamentos › Crédito: as compras no cartão, por fatura",
+     iphone(titulo("Lançamentos", f'<button class="bf-iconbtn" aria-label="Trocar mês">{i("calendar")}</button>')
+            + SEG("Crédito")
+            + '<section class="bf-card" style="padding-top:8px;padding-bottom:4px">'
+              f'<div class="bf-card__head" style="margin:0"><h3 class="bf-card__title" style="display:flex;gap:8px;align-items:center">{i("credit-card")}Fatura C6bank · novembro</h3><span class="caption num muted">R$ 1.234,56</span></div>'
+              '<div class="caption muted">Fechou dia 4 · vence dia 11</div><ul class="bf-list">'
+            + linha("despesa", "ticket", "Fone de ouvido", "Lazer · 1/3 · comprado em 7 out", "− R$ 400,00")
+            + linha("despesa", "shopping-cart", "Mercado do mês", "Mercado · à vista · 20 out", "− R$ 148,30")
+            + linha("despesa", "ticket", "Netflix", "Lazer · todo mês", "− R$ 39,90")
+            + '</ul></section>', aba=1),
+     """"Crédito" mostra as compras no cartão de cada fatura do mês (a que fecha nele), com o total, quando fechou e
+quando vence — como antes. As compras não aparecem no extrato da conta: lá a fatura entra inteira, no vencimento.""")
 
 print("telas geradas em", RAIZ)
