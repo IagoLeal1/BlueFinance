@@ -94,3 +94,9 @@
     transform: translateX(100%);
   }
 }
+
+/* Campo de data no iOS: o valor fica alinhado à esquerda, como os outros campos. */
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+}
+

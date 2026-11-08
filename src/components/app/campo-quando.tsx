@@ -13,6 +13,8 @@ export function CampoQuando({ id, dia, onChange }: { id: string; dia: string; on
         id={`data-${id}`}
         name="data"
         type="date"
+        // O iOS dá ao campo de data uma largura mínima própria, maior que a coluna: zera e tira a aparência nativa.
+        className="block min-w-0 appearance-none text-left"
         value={dia}
         max={diaDe(new Date())}
         required

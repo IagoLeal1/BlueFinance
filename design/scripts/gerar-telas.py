@@ -540,7 +540,7 @@ CORES_CAT = {"Moradia": ("#e1ecf9", "#2a78d6"), "Mercado": ("#fceae3", "#dd5b25"
              "Alimentação": ("#fcf2db", "#be7500"), "Lazer": ("#fcedf2", "#cc628c"), "Saúde": ("#dbeedb", "#008300")}
 def linha_cor(icone, titulo_, meta, valor, categoria=None, tipo="despesa"):
     if categoria == "Fatura":
-        tile = f'<span class="bf-cat" style="background:var(--hero);color:var(--water)">{i(icone)}</span>'
+        tile = f'<span class="bf-cat" style="background:var(--cat-fatura-soft);color:var(--cat-fatura)">{i(icone)}</span>'
     elif categoria in CORES_CAT:
         fundo, cor = CORES_CAT[categoria]
         tile = f'<span class="bf-cat" style="background:{fundo};color:{cor}">{i(icone)}</span>'
@@ -551,7 +551,7 @@ def linha_cor(icone, titulo_, meta, valor, categoria=None, tipo="despesa"):
     classe = "is-positive" if tipo == "receita" else "is-negative"
     return (f'<li class="bf-row">{tile}<div class="bf-row__main"><div class="bf-row__title">{titulo_}</div><div class="bf-row__meta">{meta}</div></div>'
             f'<span class="bf-row__amount {classe}">{valor}</span></li>')
-LISTRAS = "repeating-linear-gradient(45deg, var(--hero-end) 0 4px, var(--water) 4px 7px)"
+LISTRAS = "var(--chart-fatura)"
 barra = ('<div style="display:flex;gap:2px;height:12px;border-radius:6px;overflow:hidden">'
          '<span style="flex:44;background:var(--chart-1)"></span><span style="flex:26;background:' + LISTRAS + '"></span>'
          '<span style="flex:14;background:var(--chart-2)"></span><span style="flex:9;background:var(--chart-3)"></span><span style="flex:7;background:var(--chart-6)"></span></div>')
@@ -584,7 +584,7 @@ tela("TelaCoresCategoria", "24 · Cada categoria com a sua cor; a fatura sem det
                      + legenda("var(--chart-3)", "Transporte", "R$ 330,40", "9%")
                      + legenda("var(--chart-6)", "Saúde", "R$ 260,00", "7%")
                      + "</ul></section>", aba=0),
-              "\"Lançar o total da fatura\" agora usa a categoria Fatura (ícone de cartão). Ela tem as cores da marca (Abismo e Água) e na barra fica listrada: é um total sem detalhe, e as listras a separam do azul liso de Moradia. Os totais já lançados como Outros passam para Fatura.")
+              "\"Lançar o total da fatura\" agora usa a categoria Fatura (ícone de cartão). Ela tem cor própria, lisa: lilás pastel, escolhido pelo validador para se distinguir das outras categorias nos dois temas. Os totais já lançados como Outros passam para Fatura.")
      + "</div>",
      """As categorias de gasto ganham cor própria nas linhas — a mesma da barra "Gastos por categoria" — com o ícone
 escurecido até ter 3:1 sobre o fundo nos dois temas. Receitas seguem verdes e aportes, âmbar. A cor nunca é o único

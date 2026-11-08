@@ -105,7 +105,10 @@ export async function enviarAvisoDeTeste(): Promise<{ ok?: true; erro?: string }
   const resultados = await Promise.all(
     inscricoes.map((i) => enviarAviso(i, { titulo: 'BlueFin', corpo: 'Aviso de teste: é assim que chega o aviso da fatura.', url: '/ajustes' })),
   );
-  const sumiram = inscricoes.filter((_, n) => resultados[n] === 'sumiu').map((i) => i.id);
+  const sumiram = inscricoes.filter((_, n) => resultados[n]!.estado === 'sumiu').map((i) => i.id);
   if (sumiram.length) await supabaseAdmin.from('inscricoes_push').delete().in('id', sumiram);
-  return resultados.includes('ok') ? { ok: true } : { erro: 'O aviso não chegou. Desative e ative de novo.' };
+  if (resultados.some((r) => r.estado === 'ok')) return { ok: true };
+  // Mostra o que o serviço de avisos respondeu, para dar para entender o problema.
+  const motivo = resultados.find((r) => r.detalhe)?.detalhe;
+  return { erro: `O aviso não saiu${motivo ? ` (resposta: ${motivo})` : ''}. Desative e ative de novo.` };
 }

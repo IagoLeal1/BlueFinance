@@ -90,8 +90,8 @@ test.describe('fatura do cartão', () => {
     const linha = fatura.getByRole('listitem').filter({ hasText: `Fatura de ${nomeDoMes(mes)}` });
     await expect(linha).toContainText('− R$ 1.234,56');
     await expect(linha).toContainText('Fatura · à vista');
-    // A Fatura tem as cores da marca (Abismo), diferente do cinza de Outros.
-    await expect(linha.locator('span').first()).toHaveCSS('background-color', 'rgb(11, 31, 77)');
+    // A Fatura tem cor própria, lisa (lilás pastel), diferente do cinza de Outros.
+    await expect(linha.locator('span').first()).toHaveCSS('background-color', 'rgb(240, 233, 254)');
     await expect(linha.locator('svg.lucide-credit-card')).toHaveCount(1); // o ícone é o cartão
     await expect(fatura.getByRole('button', { name: 'Lançar o total da fatura' })).toHaveCount(0);
 

@@ -22,11 +22,14 @@ function chaves() {
   return { subject: REMETENTE, publicKey, privateKey };
 }
 
+export type ResultadoDoEnvio = { estado: 'ok' | 'sumiu' | 'erro'; detalhe?: string };
+
 /**
  * Manda um aviso para um aparelho. O web-push cifra a mensagem e assina o pedido; o envio é com fetch.
- * 404/410 do serviço de push = o aparelho não existe mais (app removido, permissão retirada).
+ * 404/410 do serviço de push = o aparelho não existe mais (app removido, permissão retirada). Em erro,
+ * `detalhe` traz o que o serviço respondeu (status e motivo), também no log do servidor.
  */
-export async function enviarAviso(inscricao: Inscricao, aviso: Aviso): Promise<'ok' | 'sumiu' | 'erro'> {
+export async function enviarAviso(inscricao: Inscricao, aviso: Aviso): Promise<ResultadoDoEnvio> {
   const pedido = generateRequestDetails(
     { endpoint: inscricao.endpoint, keys: { p256dh: inscricao.p256dh, auth: inscricao.auth } },
     JSON.stringify(aviso),
@@ -36,10 +39,14 @@ export async function enviarAviso(inscricao: Inscricao, aviso: Aviso): Promise<'
   const cabecalhos = Object.fromEntries(Object.entries(pedido.headers).filter(([nome]) => nome.toLowerCase() !== 'content-length'));
   try {
     const res = await fetch(pedido.endpoint, { method: pedido.method, headers: cabecalhos as Record<string, string>, body: new Uint8Array(pedido.body as Buffer) });
-    if (res.status === 404 || res.status === 410) return 'sumiu';
-    return res.ok ? 'ok' : 'erro';
-  } catch {
-    return 'erro';
+    if (res.ok) return { estado: 'ok' };
+    const detalhe = `${res.status} ${(await res.text()).slice(0, 160)}`.trim();
+    console.error('[aviso] o serviço de push recusou:', new URL(inscricao.endpoint).host, detalhe);
+    return { estado: res.status === 404 || res.status === 410 ? 'sumiu' : 'erro', detalhe };
+  } catch (e) {
+    const detalhe = e instanceof Error ? e.message : String(e);
+    console.error('[aviso] falha ao enviar:', detalhe);
+    return { estado: 'erro', detalhe };
   }
 }
 
@@ -87,8 +94,8 @@ export async function mandarAvisosDoDia(agora: Date): Promise<{ enviados: number
     for (const inscricao of inscricoes.filter((i) => i.user_id === userId)) {
       for (const aviso of avisos) {
         const r = await enviarAviso(inscricao, aviso);
-        if (r === 'ok') enviados++;
-        if (r === 'sumiu') {
+        if (r.estado === 'ok') enviados++;
+        if (r.estado === 'sumiu') {
           sumiram.push(inscricao.id);
           break;
         }

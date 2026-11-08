@@ -22,7 +22,11 @@ export function BottomSheet({
     <Drawer open={aberto} onOpenChange={onAbertoChange}>
       <DrawerTrigger render={gatilho} />
       <DrawerContent className="rounded-t-xl bg-popover shadow-sheet">
-        <div className="grid gap-4 overflow-y-auto px-5 pt-2 pb-[max(env(safe-area-inset-bottom),32px)]">
+        {/* Rola só na vertical: nada (ex.: o calendário nativo do iOS) pode empurrar o sheet para o lado. */}
+        <div
+          data-rolagem="sheet"
+          className="grid touch-pan-y gap-4 overflow-x-hidden overflow-y-auto overscroll-contain px-5 pt-2 pb-[max(env(safe-area-inset-bottom),32px)] [&>*]:min-w-0"
+        >
           <div className="mx-auto h-[5px] w-9 rounded-full bg-border" />
           <div className="flex items-center justify-between">
             <DrawerTitle className="text-lg font-bold">{titulo}</DrawerTitle>

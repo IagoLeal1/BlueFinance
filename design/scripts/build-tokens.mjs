@@ -73,6 +73,7 @@ const pairs = [
   ['focus', ['bg', 'surface', 'surface-raised', 'surface-sunken'], 3],
   ['chart-1', ['surface'], 3], ['chart-2', ['surface'], 3], ['chart-6', ['surface'], 3],
   ...[1, 2, 3, 4, 5, 6].map((n) => [`cat-${n}`, [`cat-${n}-soft`], 3]),
+  ['cat-fatura', ['cat-fatura-soft'], 3],
 ];
 let fails = 0;
 for (const theme of themes) {

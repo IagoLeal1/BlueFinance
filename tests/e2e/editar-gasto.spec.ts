@@ -144,3 +144,21 @@ test.describe('editar data e forma de pagamento', () => {
     }
   });
 });
+
+test.describe('sheet de edição no iPhone', () => {
+  test('não arrasta para o lado: rola só na vertical e o campo de data cabe na largura', async ({ page, usuario }) => {
+    await semearLancamentos(usuario, [{ valor: 4500, categoria: 'Mercado', descricao: 'Feira' }]);
+    await entrar(page, usuario);
+    await page.getByRole('link', { name: 'Lançamentos' }).click();
+    await page.getByRole('button', { name: /Feira/ }).click();
+    const sheet = page.getByRole('dialog', { name: 'Editar lançamento' });
+
+    // O iOS desenha o calendário nativo mais largo que a coluna; ele não pode empurrar o sheet.
+    const area = sheet.locator('[data-rolagem="sheet"]');
+    await expect(area).toHaveCSS('overflow-x', 'hidden');
+    await expect(area).toHaveCSS('touch-action', 'pan-y');
+    const quando = sheet.getByLabel('Quando');
+    await expect(quando).toHaveCSS('min-width', '0px');
+    await expect(quando).toHaveCSS('appearance', 'none');
+  });
+});
