@@ -1,7 +1,7 @@
 import 'server-only';
 import type { TipoLancamento } from '@/domain/money';
 import { somarMeses } from '@/domain/datas';
-import { MESES_DE_ASSINATURA } from '@/domain/parcelas';
+import { MESES_DE_ASSINATURA, vencimentoDaFatura, vencimentoPadrao } from '@/domain/parcelas';
 import { mesDe, type Lancamento } from '@/domain/summary';
 import { supabaseServidor } from '@/lib/supabase/server';
 
@@ -13,7 +13,7 @@ export interface LancamentoListado extends Lancamento {
   icone: string;
   origem: 'app' | 'atalho';
   forma: FormaPagamento | null;
-  cartao: { id: string; nome: string; diaFechamento: number } | null;
+  cartao: { id: string; nome: string; diaFechamento: number; diaVencimento: number } | null;
   /** Compra parcelada: id da compra e posição ("2 de 3"). */
   compraId: string | null;
   parcela: number | null;
@@ -25,15 +25,27 @@ export interface LancamentoListado extends Lancamento {
 }
 
 const CAMPOS =
-  'id, tipo, valor, data, descricao, origem, competencia, forma_pagamento, compra_id, parcela, parcelas, recorrente, categorias(nome, icone), investimentos(nome), cartoes(id, nome, dia_fechamento)';
+  'id, tipo, valor, data, descricao, origem, competencia, forma_pagamento, compra_id, parcela, parcelas, recorrente, categorias(nome, icone), investimentos(nome), cartoes(id, nome, dia_fechamento, dia_vencimento)';
 
 /** Lançamentos do usuário logado num mês de competência, do mais novo ao mais antigo (RLS: só os dele). */
-export async function lancamentosDoMes(mes: string): Promise<LancamentoListado[]> {
+export function lancamentosDoMes(mes: string): Promise<LancamentoListado[]> {
+  return buscar([mes]);
+}
+
+/**
+ * Para o que passa na conta no mês: os lançamentos dele e também a fatura do mês anterior, que pode vencer
+ * neste (cartão que fecha 25 e vence 5). Quem usa filtra por `mes` (competência) ou por `pagoEm`.
+ */
+export function lancamentosDoCaixa(mes: string): Promise<LancamentoListado[]> {
+  return buscar([somarMeses(mes, -1), mes]);
+}
+
+async function buscar(meses: string[]): Promise<LancamentoListado[]> {
   const supabase = await supabaseServidor();
   const { data, error } = await supabase
     .from('lancamentos')
     .select(CAMPOS)
-    .eq('competencia', mes)
+    .in('competencia', meses)
     .order('data', { ascending: false })
     .order('parcela', { ascending: true });
   if (error) throw error;
@@ -58,7 +70,19 @@ export async function lancamentosDoMes(mes: string): Promise<LancamentoListado[]
     origem: l.origem === 'atalho' ? 'atalho' : 'app',
     icone: l.categorias?.icone ?? (l.tipo === 'investimento' ? 'piggy-bank' : 'circle'),
     forma: (l.forma_pagamento as FormaPagamento | null) ?? null,
-    cartao: l.cartoes ? { id: l.cartoes.id, nome: l.cartoes.nome, diaFechamento: l.cartoes.dia_fechamento } : null,
+    cartao: l.cartoes
+      ? {
+          id: l.cartoes.id,
+          nome: l.cartoes.nome,
+          diaFechamento: l.cartoes.dia_fechamento,
+          diaVencimento: l.cartoes.dia_vencimento ?? vencimentoPadrao(l.cartoes.dia_fechamento),
+        }
+      : null,
+    // No crédito, o dinheiro sai da conta no vencimento da fatura.
+    pagoEm:
+      l.forma_pagamento === 'credito' && l.cartoes
+        ? vencimentoDaFatura(l.competencia, l.cartoes.dia_fechamento, l.cartoes.dia_vencimento ?? vencimentoPadrao(l.cartoes.dia_fechamento))
+        : undefined,
     compraId: l.compra_id,
     parcela: l.parcela,
     parcelas: l.parcelas,

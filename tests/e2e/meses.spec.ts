@@ -41,6 +41,7 @@ test.describe('trocar de mês', () => {
     await page.getByRole('button', { name: 'Trocar mês' }).click();
     await page.getByRole('dialog', { name: 'Escolher mês' }).getByRole('link', { name: `${nome} de ${futuro.slice(0, 4)}` }).click();
     await expect(page.getByRole('heading', { level: 1 })).toContainText(`Lançamentos · ${nome}`);
+    await page.getByRole('radiogroup', { name: 'Extrato' }).getByText('Crédito', { exact: true }).click();
     await expect(page.getByRole('region', { name: 'Fatura Nubank' }).getByRole('listitem').filter({ hasText: 'Viagem' })).toContainText('3/3');
 
     // O mês atual continua levando para a página sem ?mes.

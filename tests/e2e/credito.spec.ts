@@ -3,7 +3,9 @@ import { mesAtual, nomeDoMes, somarMeses } from '../../src/domain/datas';
 import { mesDaFatura, mesesDasParcelas } from '../../src/domain/parcelas';
 
 const FECHAMENTO = 3;
-const lancamentosDo = (page: Page, mes: string) => page.goto(mes === mesAtual() ? '/lancamentos' : `/lancamentos?mes=${mes}`);
+/** Abre Lançamentos no mês, no extrato do Crédito (compras no cartão) ou do Débito (a conta). */
+const lancamentosDo = (page: Page, mes: string, ver: 'credito' | 'debito' = 'credito') =>
+  page.goto(`/lancamentos?ver=${ver}${mes === mesAtual() ? '' : `&mes=${mes}`}`);
 
 /** Fone de ouvido em 3x de R$ 400,00 no Nubank, com a 1ª parcela na fatura deste mês. */
 async function semearFoneEm3x(usuario: Usuario) {

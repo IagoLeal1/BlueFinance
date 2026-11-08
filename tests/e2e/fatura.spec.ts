@@ -21,7 +21,7 @@ test.describe('fatura do cartão', () => {
       { valor: 160000, categoria: 'Moradia', descricao: 'Aluguel', forma: 'pix' },
     ]);
     await entrar(page, usuario);
-    await page.getByRole('link', { name: 'Lançamentos' }).click();
+    await page.goto('/lancamentos?ver=credito');
 
     const fatura = page.getByRole('region', { name: 'Fatura Nubank' });
     await expect(fatura).toContainText('R$ 548,30');
@@ -31,7 +31,8 @@ test.describe('fatura do cartão', () => {
     // Cada compra aparece uma vez só (na fatura, não também no dia em que foi comprada).
     await expect(page.getByRole('listitem').filter({ hasText: 'Fone de ouvido' })).toHaveCount(1);
 
-    // Débito e Pix seguem agrupados por dia, fora da fatura.
+    // Débito e Pix ficam no extrato do Débito, agrupados por dia, fora da fatura.
+    await page.getByRole('radiogroup', { name: 'Extrato' }).getByText('Débito', { exact: true }).click();
     const aluguel = page.getByRole('region', { name: /^Hoje/ }).getByRole('listitem').filter({ hasText: 'Aluguel' });
     await expect(aluguel).toContainText('Moradia · Pix');
     await expect(fatura.getByRole('listitem').filter({ hasText: 'Aluguel' })).toHaveCount(0);
@@ -63,7 +64,7 @@ test.describe('fatura do cartão', () => {
     await expect(cartao).toContainText(`Mais R$ 800 em parcelas até ${nomeDoMes(somarMeses(mes, 3))}`);
 
     await aberta.click();
-    await expect(page).toHaveURL(new RegExp(`/lancamentos\\?mes=${somarMeses(mes, 1)}$`));
+    await expect(page).toHaveURL(new RegExp(`/lancamentos\\?mes=${somarMeses(mes, 1)}&ver=credito$`));
     await expect(page.getByRole('region', { name: 'Fatura Nubank' })).toContainText('R$ 520,00');
   });
 
@@ -73,7 +74,7 @@ test.describe('fatura do cartão', () => {
     const dia = Number(diaDe(new Date()).slice(8));
     await semearCartao(usuario, 'Nubank', 1, dia);
     await entrar(page, usuario);
-    await page.getByRole('link', { name: 'Lançamentos' }).click();
+    await page.goto('/lancamentos?ver=credito');
 
     const fatura = page.getByRole('region', { name: 'Fatura Nubank' });
     await expect(fatura).toContainText('R$ 0,00');

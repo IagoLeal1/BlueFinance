@@ -8,7 +8,7 @@ import type { ResumoDoCartao } from '@/server/cartoes';
 function LinhaFatura({ mes, meta, total, mesAtual }: { mes: string; meta: string; total: number; mesAtual: string }) {
   return (
     <li className="not-first:border-t not-first:border-border">
-      <Link href={mes === mesAtual ? '/lancamentos' : `/lancamentos?mes=${mes}`} className="flex min-h-14 items-center gap-3 py-2">
+      <Link href={mes === mesAtual ? '/lancamentos?ver=credito' : `/lancamentos?mes=${mes}&ver=credito`} className="flex min-h-14 items-center gap-3 py-2">
         <span className="min-w-0 flex-1">
           <span className="block font-bold">Fatura de {nomeDoMes(mes)}</span>
           <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">{meta}</span>

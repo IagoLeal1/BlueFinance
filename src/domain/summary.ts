@@ -8,6 +8,11 @@ export interface Lancamento {
   data: string;
   /** Mês de competência ("2026-12"): para parcelas, o da fatura. Sem ele, vale o mês da data. */
   mes?: string;
+  /**
+   * Dia em que o dinheiro sai da conta ("2026-11-11"): no crédito, o vencimento da fatura. Quando existe,
+   * o lançamento conta no mês desse dia e, antes dele, fica "a pagar".
+   */
+  pagoEm?: string;
 }
 
 export interface ResumoDoMes {
@@ -15,6 +20,8 @@ export interface ResumoDoMes {
   saiu: Centavos;
   investiu: Centavos;
   sobrou: Centavos;
+  /** Faturas do mês que ainda não venceram: não entram no "Saiu" nem no "Sobrou". */
+  aPagar: Centavos;
   /** Gastos por categoria, do maior para o menor; da 7ª em diante somadas em "Outros". */
   porCategoria: GastoPorCategoria[];
 }
@@ -37,15 +44,21 @@ export function mesDe(data: string): string {
   return anoMes.format(new Date(data)).slice(0, 7);
 }
 
-/** Totais de um mês ("2026-11"): o que entrou, saiu, foi investido e quanto sobrou. */
-export function summarizeMonth(lancamentos: Lancamento[], mes: string): ResumoDoMes {
-  const doMes = lancamentos.filter((l) => (l.mes ?? mesDe(l.data)) === mes);
-  const soma = (tipo: TipoLancamento) =>
-    doMes.filter((l) => l.tipo === tipo).reduce((t, l) => t + l.valor, 0);
+/**
+ * Totais de um mês ("2026-11") pelo que passa na conta: o que entrou, saiu, foi investido e quanto sobrou.
+ * A fatura do cartão sai no vencimento (`pagoEm`): conta no mês dele e, até `hoje` chegar lá, fica em
+ * `aPagar`. "Gastos por categoria" já conta as compras da fatura do mês, pagas ou não.
+ */
+export function summarizeMonth(lancamentos: Lancamento[], mes: string, hoje?: string): ResumoDoMes {
+  const doMes = lancamentos.filter((l) => (l.pagoEm ? l.pagoEm.slice(0, 7) : (l.mes ?? mesDe(l.data))) === mes);
+  const pendente = (l: Lancamento) => !!hoje && !!l.pagoEm && l.pagoEm > hoje;
+  const soma = (tipo: TipoLancamento, filtro: (l: Lancamento) => boolean = () => true) =>
+    doMes.filter((l) => l.tipo === tipo && filtro(l)).reduce((t, l) => t + l.valor, 0);
   const entrou = soma('receita');
-  const saiu = soma('despesa');
+  const saiu = soma('despesa', (l) => !pendente(l));
+  const aPagar = soma('despesa', pendente);
   const investiu = soma('investimento');
-  return { entrou, saiu, investiu, sobrou: entrou - saiu - investiu, porCategoria: gastosPorCategoria(doMes, saiu) };
+  return { entrou, saiu, investiu, sobrou: entrou - saiu - investiu, aPagar, porCategoria: gastosPorCategoria(doMes, saiu + aPagar) };
 }
 
 function gastosPorCategoria(lancamentos: Lancamento[], saiu: Centavos): GastoPorCategoria[] {

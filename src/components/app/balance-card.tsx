@@ -7,7 +7,18 @@ import { LinhaDagua } from './marca';
  * Topo do Início (design kit: Identidade A · BlueFin): título e saldo sobre o degradê Abismo → Atum,
  * de ponta a ponta da tela, com a linha d'água no pé; Entrou, Saiu e Investiu logo abaixo.
  */
-export function BalanceCard({ resumo, nomeMes, topo }: { resumo: ResumoDoMes; nomeMes: string; topo?: React.ReactNode }) {
+export function BalanceCard({
+  resumo,
+  nomeMes,
+  topo,
+  depois,
+}: {
+  resumo: ResumoDoMes;
+  nomeMes: string;
+  topo?: React.ReactNode;
+  /** "Depois da fatura do C6bank (dia 11): R$ …" — quando há fatura do mês ainda a pagar. */
+  depois?: string;
+}) {
   const stats = [
     { rotulo: 'Entrou', valor: resumo.entrou, Icone: ArrowDownLeft, cor: 'text-positive' },
     { rotulo: 'Saiu', valor: resumo.saiu, Icone: ArrowUpRight, cor: 'text-negative' },
@@ -19,6 +30,7 @@ export function BalanceCard({ resumo, nomeMes, topo }: { resumo: ResumoDoMes; no
         {topo}
         <p className="mt-5 text-[13px] leading-[18px] font-semibold text-on-hero/80">Sobrou em {nomeMes}</p>
         <p className="mt-1 text-[40px] leading-[44px] font-extrabold tracking-[-0.02em] tabular-nums">{formatBRL(resumo.sobrou)}</p>
+        {depois && <p className="mt-1.5 text-[13px] leading-[18px] font-semibold text-on-hero/80">{depois}</p>}
         <LinhaDagua className="absolute inset-x-0 -bottom-px h-6 w-full text-background" />
       </div>
       <div className="grid grid-cols-3 gap-2">

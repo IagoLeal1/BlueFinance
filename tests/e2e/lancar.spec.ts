@@ -30,28 +30,6 @@ test.describe('lançar pelo app', () => {
     await expect(linha).toContainText('+ R$ 8.500,00');
   });
 
-  test('filtra Lançamentos por Saiu e Entrou', async ({ page, usuario }) => {
-    await entrar(page, usuario);
-    await lancarPeloApp(page, { digitos: '3290', categoria: 'Mercado', descricao: 'Mercado do bairro' });
-    await lancarPeloApp(page, { tipo: 'Receita', digitos: '85000', categoria: 'Renda extra', descricao: 'Freela site' });
-    await page.getByRole('link', { name: 'Lançamentos' }).click();
-
-    const filtro = page.getByRole('radiogroup', { name: 'Filtro' });
-    const linhas = page.getByRole('listitem');
-    await expect(linhas).toHaveCount(2);
-
-    await filtro.getByText('Saiu', { exact: true }).click();
-    await expect(linhas).toHaveCount(1);
-    await expect(linhas).toContainText('Mercado do bairro');
-
-    await filtro.getByText('Entrou', { exact: true }).click();
-    await expect(linhas).toHaveCount(1);
-    await expect(linhas).toContainText('Freela site');
-
-    await filtro.getByText('Tudo', { exact: true }).click();
-    await expect(linhas).toHaveCount(2);
-  });
-
   test('depois de salvar, avisa com Desfazer, e desfazer tira o gasto', async ({ page, usuario }) => {
     await entrar(page, usuario);
     await page.getByRole('link', { name: 'Lançamentos' }).click();

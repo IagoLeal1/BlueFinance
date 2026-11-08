@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { dividirParcelas, faturasDoCartao, mesDaFatura, mesesDasParcelas, vencimentoPadrao } from '../../src/domain/parcelas';
+import { dividirParcelas, faturasDoCartao, mesDaFatura, mesesDasParcelas, vencimentoDaFatura, vencimentoPadrao } from '../../src/domain/parcelas';
 
 test.describe('parcelas no crédito', () => {
   test('divide o total em parcelas; centavos que sobram ficam na 1ª', () => {
@@ -51,5 +51,11 @@ test.describe('parcelas no crédito', () => {
     expect(faturasDoCartao(em('2026-12-03'), 25, 5)).toEqual({ aberta: '2026-12', fechada: { mes: '2026-11', vence: '2026-12-05' } });
     // Vencimento 31 em fevereiro vale o último dia.
     expect(faturasDoCartao(em('2027-02-21'), 20, 31)).toEqual({ aberta: '2027-03', fechada: { mes: '2027-02', vence: '2027-02-28' } });
+  });
+
+  test('dia em que a fatura de um mês vence', () => {
+    expect(vencimentoDaFatura('2026-11', 4, 11)).toBe('2026-11-11');
+    expect(vencimentoDaFatura('2026-11', 25, 5)).toBe('2026-12-05');
+    expect(vencimentoDaFatura('2027-02', 20, 31)).toBe('2027-02-28');
   });
 });

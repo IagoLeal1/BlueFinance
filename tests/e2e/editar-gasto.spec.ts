@@ -2,7 +2,9 @@ import { test, expect, entrar, semearCartao, semearLancamentos, type Page, type 
 import { mesAtual, nomeDoMes, somarMeses } from '../../src/domain/datas';
 import { mesDaFatura, mesesDasParcelas } from '../../src/domain/parcelas';
 
-const lancamentosDo = (page: Page, mes: string) => page.goto(mes === mesAtual() ? '/lancamentos' : `/lancamentos?mes=${mes}`);
+/** Abre Lançamentos no mês, no extrato do Crédito (compras no cartão) ou do Débito (a conta). */
+const lancamentosDo = (page: Page, mes: string, ver: 'credito' | 'debito' = 'credito') =>
+  page.goto(`/lancamentos?ver=${ver}${mes === mesAtual() ? '' : `&mes=${mes}`}`);
 const CURTOS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 
 /**
@@ -45,7 +47,7 @@ test.describe('editar data e forma de pagamento', () => {
     await expect(sheet).toBeHidden();
 
     await expect(page.getByRole('listitem').filter({ hasText: 'Feira' })).toHaveCount(0);
-    await lancamentosDo(page, anterior);
+    await lancamentosDo(page, anterior, 'debito');
     const linha = page.getByRole('region', { name: /^15 / }).getByRole('listitem').filter({ hasText: 'Feira' });
     await expect(linha).toContainText('Mercado · Pix');
     await expect(linha).toContainText('− R$ 45,00');
@@ -75,14 +77,14 @@ test.describe('editar data e forma de pagamento', () => {
       await expect(linha, mes).toContainText('− R$ 150,00');
     }
     // Não ficou um débito sobrando no dia da compra.
-    await lancamentosDo(page, mesAtual());
+    await lancamentosDo(page, mesAtual(), 'debito');
     await expect(page.getByRole('region', { name: /^Hoje/ }).getByRole('listitem').filter({ hasText: 'Tênis' })).toHaveCount(0);
   });
 
   test('mudar a data da compra refaz as faturas das parcelas', async ({ page, usuario }) => {
     const m = await semearFoneEm3x(usuario);
     await entrar(page, usuario);
-    await page.getByRole('link', { name: 'Lançamentos' }).click();
+    await lancamentosDo(page, mesAtual());
 
     const sheet = await abrirCompra(page);
     await expect(sheet.getByLabel('Quando')).toHaveValue(`${m.anterior}-07`);
@@ -105,7 +107,7 @@ test.describe('editar data e forma de pagamento', () => {
   test('trocar o cartão de uma compra leva as parcelas para as faturas dele', async ({ page, usuario }) => {
     const m = await semearFoneEm3x(usuario);
     await entrar(page, usuario);
-    await page.getByRole('link', { name: 'Lançamentos' }).click();
+    await lancamentosDo(page, mesAtual());
 
     const sheet = await abrirCompra(page);
     await expect(sheet.getByRole('button', { name: 'Nubank' })).toHaveAttribute('aria-pressed', 'true');
@@ -124,7 +126,7 @@ test.describe('editar data e forma de pagamento', () => {
   test('passar a compra para Débito desfaz o parcelamento: vira um gasto só, no mês da data', async ({ page, usuario }) => {
     const m = await semearFoneEm3x(usuario);
     await entrar(page, usuario);
-    await page.getByRole('link', { name: 'Lançamentos' }).click();
+    await lancamentosDo(page, mesAtual());
 
     const sheet = await abrirCompra(page);
     await sheet.getByRole('radiogroup', { name: 'Como pagou' }).getByText('Débito', { exact: true }).click();
@@ -132,7 +134,7 @@ test.describe('editar data e forma de pagamento', () => {
     await sheet.getByRole('button', { name: 'Salvar alterações' }).click();
     await expect(sheet).toBeHidden();
 
-    await lancamentosDo(page, m.anterior);
+    await lancamentosDo(page, m.anterior, 'debito');
     const linha = page.getByRole('region', { name: /^7 / }).getByRole('listitem').filter({ hasText: 'Fone de ouvido' });
     await expect(linha).toContainText('Lazer · Débito');
     await expect(linha).toContainText('− R$ 1.200,00');

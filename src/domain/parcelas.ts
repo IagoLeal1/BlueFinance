@@ -54,8 +54,16 @@ export interface FaturasDoCartao {
 export function faturasDoCartao(hoje: string, diaFechamento: number, diaVencimento: number): FaturasDoCartao {
   const aberta = mesDaFatura(hoje, diaFechamento);
   const mes = somarMeses(aberta, -1);
+  const vence = vencimentoDaFatura(mes, diaFechamento, diaVencimento);
+  return { aberta, fechada: diaDe(hoje) <= vence ? { mes, vence } : null };
+}
+
+/**
+ * Dia em que vence a fatura de `mes` ("2026-11-11"): o dia de vencimento do mesmo mês, ou do seguinte se o
+ * vencimento vem antes do fechamento (fecha 25, vence 5). Dia 31 em mês curto vale o último dia.
+ */
+export function vencimentoDaFatura(mes: string, diaFechamento: number, diaVencimento: number): string {
   const mesVence = diaVencimento > diaFechamento ? mes : somarMeses(mes, 1);
   const [ano, m] = mesVence.split('-').map(Number) as [number, number];
-  const vence = `${mesVence}-${String(Math.min(diaVencimento, ultimoDia(ano, m))).padStart(2, '0')}`;
-  return { aberta, fechada: diaDe(hoje) <= vence ? { mes, vence } : null };
+  return `${mesVence}-${String(Math.min(diaVencimento, ultimoDia(ano, m))).padStart(2, '0')}`;
 }

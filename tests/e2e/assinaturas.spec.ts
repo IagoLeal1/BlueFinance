@@ -2,7 +2,9 @@ import { test, expect, entrar, semearCartao, semearLancamentos, type Page } from
 import { mesAtual, nomeDoMes, somarMeses } from '../../src/domain/datas';
 import { mesDaFatura } from '../../src/domain/parcelas';
 
-const lancamentosDo = (page: Page, mes: string) => page.goto(mes === mesAtual() ? '/lancamentos' : `/lancamentos?mes=${mes}`);
+/** Abre Lançamentos no mês, no extrato do Crédito (compras no cartão) ou do Débito (a conta). */
+const lancamentosDo = (page: Page, mes: string, ver: 'credito' | 'debito' = 'credito') =>
+  page.goto(`/lancamentos?ver=${ver}${mes === mesAtual() ? '' : `&mes=${mes}`}`);
 const netflix = (page: Page) => page.getByRole('region', { name: 'Fatura Nubank' }).getByRole('listitem').filter({ hasText: 'Netflix' });
 
 test.describe('assinaturas (Todo mês no crédito)', () => {

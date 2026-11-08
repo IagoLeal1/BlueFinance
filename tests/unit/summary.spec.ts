@@ -81,4 +81,27 @@ test.describe('resumo do mês', () => {
     expect(summarizeMonth(lancamentos, '2026-12').saiu).toBe(40000);
     expect(summarizeMonth(lancamentos, '2027-01').saiu).toBe(40000);
   });
+
+  test('a fatura do cartão sai da conta no vencimento; até lá fica a pagar', () => {
+    const lancamentos: Lancamento[] = [
+      { tipo: 'receita', valor: 850000, categoria: 'Salário', data: '2026-11-05T12:00:00-03:00' },
+      { tipo: 'despesa', valor: 3290, categoria: 'Mercado', data: '2026-11-08T12:00:00-03:00' },
+      // Compra de outubro na fatura de novembro, que vence dia 11.
+      { tipo: 'despesa', valor: 123456, categoria: 'Outros', data: '2026-10-20T12:00:00-03:00', mes: '2026-11', pagoEm: '2026-11-11' },
+    ];
+    const antes = summarizeMonth(lancamentos, '2026-11', '2026-11-08');
+    expect(antes).toMatchObject({ entrou: 850000, saiu: 3290, aPagar: 123456, sobrou: 846710 });
+    // Para onde foi o dinheiro: as compras da fatura já contam.
+    expect(antes.porCategoria.map((c) => c.categoria)).toEqual(['Outros', 'Mercado']);
+
+    const noVencimento = summarizeMonth(lancamentos, '2026-11', '2026-11-11');
+    expect(noVencimento).toMatchObject({ saiu: 126746, aPagar: 0, sobrou: 723254 });
+
+    // Fecha 25 e vence 5: a fatura de outubro sai em novembro.
+    const virada: Lancamento[] = [
+      { tipo: 'despesa', valor: 1000, categoria: 'Lazer', data: '2026-10-10T12:00:00-03:00', mes: '2026-10', pagoEm: '2026-11-05' },
+    ];
+    expect(summarizeMonth(virada, '2026-11', '2026-11-08').saiu).toBe(1000);
+    expect(summarizeMonth(virada, '2026-10', '2026-11-08').saiu).toBe(0);
+  });
 });
