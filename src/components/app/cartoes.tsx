@@ -14,6 +14,7 @@ import { Stepper } from './stepper';
 function SheetCartao({ cartao, gatilho }: { cartao?: Cartao; gatilho: React.ReactElement }) {
   const [aberto, setAberto] = useState(false);
   const [dia, setDia] = useState(cartao?.diaFechamento ?? 1);
+  const [vence, setVence] = useState(cartao?.diaVencimento ?? 10);
   const [confirmando, setConfirmando] = useState(false);
   const fecharSeOk = (acao: typeof salvarCartao) => async (anterior: EstadoCartao, form: FormData) => {
     const r = await acao(anterior, form);
@@ -33,6 +34,7 @@ function SheetCartao({ cartao, gatilho }: { cartao?: Cartao; gatilho: React.Reac
         setAberto(v);
         if (v) {
           setDia(cartao?.diaFechamento ?? 1);
+          setVence(cartao?.diaVencimento ?? 10);
           setConfirmando(false);
         }
       }}
@@ -46,11 +48,16 @@ function SheetCartao({ cartao, gatilho }: { cartao?: Cartao; gatilho: React.Reac
         </div>
         <div className="grid gap-2">
           <Label>Dia que a fatura fecha</Label>
-          <Stepper valor={dia} min={1} max={31} onChange={setDia} rotulo={(d) => `dia ${d}`} />
+          <Stepper valor={dia} min={1} max={31} onChange={setDia} rotulo={(d) => `dia ${d}`} grupo="Dia que a fatura fecha" />
           <input type="hidden" name="dia_fechamento" value={dia} />
           <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
-            Está no app do banco, perto da data de vencimento. Compras a partir desse dia vão para a fatura seguinte.
+            Está no app do banco. Compras a partir desse dia vão para a fatura seguinte.
           </p>
+        </div>
+        <div className="grid gap-2">
+          <Label>Dia do vencimento</Label>
+          <Stepper valor={vence} min={1} max={31} onChange={setVence} rotulo={(d) => `dia ${d}`} grupo="Dia do vencimento" />
+          <input type="hidden" name="dia_vencimento" value={vence} />
         </div>
         {erro && (
           <p role="alert" className="text-sm font-semibold text-negative">
@@ -108,7 +115,9 @@ export function Cartoes({ cartoes }: { cartoes: Cartao[] }) {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-bold">{c.nome}</span>
-                    <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">Fecha dia {c.diaFechamento}</span>
+                    <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">
+                      Fecha dia {c.diaFechamento} · vence dia {c.diaVencimento}
+                    </span>
                   </span>
                   <ChevronRight className="size-5 text-muted-foreground" aria-hidden />
                 </button>

@@ -84,8 +84,10 @@ export async function semearLancamentos(usuario: Usuario, lancamentos: Lancament
   if (error) throw error;
 }
 
-/** Cadastra um cartão de crédito do usuário pelo acesso do app (com RLS). */
-export async function semearCartao(usuario: Usuario, nome: string, diaFechamento: number) {
-  const { error } = await clienteDe(usuario).from('cartoes').insert({ user_id: usuario.id, nome, dia_fechamento: diaFechamento });
+/** Cadastra um cartão de crédito do usuário pelo acesso do app (com RLS). Vencimento padrão: dia 10. */
+export async function semearCartao(usuario: Usuario, nome: string, diaFechamento: number, diaVencimento = 10) {
+  const { error } = await clienteDe(usuario)
+    .from('cartoes')
+    .insert({ user_id: usuario.id, nome, dia_fechamento: diaFechamento, dia_vencimento: diaVencimento });
   if (error) throw error;
 }

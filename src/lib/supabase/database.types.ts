@@ -25,14 +25,14 @@ export type Database = {
           Tables: {
             "cartoes": {
                   Row: {
-                    "criado_em": string,"dia_fechamento": number,"id": string,"nome": string,"user_id": string
+                    "criado_em": string,"dia_fechamento": number,"dia_vencimento": number | null,"id": string,"nome": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "criado_em"?: string,"dia_fechamento": number,"id"?: string,"nome": string,"user_id": string
+                    "criado_em"?: string,"dia_fechamento": number,"dia_vencimento"?: number | null,"id"?: string,"nome": string,"user_id": string
                   }
                   Update: {
-                    "criado_em"?: string,"dia_fechamento"?: number,"id"?: string,"nome"?: string,"user_id"?: string
+                    "criado_em"?: string,"dia_fechamento"?: number,"dia_vencimento"?: number | null,"id"?: string,"nome"?: string,"user_id"?: string
                   }
                   Relationships: [
                     

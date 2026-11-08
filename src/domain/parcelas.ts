@@ -28,6 +28,9 @@ export function mesDaFatura(dataCompra: string, diaFechamento: number): string {
   return dia >= fechamento ? somarMeses(mesCompra, 1) : mesCompra;
 }
 
+/** Vencimento padrão de um cartão: uma semana depois do fechamento (fecha 3 → vence 10). */
+export const vencimentoPadrao = (diaFechamento: number) => ((diaFechamento + 6) % 31) + 1;
+
 /** Mês de cada parcela, começando pela fatura da 1ª. */
 export function mesesDasParcelas(primeiro: string, n: number): string[] {
   return Array.from({ length: n }, (_, i) => somarMeses(primeiro, i));
