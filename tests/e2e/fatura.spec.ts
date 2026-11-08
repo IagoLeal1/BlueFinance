@@ -67,6 +67,35 @@ test.describe('fatura do cartão', () => {
     await expect(page.getByRole('region', { name: 'Fatura Nubank' })).toContainText('R$ 520,00');
   });
 
+  test('fatura fechada sem compras lançadas: lança o total de uma vez', async ({ page, usuario }) => {
+    // Fecha dia 1 e vence hoje: a fatura deste mês é a fechada, ainda a pagar, e não tem nada lançado.
+    const mes = mesAtual();
+    const dia = Number(diaDe(new Date()).slice(8));
+    await semearCartao(usuario, 'Nubank', 1, dia);
+    await entrar(page, usuario);
+    await page.getByRole('link', { name: 'Lançamentos' }).click();
+
+    const fatura = page.getByRole('region', { name: 'Fatura Nubank' });
+    await expect(fatura).toContainText('R$ 0,00');
+    await expect(fatura).toContainText(`Fechou dia 1 · vence dia ${dia}`);
+    await fatura.getByRole('button', { name: 'Lançar o total da fatura' }).click();
+    const sheet = page.getByRole('dialog', { name: 'Total da fatura' });
+    await expect(sheet).toContainText(`Nubank · fatura de ${nomeDoMes(mes)}`);
+    await sheet.getByLabel('Valor').pressSequentially('123456');
+    await expect(sheet.getByRole('button', { name: 'Outros' })).toHaveAttribute('aria-pressed', 'true');
+    await sheet.getByRole('button', { name: 'Salvar total' }).click();
+    await expect(sheet).toBeHidden();
+
+    const linha = fatura.getByRole('listitem').filter({ hasText: `Fatura de ${nomeDoMes(mes)}` });
+    await expect(linha).toContainText('− R$ 1.234,56');
+    await expect(linha).toContainText('Outros');
+    await expect(fatura.getByRole('button', { name: 'Lançar o total da fatura' })).toHaveCount(0);
+
+    await page.getByRole('link', { name: 'Início' }).click();
+    await expect(page.getByRole('region', { name: 'Cartão de crédito' }).getByRole('link', { name: new RegExp(`^Fatura de ${nomeDoMes(mes)}`) }))
+      .toContainText('R$ 1.234,56');
+  });
+
   test('sem cartão cadastrado, o Início não mostra o card do cartão', async ({ page, usuario }) => {
     await semearLancamentos(usuario, [{ valor: 5000, categoria: 'Transporte', descricao: 'Ônibus' }]);
     await entrar(page, usuario);

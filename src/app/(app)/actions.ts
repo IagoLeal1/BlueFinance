@@ -3,9 +3,9 @@
 import { refresh } from 'next/cache';
 import { randomUUID } from 'node:crypto';
 import type { TipoLancamento } from '@/domain/money';
-import { diaDe, somarMeses } from '@/domain/datas';
+import { diaDe, nomeDoMes, somarMeses } from '@/domain/datas';
 import { mesDe } from '@/domain/summary';
-import { dividirParcelas, mesDaFatura, mesesDasParcelas } from '@/domain/parcelas';
+import { diaDoFechamento, dividirParcelas, mesDaFatura, mesesDasParcelas } from '@/domain/parcelas';
 import { supabaseServidor } from '@/lib/supabase/server';
 
 export interface EstadoLancamento {
@@ -319,6 +319,47 @@ export async function editarCompra(_anterior: EstadoLancamento, form: FormData):
     competencia: meses[i]!,
   }));
   const { error } = await supabase.rpc('regravar_compra', { p_compra: compraId, p_linhas: linhas });
+  if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
+  refresh();
+  return { ok: true };
+}
+
+/**
+ * Lança o total de uma fatura já fechada cujas compras não foram lançadas (ex.: de antes de usar o app):
+ * um lançamento só, no crédito, nessa fatura, datado da véspera do fechamento.
+ */
+export async function lancarTotalFatura(_anterior: EstadoLancamento, form: FormData): Promise<EstadoLancamento> {
+  const valor = Number(form.get('valor_centavos'));
+  const mes = String(form.get('mes') ?? '');
+  if (!Number.isSafeInteger(valor) || valor <= 0) return { erro: 'Digite um valor maior que zero.' };
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(mes)) return { erro: 'Fatura inválida.' };
+
+  const supabase = await supabaseServidor();
+  const [{ data: cartao }, { data: categoria }, { data: claims }] = await Promise.all([
+    supabase.from('cartoes').select('id, dia_fechamento').eq('id', String(form.get('cartao_id') ?? '')).maybeSingle(),
+    supabase.from('categorias').select('id').eq('id', String(form.get('categoria_id') ?? '')).eq('tipo', 'despesa').maybeSingle(),
+    supabase.auth.getClaims(),
+  ]);
+  const userId = claims?.claims.sub;
+  if (!userId) return { erro: 'Sua sessão expirou. Entre de novo.' };
+  if (!cartao) return { erro: 'Cartão não encontrado.' };
+  if (!categoria) return { erro: 'Escolha uma categoria.' };
+
+  const fecha = new Date(`${mes}-${String(diaDoFechamento(mes, cartao.dia_fechamento)).padStart(2, '0')}T12:00:00-03:00`);
+  const { error } = await supabase.from('lancamentos').insert({
+    user_id: userId,
+    tipo: 'despesa',
+    valor,
+    categoria_id: categoria.id,
+    descricao: `Fatura de ${nomeDoMes(mes)}`,
+    data: new Date(fecha.getTime() - 86_400_000).toISOString(),
+    forma_pagamento: 'credito',
+    cartao_id: cartao.id,
+    compra_id: randomUUID(),
+    parcela: 1,
+    parcelas: 1,
+    competencia: mes,
+  });
   if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
   refresh();
   return { ok: true };

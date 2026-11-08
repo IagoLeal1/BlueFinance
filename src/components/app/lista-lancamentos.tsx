@@ -8,6 +8,7 @@ import type { LancamentoListado } from '@/server/lancamentos';
 import { Segmented } from './segmented';
 import { LinhaCompra } from './editar-compra';
 import { LinhaEditavel, type CategoriaEditavel } from './editar-lancamento';
+import { LancarTotalFatura } from './total-fatura';
 import { useFeedback } from './feedback';
 import { metaDe } from './meta';
 import { TransactionRow } from './transaction-row';
@@ -33,6 +34,8 @@ export interface Fatura {
   fecha: string | null;
   total: number;
   lancamentos: LancamentoListado[];
+  /** Fatura fechada sem nada lançado: dá para lançar o total de uma vez. */
+  semCompras?: { cartao: { id: string; nome: string }; mes: string; fechou: number };
 }
 
 /**
@@ -79,6 +82,12 @@ export function ListaLancamentos({
             <span className="text-sm font-bold tabular-nums text-muted-foreground">{formatBRL(f.total)}</span>
           </div>
           {f.fecha && <p className="text-xs font-semibold text-muted-foreground">{f.fecha}</p>}
+          {f.semCompras && (
+            <div className="grid gap-1 py-2">
+              <p className="text-sm font-semibold text-muted-foreground">As compras desta fatura são de antes de você usar o app.</p>
+              <LancarTotalFatura cartao={f.semCompras.cartao} mes={f.semCompras.mes} fechou={f.semCompras.fechou} categorias={categorias} />
+            </div>
+          )}
           <ul>
             {f.lancamentos.map((l) =>
               l.compraId ? <LinhaCompra key={l.id} l={l} categorias={categorias} cartoes={cartoes} /> : <LinhaEditavel key={l.id} l={l} categorias={categorias} cartoes={cartoes} />,

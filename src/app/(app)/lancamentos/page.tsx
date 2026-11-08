@@ -4,8 +4,8 @@ import { Suspense } from 'react';
 import { EsqueletoLista } from '@/components/app/esqueleto';
 import { ListaLancamentos, type Fatura } from '@/components/app/lista-lancamentos';
 import { MesPicker } from '@/components/app/mes-picker';
-import { mesAtual, mesDaUrl, nomeDoMes, opcoesDeMes, rotuloDoDia, tituloDoMes } from '@/domain/datas';
-import { diaDoFechamento } from '@/domain/parcelas';
+import { mesAtual, mesDaUrl, nomeDoMes, opcoesDeMes, rotuloDoDia, somarMeses, tituloDoMes } from '@/domain/datas';
+import { diaDoFechamento, faturasDoCartao } from '@/domain/parcelas';
 import { listarCartoes } from '@/server/cartoes';
 import { categoriasDoUsuario } from '@/server/categorias';
 import { lancamentosDoMes, ultimoMesComParcelas, type LancamentoListado } from '@/server/lancamentos';
@@ -49,6 +49,20 @@ async function ListaDoMes({ searchParams }: { searchParams: PageProps<'/lancamen
     }
     const rotulo = rotuloDoDia(l.data, agora);
     dias.set(rotulo, [...(dias.get(rotulo) ?? []), l]);
+  }
+  // A última fatura que fechou, se nada dela foi lançado, aparece vazia com "Lançar o total da fatura".
+  for (const c of cartoes) {
+    const fechada = somarMeses(faturasDoCartao(agora.toISOString(), c.diaFechamento, c.diaVencimento).aberta, -1);
+    if (fechada !== mes || faturas.has(c.id)) continue;
+    const fechou = diaDoFechamento(mes, c.diaFechamento);
+    faturas.set(c.id, {
+      id: c.id,
+      nome: c.nome,
+      fecha: `Fechou dia ${fechou} · vence dia ${c.diaVencimento}`,
+      total: 0,
+      lancamentos: [],
+      semCompras: { cartao: { id: c.id, nome: c.nome }, mes, fechou },
+    });
   }
   const titulo = mes === mesAtual(agora) ? 'Lançamentos' : `Lançamentos · ${tituloDoMes(mes, agora)}`;
   return (
