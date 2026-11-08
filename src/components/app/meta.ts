@@ -11,7 +11,9 @@ export function metaDe(l: LancamentoListado): string {
   const partes = [l.categoria];
   if (l.forma === 'credito') {
     const parcelado = (l.parcelas ?? 1) > 1;
-    partes.push(parcelado ? `${l.parcela}/${l.parcelas}` : 'à vista', parcelado ? `comprado em ${diaCurto(l.data)}` : diaCurto(l.data));
+    const quando = parcelado ? `comprado em ${diaCurto(l.data)}` : diaCurto(l.data);
+    // Espaços não separáveis: a data não quebra no meio ("7" numa linha, "out" na outra).
+    partes.push(parcelado ? `${l.parcela}/${l.parcelas}` : 'à vista', quando.replaceAll(' ', '\u00a0'));
   } else if (l.forma) {
     partes.push(FORMA[l.forma]);
   }
