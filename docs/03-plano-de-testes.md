@@ -18,7 +18,7 @@
 
 Infra já validada: `tests/e2e/infra.spec.ts` abre o app (Next) no WebKit com perfil de iPhone 16 ✅
 
-Progresso: fatias 1–27 ✅ + rodada 2 (telas aprovadas) ✅ + rodada 3 (cartão de crédito) ✅ + rodada 4 (Atalho no crédito, editar data e forma) ✅ — 77 testes (unit 24 · api 18 · e2e 35)
+Progresso: fatias 1–27 ✅ + rodada 2 (telas aprovadas) ✅ + rodada 3 (cartão de crédito) ✅ + rodada 4 (Atalho no crédito, editar data e forma) ✅ + rodada 5 (identidade BlueFin, faturas e assinaturas) ✅ — 83 testes (unit 26 · api 18 · e2e 39)
 
 ## As costuras (para confirmar)
 
@@ -113,6 +113,14 @@ Cada linha é **um** teste. O nome do teste é o comportamento.
 - Atalho (`api`): lista "Como pagou?" com a última forma da categoria em primeiro; `forma` e `parcelas` no POST (vazio é à vista; fora de 1 a 24 → 400; no Débito/Pix não contam).
 - Editar gasto: "Quando" leva para o mês da data; Débito ↔ Pix; Débito → Crédito vira compra (à vista ou parcelada) na fatura pela data.
 - Compra parcelada: mudar a data ou o cartão recalcula as faturas; Débito/Pix desfaz o parcelamento (um gasto só, no mês da data).
+
+### Rodada 5 — identidade BlueFin, faturas fechada/aberta, total da fatura e assinaturas (telas 15, 16, 19 e 20)
+- Identidade: manifest com `short_name` BlueFin; ícone novo (barbatana) servido como PNG.
+- Cartões: dia do vencimento em Ajustes (contadores com nome de grupo).
+- Regras (`unit`): fatura aberta e fechada a pagar até o vencimento (vence antes de fechar → mês seguinte; 31 em mês curto); vencimento padrão.
+- Início: por cartão, fatura fechada ("vence dia 10") e aberta ("fecha dia 3"), cada uma abre o mês dela; parcelas a vir depois da aberta.
+- Lançamentos: fatura fechada sem compras aparece vazia com "Lançar o total da fatura".
+- Assinaturas: "Todo mês" no crédito cai em toda fatura (24 meses, completados sozinhos); valor novo vale da aberta em diante; "Parar de repetir" tira os próximos meses.
 
 ## Dados de teste
 
