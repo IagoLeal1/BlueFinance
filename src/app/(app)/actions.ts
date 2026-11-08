@@ -3,6 +3,7 @@
 import { refresh } from 'next/cache';
 import { randomUUID } from 'node:crypto';
 import type { TipoLancamento } from '@/domain/money';
+import { somarMeses } from '@/domain/datas';
 import { dividirParcelas, mesDaFatura, mesesDasParcelas } from '@/domain/parcelas';
 import { supabaseServidor } from '@/lib/supabase/server';
 
@@ -89,6 +90,7 @@ async function criarCompraNoCredito(
 ): Promise<EstadoLancamento> {
   const parcelas = Number(form.get('parcelas') ?? 1);
   if (!Number.isInteger(parcelas) || parcelas < 1 || parcelas > 24) return { erro: 'Escolha de 1 a 24 parcelas.' };
+  if (total < parcelas) return { erro: 'O valor é pequeno demais para tantas parcelas.' };
   const { data: cartao } = await supabase.from('cartoes').select('id, dia_fechamento').eq('id', String(form.get('cartao_id') ?? '')).maybeSingle();
   if (!cartao) return { erro: 'Escolha o cartão.' };
 
@@ -154,6 +156,55 @@ export async function excluirCompra(_anterior: EstadoLancamento, form: FormData)
   const supabase = await supabaseServidor();
   const { error } = await supabase.from('lancamentos').delete().eq('compra_id', String(form.get('compra_id') ?? ''));
   if (error) return { erro: 'Não foi possível excluir. Tente de novo.' };
+  refresh();
+  return { ok: true };
+}
+
+/**
+ * Edita uma compra no crédito inteira: valor total, número de parcelas, descrição e categoria.
+ * Refaz a divisão a partir da fatura da 1ª parcela e regrava todas as parcelas de uma vez (regravar_compra).
+ */
+export async function editarCompra(_anterior: EstadoLancamento, form: FormData): Promise<EstadoLancamento> {
+  const compraId = String(form.get('compra_id') ?? '');
+  const total = Number(form.get('valor_centavos'));
+  const parcelas = Number(form.get('parcelas'));
+  const descricao = String(form.get('descricao') ?? '').trim();
+  if (!Number.isSafeInteger(total) || total <= 0) return { erro: 'Digite um valor maior que zero.' };
+  if (!Number.isInteger(parcelas) || parcelas < 1 || parcelas > 24) return { erro: 'Escolha de 1 a 24 parcelas.' };
+  if (total < parcelas) return { erro: 'O valor é pequeno demais para tantas parcelas.' };
+
+  const supabase = await supabaseServidor();
+  const { data: atuais } = await supabase
+    .from('lancamentos')
+    .select('parcela, competencia, data, cartao_id, categoria_id, descricao')
+    .eq('compra_id', compraId)
+    .order('parcela');
+  const primeira = atuais?.[0];
+  if (!primeira) return { erro: 'Compra não encontrada.' };
+
+  // Categoria nova (opcional): só vale se for do próprio usuário — o RLS de categorias garante.
+  let categoriaId = primeira.categoria_id;
+  const novaCategoria = String(form.get('categoria_id') ?? '');
+  if (novaCategoria) {
+    const { data } = await supabase.from('categorias').select('id').eq('id', novaCategoria).maybeSingle();
+    if (!data) return { erro: 'Categoria não encontrada.' };
+    categoriaId = data.id;
+  }
+
+  const primeiroMes = somarMeses(primeira.competencia, -((primeira.parcela ?? 1) - 1));
+  const meses = mesesDasParcelas(primeiroMes, parcelas);
+  const linhas = dividirParcelas(total, parcelas).map((valor, i) => ({
+    valor,
+    categoria_id: categoriaId,
+    descricao: descricao || primeira.descricao,
+    data: primeira.data,
+    cartao_id: primeira.cartao_id,
+    parcela: i + 1,
+    parcelas,
+    competencia: meses[i]!,
+  }));
+  const { error } = await supabase.rpc('regravar_compra', { p_compra: compraId, p_linhas: linhas });
+  if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
   refresh();
   return { ok: true };
 }

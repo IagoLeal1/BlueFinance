@@ -22,6 +22,40 @@ export interface CategoriaEditavel {
   icone: string;
 }
 
+/** Chips para trocar a categoria (envia `categoria_id`). */
+export function ChipsDeCategoria({
+  id,
+  opcoes,
+  valor,
+  onChange,
+}: {
+  id: string;
+  opcoes: CategoriaEditavel[];
+  valor: string[];
+  onChange: (v: string[]) => void;
+}) {
+  if (opcoes.length === 0) return null;
+  return (
+    <div className="grid gap-2">
+      <Label id={`rotulo-cat-${id}`}>Categoria</Label>
+      <ToggleGroup
+        aria-labelledby={`rotulo-cat-${id}`}
+        value={valor}
+        onValueChange={(v) => onChange(v as string[])}
+        className="flex w-full flex-wrap gap-2"
+      >
+        {opcoes.map((c) => (
+          <ToggleGroupItem key={c.id} value={c.id} className={CHIP}>
+            <IconeCategoria nome={c.icone} className="size-4" />
+            {c.nome}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+      <input type="hidden" name="categoria_id" value={valor[0] ?? ''} />
+    </div>
+  );
+}
+
 /** Linha de lançamento que, ao tocar, abre o sheet para editar (valor, categoria, descrição) ou excluir. */
 export function LinhaEditavel({ l, categorias }: { l: LancamentoListado; categorias: CategoriaEditavel[] }) {
   const [aberto, setAberto] = useState(false);
@@ -62,25 +96,7 @@ export function LinhaEditavel({ l, categorias }: { l: LancamentoListado; categor
         <form action={salvar} className="grid gap-4">
           <input type="hidden" name="id" value={l.id} />
           <AmountInput nome="valor_centavos" centavos={centavos} onChange={setCentavos} />
-          {opcoes.length > 0 && (
-            <div className="grid gap-2">
-              <Label id={`rotulo-cat-${l.id}`}>Categoria</Label>
-              <ToggleGroup
-                aria-labelledby={`rotulo-cat-${l.id}`}
-                value={categoria}
-                onValueChange={(v) => setCategoria(v as string[])}
-                className="flex w-full flex-wrap gap-2"
-              >
-                {opcoes.map((c) => (
-                  <ToggleGroupItem key={c.id} value={c.id} className={CHIP}>
-                    <IconeCategoria nome={c.icone} className="size-4" />
-                    {c.nome}
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
-              <input type="hidden" name="categoria_id" value={categoria[0] ?? ''} />
-            </div>
-          )}
+          <ChipsDeCategoria id={l.id} opcoes={opcoes} valor={categoria} onChange={setCategoria} />
           <div className="grid gap-2">
             <Label htmlFor={`descricao-${l.id}`}>Com o quê</Label>
             <Input id={`descricao-${l.id}`} name="descricao" defaultValue={l.descricao} />

@@ -5,6 +5,7 @@ import { CreditCard } from 'lucide-react';
 import { formatBRL, type TipoLancamento } from '@/domain/money';
 import type { LancamentoListado } from '@/server/lancamentos';
 import { Segmented } from './segmented';
+import { LinhaCompra } from './editar-compra';
 import { LinhaEditavel, type CategoriaEditavel } from './editar-lancamento';
 import { useFeedback } from './feedback';
 import { metaDe } from './meta';
@@ -76,9 +77,9 @@ export function ListaLancamentos({
           </div>
           {f.fecha && <p className="text-xs font-semibold text-muted-foreground">{f.fecha}</p>}
           <ul>
-            {f.lancamentos.map((l) => (
-              <LinhaEditavel key={l.id} l={l} categorias={categorias} />
-            ))}
+            {f.lancamentos.map((l) =>
+              l.compraId ? <LinhaCompra key={l.id} l={l} categorias={categorias} /> : <LinhaEditavel key={l.id} l={l} categorias={categorias} />,
+            )}
           </ul>
         </section>
       ))}

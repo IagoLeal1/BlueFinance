@@ -146,6 +146,7 @@ export function NovoLancamento({
     if (centavos <= 0) return setErro('Digite um valor maior que zero.');
     if (!escolhido) return setErro(tipo === 'investimento' ? 'Escolha em qual investimento foi o aporte.' : 'Escolha uma categoria.');
     if (noCredito && !cartao) return setErro('Escolha o cartão.');
+    if (noCredito && centavos < parcelas) return setErro('O valor é pequeno demais para tantas parcelas.');
 
     const form = new FormData(evento.currentTarget);
     const descricao = String(form.get('descricao') ?? '').trim();
@@ -174,7 +175,7 @@ export function NovoLancamento({
     adicionarPendente({
       id: idTemporario, tipo, valor, data: new Date().toISOString(), origem: 'app',
       descricao: descricao || escolhido.nome, categoria: escolhido.nome, icone: escolhido.icone,
-      forma: tipo === 'despesa' ? forma : null, cartao: null, compraId: null, parcela: null, parcelas: null,
+      forma: tipo === 'despesa' ? forma : null, cartao: null, compraId: null, parcela: null, parcelas: null, totalDaCompra: null,
     });
     setAberto(false);
     limpar();

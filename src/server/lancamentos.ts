@@ -16,6 +16,8 @@ export interface LancamentoListado extends Lancamento {
   compraId: string | null;
   parcela: number | null;
   parcelas: number | null;
+  /** Compra no crédito: valor total da compra (soma de todas as parcelas, em todos os meses). */
+  totalDaCompra: number | null;
 }
 
 const CAMPOS =
@@ -31,6 +33,16 @@ export async function lancamentosDoMes(mes: string): Promise<LancamentoListado[]
     .order('data', { ascending: false })
     .order('parcela', { ascending: true });
   if (error) throw error;
+
+  // Total de cada compra no crédito do mês, somando as parcelas de todos os meses.
+  const compras = [...new Set(data.map((l) => l.compra_id).filter((c): c is string => !!c))];
+  const totais = new Map<string, number>();
+  if (compras.length > 0) {
+    const { data: parcelas, error: erroParcelas } = await supabase.from('lancamentos').select('compra_id, valor').in('compra_id', compras);
+    if (erroParcelas) throw erroParcelas;
+    for (const p of parcelas) totais.set(p.compra_id!, (totais.get(p.compra_id!) ?? 0) + p.valor);
+  }
+
   return data.map((l) => ({
     id: l.id,
     tipo: l.tipo as TipoLancamento,
@@ -46,6 +58,7 @@ export async function lancamentosDoMes(mes: string): Promise<LancamentoListado[]
     compraId: l.compra_id,
     parcela: l.parcela,
     parcelas: l.parcelas,
+    totalDaCompra: l.compra_id ? (totais.get(l.compra_id) ?? null) : null,
   }));
 }
 
