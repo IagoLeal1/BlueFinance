@@ -13,7 +13,7 @@ export default function AppLayout({ children }: LayoutProps<'/'>) {
       </main>
       <TabBar
         centro={
-          <Suspense fallback={<div className="-mt-[18px] size-14 rounded-full bg-primary/40" />}>
+          <Suspense fallback={<div className="-mt-[18px] size-14 rounded-full bg-hero/40 ring-4 ring-water/40" />}>
             <BotaoNovoLancamento />
           </Suspense>
         }

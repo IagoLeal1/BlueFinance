@@ -1,4 +1,12 @@
-BlueFinance é um app pessoal de finanças para iPhone: lançar um gasto em segundos, ver para onde o dinheiro foi e acompanhar onde ele está investido. A interface é calma, direta e numérica — o número é o herói, a cor só confirma o que o sinal e o texto já dizem.
+BlueFinance (BlueFin no iPhone) é um app pessoal de finanças: lançar um gasto em segundos, ver para onde o dinheiro foi e acompanhar onde ele está investido. A interface é calma, direta e numérica — o número é o herói, a cor só confirma o que o sinal e o texto já dizem.
+
+## Marca — BlueFin
+
+- **Nome.** BlueFinance por extenso; **BlueFin** no ícone do iPhone e no dia a dia. A marca escrita é `bluefin`, em minúsculas, Manrope 800, com "fin" na cor `brand`.
+- **Símbolo.** A barbatana do atum-azul cortando a linha d'água: velocidade (lançar em três toques) e "estar por dentro". O ícone é a barbatana branca com a linha d'água em `water` sobre o degradê `hero` → `hero-end`. Sem letras no ícone.
+- **Degradê.** `hero` (Abismo) → `hero-end` (Atum), a 135°, igual nos dois temas. Aparece em três lugares: ícone, topo do Início (de ponta a ponta, atrás da barra de status, com a linha d'água no pé) e o botão +. Texto sobre ele é `on-hero`.
+- **Água.** `water` é só gráfica: linha d'água, anel do botão +, barbatana. Nunca texto, nunca o único sinal de algo.
+- **Voz.** Direta e ágil, sem gíria de banco: "Pronto: Uber no Nubank, fatura de dezembro."
 
 ## Princípios
 
@@ -24,6 +32,7 @@ BlueFinance é um app pessoal de finanças para iPhone: lançar um gasto em segu
 - Tela em `bg`; cards em `surface`; sheets em `surface-raised`; campos e segmented em `surface-sunken`.
 - Texto principal `ink`, secundário `ink-muted` — os dois passam 4.5:1 em todas as superfícies nos dois temas.
 - `brand` é para **uma** ação principal por tela, a aba ativa e links. Texto sobre ela é `on-brand`.
+- `hero`, `hero-end`, `on-hero` e `water` são da marca (ver **Marca**): topo do Início, botão + e ícone. Não use em outros componentes.
 - Semântica fixa por tipo de lançamento: despesa `negative` / `negative-soft`, receita `positive` / `positive-soft`, investimento `invest` / `invest-soft`. Não use essas cores para mais nada.
 - `negative` é laranja-queimado, não vermelho, e `positive` é verde-escuro: diferem em matiz **e** contam com o sinal, por isso funcionam para daltonismo.
 - Gráficos usam `chart-1` … `chart-6` em ordem fixa por categoria (Moradia, Mercado, Transporte, Alimentação, Lazer, Saúde); a categoria "Outros" e qualquer uma além da 6ª usam `chart-other`. A cor segue a categoria, nunca o ranking. Paleta validada para daltonismo (ΔE ≥ 8 entre vizinhas); `chart-3`, `chart-4`, `chart-5` ficam abaixo de 3:1 no tema claro, então gráfico sempre tem legenda com valores.

@@ -11,7 +11,7 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "BlueFinance",
   description: "Suas finanças em um toque.",
-  appleWebApp: { capable: true, title: "BlueFinance", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "BlueFin", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {
@@ -19,8 +19,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f3f5f9" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0e15" },
+    { media: "(prefers-color-scheme: light)", color: "#eef4f8" },
+    { media: "(prefers-color-scheme: dark)", color: "#07101f" },
   ],
 };
 

@@ -1,9 +1,9 @@
 import { ImageResponse } from 'next/og';
-import { MarcaBlueFinance } from './marca';
+import { MarcaBlueFin } from './marca';
 
 export const size = { width: 512, height: 512 };
 export const contentType = 'image/png';
 
 export default function Icon() {
-  return new ImageResponse(<MarcaBlueFinance lado={512} />, size);
+  return new ImageResponse(<MarcaBlueFin lado={512} />, size);
 }

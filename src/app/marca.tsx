@@ -1,24 +1,23 @@
+import { BARBATANA, LINHA_DAGUA } from '@/components/app/marca';
+
 /**
- * Ícone do app, tirado da capa do design kit: o azul da marca com "pílulas" vazadas
- * de comprimentos diferentes, como a barra de gastos e os chips. Sem letras: ainda não há logo.
+ * Ícone do app (design kit: Identidade A · BlueFin): a barbatana do atum-azul cortando a linha d'água,
+ * sobre o degradê Abismo → Atum. Sem cantos arredondados: o iPhone aplica a máscara.
  */
-export function MarcaBlueFinance({ lado }: { lado: number }) {
-  const u = lado / 180; // desenhado numa grade de 180px
-  const linhas: number[][] = [
-    [62, 30],
-    [40, 52],
-    [96],
-    [28, 40],
-  ];
+export function MarcaBlueFin({ lado }: { lado: number }) {
   return (
-    <div style={{ width: lado, height: lado, background: '#1846c8', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 14 * u, padding: `0 ${32 * u}px` }}>
-      {linhas.map((linha, i) => (
-        <div key={i} style={{ display: 'flex', gap: 8 * u }}>
-          {linha.map((w, j) => (
-            <div key={j} style={{ width: w * u, height: 16 * u, borderRadius: 8 * u, background: '#f3f5f9' }} />
-          ))}
-        </div>
-      ))}
+    <div style={{ width: lado, height: lado, display: 'flex' }}>
+      <svg width={lado} height={lado} viewBox="0 0 180 180">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#0b1f4d" />
+            <stop offset="1" stopColor="#1846c8" />
+          </linearGradient>
+        </defs>
+        <rect width="180" height="180" fill="url(#g)" />
+        <path d={BARBATANA} fill="#f3f7fb" />
+        <path d={LINHA_DAGUA} fill="none" stroke="#3ccfc6" strokeWidth="9" strokeLinecap="round" />
+      </svg>
     </div>
   );
 }

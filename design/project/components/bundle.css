@@ -229,3 +229,20 @@ body {
 .bf-stepper__valor { text-align: center; font: 800 20px/24px var(--font-sans); font-variant-numeric: tabular-nums; }
 .bf-nota { display: flex; gap: var(--space-2); align-items: flex-start; padding: var(--space-3); border-radius: var(--radius-md); background: var(--brand-soft); color: var(--on-brand-soft); font: 600 13px/18px var(--font-sans); }
 .bf-nota .bf-icon { width: 16px; height: 16px; margin-top: 1px; color: var(--on-brand-soft); }
+
+/* ---------- Identidade BlueFin (A): topo do Início, botão + ---------- */
+.bf-fab { background: var(--hero); color: var(--on-hero); box-shadow: var(--shadow-sheet), 0 0 0 4px var(--water); }
+.bf-phone__status { position: relative; z-index: 2; }
+.bf-phone--hero .bf-phone__status { color: var(--on-hero); }
+.bf-hero {
+  position: relative; flex: none; margin: -54px calc(-1 * var(--space-4)) 0; padding: 66px var(--space-4) 44px;
+  background: linear-gradient(135deg, var(--hero), var(--hero-end)); color: var(--on-hero);
+}
+.bf-hero .bf-screen-title { color: var(--on-hero); }
+.bf-hero .bf-iconbtn { background: rgba(255, 255, 255, 0.15); color: var(--on-hero); }
+.bf-hero__label { margin-top: 20px; font: 600 13px/18px var(--font-sans); opacity: 0.8; }
+.bf-hero__value { margin-top: 4px; font: 800 40px/44px var(--font-sans); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.bf-hero__onda { position: absolute; left: 0; right: 0; bottom: -1px; width: 100%; height: 24px; color: var(--bg); }
+.bf-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+.bf-stats .bf-stat { background: var(--surface); box-shadow: var(--shadow-card); }
+.bf-phone--hero .bf-phone__body { overflow: visible; }

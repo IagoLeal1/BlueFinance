@@ -64,6 +64,8 @@ const pairs = [
   ['brand', ['bg', 'surface', 'surface-raised'], 4.5],
   ['on-brand', ['brand', 'brand-pressed'], 4.5],
   ['on-brand-soft', ['brand-soft'], 4.5],
+  ['on-hero', ['hero', 'hero-end'], 4.5],
+  ['water', ['hero'], 3],
   ['positive', ['bg', 'surface', 'positive-soft'], 4.5],
   ['negative', ['bg', 'surface', 'surface-raised', 'negative-soft'], 4.5],
   ['invest', ['bg', 'surface', 'invest-soft'], 4.5],

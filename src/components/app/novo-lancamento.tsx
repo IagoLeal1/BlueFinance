@@ -159,7 +159,7 @@ export function NovoLancamento({
         <button
           type="button"
           aria-label="Novo lançamento"
-          className="-mt-[18px] grid size-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-sheet focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="-mt-[18px] grid size-14 place-items-center rounded-full bg-hero text-on-hero shadow-sheet ring-4 ring-water focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           <Plus className="size-7" strokeWidth={2.5} aria-hidden />
         </button>

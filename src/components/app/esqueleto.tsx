@@ -35,8 +35,19 @@ function Resumo() {
 export function EsqueletoInicio() {
   return (
     <div role="status" aria-label="Carregando" className="grid gap-3">
-      <Bloco className="mt-2 h-8 w-40" />
-      <Resumo />
+      {/* O degradê do topo aparece já no carregamento: nada muda de cor quando os dados chegam. */}
+      <div className="-mx-4 -mt-[max(env(safe-area-inset-top),16px)] grid gap-4 bg-linear-to-br from-hero to-hero-end px-4 pt-[calc(max(env(safe-area-inset-top),16px)+8px)] pb-11">
+        <div className="h-8 w-40 rounded-lg bg-white/15" />
+        <div className="grid gap-2">
+          <div className="h-3.5 w-2/5 rounded-lg bg-white/15" />
+          <div className="h-10 w-3/4 rounded-lg bg-white/15" />
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-2">
+        <Bloco className="h-14 rounded-md" />
+        <Bloco className="h-14 rounded-md" />
+        <Bloco className="h-14 rounded-md" />
+      </div>
       <Linhas n={3} />
     </div>
   );

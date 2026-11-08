@@ -9,7 +9,18 @@ import { cn } from '@/lib/utils';
 import { BottomSheet } from './bottom-sheet';
 
 /** Botão de calendário que abre a lista de meses (links ?mes=AAAA-MM; o mês atual vai para `base`). */
-export function MesPicker({ base, atual, meses }: { base: string; atual: string; meses: OpcaoDeMes[] }) {
+export function MesPicker({
+  base,
+  atual,
+  meses,
+  sobreODegrade = false,
+}: {
+  base: string;
+  atual: string;
+  meses: OpcaoDeMes[];
+  /** No topo do Início o botão fica branco sobre o degradê. */
+  sobreODegrade?: boolean;
+}) {
   const [aberto, setAberto] = useState(false);
   return (
     <BottomSheet
@@ -17,7 +28,12 @@ export function MesPicker({ base, atual, meses }: { base: string; atual: string;
       aberto={aberto}
       onAbertoChange={setAberto}
       gatilho={
-        <Button size="icon" variant="ghost" aria-label="Trocar mês">
+        <Button
+          size="icon"
+          variant="ghost"
+          aria-label="Trocar mês"
+          className={sobreODegrade ? 'bg-white/15 text-on-hero hover:bg-white/25 aria-expanded:bg-white/25' : undefined}
+        >
           <Calendar aria-hidden />
         </Button>
       }

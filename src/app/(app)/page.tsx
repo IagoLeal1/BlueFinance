@@ -39,11 +39,16 @@ async function ResumoDoMes({ searchParams }: { searchParams: PageProps<'/'>['sea
 
   return (
     <>
-      <div className="mt-2 flex items-center justify-between">
-        <h1 className="text-[28px] leading-[34px] font-extrabold tracking-tight">{tituloDoMes(mes, agora)}</h1>
-        <MesPicker base="/" atual={mes} meses={opcoesDeMes(agora, ultimaParcela)} />
-      </div>
-      <BalanceCard resumo={resumo} nomeMes={nome} />
+      <BalanceCard
+        resumo={resumo}
+        nomeMes={nome}
+        topo={
+          <div className="flex items-center justify-between">
+            <h1 className="text-[28px] leading-[34px] font-extrabold tracking-tight">{tituloDoMes(mes, agora)}</h1>
+            <MesPicker base="/" atual={mes} meses={opcoesDeMes(agora, ultimaParcela)} sobreODegrade />
+          </div>
+        }
+      />
       {cartoes.length > 0 && <CartaoCredito mes={mes} fatura={fatura} aVir={aVir} cartoes={cartoes} href={listaDoMes} />}
       <SpendingBar gastos={resumo.porCategoria} ordemPorNome={ordem} />
       {lancamentos.length > 0 && (

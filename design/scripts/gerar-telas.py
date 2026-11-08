@@ -43,6 +43,23 @@ def linha(tipo, icone, titulo, meta, valor, extra=""):
             f'<span class="bf-row__amount {cor}">{valor}</span></li>')
 
 
+ONDA_HERO = ('<svg class="bf-hero__onda" viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true">'
+             '<path d="M0 14 Q 25 4 50 14 T 100 14 T 150 14 T 200 14 T 250 14 T 300 14 V24 H0Z" fill="currentColor"/></svg>')
+
+
+def topo_inicio(sobrou, entrou, saiu, investiu, mes="novembro", trocar_mes=True):
+    """Topo do Início na identidade BlueFin: título e saldo no degradê, linha d'água, e os três totais abaixo."""
+    seta_in, seta_out, porco = i("arrow-down-left", cls="is-positive"), i("arrow-up-right", cls="is-negative"), i("piggy-bank", cls="is-invest")
+    acao = f'<button class="bf-iconbtn" aria-label="Trocar mês">{i("calendar")}</button>' if trocar_mes else ""
+    return (f'<section class="bf-hero" aria-label="Resumo de {mes}">{titulo(mes.capitalize(), acao)}'
+            f'<div class="bf-hero__label">Sobrou em {mes}</div><div class="bf-hero__value">{sobrou}</div>{ONDA_HERO}</section>'
+            '<div class="bf-stats">'
+            f'<div class="bf-stat"><div class="bf-stat__label">{seta_in}Entrou</div><div class="bf-stat__value">{entrou}</div></div>'
+            f'<div class="bf-stat"><div class="bf-stat__label">{seta_out}Saiu</div><div class="bf-stat__value">{saiu}</div></div>'
+            f'<div class="bf-stat"><div class="bf-stat__label">{porco}Investiu</div><div class="bf-stat__value">{investiu}</div></div>'
+            '</div>')
+
+
 def resumo(sobrou, entrou, saiu, investiu, mes="novembro"):
     seta_in, seta_out, porco = i("arrow-down-left", cls="is-positive"), i("arrow-up-right", cls="is-negative"), i("piggy-bank", cls="is-invest")
     return (f'<section class="bf-card bf-balance" aria-label="Resumo de {mes}">'
@@ -74,7 +91,8 @@ def tela(nome, subtitulo, corpo, readme, altura=900, largura=None):
 
 def iphone(miolo, aba=None, sobre=""):
     tab = tabbar(aba) if aba is not None else ""
-    return f'<div class="bf-phone">{STATUS}<div class="bf-phone__body">{miolo}</div>{tab}{sobre}</div>'
+    hero = " bf-phone--hero" if 'class="bf-hero"' in miolo else ""
+    return f'<div class="bf-phone{hero}">{STATUS}<div class="bf-phone__body">{miolo}</div>{tab}{sobre}</div>'
 
 
 titulo = lambda t, acao="": f'<div style="display:flex;justify-content:space-between;align-items:center"><h1 class="bf-screen-title">{t}</h1>{acao}</div>'
@@ -103,14 +121,13 @@ ultimos = ('<section class="bf-card" style="padding-top:8px;padding-bottom:4px">
            + linha("receita", "briefcase", "Salário de novembro", "5 nov · Salário", "+ R$ 8.500,00")
            + "</ul></section>")
 tela("TelaInicio", "2 · Início: resumo do mês, gastos por categoria, últimos lançamentos",
-     iphone(titulo("Novembro", f'<button class="bf-iconbtn" aria-label="Trocar mês">{i("calendar")}</button>')
-            + resumo("R$ 4.218,35", "R$ 9.350", "R$ 3.632", "R$ 1.500") + gastos + ultimos, aba=0),
+     iphone(topo_inicio("R$ 4.218,35", "R$ 9.350", "R$ 3.632", "R$ 1.500") + gastos + ultimos, aba=0),
      """Início: o mês em uma olhada. Título é o mês; o botão de calendário troca o mês (ver meses anteriores).
 "Últimos" mostra os 3 lançamentos mais recentes e leva para Lançamentos.""")
 
 # 3 · Início vazio
 tela("TelaInicioVazio", "3 · Início sem lançamentos: o que fazer primeiro",
-     iphone(titulo("Novembro") + resumo("R$ 0,00", "R$ 0", "R$ 0", "R$ 0")
+     iphone(topo_inicio("R$ 0,00", "R$ 0", "R$ 0", "R$ 0", trocar_mes=False)
             + f'<section class="bf-card" style="text-align:center;display:grid;gap:8px;justify-items:center;padding:24px">'
               f'<span class="bf-cat bf-cat--neutral" style="width:48px;height:48px">{i("sparkles")}</span>'
               '<div class="body-strong">Nenhum lançamento ainda.</div>'
@@ -329,8 +346,7 @@ credito = ('<section class="bf-card" aria-label="Cartão de crédito" style="dis
            '<div class="bf-stat"><div class="bf-stat__label">Parcelas a vir</div><div class="bf-stat__value">R$ 2.400</div></div></div>'
            '<div class="caption muted">Nubank fecha dia 3 · 4 compras parceladas até março</div></section>')
 tela("TelaInicioCredito", "15 · Início: quanto do mês é cartão e quanto já está comprometido",
-     iphone(titulo("Novembro", f'<button class="bf-iconbtn" aria-label="Trocar mês">{i("calendar")}</button>')
-            + resumo("R$ 4.218,35", "R$ 9.350", "R$ 3.632", "R$ 1.500") + credito + ultimos, aba=0),
+     iphone(topo_inicio("R$ 4.218,35", "R$ 9.350", "R$ 3.632", "R$ 1.500") + credito + ultimos, aba=0),
      """O "Saiu" do mês já inclui as parcelas que caem nele. O card do cartão mostra a fatura do mês (soma do crédito
 que cai neste mês) e "Parcelas a vir": o que já está comprometido nos meses seguintes. Só aparece se houver cartão.""")
 
