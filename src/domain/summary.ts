@@ -6,6 +6,8 @@ export interface Lancamento {
   categoria: string;
   /** ISO 8601 com fuso, ex.: "2026-11-07T10:00:00-03:00". */
   data: string;
+  /** Mês de competência ("2026-12"): para parcelas, o da fatura. Sem ele, vale o mês da data. */
+  mes?: string;
 }
 
 export interface ResumoDoMes {
@@ -37,7 +39,7 @@ export function mesDe(data: string): string {
 
 /** Totais de um mês ("2026-11"): o que entrou, saiu, foi investido e quanto sobrou. */
 export function summarizeMonth(lancamentos: Lancamento[], mes: string): ResumoDoMes {
-  const doMes = lancamentos.filter((l) => mesDe(l.data) === mes);
+  const doMes = lancamentos.filter((l) => (l.mes ?? mesDe(l.data)) === mes);
   const soma = (tipo: TipoLancamento) =>
     doMes.filter((l) => l.tipo === tipo).reduce((t, l) => t + l.valor, 0);
   const entrou = soma('receita');

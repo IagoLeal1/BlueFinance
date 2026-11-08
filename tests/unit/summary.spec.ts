@@ -68,4 +68,17 @@ test.describe('resumo do mês', () => {
       { categoria: 'Outros', total: 7100, percentual: 2 },
     ]);
   });
+
+  test('parcela conta no mês da fatura (competência), não no dia da compra', () => {
+    const compra = '2026-11-07T12:00:00-03:00';
+    const lancamentos: Lancamento[] = [
+      { tipo: 'despesa', valor: 40000, categoria: 'Lazer', data: compra, mes: '2026-12' },
+      { tipo: 'despesa', valor: 40000, categoria: 'Lazer', data: compra, mes: '2027-01' },
+      l('despesa', 3290, 'Mercado', compra),
+    ];
+
+    expect(summarizeMonth(lancamentos, '2026-11').saiu).toBe(3290);
+    expect(summarizeMonth(lancamentos, '2026-12').saiu).toBe(40000);
+    expect(summarizeMonth(lancamentos, '2027-01').saiu).toBe(40000);
+  });
 });
