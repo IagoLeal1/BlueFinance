@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
+import { Cartoes } from '@/components/app/cartoes';
 import { TokenAtalho } from '@/components/app/token-atalho';
 import { Button } from '@/components/ui/button';
 import { supabaseServidor } from '@/lib/supabase/server';
+import { listarCartoes } from '@/server/cartoes';
 import { tokenAtivo } from '@/server/tokens';
 import { sair } from './actions';
 
@@ -14,6 +16,9 @@ export default function Ajustes() {
   return (
     <>
       <h1 className="mt-2 text-[28px] leading-[34px] font-extrabold tracking-tight">Ajustes</h1>
+      <Suspense fallback={null}>
+        <CartoesDoUsuario />
+      </Suspense>
       <section aria-label="Lançar sem abrir o app" className="grid gap-3 rounded-lg bg-card p-4 shadow-card">
         <h2 className="text-lg font-bold">Lançar sem abrir o app</h2>
         <ol className="grid gap-3">
@@ -53,6 +58,10 @@ export default function Ajustes() {
       </section>
     </>
   );
+}
+
+async function CartoesDoUsuario() {
+  return <Cartoes cartoes={await listarCartoes()} />;
 }
 
 async function EmailDaConta() {

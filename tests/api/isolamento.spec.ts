@@ -8,12 +8,14 @@ test.describe('isolamento entre usuários', () => {
       data: { categoria: 'Mercado', descricao: 'Só meu', valor_centavos: 3290 },
     });
     const intruso = clienteDe(outroUsuario);
+    await clienteDe(usuario).from('cartoes').insert({ user_id: usuario.id, nome: 'Meu cartão', dia_fechamento: 3 });
 
     // Não lê lançamentos nem categorias do outro, nem tokens de ninguém.
     expect((await intruso.from('lancamentos').select('descricao')).data).toEqual([]);
     const categorias = (await intruso.from('categorias').select('user_id')).data ?? [];
     expect(categorias.every((c) => c.user_id === outroUsuario.id)).toBe(true);
     expect((await intruso.from('tokens_pessoais').select('id')).data).toEqual([]);
+    expect((await intruso.from('cartoes').select('id')).data).toEqual([]);
 
     // Não cria lançamento em nome do outro.
     const invasao = await intruso.from('lancamentos').insert({ user_id: usuario.id, tipo: 'despesa', valor: 1 });
