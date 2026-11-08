@@ -14,7 +14,7 @@ import { LinhaEditavel, type CategoriaEditavel } from './editar-lancamento';
 import { LancarTotalFatura } from './total-fatura';
 import { useFeedback } from './feedback';
 import { metaDe } from './meta';
-import { TransactionRow } from './transaction-row';
+import { FUNDO_DA_FATURA, TransactionRow } from './transaction-row';
 
 export type Extrato = 'debito' | 'credito';
 const EXTRATOS: { valor: Extrato; rotulo: string }[] = [
@@ -57,7 +57,7 @@ function LinhaPagamentoFatura({ f, aPagar }: { f: PagamentoFatura; aPagar: boole
   return (
     <li className="not-first:border-t not-first:border-border">
       <Link href={f.href} className="flex min-h-16 items-center gap-3 py-3">
-        <span className="grid size-10 shrink-0 place-items-center rounded-[12px] bg-muted text-muted-foreground">
+        <span className={`grid size-10 shrink-0 place-items-center rounded-[12px] ${FUNDO_DA_FATURA}`}>
           <CreditCard className="size-5" aria-hidden />
         </span>
         <span className="min-w-0 flex-1">

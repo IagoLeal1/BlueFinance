@@ -1,8 +1,11 @@
 import { formatBRL } from '@/domain/money';
 import type { GastoPorCategoria } from '@/domain/summary';
 
-/** Fatura (o total de uma fatura, sem detalhe): listrada em cinza, sem cor própria (design kit: TelaCoresCategoria). */
-const LISTRAS = 'repeating-linear-gradient(45deg, var(--chart-other) 0 4px, var(--surface-sunken) 4px 7px)';
+/**
+ * Fatura (o total de uma fatura, sem detalhe): listrada nas cores da marca, Atum e Água (design kit:
+ * TelaCoresCategoria). As listras a separam de Moradia, que é azul liso.
+ */
+const LISTRAS = 'repeating-linear-gradient(45deg, var(--hero-end) 0 4px, var(--water) 4px 7px)';
 
 /** Cor fixa por categoria (chart-1 … chart-6 pela ordem da categoria); Fatura listrada; o resto é "Outros". */
 export function corDaCategoria(nome: string, ordemPorNome: Map<string, number>): string {

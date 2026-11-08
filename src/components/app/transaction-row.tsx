@@ -21,8 +21,14 @@ const COR_DA_CATEGORIA = [
   'bg-cat-5-soft text-cat-5',
   'bg-cat-6-soft text-cat-6',
 ];
-export const fundoDoIcone = (l: Pick<LancamentoListado, 'tipo' | 'ordemCategoria'>) =>
-  l.tipo === 'despesa' && l.ordemCategoria && l.ordemCategoria <= 6 ? COR_DA_CATEGORIA[l.ordemCategoria - 1]! : COR[l.tipo].tile;
+/** Fatura (o cartão): as cores da marca, Abismo com o ícone em Água — diferente do cinza de Outros. */
+export const FUNDO_DA_FATURA = 'bg-hero text-water';
+export const fundoDoIcone = (l: Pick<LancamentoListado, 'tipo' | 'ordemCategoria' | 'categoria'>) =>
+  l.tipo === 'despesa' && l.categoria === 'Fatura'
+    ? FUNDO_DA_FATURA
+    : l.tipo === 'despesa' && l.ordemCategoria && l.ordemCategoria <= 6
+      ? COR_DA_CATEGORIA[l.ordemCategoria - 1]!
+      : COR[l.tipo].tile;
 
 /** Linha de um lançamento (design kit: TransactionRow). */
 export function TransactionRow({
