@@ -73,7 +73,8 @@ export async function semearLancamentos(usuario: Usuario, lancamentos: Lancament
     const tipo = l.tipo ?? 'despesa';
     const cat = categorias?.find((c) => c.nome === l.categoria && c.tipo === tipo);
     if (!cat) throw new Error(`categoria não encontrada: ${l.categoria}`);
-    const base = { user_id: usuario.id, tipo, valor: l.valor, categoria_id: cat.id, descricao: l.descricao, data: l.data ?? new Date().toISOString() };
+    // Todas as linhas com as mesmas colunas: num insert em lote, coluna que falta vai como null (não como o padrão).
+    const base = { user_id: usuario.id, tipo, valor: l.valor, categoria_id: cat.id, descricao: l.descricao, data: l.data ?? new Date().toISOString(), recorrente: false };
     if (!l.credito) return { ...base, ...(l.forma && { forma_pagamento: l.forma }) };
     const cartao = cartoes?.find((c) => c.nome === l.credito!.cartao);
     if (!cartao) throw new Error(`cartão não encontrado: ${l.credito.cartao}`);
