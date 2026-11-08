@@ -18,7 +18,7 @@
 
 Infra já validada: `tests/e2e/infra.spec.ts` abre o app (Next) no WebKit com perfil de iPhone 16 ✅
 
-Progresso: fatias 1–27 ✅ + rodada 2 (telas aprovadas) ✅ + rodada 3 (cartão de crédito) ✅ — 66 testes (unit 24 · api 12 · e2e 30)
+Progresso: fatias 1–27 ✅ + rodada 2 (telas aprovadas) ✅ + rodada 3 (cartão de crédito) ✅ + rodada 4 (Atalho no crédito, editar data e forma) ✅ — 77 testes (unit 24 · api 18 · e2e 35)
 
 ## As costuras (para confirmar)
 
@@ -108,6 +108,11 @@ Cada linha é **um** teste. O nome do teste é o comportamento.
 - Lançamentos: card "Fatura {cartão}" com total e dia do fechamento; meta "Lazer · 1/3 · comprado em 7 out"; débito/Pix por dia ("Moradia · Pix", "Transporte · Débito · pelo Atalho").
 - Início: card do cartão (fatura do mês e parcelas a vir) só para quem tem cartão (conferido com mutação); "Saiu" conta as parcelas do mês.
 - Compra parcelada: tocar numa parcela abre a compra inteira; mudar total/parcelas refaz a divisão; excluir apaga todas, com confirmação.
+
+### Rodada 4 — Atalho no crédito, editar data e forma (telas 12, 17 e 18)
+- Atalho (`api`): lista "Como pagou?" com a última forma da categoria em primeiro; `forma` e `parcelas` no POST (vazio é à vista; fora de 1 a 24 → 400; no Débito/Pix não contam).
+- Editar gasto: "Quando" leva para o mês da data; Débito ↔ Pix; Débito → Crédito vira compra (à vista ou parcelada) na fatura pela data.
+- Compra parcelada: mudar a data ou o cartão recalcula as faturas; Débito/Pix desfaz o parcelamento (um gasto só, no mês da data).
 
 ## Dados de teste
 
