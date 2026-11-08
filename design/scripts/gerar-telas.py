@@ -535,4 +535,58 @@ tela("TelaAvisosOffline", "23 · Aviso da fatura (push) e sem internet — PWA, 
 abre sem internet (service worker). Sem app nativo, sem Xcode e sem conta paga da Apple.""",
      altura=560, largura=1240)
 
+# 24 · Cores por categoria e a categoria Fatura
+CORES_CAT = {"Moradia": ("#e1ecf9", "#2a78d6"), "Mercado": ("#fceae3", "#dd5b25"), "Transporte": ("#dff4ec", "#009965"),
+             "Alimentação": ("#fcf2db", "#be7500"), "Lazer": ("#fcedf2", "#cc628c"), "Saúde": ("#dbeedb", "#008300")}
+def linha_cor(icone, titulo_, meta, valor, categoria=None, tipo="despesa"):
+    if categoria in CORES_CAT:
+        fundo, cor = CORES_CAT[categoria]
+        tile = f'<span class="bf-cat" style="background:{fundo};color:{cor}">{i(icone)}</span>'
+    elif tipo == "receita":
+        tile = f'<span class="bf-cat bf-cat--income">{i(icone)}</span>'
+    else:
+        tile = f'<span class="bf-cat bf-cat--neutral">{i(icone)}</span>'
+    classe = "is-positive" if tipo == "receita" else "is-negative"
+    return (f'<li class="bf-row">{tile}<div class="bf-row__main"><div class="bf-row__title">{titulo_}</div><div class="bf-row__meta">{meta}</div></div>'
+            f'<span class="bf-row__amount {classe}">{valor}</span></li>')
+LISTRAS = "repeating-linear-gradient(45deg, var(--chart-other) 0 4px, var(--surface-sunken) 4px 7px)"
+barra = ('<div style="display:flex;gap:2px;height:12px;border-radius:6px;overflow:hidden">'
+         '<span style="flex:44;background:var(--chart-1)"></span><span style="flex:26;background:' + LISTRAS + '"></span>'
+         '<span style="flex:14;background:var(--chart-2)"></span><span style="flex:9;background:var(--chart-3)"></span><span style="flex:7;background:var(--chart-6)"></span></div>')
+legenda = lambda swatch, nome, valor, pct: (f'<li style="display:flex;align-items:center;gap:8px;font:600 13px/18px var(--font-sans)">'
+                                            f'<span style="width:10px;height:10px;border-radius:3px;background:{swatch}"></span><span style="flex:1">{nome}</span>'
+                                            f'<span class="num">{valor}</span><span class="muted num" style="width:34px;text-align:right">{pct}</span></li>')
+tela("TelaCoresCategoria", "24 · Cada categoria com a sua cor; a fatura sem detalhe ganha a categoria Fatura",
+     '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;padding:16px">'
+     + painel("1 · Lançamentos › Débito",
+              iphone(titulo("Lançamentos", f'<button class="bf-iconbtn" aria-label="Trocar mês">{i("calendar")}</button>')
+                     + SEG("Débito")
+                     + '<section class="bf-card" style="padding-top:0;padding-bottom:4px"><div class="bf-list__day">A pagar</div><ul class="bf-list">'
+                     + linha_cor("credit-card", "Fatura C6bank", "Crédito · vence 11 nov", "− R$ 1.234,56")
+                     + '</ul><div class="bf-list__day">Hoje · 8 nov</div><ul class="bf-list">'
+                     + linha_cor("heart-pulse", "Farmácia", "Saúde · Débito", "− R$ 75,00", "Saúde")
+                     + linha_cor("car", "Uber", "Transporte · Pix", "− R$ 18,40", "Transporte")
+                     + linha_cor("shopping-cart", "Mercado do bairro", "Mercado · Débito", "− R$ 32,90", "Mercado")
+                     + '</ul><div class="bf-list__day">5 nov</div><ul class="bf-list">'
+                     + linha_cor("house", "Aluguel", "Moradia · Pix", "− R$ 1.600,00", "Moradia")
+                     + linha_cor("briefcase", "Salário", "Salário", "+ R$ 8.500,00", tipo="receita")
+                     + "</ul></section>", aba=1),
+              "O fundo do ícone tem a cor da categoria, a mesma da barra de gastos. O valor continua vermelho (gasto) ou verde (receita): a cor da categoria diz \"o quê\", o sinal diz \"entrou ou saiu\".")
+     + painel("2 · Início › Gastos por categoria",
+              iphone(topo_inicio("R$ 4.218,35", "R$ 9.350", "R$ 3.632", "R$ 1.500")
+                     + '<section class="bf-card" style="display:grid;gap:12px"><h3 class="bf-card__title">Gastos por categoria</h3>' + barra
+                     + '<ul style="display:grid;gap:8px;margin:0;padding:0;list-style:none">'
+                     + legenda("var(--chart-1)", "Moradia", "R$ 1.600,00", "44%")
+                     + legenda(LISTRAS, "Fatura", "R$ 1.234,56", "26%")
+                     + legenda("var(--chart-2)", "Mercado", "R$ 508,30", "14%")
+                     + legenda("var(--chart-3)", "Transporte", "R$ 330,40", "9%")
+                     + legenda("var(--chart-6)", "Saúde", "R$ 260,00", "7%")
+                     + "</ul></section>", aba=0),
+              "\"Lançar o total da fatura\" agora usa a categoria Fatura (ícone de cartão). Ela fica separada das outras, listrada em cinza: é um total sem detalhe, não uma cor nova. Os totais já lançados como Outros passam para Fatura.")
+     + "</div>",
+     """As categorias de gasto ganham cor própria nas linhas — a mesma da barra "Gastos por categoria" — com o ícone
+escurecido até ter 3:1 sobre o fundo nos dois temas. Receitas seguem verdes e aportes, âmbar. A cor nunca é o único
+sinal: toda linha tem ícone e nome. A nova categoria Fatura junta o total das faturas lançadas sem detalhe.""",
+     altura=980, largura=900)
+
 print("telas geradas em", RAIZ)
