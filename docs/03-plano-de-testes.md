@@ -18,7 +18,7 @@
 
 Infra já validada: `tests/e2e/infra.spec.ts` abre o app (Next) no WebKit com perfil de iPhone 16 ✅
 
-Progresso: fatias 1–27 ✅ + rodada 2 (telas aprovadas) ✅ + rodada 3 (cartão de crédito) ✅ + rodada 4 (Atalho no crédito, editar data e forma) ✅ + rodada 5 (identidade BlueFin, faturas e assinaturas) ✅ — 83 testes (unit 26 · api 18 · e2e 39)
+Progresso: fatias 1–27 ✅ + rodada 2 (telas aprovadas) ✅ + rodada 3 (cartão de crédito) ✅ + rodada 4 (Atalho no crédito, editar data e forma) ✅ + rodada 5 (identidade BlueFin, faturas e assinaturas) ✅ + rodada 6 (extrato, aviso da fatura, sem internet, cores) ✅ — 96 testes (unit 32 · api 20 · e2e 44)
 
 ## As costuras (para confirmar)
 
@@ -121,6 +121,13 @@ Cada linha é **um** teste. O nome do teste é o comportamento.
 - Início: por cartão, fatura fechada ("vence dia 10") e aberta ("fecha dia 3"), cada uma abre o mês dela; parcelas a vir depois da aberta.
 - Lançamentos: fatura fechada sem compras aparece vazia com "Lançar o total da fatura".
 - Assinaturas: "Todo mês" no crédito cai em toda fatura (24 meses, completados sozinhos); valor novo vale da aberta em diante; "Parar de repetir" tira os próximos meses.
+
+### Rodada 6 — extrato Débito/Crédito, aviso da fatura (push), sem internet e cores por categoria (telas 21 a 24)
+- Regra (`unit`): a fatura sai da conta no vencimento (`pagoEm`); até lá fica "a pagar"; fecha 25/vence 5 sai no mês seguinte.
+- Extrato: Débito é a conta (fatura numa linha só, no vencimento; "A pagar" antes); Crédito são as compras por fatura. Conferido com mutação.
+- Aviso da fatura (`unit` + `api`): um dia antes e no dia do vencimento; o agendamento manda para um serviço de push de mentira, cifrado de verdade, e esquece o aparelho que responde 410; sem CRON_SECRET → 401.
+- Sem internet: lançado offline fica "salvando…" e sobe quando volta; sobe mesmo com o app fechado; reenviar o mesmo id não duplica (duas mutações). Cache de telas conferido num build de produção local.
+- Cores: cada categoria com a sua cor na linha (tokens cat-N com 3:1); Outros neutro; Fatura nas cores da marca, listrada na barra, fora do botão + e do Atalho.
 
 ## Dados de teste
 
