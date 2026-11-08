@@ -47,17 +47,29 @@ export interface LancamentoSemente {
   descricao: string;
   /** ISO 8601; padrão: agora. */
   data?: string;
+  /** Despesa à vista: débito (padrão) ou Pix. */
+  forma?: 'debito' | 'pix';
+  /** Parcela de uma compra no crédito, no mês de fatura `competencia` ("2026-12"). */
+  credito?: { cartao: string; parcela: number; parcelas: number; competencia: string };
 }
 
 /** Prepara lançamentos do usuário pelo mesmo acesso (com RLS) que o app usa. */
 export async function semearLancamentos(usuario: Usuario, lancamentos: LancamentoSemente[]) {
   const db = clienteDe(usuario);
-  const { data: categorias } = await db.from('categorias').select('id, nome, tipo');
+  const [{ data: categorias }, { data: cartoes }] = await Promise.all([
+    db.from('categorias').select('id, nome, tipo'),
+    db.from('cartoes').select('id, nome'),
+  ]);
   const linhas = lancamentos.map((l) => {
     const tipo = l.tipo ?? 'despesa';
     const cat = categorias?.find((c) => c.nome === l.categoria && c.tipo === tipo);
     if (!cat) throw new Error(`categoria não encontrada: ${l.categoria}`);
-    return { user_id: usuario.id, tipo, valor: l.valor, categoria_id: cat.id, descricao: l.descricao, data: l.data ?? new Date().toISOString() };
+    const base = { user_id: usuario.id, tipo, valor: l.valor, categoria_id: cat.id, descricao: l.descricao, data: l.data ?? new Date().toISOString() };
+    if (!l.credito) return { ...base, ...(l.forma && { forma_pagamento: l.forma }) };
+    const cartao = cartoes?.find((c) => c.nome === l.credito!.cartao);
+    if (!cartao) throw new Error(`cartão não encontrado: ${l.credito.cartao}`);
+    const { parcela, parcelas, competencia } = l.credito;
+    return { ...base, forma_pagamento: 'credito', cartao_id: cartao.id, compra_id: crypto.randomUUID(), parcela, parcelas, competencia };
   });
   const { error } = await db.from('lancamentos').insert(linhas);
   if (error) throw error;

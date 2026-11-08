@@ -20,16 +20,23 @@ export function diaDe(data: string | Date): string {
   return diaSP.format(new Date(data));
 }
 
+/** Dia curto: "7 nov" no ano corrente, "24 dez 2025" em outro ano. */
+export function diaCurto(data: string, agora: Date = new Date()): string {
+  const [ano, mes, d] = diaDe(data).split('-').map(Number) as [number, number, number];
+  const curto = `${d} ${MESES_CURTOS[mes - 1]}`;
+  return ano === Number(diaDe(agora).slice(0, 4)) ? curto : `${curto} ${ano}`;
+}
+
 /** Rótulo do dia para agrupar a lista: "Hoje · 7 nov", "Ontem · 6 nov", "5 nov", "24 dez 2025". */
 export function rotuloDoDia(data: string, agora: Date = new Date()): string {
   const dia = diaDe(data);
-  const [ano, mes, d] = dia.split('-').map(Number) as [number, number, number];
+  const [, mes, d] = dia.split('-').map(Number) as [number, number, number];
   const curto = `${d} ${MESES_CURTOS[mes - 1]}`;
   const hoje = diaDe(agora);
   const ontem = diaDe(new Date(new Date(`${hoje}T12:00:00-03:00`).getTime() - 86_400_000));
   if (dia === hoje) return `Hoje · ${curto}`;
   if (dia === ontem) return `Ontem · ${curto}`;
-  return ano === Number(hoje.slice(0, 4)) ? curto : `${curto} ${ano}`;
+  return diaCurto(data, agora);
 }
 
 const MES_VALIDO = /^\d{4}-(0[1-9]|1[0-2])$/;
@@ -73,10 +80,24 @@ export function tituloDoMes(mes: string, agora: Date = new Date()): string {
   return mes.slice(0, 4) === mesAtual(agora).slice(0, 4) ? capitalizado : `${capitalizado} de ${mes.slice(0, 4)}`;
 }
 
-/** Opções do seletor de mês: os últimos 12, com o ano por extenso ("Outubro de 2026"). */
-export function opcoesDeMes(agora: Date = new Date()): { mes: string; titulo: string }[] {
-  return mesesRecentes(agora).map((m) => {
+export interface OpcaoDeMes {
+  mes: string;
+  /** "Outubro de 2026". */
+  titulo: string;
+  /** É o mês atual (o link vai para a página sem ?mes). */
+  hoje: boolean;
+}
+
+/**
+ * Opções do seletor de mês, do mais novo para o mais antigo: os meses à frente até `ultimaParcela`
+ * (se houver parcelas no crédito a vir) e os últimos 12, com o ano por extenso.
+ */
+export function opcoesDeMes(agora: Date = new Date(), ultimaParcela: string | null = null): OpcaoDeMes[] {
+  const atual = mesAtual(agora);
+  const futuros: string[] = [];
+  for (let m = ultimaParcela; m && m > atual; m = somarMeses(m, -1)) futuros.push(m);
+  return [...futuros, ...mesesRecentes(agora)].map((m) => {
     const nome = nomeDoMes(m);
-    return { mes: m, titulo: `${nome[0]!.toUpperCase()}${nome.slice(1)} de ${m.slice(0, 4)}` };
+    return { mes: m, titulo: `${nome[0]!.toUpperCase()}${nome.slice(1)} de ${m.slice(0, 4)}`, hoje: m === atual };
   });
 }

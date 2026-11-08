@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { mesDaUrl, mesesRecentes, rotuloDoDia, tituloDoMes } from '../../src/domain/datas';
+import { mesDaUrl, mesesRecentes, opcoesDeMes, rotuloDoDia, tituloDoMes } from '../../src/domain/datas';
 
 test.describe('datas', () => {
   test('dá nome ao dia de um lançamento no horário de São Paulo', () => {
@@ -26,5 +26,16 @@ test.describe('datas', () => {
     expect(mesesRecentes(agora, 4)).toEqual(['2026-02', '2026-01', '2025-12', '2025-11']);
     expect(tituloDoMes('2026-01', agora)).toBe('Janeiro');
     expect(tituloDoMes('2025-12', agora)).toBe('Dezembro de 2025');
+  });
+
+  test('o seletor de mês inclui os meses à frente até a última parcela', () => {
+    const agora = new Date('2026-11-07T12:00:00-03:00');
+    const opcoes = opcoesDeMes(agora, '2027-01');
+    expect(opcoes.slice(0, 4).map((o) => o.titulo)).toEqual(['Janeiro de 2027', 'Dezembro de 2026', 'Novembro de 2026', 'Outubro de 2026']);
+    expect(opcoes).toHaveLength(14);
+    expect(opcoes.filter((o) => o.hoje).map((o) => o.mes)).toEqual(['2026-11']);
+    // Sem parcelas à frente: só os últimos 12, começando pelo atual.
+    expect(opcoesDeMes(agora, null).map((o) => o.mes).slice(0, 2)).toEqual(['2026-11', '2026-10']);
+    expect(opcoesDeMes(agora, null)).toHaveLength(12);
   });
 });

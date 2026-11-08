@@ -10,6 +10,12 @@ export function dividirParcelas(total: Centavos, n: number): Centavos[] {
 
 const ultimoDia = (ano: number, mes: number) => new Date(Date.UTC(ano, mes, 0)).getUTCDate();
 
+/** Dia em que a fatura de `mes` ("2026-02") fecha: o dia do cartão, ou o último dia se o mês for mais curto. */
+export function diaDoFechamento(mes: string, diaFechamento: number): number {
+  const [ano, m] = mes.split('-').map(Number) as [number, number];
+  return Math.min(diaFechamento, ultimoDia(ano, m));
+}
+
 /**
  * Mês da fatura em que cai uma compra no crédito (horário de São Paulo).
  * Compra até a véspera do fechamento entra na fatura do mês; a partir do dia do fechamento,

@@ -9,7 +9,7 @@ import { mesAtual, mesDaUrl, nomeDoMes, opcoesDeMes, rotuloDoDia, tituloDoMes } 
 import { MesPicker } from '@/components/app/mes-picker';
 import { summarizeMonth } from '@/domain/summary';
 import { ordemDasCategorias } from '@/server/categorias';
-import { lancamentosDoMes } from '@/server/lancamentos';
+import { lancamentosDoMes, ultimoMesComParcelas } from '@/server/lancamentos';
 
 export default function Inicio({ searchParams }: PageProps<'/'>) {
   return (
@@ -24,14 +24,18 @@ async function ResumoDoMes({ searchParams }: { searchParams: PageProps<'/'>['sea
   const agora = new Date();
   const mes = mesDaUrl((await searchParams).mes, agora);
   const nome = nomeDoMes(mes);
-  const [lancamentos, ordem] = await Promise.all([lancamentosDoMes(mes), ordemDasCategorias()]);
+  const [lancamentos, ordem, ultimaParcela] = await Promise.all([
+    lancamentosDoMes(mes),
+    ordemDasCategorias(),
+    ultimoMesComParcelas(mesAtual(agora)),
+  ]);
   const resumo = summarizeMonth(lancamentos, mes);
 
   return (
     <>
       <div className="mt-2 flex items-center justify-between">
         <h1 className="text-[28px] leading-[34px] font-extrabold tracking-tight">{tituloDoMes(mes, agora)}</h1>
-        <MesPicker base="/" atual={mes} meses={opcoesDeMes(agora)} />
+        <MesPicker base="/" atual={mes} meses={opcoesDeMes(agora, ultimaParcela)} />
       </div>
       <BalanceCard resumo={resumo} nomeMes={nome} />
       <SpendingBar gastos={resumo.porCategoria} ordemPorNome={ordem} />

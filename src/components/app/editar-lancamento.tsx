@@ -12,6 +12,7 @@ import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { CHIP } from './estilos';
 import { IconeCategoria } from './icone-categoria';
+import { metaDe } from './meta';
 import { TransactionRow } from './transaction-row';
 
 export interface CategoriaEditavel {
@@ -19,14 +20,6 @@ export interface CategoriaEditavel {
   nome: string;
   tipo: string;
   icone: string;
-}
-
-/** Texto de baixo da linha: categoria, parcela (no crédito) e se veio pelo Atalho. */
-function metaDe(l: LancamentoListado): string {
-  const partes = [l.categoria];
-  if (l.forma === 'credito' && l.parcelas && l.parcelas > 1) partes.push(`${l.parcela}/${l.parcelas}`);
-  if (l.origem === 'atalho') partes.push('pelo Atalho');
-  return partes.join(' · ');
 }
 
 /** Linha de lançamento que, ao tocar, abre o sheet para editar (valor, categoria, descrição) ou excluir. */

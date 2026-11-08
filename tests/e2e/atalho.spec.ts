@@ -17,6 +17,6 @@ test.describe('Atalho do iOS', () => {
     await page.getByRole('link', { name: 'Lançamentos' }).click();
     const linha = page.getByRole('region', { name: /^Hoje/ }).getByRole('listitem').filter({ hasText: 'Uber para o trabalho' });
     await expect(linha).toContainText('− R$ 18,40');
-    await expect(linha).toContainText('Transporte · pelo Atalho');
+    await expect(linha).toContainText('Transporte · Débito · pelo Atalho');
   });
 });
