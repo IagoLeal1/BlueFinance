@@ -76,17 +76,3 @@ export async function ultimoMesComParcelas(mes: string): Promise<string | null> 
   if (error) throw error;
   return data?.competencia ?? null;
 }
-
-/** Soma das parcelas no crédito em meses depois de `mes` (o que já está comprometido). */
-export async function parcelasAVir(mes: string): Promise<{ total: number; ultimoMes: string | null; compras: number }> {
-  const supabase = await supabaseServidor();
-  const { data, error } = await supabase
-    .from('lancamentos')
-    .select('valor, competencia, compra_id')
-    .eq('forma_pagamento', 'credito')
-    .gt('competencia', mes);
-  if (error) throw error;
-  const compras = new Set(data.map((l) => l.compra_id).filter(Boolean));
-  const ultimoMes = data.reduce<string | null>((u, l) => (!u || l.competencia > u ? l.competencia : u), null);
-  return { total: data.reduce((t, l) => t + l.valor, 0), ultimoMes, compras: compras.size };
-}

@@ -1,5 +1,5 @@
 import 'server-only';
-import { vencimentoPadrao } from '@/domain/parcelas';
+import { diaDoFechamento, faturasDoCartao, vencimentoPadrao } from '@/domain/parcelas';
 import { supabaseServidor } from '@/lib/supabase/server';
 
 export interface Cartao {
@@ -20,4 +20,50 @@ export async function listarCartoes(): Promise<Cartao[]> {
     diaFechamento: c.dia_fechamento,
     diaVencimento: c.dia_vencimento ?? vencimentoPadrao(c.dia_fechamento),
   }));
+}
+
+export interface ResumoDoCartao {
+  cartao: Cartao;
+  aberta: { mes: string; fecha: number; total: number };
+  fechada: { mes: string; vence: string; total: number } | null;
+}
+
+/**
+ * Para o Início: de cada cartão, a fatura fechada a pagar (até o vencimento) e a aberta, com os totais;
+ * e o que já está comprometido em parcelas depois da fatura aberta.
+ */
+export async function resumoDosCartoes(
+  cartoes: Cartao[],
+  agora: Date,
+): Promise<{ cartoes: ResumoDoCartao[]; aVir: { total: number; ultimoMes: string | null } }> {
+  if (cartoes.length === 0) return { cartoes: [], aVir: { total: 0, ultimoMes: null } };
+  const hoje = agora.toISOString();
+  const faturas = cartoes.map((c) => ({ cartao: c, ...faturasDoCartao(hoje, c.diaFechamento, c.diaVencimento) }));
+  const desde = faturas.map((f) => f.fechada?.mes ?? f.aberta).sort()[0]!;
+
+  const supabase = await supabaseServidor();
+  const { data, error } = await supabase
+    .from('lancamentos')
+    .select('valor, competencia, cartao_id')
+    .eq('forma_pagamento', 'credito')
+    .in('cartao_id', cartoes.map((c) => c.id))
+    .gte('competencia', desde);
+  if (error) throw error;
+
+  const soma = (cartaoId: string, filtro: (mes: string) => boolean) =>
+    data.filter((l) => l.cartao_id === cartaoId && filtro(l.competencia)).reduce((t, l) => t + l.valor, 0);
+  let total = 0;
+  let ultimoMes: string | null = null;
+  const resumos = faturas.map(({ cartao, aberta, fechada }) => {
+    for (const l of data.filter((x) => x.cartao_id === cartao.id && x.competencia > aberta)) {
+      total += l.valor;
+      if (!ultimoMes || l.competencia > ultimoMes) ultimoMes = l.competencia;
+    }
+    return {
+      cartao,
+      aberta: { mes: aberta, fecha: diaDoFechamento(aberta, cartao.diaFechamento), total: soma(cartao.id, (m) => m === aberta) },
+      fechada: fechada && { ...fechada, total: soma(cartao.id, (m) => m === fechada.mes) },
+    };
+  });
+  return { cartoes: resumos, aVir: { total, ultimoMes } };
 }

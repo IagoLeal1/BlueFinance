@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { dividirParcelas, mesDaFatura, mesesDasParcelas } from '../../src/domain/parcelas';
+import { dividirParcelas, faturasDoCartao, mesDaFatura, mesesDasParcelas, vencimentoPadrao } from '../../src/domain/parcelas';
 
 test.describe('parcelas no crédito', () => {
   test('divide o total em parcelas; centavos que sobram ficam na 1ª', () => {
@@ -30,5 +30,26 @@ test.describe('parcelas no crédito', () => {
   test('lista os meses de cada parcela a partir da 1ª fatura', () => {
     expect(mesesDasParcelas('2026-12', 3)).toEqual(['2026-12', '2027-01', '2027-02']);
     expect(mesesDasParcelas('2026-05', 1)).toEqual(['2026-05']);
+  });
+
+  test('vencimento padrão: uma semana depois do fechamento', () => {
+    expect(vencimentoPadrao(3)).toBe(10);
+    expect(vencimentoPadrao(25)).toBe(1);
+    expect(vencimentoPadrao(31)).toBe(7);
+  });
+
+  test('fatura aberta e fechada (a pagar até o vencimento)', () => {
+    const em = (dia: string) => `${dia}T12:00:00-03:00`;
+    // Fecha 3, vence 10: em 7/11 a aberta é dezembro e a de novembro está a pagar até 10/11.
+    expect(faturasDoCartao(em('2026-11-07'), 3, 10)).toEqual({ aberta: '2026-12', fechada: { mes: '2026-11', vence: '2026-11-10' } });
+    expect(faturasDoCartao(em('2026-11-10'), 3, 10).fechada).toEqual({ mes: '2026-11', vence: '2026-11-10' });
+    expect(faturasDoCartao(em('2026-11-11'), 3, 10)).toEqual({ aberta: '2026-12', fechada: null });
+    // Antes do fechamento: a aberta é a do mês; a de outubro já venceu.
+    expect(faturasDoCartao(em('2026-11-02'), 3, 10)).toEqual({ aberta: '2026-11', fechada: null });
+    // Vence antes de fechar (fecha 25, vence 5): vence no mês seguinte.
+    expect(faturasDoCartao(em('2026-11-27'), 25, 5)).toEqual({ aberta: '2026-12', fechada: { mes: '2026-11', vence: '2026-12-05' } });
+    expect(faturasDoCartao(em('2026-12-03'), 25, 5)).toEqual({ aberta: '2026-12', fechada: { mes: '2026-11', vence: '2026-12-05' } });
+    // Vencimento 31 em fevereiro vale o último dia.
+    expect(faturasDoCartao(em('2027-02-21'), 20, 31)).toEqual({ aberta: '2027-03', fechada: { mes: '2027-02', vence: '2027-02-28' } });
   });
 });

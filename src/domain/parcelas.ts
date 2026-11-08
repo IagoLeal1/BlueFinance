@@ -35,3 +35,24 @@ export const vencimentoPadrao = (diaFechamento: number) => ((diaFechamento + 6) 
 export function mesesDasParcelas(primeiro: string, n: number): string[] {
   return Array.from({ length: n }, (_, i) => somarMeses(primeiro, i));
 }
+
+export interface FaturasDoCartao {
+  /** Fatura que está recebendo as compras de hoje ("2026-12"). */
+  aberta: string;
+  /** A anterior, já fechada, enquanto não passa do vencimento (dia "2026-11-10"); depois, null. */
+  fechada: { mes: string; vence: string } | null;
+}
+
+/**
+ * Faturas de um cartão hoje: a aberta e a fechada a pagar. A fatura de um mês fecha no dia de fechamento
+ * dele e vence no dia de vencimento do mesmo mês — ou do seguinte, se o vencimento vem antes do fechamento
+ * (fecha 25, vence 5). Dia 31 em mês curto vale o último dia.
+ */
+export function faturasDoCartao(hoje: string, diaFechamento: number, diaVencimento: number): FaturasDoCartao {
+  const aberta = mesDaFatura(hoje, diaFechamento);
+  const mes = somarMeses(aberta, -1);
+  const mesVence = diaVencimento > diaFechamento ? mes : somarMeses(mes, 1);
+  const [ano, m] = mesVence.split('-').map(Number) as [number, number];
+  const vence = `${mesVence}-${String(Math.min(diaVencimento, ultimoDia(ano, m))).padStart(2, '0')}`;
+  return { aberta, fechada: diaDe(hoje) <= vence ? { mes, vence } : null };
+}

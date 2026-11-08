@@ -1,5 +1,5 @@
 import { test, expect, entrar, semearCartao, semearLancamentos } from './fixtures';
-import { mesAtual, nomeDoMes, somarMeses } from '../../src/domain/datas';
+import { diaDe, mesAtual, nomeDoMes, somarMeses } from '../../src/domain/datas';
 
 const CURTOS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 
@@ -37,28 +37,33 @@ test.describe('fatura do cartão', () => {
     await expect(fatura.getByRole('listitem').filter({ hasText: 'Aluguel' })).toHaveCount(0);
   });
 
-  test('o Início mostra a fatura do mês e o que já está comprometido nos próximos', async ({ page, usuario }) => {
+  test('o Início mostra a fatura fechada (a pagar) e a aberta de cada cartão', async ({ page, usuario }) => {
+    // Fecha dia 1 e vence hoje: a fatura deste mês está fechada e a pagar; a do mês que vem está aberta.
     const mes = mesAtual();
+    const dia = Number(diaDe(new Date()).slice(8));
     const fone = (parcela: number) => ({
       valor: 40000, categoria: 'Lazer', descricao: 'Fone de ouvido',
-      credito: { cartao: 'Nubank', parcela, parcelas: 3, competencia: somarMeses(mes, parcela - 1), compra: 'fone' },
+      credito: { cartao: 'Nubank', parcela, parcelas: 3, competencia: somarMeses(mes, parcela), compra: 'fone' },
     });
-    await semearCartao(usuario, 'Nubank', 3);
+    await semearCartao(usuario, 'Nubank', 1, dia);
     await semearLancamentos(usuario, [
+      { valor: 123456, categoria: 'Outros', descricao: 'Compras antigas', credito: { cartao: 'Nubank', parcela: 1, parcelas: 1, competencia: mes } },
       fone(1), fone(2), fone(3),
-      { valor: 12000, categoria: 'Mercado', descricao: 'Feira', credito: { cartao: 'Nubank', parcela: 1, parcelas: 1, competencia: mes } },
-      { valor: 5000, categoria: 'Transporte', descricao: 'Ônibus', forma: 'pix' },
+      { valor: 12000, categoria: 'Mercado', descricao: 'Feira', credito: { cartao: 'Nubank', parcela: 1, parcelas: 1, competencia: somarMeses(mes, 1) } },
     ]);
     await entrar(page, usuario);
 
-    // O "Saiu" do mês já conta a parcela que cai nele.
-    await expect(page.getByRole('region', { name: /^Resumo de / }).getByRole('group', { name: 'Saiu' })).toContainText('R$ 570');
     const cartao = page.getByRole('region', { name: 'Cartão de crédito' });
-    await expect(cartao.getByRole('group', { name: `Fatura de ${nomeDoMes(mes)}` })).toContainText('R$ 520');
-    await expect(cartao.getByRole('group', { name: 'Parcelas a vir' })).toContainText('R$ 800');
-    await expect(cartao).toContainText(`Nubank fecha dia 3 · 1 compra parcelada até ${nomeDoMes(somarMeses(mes, 2))}`);
+    const fechada = cartao.getByRole('link', { name: new RegExp(`^Fatura de ${nomeDoMes(mes)}`) });
+    await expect(fechada).toContainText(`Fechada · vence dia ${dia}`);
+    await expect(fechada).toContainText('R$ 1.234,56');
+    const aberta = cartao.getByRole('link', { name: new RegExp(`^Fatura de ${nomeDoMes(somarMeses(mes, 1))}`) });
+    await expect(aberta).toContainText('Aberta · fecha dia 1');
+    await expect(aberta).toContainText('R$ 520,00');
+    await expect(cartao).toContainText(`Mais R$ 800 em parcelas até ${nomeDoMes(somarMeses(mes, 3))}`);
 
-    await cartao.getByRole('link', { name: 'Ver fatura' }).click();
+    await aberta.click();
+    await expect(page).toHaveURL(new RegExp(`/lancamentos\\?mes=${somarMeses(mes, 1)}$`));
     await expect(page.getByRole('region', { name: 'Fatura Nubank' })).toContainText('R$ 520,00');
   });
 
