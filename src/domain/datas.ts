@@ -12,16 +12,6 @@ export function nomeDoMes(mes: string): string {
   return MESES[Number(mes.slice(5, 7)) - 1]!;
 }
 
-/**
- * Início e fim do mês em São Paulo, para filtrar no banco.
- * O Brasil não tem horário de verão desde 2019, então o fuso é sempre -03:00.
- */
-export function limitesDoMes(mes: string): { inicio: string; fim: string } {
-  const [ano, m] = mes.split('-').map(Number) as [number, number];
-  const prox = m === 12 ? `${ano + 1}-01` : `${ano}-${String(m + 1).padStart(2, '0')}`;
-  return { inicio: `${mes}-01T00:00:00-03:00`, fim: `${prox}-01T00:00:00-03:00` };
-}
-
 const diaSP = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' });
 const MESES_CURTOS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 

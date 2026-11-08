@@ -23,7 +23,21 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "categorias": {
+            "cartoes": {
+                  Row: {
+                    "criado_em": string,"dia_fechamento": number,"id": string,"nome": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "criado_em"?: string,"dia_fechamento": number,"id"?: string,"nome": string,"user_id": string
+                  }
+                  Update: {
+                    "criado_em"?: string,"dia_fechamento"?: number,"id"?: string,"nome"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"categorias": {
                   Row: {
                     "icone": string,"id": string,"nome": string,"ordem": number,"tipo": string,"user_id": string
                   }
@@ -53,17 +67,23 @@ export type Database = {
                   ]
                 },"lancamentos": {
                   Row: {
-                    "categoria_id": string | null,"criado_em": string,"data": string,"descricao": string,"id": string,"investimento_id": string | null,"origem": string,"tipo": string,"user_id": string,"valor": number
+                    "cartao_id": string | null,"categoria_id": string | null,"competencia": string,"compra_id": string | null,"criado_em": string,"data": string,"descricao": string,"forma_pagamento": string | null,"id": string,"investimento_id": string | null,"origem": string,"parcela": number | null,"parcelas": number | null,"tipo": string,"user_id": string,"valor": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "categoria_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"id"?: string,"investimento_id"?: string | null,"origem"?: string,"tipo": string,"user_id": string,"valor": number
+                    "cartao_id"?: string | null,"categoria_id"?: string | null,"competencia"?: string,"compra_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"forma_pagamento"?: string | null,"id"?: string,"investimento_id"?: string | null,"origem"?: string,"parcela"?: number | null,"parcelas"?: number | null,"tipo": string,"user_id": string,"valor": number
                   }
                   Update: {
-                    "categoria_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"id"?: string,"investimento_id"?: string | null,"origem"?: string,"tipo"?: string,"user_id"?: string,"valor"?: number
+                    "cartao_id"?: string | null,"categoria_id"?: string | null,"competencia"?: string,"compra_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"forma_pagamento"?: string | null,"id"?: string,"investimento_id"?: string | null,"origem"?: string,"parcela"?: number | null,"parcelas"?: number | null,"tipo"?: string,"user_id"?: string,"valor"?: number
                   }
                   Relationships: [
                     {
+      foreignKeyName: "lancamentos_cartao_id_fkey"
+      columns: ["cartao_id"]
+isOneToOne: false
+      referencedRelation: "cartoes"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "lancamentos_categoria_id_fkey"
       columns: ["categoria_id"]
 isOneToOne: false
@@ -105,6 +125,9 @@ isOneToOne: false
                            },
 "registrar_aporte":
 { Args: { "p_descricao": string,"p_investimento": string,"p_valor": number }; Returns: string
+                           },
+"regravar_compra":
+{ Args: { "p_compra": string,"p_linhas": Json }; Returns: undefined
                            }
           }
           Enums: {

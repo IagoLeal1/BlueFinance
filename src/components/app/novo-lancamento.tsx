@@ -88,6 +88,7 @@ export function NovoLancamento({ categorias, investimentos }: { categorias: Cate
     adicionarPendente({
       id: idTemporario, tipo, valor, data: new Date().toISOString(), origem: 'app',
       descricao: descricao || escolhido.nome, categoria: escolhido.nome, icone: escolhido.icone,
+      forma: null, cartao: null, compraId: null, parcela: null, parcelas: null,
     });
     setAberto(false);
     setCentavos(0);
