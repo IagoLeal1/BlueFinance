@@ -18,7 +18,7 @@
 
 Infra já validada: `tests/e2e/infra.spec.ts` abre o app (Next) no WebKit com perfil de iPhone 16 ✅
 
-Progresso: fatias 1–27 ✅ + rodada 2 (telas aprovadas) ✅ — 51 testes (unit 18 · api 12 · e2e 21)
+Progresso: fatias 1–27 ✅ + rodada 2 (telas aprovadas) ✅ + rodada 3 (cartão de crédito) ✅ — 66 testes (unit 24 · api 12 · e2e 30)
 
 ## As costuras (para confirmar)
 
@@ -100,6 +100,14 @@ Cada linha é **um** teste. O nome do teste é o comportamento.
 - Investimentos: aportado, rendeu e atualizar valor atual; rendimento em %.
 - Botão +: última categoria usada pré-marcada; descrição opcional.
 - Ajustes: passo a passo do Botão de Ação e conta.
+
+### Rodada 3 — Débito, Pix e Crédito (telas 13–17)
+- Regras (`unit`): dividir em parcelas (centavos que sobram na 1ª), mês da fatura pelo dia de fechamento (31 em mês curto = último dia), meses das parcelas; `mesDaUrl` aceita até 24 meses à frente; seletor de mês vai até a última parcela.
+- Cartões em Ajustes: cadastrar, editar e excluir; isolamento por RLS (`api`).
+- Botão +: Como pagou (Débito/Pix/Crédito); no crédito, cartão e 1x–24x, cada parcela na fatura do seu mês; Desfazer apaga a compra inteira (conferido com mutação).
+- Lançamentos: card "Fatura {cartão}" com total e dia do fechamento; meta "Lazer · 1/3 · comprado em 7 out"; débito/Pix por dia ("Moradia · Pix", "Transporte · Débito · pelo Atalho").
+- Início: card do cartão (fatura do mês e parcelas a vir) só para quem tem cartão (conferido com mutação); "Saiu" conta as parcelas do mês.
+- Compra parcelada: tocar numa parcela abre a compra inteira; mudar total/parcelas refaz a divisão; excluir apaga todas, com confirmação.
 
 ## Dados de teste
 
