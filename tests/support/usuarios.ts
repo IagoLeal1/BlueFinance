@@ -49,8 +49,11 @@ export interface LancamentoSemente {
   data?: string;
   /** Despesa à vista: débito (padrão) ou Pix. */
   forma?: 'debito' | 'pix';
-  /** Parcela de uma compra no crédito, no mês de fatura `competencia` ("2026-12"). */
-  credito?: { cartao: string; parcela: number; parcelas: number; competencia: string };
+  /**
+   * Parcela de uma compra no crédito, no mês de fatura `competencia` ("2026-12").
+   * Parcelas com o mesmo rótulo `compra` são da mesma compra.
+   */
+  credito?: { cartao: string; parcela: number; parcelas: number; competencia: string; compra?: string };
 }
 
 /** Prepara lançamentos do usuário pelo mesmo acesso (com RLS) que o app usa. */
@@ -60,6 +63,12 @@ export async function semearLancamentos(usuario: Usuario, lancamentos: Lancament
     db.from('categorias').select('id, nome, tipo'),
     db.from('cartoes').select('id, nome'),
   ]);
+  const compras = new Map<string, string>();
+  const idDaCompra = (rotulo?: string) => {
+    if (!rotulo) return crypto.randomUUID();
+    if (!compras.has(rotulo)) compras.set(rotulo, crypto.randomUUID());
+    return compras.get(rotulo)!;
+  };
   const linhas = lancamentos.map((l) => {
     const tipo = l.tipo ?? 'despesa';
     const cat = categorias?.find((c) => c.nome === l.categoria && c.tipo === tipo);
@@ -68,8 +77,8 @@ export async function semearLancamentos(usuario: Usuario, lancamentos: Lancament
     if (!l.credito) return { ...base, ...(l.forma && { forma_pagamento: l.forma }) };
     const cartao = cartoes?.find((c) => c.nome === l.credito!.cartao);
     if (!cartao) throw new Error(`cartão não encontrado: ${l.credito.cartao}`);
-    const { parcela, parcelas, competencia } = l.credito;
-    return { ...base, forma_pagamento: 'credito', cartao_id: cartao.id, compra_id: crypto.randomUUID(), parcela, parcelas, competencia };
+    const { parcela, parcelas, competencia, compra } = l.credito;
+    return { ...base, forma_pagamento: 'credito', cartao_id: cartao.id, compra_id: idDaCompra(compra), parcela, parcelas, competencia };
   });
   const { error } = await db.from('lancamentos').insert(linhas);
   if (error) throw error;

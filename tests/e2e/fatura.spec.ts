@@ -36,4 +36,36 @@ test.describe('fatura do cartão', () => {
     await expect(aluguel).toContainText('Moradia · Pix');
     await expect(fatura.getByRole('listitem').filter({ hasText: 'Aluguel' })).toHaveCount(0);
   });
+
+  test('o Início mostra a fatura do mês e o que já está comprometido nos próximos', async ({ page, usuario }) => {
+    const mes = mesAtual();
+    const fone = (parcela: number) => ({
+      valor: 40000, categoria: 'Lazer', descricao: 'Fone de ouvido',
+      credito: { cartao: 'Nubank', parcela, parcelas: 3, competencia: somarMeses(mes, parcela - 1), compra: 'fone' },
+    });
+    await semearCartao(usuario, 'Nubank', 3);
+    await semearLancamentos(usuario, [
+      fone(1), fone(2), fone(3),
+      { valor: 12000, categoria: 'Mercado', descricao: 'Feira', credito: { cartao: 'Nubank', parcela: 1, parcelas: 1, competencia: mes } },
+      { valor: 5000, categoria: 'Transporte', descricao: 'Ônibus', forma: 'pix' },
+    ]);
+    await entrar(page, usuario);
+
+    // O "Saiu" do mês já conta a parcela que cai nele.
+    await expect(page.getByRole('region', { name: /^Resumo de / }).getByRole('group', { name: 'Saiu' })).toContainText('R$ 570');
+    const cartao = page.getByRole('region', { name: 'Cartão de crédito' });
+    await expect(cartao.getByRole('group', { name: `Fatura de ${nomeDoMes(mes)}` })).toContainText('R$ 520');
+    await expect(cartao.getByRole('group', { name: 'Parcelas a vir' })).toContainText('R$ 800');
+    await expect(cartao).toContainText(`Nubank fecha dia 3 · 1 compra parcelada até ${nomeDoMes(somarMeses(mes, 2))}`);
+
+    await cartao.getByRole('link', { name: 'Ver fatura' }).click();
+    await expect(page.getByRole('region', { name: 'Fatura Nubank' })).toContainText('R$ 520,00');
+  });
+
+  test('sem cartão cadastrado, o Início não mostra o card do cartão', async ({ page, usuario }) => {
+    await semearLancamentos(usuario, [{ valor: 5000, categoria: 'Transporte', descricao: 'Ônibus' }]);
+    await entrar(page, usuario);
+    await expect(page.getByRole('region', { name: 'Últimos' })).toContainText('Ônibus');
+    await expect(page.getByRole('region', { name: 'Cartão de crédito' })).toHaveCount(0);
+  });
 });
