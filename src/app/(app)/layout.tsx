@@ -3,6 +3,7 @@ import { FeedbackProvider } from '@/components/app/feedback';
 import { NovoLancamento } from '@/components/app/novo-lancamento';
 import { TabBar } from '@/components/app/tab-bar';
 import { supabaseServidor } from '@/lib/supabase/server';
+import { listarCartoes } from '@/server/cartoes';
 
 export default function AppLayout({ children }: LayoutProps<'/'>) {
   return (
@@ -23,10 +24,11 @@ export default function AppLayout({ children }: LayoutProps<'/'>) {
 
 async function BotaoNovoLancamento() {
   const supabase = await supabaseServidor();
-  const [{ data: cats }, { data: invs }] = await Promise.all([
+  const [{ data: cats }, { data: invs }, cartoes] = await Promise.all([
     supabase.from('categorias').select('nome, tipo, icone').order('ordem'),
     supabase.from('investimentos').select('id, nome').order('nome'),
+    listarCartoes(),
   ]);
   const categorias = (cats ?? []).map((c) => ({ ...c, tipo: c.tipo as 'despesa' | 'receita' }));
-  return <NovoLancamento categorias={categorias} investimentos={invs ?? []} />;
+  return <NovoLancamento categorias={categorias} investimentos={invs ?? []} cartoes={cartoes} />;
 }

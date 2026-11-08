@@ -62,3 +62,9 @@ export async function semearLancamentos(usuario: Usuario, lancamentos: Lancament
   const { error } = await db.from('lancamentos').insert(linhas);
   if (error) throw error;
 }
+
+/** Cadastra um cartão de crédito do usuário pelo acesso do app (com RLS). */
+export async function semearCartao(usuario: Usuario, nome: string, diaFechamento: number) {
+  const { error } = await clienteDe(usuario).from('cartoes').insert({ user_id: usuario.id, nome, dia_fechamento: diaFechamento });
+  if (error) throw error;
+}

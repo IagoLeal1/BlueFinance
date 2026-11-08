@@ -1,4 +1,4 @@
-import { diaDe } from './datas';
+import { diaDe, somarMeses } from './datas';
 import type { Centavos } from './money';
 
 /** Divide o total em `n` parcelas de centavos inteiros; o que sobra da divisão vai na 1ª. */
@@ -7,12 +7,6 @@ export function dividirParcelas(total: Centavos, n: number): Centavos[] {
   const resto = total - base * n;
   return Array.from({ length: n }, (_, i) => (i === 0 ? base + resto : base));
 }
-
-const somarMeses = (mes: string, k: number): string => {
-  const [ano, m] = mes.split('-').map(Number) as [number, number];
-  const total = ano * 12 + (m - 1) + k;
-  return `${Math.floor(total / 12)}-${String((total % 12) + 1).padStart(2, '0')}`;
-};
 
 const ultimoDia = (ano: number, mes: number) => new Date(Date.UTC(ano, mes, 0)).getUTCDate();
 

@@ -1,7 +1,9 @@
 'use server';
 
 import { refresh } from 'next/cache';
+import { randomUUID } from 'node:crypto';
 import type { TipoLancamento } from '@/domain/money';
+import { dividirParcelas, mesDaFatura, mesesDasParcelas } from '@/domain/parcelas';
 import { supabaseServidor } from '@/lib/supabase/server';
 
 export interface EstadoLancamento {
@@ -9,7 +11,12 @@ export interface EstadoLancamento {
   erro?: string;
   /** Id do lançamento criado — usado pelo "Desfazer". */
   id?: string;
+  /** Compra no crédito: id da compra (todas as parcelas) — o "Desfazer" apaga a compra inteira. */
+  compraId?: string;
 }
+
+const FORMAS = ['debito', 'pix', 'credito'] as const;
+type Forma = (typeof FORMAS)[number];
 
 const TIPOS: TipoLancamento[] = ['despesa', 'receita', 'investimento'];
 
@@ -45,15 +52,70 @@ export async function criarLancamento(_anterior: EstadoLancamento, form: FormDat
     .maybeSingle();
   if (!categoria) return { erro: 'Escolha uma categoria.' };
 
+  const forma = (FORMAS as readonly string[]).includes(String(form.get('forma'))) ? (String(form.get('forma')) as Forma) : 'debito';
+  if (tipo === 'despesa' && forma === 'credito') {
+    return criarCompraNoCredito(supabase, userId, form, valor, { id: categoria.id, nome: categoria.nome }, descricao);
+  }
+
   const { data: criado, error } = await supabase
     .from('lancamentos')
-    .insert({ user_id: userId, tipo, valor, categoria_id: categoria.id, descricao: descricao || categoria.nome })
+    .insert({
+      user_id: userId,
+      tipo,
+      valor,
+      categoria_id: categoria.id,
+      descricao: descricao || categoria.nome,
+      forma_pagamento: tipo === 'despesa' ? forma : null,
+    })
     .select('id')
     .single();
   if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
 
   refresh();
   return { ok: true, id: criado.id };
+}
+
+/**
+ * Compra no crédito: divide em parcelas e grava cada uma no mês da sua fatura
+ * (pelo dia de fechamento do cartão). Um único insert com todas as linhas — ou grava tudo, ou nada.
+ */
+async function criarCompraNoCredito(
+  supabase: Awaited<ReturnType<typeof supabaseServidor>>,
+  userId: string,
+  form: FormData,
+  total: number,
+  categoria: { id: string; nome: string },
+  descricao: string,
+): Promise<EstadoLancamento> {
+  const parcelas = Number(form.get('parcelas') ?? 1);
+  if (!Number.isInteger(parcelas) || parcelas < 1 || parcelas > 24) return { erro: 'Escolha de 1 a 24 parcelas.' };
+  const { data: cartao } = await supabase.from('cartoes').select('id, dia_fechamento').eq('id', String(form.get('cartao_id') ?? '')).maybeSingle();
+  if (!cartao) return { erro: 'Escolha o cartão.' };
+
+  const agora = new Date().toISOString();
+  const meses = mesesDasParcelas(mesDaFatura(agora, cartao.dia_fechamento), parcelas);
+  const valores = dividirParcelas(total, parcelas);
+  const compraId = randomUUID();
+  const { error } = await supabase.from('lancamentos').insert(
+    valores.map((valor, i) => ({
+      user_id: userId,
+      tipo: 'despesa',
+      valor,
+      categoria_id: categoria.id,
+      descricao: descricao || categoria.nome,
+      data: agora,
+      forma_pagamento: 'credito',
+      cartao_id: cartao.id,
+      compra_id: compraId,
+      parcela: i + 1,
+      parcelas,
+      competencia: meses[i]!,
+    })),
+  );
+  if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
+
+  refresh();
+  return { ok: true, compraId };
 }
 
 /** Altera valor, descrição e categoria de um lançamento do usuário (aporte ajusta o investimento junto). */
@@ -82,6 +144,15 @@ export async function editarLancamento(_anterior: EstadoLancamento, form: FormDa
 export async function excluirLancamento(_anterior: EstadoLancamento, form: FormData): Promise<EstadoLancamento> {
   const supabase = await supabaseServidor();
   const { error } = await supabase.rpc('excluir_lancamento', { p_id: String(form.get('id') ?? '') });
+  if (error) return { erro: 'Não foi possível excluir. Tente de novo.' };
+  refresh();
+  return { ok: true };
+}
+
+/** Exclui uma compra no crédito inteira (todas as parcelas). */
+export async function excluirCompra(_anterior: EstadoLancamento, form: FormData): Promise<EstadoLancamento> {
+  const supabase = await supabaseServidor();
+  const { error } = await supabase.from('lancamentos').delete().eq('compra_id', String(form.get('compra_id') ?? ''));
   if (error) return { erro: 'Não foi possível excluir. Tente de novo.' };
   refresh();
   return { ok: true };

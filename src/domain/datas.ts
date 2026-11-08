@@ -34,10 +34,21 @@ export function rotuloDoDia(data: string, agora: Date = new Date()): string {
 
 const MES_VALIDO = /^\d{4}-(0[1-9]|1[0-2])$/;
 
-/** Mês da URL (?mes=2026-10) se for válido e não estiver no futuro; senão o mês atual. */
+/** Soma `k` meses a "AAAA-MM" (k pode ser negativo). */
+export function somarMeses(mes: string, k: number): string {
+  const [ano, m] = mes.split('-').map(Number) as [number, number];
+  const total = ano * 12 + (m - 1) + k;
+  return `${Math.floor(total / 12)}-${String((total % 12) + 1).padStart(2, '0')}`;
+}
+
+/** Até quantos meses à frente dá para abrir (parcelas de até 24x). */
+const MESES_A_FRENTE = 24;
+
+/** Mês da URL (?mes=2026-10) se for válido e até 24 meses à frente; senão o mês atual. */
 export function mesDaUrl(valor: string | string[] | undefined, agora: Date = new Date()): string {
   const atual = mesAtual(agora);
-  return typeof valor === 'string' && MES_VALIDO.test(valor) && valor <= atual ? valor : atual;
+  const limite = somarMeses(atual, MESES_A_FRENTE);
+  return typeof valor === 'string' && MES_VALIDO.test(valor) && valor <= limite ? valor : atual;
 }
 
 /** Os últimos `n` meses, do atual para trás ("2026-11", "2026-10", …). */

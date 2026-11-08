@@ -10,11 +10,13 @@ test.describe('datas', () => {
     expect(rotuloDoDia('2025-12-24T12:00:00-03:00', agora)).toBe('24 dez 2025');
   });
 
-  test('mês da URL: aceita meses passados válidos, recusa futuro e lixo', () => {
+  test('mês da URL: aceita meses válidos até 24 à frente (parcelas), recusa além disso e lixo', () => {
     const agora = new Date('2026-11-07T15:00:00-03:00');
     expect(mesDaUrl('2026-10', agora)).toBe('2026-10');
     expect(mesDaUrl('2025-12', agora)).toBe('2025-12');
-    for (const ruim of ['2026-12', '2026-13', 'outubro', '', undefined, ['2026-10']]) {
+    expect(mesDaUrl('2026-12', agora)).toBe('2026-12');
+    expect(mesDaUrl('2028-11', agora)).toBe('2028-11');
+    for (const ruim of ['2028-12', '2026-13', 'outubro', '', undefined, ['2026-10']]) {
       expect(mesDaUrl(ruim as string | undefined, agora), String(ruim)).toBe('2026-11');
     }
   });

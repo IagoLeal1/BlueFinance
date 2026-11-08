@@ -21,6 +21,14 @@ export interface CategoriaEditavel {
   icone: string;
 }
 
+/** Texto de baixo da linha: categoria, parcela (no crédito) e se veio pelo Atalho. */
+function metaDe(l: LancamentoListado): string {
+  const partes = [l.categoria];
+  if (l.forma === 'credito' && l.parcelas && l.parcelas > 1) partes.push(`${l.parcela}/${l.parcelas}`);
+  if (l.origem === 'atalho') partes.push('pelo Atalho');
+  return partes.join(' · ');
+}
+
 /** Linha de lançamento que, ao tocar, abre o sheet para editar (valor, categoria, descrição) ou excluir. */
 export function LinhaEditavel({ l, categorias }: { l: LancamentoListado; categorias: CategoriaEditavel[] }) {
   const [aberto, setAberto] = useState(false);
@@ -54,7 +62,7 @@ export function LinhaEditavel({ l, categorias }: { l: LancamentoListado; categor
         }}
         gatilho={
           <button type="button" className="w-full text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-md">
-            <TransactionRow l={l} meta={l.origem === 'atalho' ? `${l.categoria} · pelo Atalho` : l.categoria} como="div" />
+            <TransactionRow l={l} meta={metaDe(l)} como="div" />
           </button>
         }
       >
