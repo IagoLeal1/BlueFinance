@@ -237,17 +237,20 @@ export async function excluirCompra(_anterior: EstadoLancamento, form: FormData)
 }
 
 /**
- * Edita uma compra no crédito inteira: valor total, número de parcelas, descrição e categoria.
- * Refaz a divisão a partir da fatura da 1ª parcela e regrava todas as parcelas de uma vez (regravar_compra).
+ * Edita uma compra no crédito inteira: valor total, data, cartão, número de parcelas, descrição e categoria.
+ * Data ou cartão novos recalculam a fatura da 1ª parcela; senão ela fica onde está. Regrava todas as parcelas
+ * de uma vez (regravar_compra). Débito ou Pix desfazem o parcelamento: vira um gasto só, no mês da data.
  */
 export async function editarCompra(_anterior: EstadoLancamento, form: FormData): Promise<EstadoLancamento> {
   const compraId = String(form.get('compra_id') ?? '');
   const total = Number(form.get('valor_centavos'));
-  const parcelas = Number(form.get('parcelas'));
+  const parcelas = Number(form.get('parcelas') ?? 1);
   const descricao = String(form.get('descricao') ?? '').trim();
+  const forma = String(form.get('forma') ?? 'credito');
   if (!Number.isSafeInteger(total) || total <= 0) return { erro: 'Digite um valor maior que zero.' };
   if (!Number.isInteger(parcelas) || parcelas < 1 || parcelas > 24) return { erro: 'Escolha de 1 a 24 parcelas.' };
   if (total < parcelas) return { erro: 'O valor é pequeno demais para tantas parcelas.' };
+  if (!(FORMAS as readonly string[]).includes(forma)) return { erro: 'Escolha como pagou.' };
 
   const supabase = await supabaseServidor();
   const { data: atuais } = await supabase
@@ -267,14 +270,50 @@ export async function editarCompra(_anterior: EstadoLancamento, form: FormData):
     categoriaId = data.id;
   }
 
-  const primeiroMes = somarMeses(primeira.competencia, -((primeira.parcela ?? 1) - 1));
+  const dia = String(form.get('data') ?? '');
+  let data = primeira.data;
+  if (dia && dia !== diaDe(primeira.data)) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dia) || Number.isNaN(Date.parse(`${dia}T12:00:00-03:00`)) || dia > diaDe(new Date())) {
+      return { erro: 'Escolha uma data até hoje.' };
+    }
+    data = new Date(`${dia}T12:00:00-03:00`).toISOString();
+  }
+  const base = { categoria_id: categoriaId, descricao: descricao || primeira.descricao, data };
+
+  if (forma !== 'credito') {
+    // À vista: regrava como uma parcela só (atômico) e depois tira do cartão. Se o 2º passo falhar,
+    // a compra fica como 1x no crédito — nada se perde.
+    const { error } = await supabase.rpc('regravar_compra', {
+      p_compra: compraId,
+      p_linhas: [{ ...base, valor: total, cartao_id: primeira.cartao_id, parcela: 1, parcelas: 1, competencia: mesDe(data) }],
+    });
+    if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
+    const { error: erroForma } = await supabase
+      .from('lancamentos')
+      .update({ forma_pagamento: forma as Forma, cartao_id: null, compra_id: null, parcela: null, parcelas: null })
+      .eq('compra_id', compraId);
+    if (erroForma) return { erro: 'Não foi possível salvar. Tente de novo.' };
+    refresh();
+    return { ok: true };
+  }
+
+  const cartaoNovo = String(form.get('cartao_id') ?? '');
+  let cartao: { id: string; dia_fechamento: number } | null = null;
+  if (cartaoNovo) {
+    const { data: c } = await supabase.from('cartoes').select('id, dia_fechamento').eq('id', cartaoNovo).maybeSingle();
+    if (!c) return { erro: 'Escolha o cartão.' };
+    cartao = c;
+  }
+  const mudouFatura = data !== primeira.data || (cartao !== null && cartao.id !== primeira.cartao_id);
+  const primeiroMes =
+    mudouFatura && cartao
+      ? mesDaFatura(data, cartao.dia_fechamento)
+      : somarMeses(primeira.competencia, -((primeira.parcela ?? 1) - 1));
   const meses = mesesDasParcelas(primeiroMes, parcelas);
   const linhas = dividirParcelas(total, parcelas).map((valor, i) => ({
+    ...base,
     valor,
-    categoria_id: categoriaId,
-    descricao: descricao || primeira.descricao,
-    data: primeira.data,
-    cartao_id: primeira.cartao_id,
+    cartao_id: cartao?.id ?? primeira.cartao_id,
     parcela: i + 1,
     parcelas,
     competencia: meses[i]!,

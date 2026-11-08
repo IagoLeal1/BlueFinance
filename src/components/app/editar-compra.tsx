@@ -6,17 +6,19 @@ import { editarCompra, excluirCompra, type EstadoLancamento } from '@/app/(app)/
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { diaCurto, nomeDoMes, somarMeses } from '@/domain/datas';
+import { diaCurto, diaDe, nomeDoMes, somarMeses } from '@/domain/datas';
 import { formatBRL } from '@/domain/money';
-import { dividirParcelas, mesesDasParcelas } from '@/domain/parcelas';
+import { dividirParcelas, mesDaFatura, mesesDasParcelas } from '@/domain/parcelas';
 import { mesDe } from '@/domain/summary';
 import type { Cartao } from '@/server/cartoes';
 import type { LancamentoListado } from '@/server/lancamentos';
 import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
+import { CampoQuando, dataDoDia } from './campo-quando';
+import { CamposCredito, FORMAS, type Forma } from './campos-credito';
 import { ChipsDeCategoria, type CategoriaEditavel } from './editar-lancamento';
 import { metaDe } from './meta';
-import { Stepper } from './stepper';
+import { Segmented } from './segmented';
 import { TransactionRow } from './transaction-row';
 
 /**
@@ -24,18 +26,23 @@ import { TransactionRow } from './transaction-row';
  * sozinha: tocar abre a compra inteira — total, parcelas, descrição e categoria; mudar o total ou
  * o número de parcelas refaz a divisão. Excluir apaga todas as parcelas.
  */
-export function LinhaCompra({ l, categorias }: { l: LancamentoListado; categorias: CategoriaEditavel[]; cartoes: Cartao[] }) {
+export function LinhaCompra({ l, categorias, cartoes }: { l: LancamentoListado; categorias: CategoriaEditavel[]; cartoes: Cartao[] }) {
   const totalOriginal = l.totalDaCompra ?? l.valor;
   const parcelasOriginais = l.parcelas ?? 1;
   const opcoes = categorias.filter((c) => c.tipo === 'despesa');
   const atual = opcoes.find((c) => c.nome === l.categoria)?.id;
-  // A fatura da 1ª parcela não muda ao editar: as parcelas são refeitas a partir dela.
-  const primeiroMes = somarMeses(l.mes ?? mesDe(l.data), -((l.parcela ?? 1) - 1));
+  // Sem mudar data nem cartão, a fatura da 1ª parcela fica onde está; com data ou cartão novos, é recalculada.
+  const primeiroMesAtual = somarMeses(l.mes ?? mesDe(l.data), -((l.parcela ?? 1) - 1));
+  const diaAtual = diaDe(l.data);
+  const cartaoAtual = l.cartao?.id ? [l.cartao.id] : [];
 
   const [aberto, setAberto] = useState(false);
   const [centavos, setCentavos] = useState(totalOriginal);
   const [parcelas, setParcelas] = useState(parcelasOriginais);
   const [categoria, setCategoria] = useState<string[]>(atual ? [atual] : []);
+  const [dia, setDia] = useState(diaAtual);
+  const [forma, setForma] = useState<Forma>('credito');
+  const [cartaoId, setCartaoId] = useState<string[]>(cartaoAtual);
   const [confirmando, setConfirmando] = useState(false);
 
   const fecharSeOk = (acao: typeof editarCompra) => async (anterior: EstadoLancamento, form: FormData) => {
@@ -47,6 +54,9 @@ export function LinhaCompra({ l, categorias }: { l: LancamentoListado; categoria
   const [estadoExclusao, excluir, excluindo] = useActionState(fecharSeOk(excluirCompra), {});
   const erro = estadoEdicao.erro ?? estadoExclusao.erro;
 
+  const cartao = cartoes.find((c) => c.id === cartaoId[0]);
+  const mudouFatura = dia !== diaAtual || cartaoId[0] !== cartaoAtual[0];
+  const primeiroMes = mudouFatura && cartao ? mesDaFatura(dataDoDia(dia), cartao.diaFechamento) : primeiroMesAtual;
   const meses = mesesDasParcelas(primeiroMes, parcelas);
   const valores = dividirParcelas(centavos, parcelas);
   const varias = parcelasOriginais > 1;
@@ -62,6 +72,9 @@ export function LinhaCompra({ l, categorias }: { l: LancamentoListado; categoria
             setCentavos(totalOriginal);
             setParcelas(parcelasOriginais);
             setCategoria(atual ? [atual] : []);
+            setDia(diaAtual);
+            setForma('credito');
+            setCartaoId(cartaoAtual);
             setConfirmando(false);
           }
         }}
@@ -73,25 +86,47 @@ export function LinhaCompra({ l, categorias }: { l: LancamentoListado; categoria
       >
         <form action={salvar} className="grid gap-4">
           <input type="hidden" name="compra_id" value={l.compraId ?? ''} />
-          <p className="text-center text-xs font-semibold text-muted-foreground">
-            Valor total · {l.cartao?.nome ?? 'cartão excluído'} · comprado em {diaCurto(l.data)}
-          </p>
+          <p className="text-center text-xs font-semibold text-muted-foreground">Valor total</p>
           <AmountInput nome="valor_centavos" centavos={centavos} onChange={setCentavos} />
+          <CampoQuando id={l.id} dia={dia} onChange={setDia} />
           <div className="grid gap-2">
-            <Label>Parcelas</Label>
-            <Stepper valor={parcelas} min={1} max={24} onChange={setParcelas} rotulo={(n) => `${n}x de ${formatBRL(Math.floor(centavos / n))}`} />
-            <input type="hidden" name="parcelas" value={parcelas} />
+            <Label>Como pagou</Label>
+            <Segmented nome="forma" rotulo="Como pagou" opcoes={FORMAS} valor={forma} onChange={setForma} />
           </div>
-          <ul className="px-1">
-            {valores.map((valor, i) => (
-              <li key={meses[i]} className="flex min-h-10 items-center justify-between gap-3 text-sm font-semibold not-first:border-t not-first:border-border">
-                <span>
-                  {i + 1}/{parcelas} · fatura de {nomeDoMes(meses[i]!)}
-                </span>
-                <span className="tabular-nums">{formatBRL(valor)}</span>
-              </li>
-            ))}
-          </ul>
+          {forma === 'credito' ? (
+            <>
+              <CamposCredito
+                id={l.id}
+                cartoes={cartoes}
+                cartaoId={cartaoId}
+                onCartao={setCartaoId}
+                parcelas={parcelas}
+                onParcelas={setParcelas}
+                centavos={centavos}
+                dataCompra={dataDoDia(dia)}
+                edicao
+                nota={false}
+                onIrAjustes={() => setAberto(false)}
+              />
+              <ul className="px-1">
+                {valores.map((valor, i) => (
+                  <li key={meses[i]} className="flex min-h-10 items-center justify-between gap-3 text-sm font-semibold not-first:border-t not-first:border-border">
+                    <span>
+                      {i + 1}/{parcelas} · fatura de {nomeDoMes(meses[i]!)}
+                    </span>
+                    <span className="tabular-nums">{formatBRL(valor)}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <>
+              <input type="hidden" name="parcelas" value={1} />
+              <p className="rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+                Vira um gasto só de {formatBRL(centavos)} em {diaCurto(dataDoDia(dia))}.
+              </p>
+            </>
+          )}
           <ChipsDeCategoria id={l.id} opcoes={opcoes} valor={categoria} onChange={setCategoria} />
           <div className="grid gap-2">
             <Label htmlFor={`descricao-${l.id}`}>Com o quê</Label>

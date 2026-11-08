@@ -65,6 +65,7 @@ export function CamposCredito({
   centavos,
   dataCompra,
   edicao = false,
+  nota = true,
   onIrAjustes,
 }: {
   id: string;
@@ -76,6 +77,8 @@ export function CamposCredito({
   centavos: number;
   dataCompra: string;
   edicao?: boolean;
+  /** Mostra a nota de em qual fatura cai (a compra parcelada mostra a lista dos meses no lugar). */
+  nota?: boolean;
   onIrAjustes: () => void;
 }) {
   if (cartoes.length === 0) {
@@ -114,7 +117,7 @@ export function CamposCredito({
         <Stepper valor={parcelas} min={1} max={24} onChange={onParcelas} rotulo={(n) => rotuloParcelas(centavos, n)} />
         <input type="hidden" name="parcelas" value={parcelas} />
       </div>
-      {cartao && <NotaFatura cartao={cartao} parcelas={parcelas} dataCompra={dataCompra} edicao={edicao} />}
+      {nota && cartao && <NotaFatura cartao={cartao} parcelas={parcelas} dataCompra={dataCompra} edicao={edicao} />}
     </>
   );
 }
