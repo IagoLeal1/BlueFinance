@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { CreditCard } from 'lucide-react';
 import { formatBRL, type TipoLancamento } from '@/domain/money';
+import type { Cartao } from '@/server/cartoes';
 import type { LancamentoListado } from '@/server/lancamentos';
 import { Segmented } from './segmented';
 import { LinhaCompra } from './editar-compra';
@@ -42,10 +43,12 @@ export function ListaLancamentos({
   faturas,
   dias,
   categorias,
+  cartoes,
 }: {
   faturas: Fatura[];
   dias: DiaDeLancamentos[];
   categorias: CategoriaEditavel[];
+  cartoes: Cartao[];
 }) {
   const [filtro, setFiltro] = useState<Filtro>('tudo');
   const { pendentes } = useFeedback();
@@ -78,7 +81,7 @@ export function ListaLancamentos({
           {f.fecha && <p className="text-xs font-semibold text-muted-foreground">{f.fecha}</p>}
           <ul>
             {f.lancamentos.map((l) =>
-              l.compraId ? <LinhaCompra key={l.id} l={l} categorias={categorias} /> : <LinhaEditavel key={l.id} l={l} categorias={categorias} />,
+              l.compraId ? <LinhaCompra key={l.id} l={l} categorias={categorias} cartoes={cartoes} /> : <LinhaEditavel key={l.id} l={l} categorias={categorias} cartoes={cartoes} />,
             )}
           </ul>
         </section>
@@ -92,7 +95,7 @@ export function ListaLancamentos({
               <h2 className="pt-4 pb-1 text-xs font-bold tracking-[0.02em] text-muted-foreground">{d.rotulo}</h2>
               <ul>
                 {d.lancamentos.map((l) => (
-                  <LinhaEditavel key={l.id} l={l} categorias={categorias} />
+                  <LinhaEditavel key={l.id} l={l} categorias={categorias} cartoes={cartoes} />
                 ))}
               </ul>
             </section>

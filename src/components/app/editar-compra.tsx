@@ -10,6 +10,7 @@ import { diaCurto, nomeDoMes, somarMeses } from '@/domain/datas';
 import { formatBRL } from '@/domain/money';
 import { dividirParcelas, mesesDasParcelas } from '@/domain/parcelas';
 import { mesDe } from '@/domain/summary';
+import type { Cartao } from '@/server/cartoes';
 import type { LancamentoListado } from '@/server/lancamentos';
 import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
@@ -23,7 +24,7 @@ import { TransactionRow } from './transaction-row';
  * sozinha: tocar abre a compra inteira — total, parcelas, descrição e categoria; mudar o total ou
  * o número de parcelas refaz a divisão. Excluir apaga todas as parcelas.
  */
-export function LinhaCompra({ l, categorias }: { l: LancamentoListado; categorias: CategoriaEditavel[] }) {
+export function LinhaCompra({ l, categorias }: { l: LancamentoListado; categorias: CategoriaEditavel[]; cartoes: Cartao[] }) {
   const totalOriginal = l.totalDaCompra ?? l.valor;
   const parcelasOriginais = l.parcelas ?? 1;
   const opcoes = categorias.filter((c) => c.tipo === 'despesa');

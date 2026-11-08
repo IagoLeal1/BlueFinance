@@ -6,6 +6,7 @@ import { ListaLancamentos, type Fatura } from '@/components/app/lista-lancamento
 import { MesPicker } from '@/components/app/mes-picker';
 import { mesAtual, mesDaUrl, nomeDoMes, opcoesDeMes, rotuloDoDia, tituloDoMes } from '@/domain/datas';
 import { diaDoFechamento } from '@/domain/parcelas';
+import { listarCartoes } from '@/server/cartoes';
 import { categoriasDoUsuario } from '@/server/categorias';
 import { lancamentosDoMes, ultimoMesComParcelas, type LancamentoListado } from '@/server/lancamentos';
 
@@ -23,10 +24,11 @@ async function ListaDoMes({ searchParams }: { searchParams: PageProps<'/lancamen
   await connection();
   const agora = new Date();
   const mes = mesDaUrl((await searchParams).mes, agora);
-  const [lancamentos, categorias, ultimaParcela] = await Promise.all([
+  const [lancamentos, categorias, ultimaParcela, cartoes] = await Promise.all([
     lancamentosDoMes(mes),
     categoriasDoUsuario(),
     ultimoMesComParcelas(mesAtual(agora)),
+    listarCartoes(),
   ]);
 
   // Crédito vai para a fatura do cartão; débito, Pix, receitas e aportes ficam no dia.
@@ -59,6 +61,7 @@ async function ListaDoMes({ searchParams }: { searchParams: PageProps<'/lancamen
         faturas={[...faturas.values()]}
         dias={[...dias].map(([rotulo, doDia]) => ({ rotulo, lancamentos: doDia }))}
         categorias={categorias}
+        cartoes={cartoes}
       />
     </>
   );

@@ -7,12 +7,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { diaDe } from '@/domain/datas';
+import type { Cartao } from '@/server/cartoes';
 import type { LancamentoListado } from '@/server/lancamentos';
 import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
+import { CampoQuando, dataDoDia } from './campo-quando';
+import { CamposCredito, FORMAS, cartaoInicial, type Forma } from './campos-credito';
 import { CHIP } from './estilos';
 import { IconeCategoria } from './icone-categoria';
 import { metaDe } from './meta';
+import { Segmented } from './segmented';
 import { TransactionRow } from './transaction-row';
 
 export interface CategoriaEditavel {
@@ -56,13 +61,21 @@ export function ChipsDeCategoria({
   );
 }
 
-/** Linha de lançamento que, ao tocar, abre o sheet para editar (valor, categoria, descrição) ou excluir. */
-export function LinhaEditavel({ l, categorias }: { l: LancamentoListado; categorias: CategoriaEditavel[] }) {
+/**
+ * Linha de lançamento que, ao tocar, abre o sheet para editar (valor, data, categoria, como pagou, descrição)
+ * ou excluir (design kit: TelaEditar, TelaEditarGasto). Débito/Pix → Crédito vira compra no cartão.
+ */
+export function LinhaEditavel({ l, categorias, cartoes }: { l: LancamentoListado; categorias: CategoriaEditavel[]; cartoes: Cartao[] }) {
   const [aberto, setAberto] = useState(false);
   const opcoes = l.tipo === 'investimento' ? [] : categorias.filter((c) => c.tipo === l.tipo);
   const atual = opcoes.find((c) => c.nome === l.categoria)?.id;
+  const formaAtual: Forma = l.forma ?? 'debito';
   const [categoria, setCategoria] = useState<string[]>(atual ? [atual] : []);
   const [centavos, setCentavos] = useState(l.valor);
+  const [dia, setDia] = useState(diaDe(l.data));
+  const [forma, setForma] = useState<Forma>(formaAtual);
+  const [cartaoId, setCartaoId] = useState<string[]>([]);
+  const [parcelas, setParcelas] = useState(1);
   const [confirmando, setConfirmando] = useState(false);
 
   const fecharSeOk = (acao: typeof editarLancamento) => async (anterior: EstadoLancamento, form: FormData) => {
@@ -84,6 +97,9 @@ export function LinhaEditavel({ l, categorias }: { l: LancamentoListado; categor
           if (v) {
             setCentavos(l.valor);
             setCategoria(atual ? [atual] : []);
+            setDia(diaDe(l.data));
+            setForma(formaAtual);
+            setParcelas(1);
             setConfirmando(false);
           }
         }}
@@ -96,7 +112,37 @@ export function LinhaEditavel({ l, categorias }: { l: LancamentoListado; categor
         <form action={salvar} className="grid gap-4">
           <input type="hidden" name="id" value={l.id} />
           <AmountInput nome="valor_centavos" centavos={centavos} onChange={setCentavos} />
+          <CampoQuando id={l.id} dia={dia} onChange={setDia} />
           <ChipsDeCategoria id={l.id} opcoes={opcoes} valor={categoria} onChange={setCategoria} />
+          {l.tipo === 'despesa' && (
+            <div className="grid gap-2">
+              <Label>Como pagou</Label>
+              <Segmented
+              nome="forma"
+              rotulo="Como pagou"
+              opcoes={FORMAS}
+              valor={forma}
+              onChange={(f) => {
+                setForma(f);
+                  if (f === 'credito' && cartaoId.length === 0) setCartaoId(cartaoInicial(cartoes));
+                }}
+              />
+            </div>
+          )}
+          {l.tipo === 'despesa' && forma === 'credito' && (
+            <CamposCredito
+              id={l.id}
+              cartoes={cartoes}
+              cartaoId={cartaoId}
+              onCartao={setCartaoId}
+              parcelas={parcelas}
+              onParcelas={setParcelas}
+              centavos={centavos}
+              dataCompra={dataDoDia(dia)}
+              edicao
+              onIrAjustes={() => setAberto(false)}
+            />
+          )}
           <div className="grid gap-2">
             <Label htmlFor={`descricao-${l.id}`}>Com o quê</Label>
             <Input id={`descricao-${l.id}`} name="descricao" defaultValue={l.descricao} />

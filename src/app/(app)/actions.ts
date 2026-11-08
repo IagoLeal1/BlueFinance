@@ -3,7 +3,8 @@
 import { refresh } from 'next/cache';
 import { randomUUID } from 'node:crypto';
 import type { TipoLancamento } from '@/domain/money';
-import { somarMeses } from '@/domain/datas';
+import { diaDe, somarMeses } from '@/domain/datas';
+import { mesDe } from '@/domain/summary';
 import { dividirParcelas, mesDaFatura, mesesDasParcelas } from '@/domain/parcelas';
 import { supabaseServidor } from '@/lib/supabase/server';
 
@@ -128,6 +129,13 @@ export async function editarLancamento(_anterior: EstadoLancamento, form: FormDa
   if (!Number.isSafeInteger(valor) || valor <= 0) return { erro: 'Digite um valor maior que zero.' };
 
   const supabase = await supabaseServidor();
+  const { data: atual } = await supabase
+    .from('lancamentos')
+    .select('tipo, data, descricao, categoria_id, forma_pagamento')
+    .eq('id', id)
+    .maybeSingle();
+  if (!atual) return { erro: 'Lançamento não encontrado.' };
+
   // Categoria nova (opcional): só vale se for do próprio usuário — o RLS de categorias garante.
   const categoriaId = String(form.get('categoria_id') ?? '');
   let p_categoria: string | undefined;
@@ -136,8 +144,76 @@ export async function editarLancamento(_anterior: EstadoLancamento, form: FormDa
     if (!data) return { erro: 'Categoria não encontrada.' };
     p_categoria = data.id;
   }
+
+  // Data nova (opcional): meio-dia em São Paulo do dia escolhido, até hoje. Leva o lançamento para o mês dela.
+  const dia = String(form.get('data') ?? '');
+  let novaData: string | null = null;
+  if (dia && dia !== diaDe(atual.data)) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dia) || Number.isNaN(Date.parse(`${dia}T12:00:00-03:00`)) || dia > diaDe(new Date())) {
+      return { erro: 'Escolha uma data até hoje.' };
+    }
+    novaData = new Date(`${dia}T12:00:00-03:00`).toISOString();
+  }
+
+  const forma = String(form.get('forma') ?? '');
+  if (atual.tipo === 'despesa' && forma === 'credito' && atual.forma_pagamento !== 'credito') {
+    return virarCompraNoCredito(supabase, id, form, {
+      total: valor,
+      categoriaId: p_categoria ?? atual.categoria_id,
+      descricao: descricao || atual.descricao,
+      data: novaData ?? atual.data,
+    });
+  }
+
   const { error } = await supabase.rpc('editar_lancamento', { p_id: id, p_valor: valor, p_descricao: descricao, p_categoria });
   if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
+
+  const mudancas: { data?: string; competencia?: string; forma_pagamento?: Forma } = {};
+  if (novaData) Object.assign(mudancas, { data: novaData, competencia: mesDe(novaData) });
+  if (atual.tipo === 'despesa' && (forma === 'debito' || forma === 'pix') && forma !== atual.forma_pagamento) mudancas.forma_pagamento = forma;
+  if (Object.keys(mudancas).length > 0) {
+    const { error: erroData } = await supabase.from('lancamentos').update(mudancas).eq('id', id);
+    if (erroData) return { erro: 'Não foi possível salvar. Tente de novo.' };
+  }
+  refresh();
+  return { ok: true };
+}
+
+/**
+ * Débito/Pix → Crédito: o gasto vira uma compra no cartão (à vista ou parcelada), na fatura pela data e pelo
+ * fechamento. Marca o gasto com o id da compra e regrava tudo numa transação (regravar_compra apaga o gasto
+ * e grava as parcelas); se der erro, o gasto continua como estava.
+ */
+async function virarCompraNoCredito(
+  supabase: Awaited<ReturnType<typeof supabaseServidor>>,
+  id: string,
+  form: FormData,
+  compra: { total: number; categoriaId: string | null; descricao: string; data: string },
+): Promise<EstadoLancamento> {
+  const parcelas = Number(form.get('parcelas') ?? 1);
+  if (!Number.isInteger(parcelas) || parcelas < 1 || parcelas > 24) return { erro: 'Escolha de 1 a 24 parcelas.' };
+  if (compra.total < parcelas) return { erro: 'O valor é pequeno demais para tantas parcelas.' };
+  const { data: cartao } = await supabase.from('cartoes').select('id, dia_fechamento').eq('id', String(form.get('cartao_id') ?? '')).maybeSingle();
+  if (!cartao) return { erro: 'Escolha o cartão.' };
+
+  const compraId = randomUUID();
+  const meses = mesesDasParcelas(mesDaFatura(compra.data, cartao.dia_fechamento), parcelas);
+  const linhas = dividirParcelas(compra.total, parcelas).map((valor, i) => ({
+    valor,
+    categoria_id: compra.categoriaId,
+    descricao: compra.descricao,
+    data: compra.data,
+    cartao_id: cartao.id,
+    parcela: i + 1,
+    parcelas,
+    competencia: meses[i]!,
+  }));
+  const { error: erroMarca } = await supabase.from('lancamentos').update({ compra_id: compraId }).eq('id', id);
+  const { error } = erroMarca ? { error: erroMarca } : await supabase.rpc('regravar_compra', { p_compra: compraId, p_linhas: linhas });
+  if (error) {
+    await supabase.from('lancamentos').update({ compra_id: null }).eq('id', id);
+    return { erro: 'Não foi possível salvar. Tente de novo.' };
+  }
   refresh();
   return { ok: true };
 }
