@@ -53,7 +53,7 @@ export interface LancamentoSemente {
    * Parcela de uma compra no crédito, no mês de fatura `competencia` ("2026-12").
    * Parcelas com o mesmo rótulo `compra` são da mesma compra.
    */
-  credito?: { cartao: string; parcela: number; parcelas: number; competencia: string; compra?: string };
+  credito?: { cartao: string; parcela: number; parcelas: number | null; competencia: string; compra?: string; recorrente?: boolean };
 }
 
 /** Prepara lançamentos do usuário pelo mesmo acesso (com RLS) que o app usa. */
@@ -77,8 +77,8 @@ export async function semearLancamentos(usuario: Usuario, lancamentos: Lancament
     if (!l.credito) return { ...base, ...(l.forma && { forma_pagamento: l.forma }) };
     const cartao = cartoes?.find((c) => c.nome === l.credito!.cartao);
     if (!cartao) throw new Error(`cartão não encontrado: ${l.credito.cartao}`);
-    const { parcela, parcelas, competencia, compra } = l.credito;
-    return { ...base, forma_pagamento: 'credito', cartao_id: cartao.id, compra_id: idDaCompra(compra), parcela, parcelas, competencia };
+    const { parcela, parcelas, competencia, compra, recorrente = false } = l.credito;
+    return { ...base, forma_pagamento: 'credito', cartao_id: cartao.id, compra_id: idDaCompra(compra), parcela, parcelas, competencia, recorrente };
   });
   const { error } = await db.from('lancamentos').insert(linhas);
   if (error) throw error;

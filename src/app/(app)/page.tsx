@@ -11,7 +11,7 @@ import { MesPicker } from '@/components/app/mes-picker';
 import { summarizeMonth } from '@/domain/summary';
 import { listarCartoes, resumoDosCartoes } from '@/server/cartoes';
 import { ordemDasCategorias } from '@/server/categorias';
-import { lancamentosDoMes, ultimoMesComParcelas } from '@/server/lancamentos';
+import { completarAssinaturas, lancamentosDoMes, ultimoMesComParcelas } from '@/server/lancamentos';
 
 export default function Inicio({ searchParams }: PageProps<'/'>) {
   return (
@@ -26,6 +26,7 @@ async function ResumoDoMes({ searchParams }: { searchParams: PageProps<'/'>['sea
   const agora = new Date();
   const mes = mesDaUrl((await searchParams).mes, agora);
   const nome = nomeDoMes(mes);
+  await completarAssinaturas(agora);
   const [lancamentos, ordem, ultimaParcela, cartoes] = await Promise.all([
     lancamentosDoMes(mes),
     ordemDasCategorias(),
@@ -50,7 +51,7 @@ async function ResumoDoMes({ searchParams }: { searchParams: PageProps<'/'>['sea
           </div>
         }
       />
-      {cartao && cartao.cartoes.length > 0 && <CartaoCredito resumos={cartao.cartoes} aVir={cartao.aVir} mesAtual={mesAtual(agora)} />}
+      {cartao && cartao.cartoes.length > 0 && <CartaoCredito resumos={cartao.cartoes} aVir={cartao.aVir} assinaturas={cartao.assinaturas} mesAtual={mesAtual(agora)} />}
       <SpendingBar gastos={resumo.porCategoria} ordemPorNome={ordem} />
       {lancamentos.length > 0 && (
         <section aria-label="Últimos" className="rounded-lg bg-card px-4 pt-3 pb-1 shadow-card">

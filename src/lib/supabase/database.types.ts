@@ -67,14 +67,14 @@ export type Database = {
                   ]
                 },"lancamentos": {
                   Row: {
-                    "cartao_id": string | null,"categoria_id": string | null,"competencia": string,"compra_id": string | null,"criado_em": string,"data": string,"descricao": string,"forma_pagamento": string | null,"id": string,"investimento_id": string | null,"origem": string,"parcela": number | null,"parcelas": number | null,"tipo": string,"user_id": string,"valor": number
+                    "cartao_id": string | null,"categoria_id": string | null,"competencia": string,"compra_id": string | null,"criado_em": string,"data": string,"descricao": string,"forma_pagamento": string | null,"id": string,"investimento_id": string | null,"origem": string,"parcela": number | null,"parcelas": number | null,"recorrente": boolean,"tipo": string,"user_id": string,"valor": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "cartao_id"?: string | null,"categoria_id"?: string | null,"competencia"?: string,"compra_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"forma_pagamento"?: string | null,"id"?: string,"investimento_id"?: string | null,"origem"?: string,"parcela"?: number | null,"parcelas"?: number | null,"tipo": string,"user_id": string,"valor": number
+                    "cartao_id"?: string | null,"categoria_id"?: string | null,"competencia"?: string,"compra_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"forma_pagamento"?: string | null,"id"?: string,"investimento_id"?: string | null,"origem"?: string,"parcela"?: number | null,"parcelas"?: number | null,"recorrente"?: boolean,"tipo": string,"user_id": string,"valor": number
                   }
                   Update: {
-                    "cartao_id"?: string | null,"categoria_id"?: string | null,"competencia"?: string,"compra_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"forma_pagamento"?: string | null,"id"?: string,"investimento_id"?: string | null,"origem"?: string,"parcela"?: number | null,"parcelas"?: number | null,"tipo"?: string,"user_id"?: string,"valor"?: number
+                    "cartao_id"?: string | null,"categoria_id"?: string | null,"competencia"?: string,"compra_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"forma_pagamento"?: string | null,"id"?: string,"investimento_id"?: string | null,"origem"?: string,"parcela"?: number | null,"parcelas"?: number | null,"recorrente"?: boolean,"tipo"?: string,"user_id"?: string,"valor"?: number
                   }
                   Relationships: [
                     {

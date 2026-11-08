@@ -1,6 +1,8 @@
 import 'server-only';
 import type { TipoLancamento } from '@/domain/money';
-import type { Lancamento } from '@/domain/summary';
+import { somarMeses } from '@/domain/datas';
+import { MESES_DE_ASSINATURA } from '@/domain/parcelas';
+import { mesDe, type Lancamento } from '@/domain/summary';
 import { supabaseServidor } from '@/lib/supabase/server';
 
 export type FormaPagamento = 'debito' | 'pix' | 'credito';
@@ -18,10 +20,12 @@ export interface LancamentoListado extends Lancamento {
   parcelas: number | null;
   /** Compra no crédito: valor total da compra (soma de todas as parcelas, em todos os meses). */
   totalDaCompra: number | null;
+  /** Assinatura ("Todo mês"): o mesmo valor em toda fatura, até o usuário parar. */
+  recorrente: boolean;
 }
 
 const CAMPOS =
-  'id, tipo, valor, data, descricao, origem, competencia, forma_pagamento, compra_id, parcela, parcelas, categorias(nome, icone), investimentos(nome), cartoes(id, nome, dia_fechamento)';
+  'id, tipo, valor, data, descricao, origem, competencia, forma_pagamento, compra_id, parcela, parcelas, recorrente, categorias(nome, icone), investimentos(nome), cartoes(id, nome, dia_fechamento)';
 
 /** Lançamentos do usuário logado num mês de competência, do mais novo ao mais antigo (RLS: só os dele). */
 export async function lancamentosDoMes(mes: string): Promise<LancamentoListado[]> {
@@ -58,7 +62,8 @@ export async function lancamentosDoMes(mes: string): Promise<LancamentoListado[]
     compraId: l.compra_id,
     parcela: l.parcela,
     parcelas: l.parcelas,
-    totalDaCompra: l.compra_id ? (totais.get(l.compra_id) ?? null) : null,
+    totalDaCompra: l.compra_id && !l.recorrente ? (totais.get(l.compra_id) ?? null) : null,
+    recorrente: l.recorrente,
   }));
 }
 
@@ -69,10 +74,53 @@ export async function ultimoMesComParcelas(mes: string): Promise<string | null> 
     .from('lancamentos')
     .select('competencia')
     .eq('forma_pagamento', 'credito')
+    .eq('recorrente', false)
     .gt('competencia', mes)
     .order('competencia', { ascending: false })
     .limit(1)
     .maybeSingle();
   if (error) throw error;
   return data?.competencia ?? null;
+}
+
+/**
+ * Mantém as assinaturas ("Todo mês") lançadas até 24 meses à frente: para cada uma, repete o último mês
+ * (valor, categoria, descrição, cartão) nos meses que faltam. Idempotente; roda ao abrir Início e Lançamentos.
+ */
+export async function completarAssinaturas(agora: Date): Promise<void> {
+  const supabase = await supabaseServidor();
+  const { data, error } = await supabase
+    .from('lancamentos')
+    .select('user_id, compra_id, valor, categoria_id, descricao, data, cartao_id, parcela, competencia')
+    .eq('recorrente', true)
+    .order('competencia');
+  if (error) throw error;
+  const ultimas = new Map<string, (typeof data)[number]>();
+  for (const l of data) if (l.compra_id) ultimas.set(l.compra_id, l);
+
+  const horizonte = somarMeses(mesDe(agora.toISOString()), MESES_DE_ASSINATURA);
+  const faltam = [...ultimas.values()].flatMap((u) => {
+    const novas = [];
+    for (let k = 1, mes = somarMeses(u.competencia, 1); mes <= horizonte; k++, mes = somarMeses(mes, 1)) {
+      novas.push({
+        user_id: u.user_id,
+        tipo: 'despesa',
+        valor: u.valor,
+        categoria_id: u.categoria_id,
+        descricao: u.descricao,
+        data: u.data,
+        forma_pagamento: 'credito',
+        cartao_id: u.cartao_id,
+        compra_id: u.compra_id,
+        parcela: (u.parcela ?? 0) + k,
+        recorrente: true,
+        competencia: mes,
+      });
+    }
+    return novas;
+  });
+  if (faltam.length > 0) {
+    const { error: erroInsert } = await supabase.from('lancamentos').insert(faltam);
+    if (erroInsert) throw erroInsert;
+  }
 }

@@ -8,7 +8,7 @@ import { mesAtual, mesDaUrl, nomeDoMes, opcoesDeMes, rotuloDoDia, somarMeses, ti
 import { diaDoFechamento, faturasDoCartao } from '@/domain/parcelas';
 import { listarCartoes } from '@/server/cartoes';
 import { categoriasDoUsuario } from '@/server/categorias';
-import { lancamentosDoMes, ultimoMesComParcelas, type LancamentoListado } from '@/server/lancamentos';
+import { completarAssinaturas, lancamentosDoMes, ultimoMesComParcelas, type LancamentoListado } from '@/server/lancamentos';
 
 export const metadata: Metadata = { title: 'Lançamentos · BlueFinance' };
 
@@ -24,6 +24,7 @@ async function ListaDoMes({ searchParams }: { searchParams: PageProps<'/lancamen
   await connection();
   const agora = new Date();
   const mes = mesDaUrl((await searchParams).mes, agora);
+  await completarAssinaturas(agora);
   const [lancamentos, categorias, ultimaParcela, cartoes] = await Promise.all([
     lancamentosDoMes(mes),
     categoriasDoUsuario(),

@@ -27,12 +27,19 @@ function LinhaFatura({ mes, meta, total, mesAtual }: { mes: string; meta: string
 export function CartaoCredito({
   resumos,
   aVir,
+  assinaturas,
   mesAtual,
 }: {
   resumos: ResumoDoCartao[];
   aVir: { total: number; ultimoMes: string | null };
+  /** Soma das assinaturas na fatura aberta (por mês). */
+  assinaturas: number;
   mesAtual: string;
 }) {
+  const legenda = [
+    ...(aVir.total > 0 && aVir.ultimoMes ? [`Mais ${formatReais(aVir.total)} em parcelas até ${nomeDoMes(aVir.ultimoMes)}`] : []),
+    ...(assinaturas > 0 ? [`${formatBRL(assinaturas)} por mês em assinaturas`] : []),
+  ];
   return (
     <section aria-label="Cartão de crédito" className="grid gap-1 rounded-lg bg-card px-4 pt-3 pb-2 shadow-card">
       {resumos.map(({ cartao, aberta, fechada }) => (
@@ -49,11 +56,7 @@ export function CartaoCredito({
           </ul>
         </div>
       ))}
-      {aVir.total > 0 && aVir.ultimoMes && (
-        <p className="pb-1 text-xs font-semibold text-muted-foreground">
-          Mais {formatReais(aVir.total)} em parcelas até {nomeDoMes(aVir.ultimoMes)}
-        </p>
-      )}
+      {legenda.length > 0 && <p className="pb-1 text-xs font-semibold text-muted-foreground">{legenda.join(' · ')}</p>}
     </section>
   );
 }

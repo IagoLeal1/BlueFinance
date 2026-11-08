@@ -28,6 +28,9 @@ export function mesDaFatura(dataCompra: string, diaFechamento: number): string {
   return dia >= fechamento ? somarMeses(mesCompra, 1) : mesCompra;
 }
 
+/** Assinaturas ("Todo mês"): quantos meses ficam lançados à frente; o app completa sozinho depois. */
+export const MESES_DE_ASSINATURA = 24;
+
 /** Vencimento padrão de um cartão: uma semana depois do fechamento (fecha 3 → vence 10). */
 export const vencimentoPadrao = (diaFechamento: number) => ((diaFechamento + 6) % 31) + 1;
 

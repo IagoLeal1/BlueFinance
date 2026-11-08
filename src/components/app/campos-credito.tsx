@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { CalendarDays, CreditCard } from 'lucide-react';
+import { CalendarDays, CreditCard, Repeat } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { diaDe, nomeDoMes } from '@/domain/datas';
@@ -66,6 +66,8 @@ export function CamposCredito({
   dataCompra,
   edicao = false,
   nota = true,
+  todoMes = false,
+  onTodoMes,
   onIrAjustes,
 }: {
   id: string;
@@ -79,6 +81,9 @@ export function CamposCredito({
   edicao?: boolean;
   /** Mostra a nota de em qual fatura cai (a compra parcelada mostra a lista dos meses no lugar). */
   nota?: boolean;
+  /** "Todo mês" (assinatura): só no botão +. Troca as parcelas pelo mesmo valor em toda fatura. */
+  todoMes?: boolean;
+  onTodoMes?: (v: boolean) => void;
   onIrAjustes: () => void;
 }) {
   if (cartoes.length === 0) {
@@ -112,12 +117,47 @@ export function CamposCredito({
         </ToggleGroup>
         <input type="hidden" name="cartao_id" value={cartaoId[0] ?? ''} />
       </div>
-      <div className="grid gap-2">
-        <Label>Parcelas</Label>
-        <Stepper valor={parcelas} min={1} max={24} onChange={onParcelas} rotulo={(n) => rotuloParcelas(centavos, n)} />
-        <input type="hidden" name="parcelas" value={parcelas} />
-      </div>
-      {nota && cartao && <NotaFatura cartao={cartao} parcelas={parcelas} dataCompra={dataCompra} edicao={edicao} />}
+      {onTodoMes && (
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="font-bold">Todo mês</p>
+            <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">Assinatura: repete na fatura até você parar.</p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={todoMes}
+            aria-label="Todo mês"
+            onClick={() => onTodoMes(!todoMes)}
+            className="relative h-[31px] w-[51px] shrink-0 rounded-full bg-line-strong/40 transition-colors aria-checked:bg-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            <span
+              aria-hidden
+              className={`absolute top-0.5 left-0.5 size-[27px] rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.25)] transition-transform ${todoMes ? 'translate-x-5' : ''}`}
+            />
+          </button>
+          {todoMes && <input type="hidden" name="recorrente" value="1" />}
+        </div>
+      )}
+      {todoMes ? (
+        cartao && (
+          <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+            <Repeat className="mt-px size-4 shrink-0" aria-hidden />
+            <span>
+              Cai todo mês a partir da fatura de <b className="text-foreground">{nomeDoMes(mesDaFatura(dataCompra, cartao.diaFechamento))}</b>.
+            </span>
+          </p>
+        )
+      ) : (
+        <>
+          <div className="grid gap-2">
+            <Label>Parcelas</Label>
+            <Stepper valor={parcelas} min={1} max={24} onChange={onParcelas} rotulo={(n) => rotuloParcelas(centavos, n)} />
+            <input type="hidden" name="parcelas" value={parcelas} />
+          </div>
+          {nota && cartao && <NotaFatura cartao={cartao} parcelas={parcelas} dataCompra={dataCompra} edicao={edicao} />}
+        </>
+      )}
     </>
   );
 }

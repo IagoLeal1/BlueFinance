@@ -35,8 +35,8 @@ export interface ResumoDoCartao {
 export async function resumoDosCartoes(
   cartoes: Cartao[],
   agora: Date,
-): Promise<{ cartoes: ResumoDoCartao[]; aVir: { total: number; ultimoMes: string | null } }> {
-  if (cartoes.length === 0) return { cartoes: [], aVir: { total: 0, ultimoMes: null } };
+): Promise<{ cartoes: ResumoDoCartao[]; aVir: { total: number; ultimoMes: string | null }; assinaturas: number }> {
+  if (cartoes.length === 0) return { cartoes: [], aVir: { total: 0, ultimoMes: null }, assinaturas: 0 };
   const hoje = agora.toISOString();
   const faturas = cartoes.map((c) => ({ cartao: c, ...faturasDoCartao(hoje, c.diaFechamento, c.diaVencimento) }));
   const desde = faturas.map((f) => f.fechada?.mes ?? f.aberta).sort()[0]!;
@@ -44,7 +44,7 @@ export async function resumoDosCartoes(
   const supabase = await supabaseServidor();
   const { data, error } = await supabase
     .from('lancamentos')
-    .select('valor, competencia, cartao_id')
+    .select('valor, competencia, cartao_id, recorrente')
     .eq('forma_pagamento', 'credito')
     .in('cartao_id', cartoes.map((c) => c.id))
     .gte('competencia', desde);
@@ -53,9 +53,12 @@ export async function resumoDosCartoes(
   const soma = (cartaoId: string, filtro: (mes: string) => boolean) =>
     data.filter((l) => l.cartao_id === cartaoId && filtro(l.competencia)).reduce((t, l) => t + l.valor, 0);
   let total = 0;
+  let assinaturas = 0;
   let ultimoMes: string | null = null;
   const resumos = faturas.map(({ cartao, aberta, fechada }) => {
-    for (const l of data.filter((x) => x.cartao_id === cartao.id && x.competencia > aberta)) {
+    // Assinaturas contam por mês (a da fatura aberta), não como parcelas a vir.
+    assinaturas += data.filter((x) => x.cartao_id === cartao.id && x.recorrente && x.competencia === aberta).reduce((t, l) => t + l.valor, 0);
+    for (const l of data.filter((x) => x.cartao_id === cartao.id && !x.recorrente && x.competencia > aberta)) {
       total += l.valor;
       if (!ultimoMes || l.competencia > ultimoMes) ultimoMes = l.competencia;
     }
@@ -65,5 +68,5 @@ export async function resumoDosCartoes(
       fechada: fechada && { ...fechada, total: soma(cartao.id, (m) => m === fechada.mes) },
     };
   });
-  return { cartoes: resumos, aVir: { total, ultimoMes } };
+  return { cartoes: resumos, aVir: { total, ultimoMes }, assinaturas };
 }

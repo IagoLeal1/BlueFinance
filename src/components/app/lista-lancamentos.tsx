@@ -6,6 +6,7 @@ import { formatBRL, type TipoLancamento } from '@/domain/money';
 import type { Cartao } from '@/server/cartoes';
 import type { LancamentoListado } from '@/server/lancamentos';
 import { Segmented } from './segmented';
+import { LinhaAssinatura } from './editar-assinatura';
 import { LinhaCompra } from './editar-compra';
 import { LinhaEditavel, type CategoriaEditavel } from './editar-lancamento';
 import { LancarTotalFatura } from './total-fatura';
@@ -90,7 +91,13 @@ export function ListaLancamentos({
           )}
           <ul>
             {f.lancamentos.map((l) =>
-              l.compraId ? <LinhaCompra key={l.id} l={l} categorias={categorias} cartoes={cartoes} /> : <LinhaEditavel key={l.id} l={l} categorias={categorias} cartoes={cartoes} />,
+              l.recorrente ? (
+                <LinhaAssinatura key={l.id} l={l} categorias={categorias} />
+              ) : l.compraId ? (
+                <LinhaCompra key={l.id} l={l} categorias={categorias} cartoes={cartoes} />
+              ) : (
+                <LinhaEditavel key={l.id} l={l} categorias={categorias} cartoes={cartoes} />
+              ),
             )}
           </ul>
         </section>

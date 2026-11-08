@@ -57,6 +57,7 @@ export function NovoLancamento({
   const [forma, setForma] = useState<Forma>('debito');
   const [cartaoId, setCartaoId] = useState<string[]>([]);
   const [parcelas, setParcelas] = useState(1);
+  const [todoMes, setTodoMes] = useState(false);
   const noCredito = tipo === 'despesa' && forma === 'credito';
   const cartao = cartoes.find((c) => c.id === cartaoId[0]);
   const [erro, setErro] = useState<string>();
@@ -89,6 +90,7 @@ export function NovoLancamento({
     setCategoria([]);
     setForma('debito');
     setParcelas(1);
+    setTodoMes(false);
     setErro(undefined);
   }
 
@@ -114,13 +116,18 @@ export function NovoLancamento({
       // No crédito as parcelas podem cair em outros meses: sem linha "salvando…" aqui, só o aviso.
       localStorage.setItem(CHAVE_CARTAO, cartao!.id);
       const n = parcelas;
+      const assinatura = todoMes;
       setAberto(false);
       limpar();
       startTransition(async () => {
         const r = await criarLancamento({}, form);
         if (!r.ok) return avisar({ texto: `Não salvou: ${r.erro ?? 'tente de novo.'}` });
         avisar({
-          texto: n > 1 ? `Compra salva · ${rotuloParcelas(valor, n)}` : `${SALVO.despesa} · ${formatSigned(valor, 'despesa')}`,
+          texto: assinatura
+            ? `Assinatura salva · ${formatSigned(valor, 'despesa')} por mês`
+            : n > 1
+              ? `Compra salva · ${rotuloParcelas(valor, n)}`
+              : `${SALVO.despesa} · ${formatSigned(valor, 'despesa')}`,
           acao: r.compraId ? { rotulo: 'Desfazer', fazer: () => desfazer('compra_id', r.compraId!) } : undefined,
         });
       });
@@ -131,7 +138,7 @@ export function NovoLancamento({
     adicionarPendente({
       id: idTemporario, tipo, valor, data: new Date().toISOString(), origem: 'app',
       descricao: descricao || escolhido.nome, categoria: escolhido.nome, icone: escolhido.icone,
-      forma: tipo === 'despesa' ? forma : null, cartao: null, compraId: null, parcela: null, parcelas: null, totalDaCompra: null,
+      forma: tipo === 'despesa' ? forma : null, cartao: null, compraId: null, parcela: null, parcelas: null, totalDaCompra: null, recorrente: false,
     });
     setAberto(false);
     limpar();
@@ -232,6 +239,8 @@ export function NovoLancamento({
               onParcelas={setParcelas}
               centavos={centavos}
               dataCompra={new Date().toISOString()}
+              todoMes={todoMes}
+              onTodoMes={setTodoMes}
               onIrAjustes={() => setAberto(false)}
             />
           )}

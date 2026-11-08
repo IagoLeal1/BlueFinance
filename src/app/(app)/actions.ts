@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 import type { TipoLancamento } from '@/domain/money';
 import { diaDe, nomeDoMes, somarMeses } from '@/domain/datas';
 import { mesDe } from '@/domain/summary';
-import { diaDoFechamento, dividirParcelas, mesDaFatura, mesesDasParcelas } from '@/domain/parcelas';
+import { MESES_DE_ASSINATURA, diaDoFechamento, dividirParcelas, mesDaFatura, mesesDasParcelas } from '@/domain/parcelas';
 import { supabaseServidor } from '@/lib/supabase/server';
 
 export interface EstadoLancamento {
@@ -96,9 +96,32 @@ async function criarCompraNoCredito(
   if (!cartao) return { erro: 'Escolha o cartão.' };
 
   const agora = new Date().toISOString();
+  const compraId = randomUUID();
+  if (form.get('recorrente') === '1') {
+    // Assinatura: o mesmo valor em toda fatura, a partir da aberta; o app completa os meses seguintes depois.
+    const meses = mesesDasParcelas(mesDaFatura(agora, cartao.dia_fechamento), MESES_DE_ASSINATURA);
+    const { error } = await supabase.from('lancamentos').insert(
+      meses.map((competencia, i) => ({
+        user_id: userId,
+        tipo: 'despesa',
+        valor: total,
+        categoria_id: categoria.id,
+        descricao: descricao || categoria.nome,
+        data: agora,
+        forma_pagamento: 'credito',
+        cartao_id: cartao.id,
+        compra_id: compraId,
+        parcela: i + 1,
+        recorrente: true,
+        competencia,
+      })),
+    );
+    if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
+    refresh();
+    return { ok: true, compraId };
+  }
   const meses = mesesDasParcelas(mesDaFatura(agora, cartao.dia_fechamento), parcelas);
   const valores = dividirParcelas(total, parcelas);
-  const compraId = randomUUID();
   const { error } = await supabase.from('lancamentos').insert(
     valores.map((valor, i) => ({
       user_id: userId,
@@ -361,6 +384,61 @@ export async function lancarTotalFatura(_anterior: EstadoLancamento, form: FormD
     competencia: mes,
   });
   if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
+  refresh();
+  return { ok: true };
+}
+
+/** Fatura aberta do cartão de uma assinatura: "daqui para frente" começa nela. */
+async function abertaDaAssinatura(supabase: Awaited<ReturnType<typeof supabaseServidor>>, compraId: string): Promise<string | null> {
+  const { data } = await supabase
+    .from('lancamentos')
+    .select('cartoes(dia_fechamento)')
+    .eq('compra_id', compraId)
+    .eq('recorrente', true)
+    .limit(1)
+    .maybeSingle();
+  if (!data) return null;
+  const agora = new Date().toISOString();
+  return data.cartoes ? mesDaFatura(agora, data.cartoes.dia_fechamento) : mesDe(agora);
+}
+
+/** Edita uma assinatura: o valor novo vale da fatura aberta em diante; descrição e categoria, em todas. */
+export async function editarAssinatura(_anterior: EstadoLancamento, form: FormData): Promise<EstadoLancamento> {
+  const compraId = String(form.get('compra_id') ?? '');
+  const valor = Number(form.get('valor_centavos'));
+  const descricao = String(form.get('descricao') ?? '').trim();
+  if (!Number.isSafeInteger(valor) || valor <= 0) return { erro: 'Digite um valor maior que zero.' };
+
+  const supabase = await supabaseServidor();
+  const aberta = await abertaDaAssinatura(supabase, compraId);
+  if (!aberta) return { erro: 'Assinatura não encontrada.' };
+  const mudancas: { descricao?: string; categoria_id?: string } = {};
+  if (descricao) mudancas.descricao = descricao;
+  const novaCategoria = String(form.get('categoria_id') ?? '');
+  if (novaCategoria) {
+    const { data } = await supabase.from('categorias').select('id').eq('id', novaCategoria).maybeSingle();
+    if (!data) return { erro: 'Categoria não encontrada.' };
+    mudancas.categoria_id = data.id;
+  }
+  const { error } = await supabase.from('lancamentos').update({ valor }).eq('compra_id', compraId).gte('competencia', aberta);
+  const { error: erroResto } =
+    Object.keys(mudancas).length > 0 ? await supabase.from('lancamentos').update(mudancas).eq('compra_id', compraId) : { error: null };
+  if (error || erroResto) return { erro: 'Não foi possível salvar. Tente de novo.' };
+  refresh();
+  return { ok: true };
+}
+
+/** Para de repetir: tira as faturas depois da aberta; o que já passou (e a aberta) fica, como gasto comum. */
+export async function pararAssinatura(_anterior: EstadoLancamento, form: FormData): Promise<EstadoLancamento> {
+  const compraId = String(form.get('compra_id') ?? '');
+  const supabase = await supabaseServidor();
+  const aberta = await abertaDaAssinatura(supabase, compraId);
+  if (!aberta) return { erro: 'Assinatura não encontrada.' };
+  const { error } = await supabase.from('lancamentos').delete().eq('compra_id', compraId).gt('competencia', aberta);
+  const { error: erroResto } = error
+    ? { error }
+    : await supabase.from('lancamentos').update({ recorrente: false, parcela: 1, parcelas: 1 }).eq('compra_id', compraId);
+  if (erroResto) return { erro: 'Não foi possível parar. Tente de novo.' };
   refresh();
   return { ok: true };
 }

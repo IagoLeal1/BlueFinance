@@ -9,7 +9,9 @@ const FORMA = { debito: 'Débito', pix: 'Pix', credito: 'Crédito' } as const;
  */
 export function metaDe(l: LancamentoListado): string {
   const partes = [l.categoria];
-  if (l.forma === 'credito') {
+  if (l.recorrente) {
+    partes.push('todo mês');
+  } else if (l.forma === 'credito') {
     const parcelado = (l.parcelas ?? 1) > 1;
     const quando = parcelado ? `comprado em ${diaCurto(l.data)}` : diaCurto(l.data);
     // Espaços não separáveis: a data não quebra no meio ("7" numa linha, "out" na outra).
