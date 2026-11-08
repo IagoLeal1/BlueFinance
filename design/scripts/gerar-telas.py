@@ -496,4 +496,43 @@ tela("TelaExtratoCredito", "22 · Lançamentos › Crédito: as compras no cart�
      """"Crédito" mostra as compras no cartão de cada fatura do mês (a que fecha nele), com o total, quando fechou e
 quando vence — como antes. As compras não aparecem no extrato da conta: lá a fatura entra inteira, no vencimento.""")
 
+# 23 · Avisos da fatura e sem internet (PWA, sem app nativo)
+SWITCH_ON = ('<span style="width:51px;height:31px;border-radius:999px;background:var(--brand);position:relative;flex:none">'
+             '<span style="position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25)"></span></span>')
+avisos = ('<section class="bf-card" style="display:grid;gap:10px">'
+          '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">'
+          '<div><h3 class="bf-card__title">Aviso da fatura</h3><div class="caption muted">Um dia antes e no dia do vencimento, às 9h.</div></div>'
+          + SWITCH_ON + '</div>'
+          '<div class="caption" style="color:var(--positive)">Ativado neste iPhone</div>'
+          f'<button class="bf-btn bf-btn--ghost" style="justify-self:start;padding:0">{i("bell")}Enviar um aviso de teste</button></section>')
+notif = (f'<div class="bf-ios-notif"><span class="bf-ios-notif__icone">{CHECK_BRANCO}</span>'
+         '<div style="flex:1"><div class="body-strong">BlueFin</div><div class="caption">A fatura do C6bank vence amanhã: R$ 1.234,56</div></div>'
+         '<span class="caption muted">9:00</span></div>')
+notif_dia = (f'<div class="bf-ios-notif"><span class="bf-ios-notif__icone">{CHECK_BRANCO}</span>'
+             '<div style="flex:1"><div class="body-strong">BlueFin</div><div class="caption">Hoje vence a fatura do C6bank: R$ 1.234,56</div></div>'
+             '<span class="caption muted">9:00</span></div>')
+sem_net = ('<div role="status" style="display:flex;gap:8px;align-items:center;border-radius:12px;padding:10px 12px;background:var(--ink);color:var(--bg);font:600 13px/18px var(--font-sans)">'
+           f'{i("wifi-off")}<span>Sem internet. Mostrando os dados de 14:32; o que você lançar sobe quando ela voltar.</span></div>')
+tela("TelaAvisosOffline", "23 · Aviso da fatura (push) e sem internet — PWA, sem app nativo",
+     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:16px">'
+     + painel("1 · Ajustes › Aviso da fatura",
+              f'<div style="display:grid;gap:10px">{avisos}'
+              '<section class="bf-card" style="display:grid;gap:6px"><h3 class="bf-card__title">Antes de ativar</h3>'
+              '<div class="caption muted">Abra o BlueFin pelo ícone da Tela de Início (Safari › Compartilhar › Adicionar à Tela de Início). '
+              'É só lá que o iPhone deixa um site mandar avisos.</div></section></div>',
+              "Ativar pede a permissão do iPhone. Vale para este aparelho; em outro, ative de novo. O teste chega na hora.")
+     + painel("2 · O aviso no iPhone",
+              f'<div style="display:grid;gap:10px">{notif}{notif_dia}</div>',
+              "Às 9h, um dia antes e no dia do vencimento, se a fatura tiver valor. Tocar abre o Crédito daquele mês.")
+     + painel("3 · Sem internet",
+              f'<div style="display:grid;gap:10px">{sem_net}'
+              '<section class="bf-card" style="padding-top:0;padding-bottom:4px"><div class="bf-list__day">Salvando</div><ul class="bf-list">'
+              + linha("despesa", "car", "Uber", "Transporte · Pix · sobe quando a internet voltar", "− R$ 18,40", " bf-row--pending")
+              + '</ul></section></div>',
+              "O app abre mesmo sem sinal, com o que viu por último. O que você lançar fica \"salvando\" e é enviado sozinho quando a internet volta — mesmo se fechar o app.")
+     + "</div>",
+     """Parte C sem Swift: o próprio site instalado na Tela de Início manda o aviso da fatura (Web Push, iOS 16.4+) e
+abre sem internet (service worker). Sem app nativo, sem Xcode e sem conta paga da Apple.""",
+     altura=560, largura=1240)
+
 print("telas geradas em", RAIZ)
