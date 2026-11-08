@@ -12,5 +12,11 @@ test.describe('tela de início do iPhone', () => {
     const png = await request.get(icone!);
     expect(png.status()).toBe(200);
     expect(png.headers()['content-type']).toContain('image/png');
+
+    // O service worker (aviso da fatura e app sem internet) abre sem login e não fica em cache.
+    const sw = await request.get('/sw.js');
+    expect(sw.status()).toBe(200);
+    expect(sw.headers()['content-type']).toContain('javascript');
+    expect(sw.headers()['cache-control']).toContain('no-cache');
   });
 });

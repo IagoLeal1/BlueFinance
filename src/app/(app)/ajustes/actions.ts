@@ -1,6 +1,8 @@
 'use server';
 
 import { refresh } from 'next/cache';
+import { enviarAviso } from '@/server/avisos';
+import { supabaseAdmin } from '@/server/supabase-admin';
 import { redirect } from 'next/navigation';
 import { supabaseServidor } from '@/lib/supabase/server';
 import { criarTokenPessoal } from '@/server/tokens';
@@ -64,4 +66,46 @@ export async function excluirCartao(_anterior: EstadoCartao, form: FormData): Pr
   if (error) return { erro: 'Não foi possível excluir. Tente de novo.' };
   refresh();
   return { ok: true };
+}
+
+export interface InscricaoDoAparelho {
+  endpoint: string;
+  keys: { p256dh: string; auth: string };
+}
+
+async function usuarioLogado(): Promise<string | null> {
+  const supabase = await supabaseServidor();
+  const { data } = await supabase.auth.getClaims();
+  return data?.claims.sub ?? null;
+}
+
+/** Liga o aviso da fatura neste aparelho. Se o aparelho era de outra conta, passa a ser desta. */
+export async function ativarAvisos(inscricao: InscricaoDoAparelho): Promise<{ ok?: true; erro?: string }> {
+  const userId = await usuarioLogado();
+  if (!userId) return { erro: 'Sua sessão expirou. Entre de novo.' };
+  const { endpoint, keys } = inscricao;
+  if (!/^https:\/\//.test(endpoint) || !keys?.p256dh || !keys?.auth) return { erro: 'Este aparelho não aceita avisos.' };
+  await supabaseAdmin.from('inscricoes_push').delete().eq('endpoint', endpoint);
+  const { error } = await supabaseAdmin.from('inscricoes_push').insert({ user_id: userId, endpoint, p256dh: keys.p256dh, auth: keys.auth });
+  return error ? { erro: 'Não foi possível ativar. Tente de novo.' } : { ok: true };
+}
+
+/** Desliga o aviso da fatura neste aparelho. */
+export async function desativarAvisos(endpoint: string): Promise<{ ok?: true; erro?: string }> {
+  const supabase = await supabaseServidor();
+  const { error } = await supabase.from('inscricoes_push').delete().eq('endpoint', endpoint);
+  return error ? { erro: 'Não foi possível desativar. Tente de novo.' } : { ok: true };
+}
+
+/** Manda um aviso de teste para os aparelhos da pessoa. */
+export async function enviarAvisoDeTeste(): Promise<{ ok?: true; erro?: string }> {
+  const supabase = await supabaseServidor();
+  const { data: inscricoes } = await supabase.from('inscricoes_push').select('id, endpoint, p256dh, auth');
+  if (!inscricoes?.length) return { erro: 'Ative o aviso neste iPhone primeiro.' };
+  const resultados = await Promise.all(
+    inscricoes.map((i) => enviarAviso(i, { titulo: 'BlueFin', corpo: 'Aviso de teste: é assim que chega o aviso da fatura.', url: '/ajustes' })),
+  );
+  const sumiram = inscricoes.filter((_, n) => resultados[n] === 'sumiu').map((i) => i.id);
+  if (sumiram.length) await supabaseAdmin.from('inscricoes_push').delete().in('id', sumiram);
+  return resultados.includes('ok') ? { ok: true } : { erro: 'O aviso não chegou. Desative e ative de novo.' };
 }

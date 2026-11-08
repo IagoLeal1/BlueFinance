@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
+import { AvisoDaFatura } from '@/components/app/aviso-fatura';
 import { Cartoes } from '@/components/app/cartoes';
 import { TokenAtalho } from '@/components/app/token-atalho';
 import { Button } from '@/components/ui/button';
@@ -19,6 +20,7 @@ export default function Ajustes() {
       <Suspense fallback={null}>
         <CartoesDoUsuario />
       </Suspense>
+      <AvisoDaFatura />
       <section aria-label="Lançar sem abrir o app" className="grid gap-3 rounded-lg bg-card p-4 shadow-card">
         <h2 className="text-lg font-bold">Lançar sem abrir o app</h2>
         <ol className="grid gap-3">

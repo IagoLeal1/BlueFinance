@@ -51,6 +51,20 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"inscricoes_push": {
+                  Row: {
+                    "auth": string,"criado_em": string,"endpoint": string,"id": string,"p256dh": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "auth": string,"criado_em"?: string,"endpoint": string,"id"?: string,"p256dh": string,"user_id": string
+                  }
+                  Update: {
+                    "auth"?: string,"criado_em"?: string,"endpoint"?: string,"id"?: string,"p256dh"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"investimentos": {
                   Row: {
                     "aportado": number,"criado_em": string,"id": string,"instituicao": string,"nome": string,"tipo": string,"user_id": string,"valor_atual": number

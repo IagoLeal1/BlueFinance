@@ -28,4 +28,13 @@ test.describe('ajustes', () => {
     await expect(secao).toContainText('Botão de Ação');
     await expect(page.getByRole('region', { name: 'Conta' })).toContainText(usuario.email);
   });
+
+  test('Aviso da fatura: aberto pelo Safari, explica que precisa estar na Tela de Início', async ({ page, usuario }) => {
+    await entrar(page, usuario);
+    await page.getByRole('link', { name: 'Ajustes' }).click();
+    const aviso = page.getByRole('region', { name: 'Aviso da fatura' });
+    await expect(aviso).toContainText('Um dia antes e no dia do vencimento, às 9h.');
+    await expect(aviso.getByRole('switch', { name: 'Aviso da fatura' })).toBeDisabled();
+    await expect(aviso).toContainText('Adicionar à Tela de Início');
+  });
 });
