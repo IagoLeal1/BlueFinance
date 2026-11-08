@@ -10,8 +10,8 @@ import { BottomSheet } from './bottom-sheet';
 import { ChipsDeCategoria, type CategoriaEditavel } from './editar-lancamento';
 
 /**
- * "Lançar o total da fatura" (design kit: TelaFaturaFechada): para a fatura fechada sem compras lançadas,
- * grava o valor total de uma vez, na categoria Outros (dá para trocar).
+ * "Lançar o total da fatura" (design kit: TelaFaturaFechada, TelaCoresCategoria): para a fatura fechada sem
+ * compras lançadas, grava o valor total de uma vez, na categoria Fatura (dá para trocar).
  */
 export function LancarTotalFatura({
   cartao,
@@ -25,7 +25,7 @@ export function LancarTotalFatura({
   categorias: CategoriaEditavel[];
 }) {
   const opcoes = categorias.filter((c) => c.tipo === 'despesa');
-  const outros = opcoes.find((c) => c.nome === 'Outros')?.id;
+  const outros = (opcoes.find((c) => c.nome === 'Fatura') ?? opcoes.find((c) => c.nome === 'Outros'))?.id;
   const [aberto, setAberto] = useState(false);
   const [centavos, setCentavos] = useState(0);
   const [categoria, setCategoria] = useState<string[]>(outros ? [outros] : []);

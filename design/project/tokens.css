@@ -32,6 +32,18 @@
   --chart-5: #e87ba4;
   --chart-6: #008300;
   --chart-other: #a3abb8;
+  --cat-1: #2a78d6;
+  --cat-1-soft: #e1ecf9;
+  --cat-2: #dd5b25;
+  --cat-2-soft: #fceae3;
+  --cat-3: #009965;
+  --cat-3-soft: #dff4ec;
+  --cat-4: #be7500;
+  --cat-4-soft: #fcf2db;
+  --cat-5: #cc628c;
+  --cat-5-soft: #fcedf2;
+  --cat-6: #008300;
+  --cat-6-soft: #dbeedb;
   --shadow-card: 0 1px 2px rgba(12, 18, 32, 0.06), 0 2px 8px rgba(12, 18, 32, 0.04);
   --shadow-sheet: 0 -8px 32px rgba(12, 18, 32, 0.16);
 }
@@ -68,6 +80,18 @@
   --chart-5: #d55181;
   --chart-6: #008300;
   --chart-other: #4a5466;
+  --cat-1: #3987e5;
+  --cat-1-soft: #183256;
+  --cat-2: #d95926;
+  --cat-2-soft: #3b282c;
+  --cat-3: #199e70;
+  --cat-3-soft: #11373d;
+  --cat-4: #c98500;
+  --cat-4-soft: #383224;
+  --cat-5: #d55181;
+  --cat-5-soft: #3b2640;
+  --cat-6: #178c14;
+  --cat-6-soft: #0c3124;
   --shadow-card: none;
   --shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.5);
 }

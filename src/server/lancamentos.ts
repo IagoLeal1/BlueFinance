@@ -11,6 +11,8 @@ export interface LancamentoListado extends Lancamento {
   id: string;
   descricao: string;
   icone: string;
+  /** Ordem da categoria de gasto (1 a 6 têm cor própria, a mesma dos gráficos). */
+  ordemCategoria: number | null;
   origem: 'app' | 'atalho';
   forma: FormaPagamento | null;
   cartao: { id: string; nome: string; diaFechamento: number; diaVencimento: number } | null;
@@ -25,7 +27,7 @@ export interface LancamentoListado extends Lancamento {
 }
 
 const CAMPOS =
-  'id, tipo, valor, data, descricao, origem, competencia, forma_pagamento, compra_id, parcela, parcelas, recorrente, categorias(nome, icone), investimentos(nome), cartoes(id, nome, dia_fechamento, dia_vencimento)';
+  'id, tipo, valor, data, descricao, origem, competencia, forma_pagamento, compra_id, parcela, parcelas, recorrente, categorias(nome, icone, ordem), investimentos(nome), cartoes(id, nome, dia_fechamento, dia_vencimento)';
 
 /** Lançamentos do usuário logado num mês de competência, do mais novo ao mais antigo (RLS: só os dele). */
 export function lancamentosDoMes(mes: string): Promise<LancamentoListado[]> {
@@ -69,6 +71,7 @@ async function buscar(meses: string[]): Promise<LancamentoListado[]> {
     categoria: l.categorias?.nome ?? l.investimentos?.nome ?? 'Sem categoria',
     origem: l.origem === 'atalho' ? 'atalho' : 'app',
     icone: l.categorias?.icone ?? (l.tipo === 'investimento' ? 'piggy-bank' : 'circle'),
+    ordemCategoria: l.categorias?.ordem ?? null,
     forma: (l.forma_pagamento as FormaPagamento | null) ?? null,
     cartao: l.cartoes
       ? {

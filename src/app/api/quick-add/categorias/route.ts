@@ -13,6 +13,7 @@ export async function GET(request: Request) {
     .select('nome')
     .eq('user_id', userId)
     .eq('tipo', 'despesa')
+    .neq('nome', 'Fatura') // só para o total de uma fatura, lançado no app
     .order('ordem');
   if (error) throw error;
 

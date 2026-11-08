@@ -83,18 +83,20 @@ test.describe('fatura do cartão', () => {
     const sheet = page.getByRole('dialog', { name: 'Total da fatura' });
     await expect(sheet).toContainText(`Nubank · fatura de ${nomeDoMes(mes)}`);
     await sheet.getByLabel('Valor').pressSequentially('123456');
-    await expect(sheet.getByRole('button', { name: 'Outros' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(sheet.getByRole('button', { name: 'Fatura' })).toHaveAttribute('aria-pressed', 'true');
     await sheet.getByRole('button', { name: 'Salvar total' }).click();
     await expect(sheet).toBeHidden();
 
     const linha = fatura.getByRole('listitem').filter({ hasText: `Fatura de ${nomeDoMes(mes)}` });
     await expect(linha).toContainText('− R$ 1.234,56');
-    await expect(linha).toContainText('Outros');
+    await expect(linha).toContainText('Fatura · à vista');
     await expect(fatura.getByRole('button', { name: 'Lançar o total da fatura' })).toHaveCount(0);
 
     await page.getByRole('link', { name: 'Início' }).click();
     await expect(page.getByRole('region', { name: 'Cartão de crédito' }).getByRole('link', { name: new RegExp(`^Fatura de ${nomeDoMes(mes)}`) }))
       .toContainText('R$ 1.234,56');
+    // Nos gastos por categoria, a fatura sem detalhe aparece separada, como Fatura.
+    await expect(page.getByRole('region', { name: 'Gastos por categoria' })).toContainText('Fatura');
   });
 
   test('sem cartão cadastrado, o Início não mostra o card do cartão', async ({ page, usuario }) => {

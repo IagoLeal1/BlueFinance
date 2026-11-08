@@ -42,6 +42,18 @@
   --chart-5: #e87ba4;
   --chart-6: #008300;
   --chart-other: #a3abb8;
+  --cat-1: #2a78d6;
+  --cat-1-soft: #e1ecf9;
+  --cat-2: #dd5b25;
+  --cat-2-soft: #fceae3;
+  --cat-3: #009965;
+  --cat-3-soft: #dff4ec;
+  --cat-4: #be7500;
+  --cat-4-soft: #fcf2db;
+  --cat-5: #cc628c;
+  --cat-5-soft: #fcedf2;
+  --cat-6: #008300;
+  --cat-6-soft: #dbeedb;
   --bf-shadow-card: 0 1px 2px rgba(12, 18, 32, 0.06), 0 2px 8px rgba(12, 18, 32, 0.04);
   --bf-shadow-sheet: 0 -8px 32px rgba(12, 18, 32, 0.16);
 }
@@ -81,6 +93,18 @@
     --chart-5: #d55181;
     --chart-6: #008300;
     --chart-other: #4a5466;
+    --cat-1: #3987e5;
+    --cat-1-soft: #183256;
+    --cat-2: #d95926;
+    --cat-2-soft: #3b282c;
+    --cat-3: #199e70;
+    --cat-3-soft: #11373d;
+    --cat-4: #c98500;
+    --cat-4-soft: #383224;
+    --cat-5: #d55181;
+    --cat-5-soft: #3b2640;
+    --cat-6: #178c14;
+    --cat-6-soft: #0c3124;
     --bf-shadow-card: none;
     --bf-shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.5);
   }
@@ -119,6 +143,18 @@
   --color-chart-5: var(--chart-5);
   --color-chart-6: var(--chart-6);
   --color-chart-other: var(--chart-other);
+  --color-cat-1: var(--cat-1);
+  --color-cat-1-soft: var(--cat-1-soft);
+  --color-cat-2: var(--cat-2);
+  --color-cat-2-soft: var(--cat-2-soft);
+  --color-cat-3: var(--cat-3);
+  --color-cat-3-soft: var(--cat-3-soft);
+  --color-cat-4: var(--cat-4);
+  --color-cat-4-soft: var(--cat-4-soft);
+  --color-cat-5: var(--cat-5);
+  --color-cat-5-soft: var(--cat-5-soft);
+  --color-cat-6: var(--cat-6);
+  --color-cat-6-soft: var(--cat-6-soft);
   --shadow-card: var(--bf-shadow-card);
   --shadow-sheet: var(--bf-shadow-sheet);
 }

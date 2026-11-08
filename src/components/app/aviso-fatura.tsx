@@ -5,7 +5,7 @@ import { Bell } from 'lucide-react';
 import { ativarAvisos, desativarAvisos, enviarAvisoDeTeste } from '@/app/(app)/ajustes/actions';
 import { Button } from '@/components/ui/button';
 
-type Situacao = 'carregando' | 'instalar' | 'sem-suporte' | 'pronto';
+type Situacao = 'carregando' | 'instalar' | 'sem-suporte' | 'sem-chave' | 'pronto';
 
 /** Chave pública do aviso em bytes, como o PushManager pede. */
 function chavePublica(base64: string): Uint8Array<ArrayBuffer> {
@@ -28,8 +28,9 @@ export function AvisoDaFatura() {
   const situacao = useSyncExternalStore<Situacao>(
     nadaMuda,
     () => {
+      if (!chave) return 'sem-chave';
       if (noIphone() && !naTelaDeInicio()) return 'instalar';
-      return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window && chave ? 'pronto' : 'sem-suporte';
+      return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window ? 'pronto' : 'sem-suporte';
     },
     () => 'carregando',
   );
@@ -103,6 +104,9 @@ export function AvisoDaFatura() {
           Abra o BlueFin pelo ícone da Tela de Início (Safari › Compartilhar › Adicionar à Tela de Início). É só lá que o iPhone deixa um
           site mandar avisos.
         </p>
+      )}
+      {situacao === 'sem-chave' && (
+        <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">O aviso ainda não foi configurado no servidor.</p>
       )}
       {situacao === 'sem-suporte' && (
         <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">Este navegador não recebe avisos.</p>

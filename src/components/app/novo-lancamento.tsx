@@ -22,6 +22,7 @@ export interface CategoriaOpcao {
   nome: string;
   tipo: 'despesa' | 'receita';
   icone: string;
+  ordem: number;
 }
 
 const TIPOS: { valor: TipoLancamento; rotulo: string }[] = [
@@ -68,8 +69,8 @@ export function NovoLancamento({
   // Despesa e receita escolhem categoria; investimento escolhe para qual investimento vai o aporte.
   const opcoesDe = (t: TipoLancamento) =>
     t === 'investimento'
-      ? investimentos.map((i) => ({ valor: i.id, nome: i.nome, icone: 'piggy-bank' }))
-      : categorias.filter((c) => c.tipo === t).map((c) => ({ valor: c.nome, nome: c.nome, icone: c.icone }));
+      ? investimentos.map((i) => ({ valor: i.id, nome: i.nome, icone: 'piggy-bank', ordem: 0 }))
+      : categorias.filter((c) => c.tipo === t).map((c) => ({ valor: c.nome, nome: c.nome, icone: c.icone, ordem: c.ordem }));
   const opcoes = opcoesDe(tipo);
 
   const ultimaDe = (t: TipoLancamento, lista = opcoesDe(t)) => {
@@ -140,6 +141,7 @@ export function NovoLancamento({
     const pendente = {
       id, tipo, valor, data: new Date().toISOString(), origem: 'app' as const,
       descricao: descricao || escolhido.nome, categoria: escolhido.nome, icone: escolhido.icone,
+      ordemCategoria: escolhido.ordem || null,
       forma: tipo === 'despesa' ? forma : null, cartao: null, compraId: null, parcela: null, parcelas: null, totalDaCompra: null, recorrente: false,
     };
     const aviso = `${SALVO[tipoSalvo]} · ${formatSigned(valor, tipoSalvo)}`;

@@ -57,7 +57,7 @@ function LinhaPagamentoFatura({ f, aPagar }: { f: PagamentoFatura; aPagar: boole
   return (
     <li className="not-first:border-t not-first:border-border">
       <Link href={f.href} className="flex min-h-16 items-center gap-3 py-3">
-        <span className="grid size-10 shrink-0 place-items-center rounded-[12px] bg-negative-soft text-negative">
+        <span className="grid size-10 shrink-0 place-items-center rounded-[12px] bg-muted text-muted-foreground">
           <CreditCard className="size-5" aria-hidden />
         </span>
         <span className="min-w-0 flex-1">
