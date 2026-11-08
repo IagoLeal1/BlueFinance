@@ -338,34 +338,41 @@ tela("TelaFatura", "14 · Lançamentos: parcelas aparecem na fatura do mês",
      """No mês, as compras no crédito ficam juntas no card da fatura do cartão (total da fatura no topo); débito e Pix
 seguem por dia. Cada parcela mostra "1/3" e quando foi comprada. Tocar numa parcela abre a compra inteira (tela 17).""")
 
-# 15 · Início com cartão
-credito = ('<section class="bf-card" aria-label="Cartão de crédito" style="display:grid;gap:10px">'
-           f'<div class="bf-card__head" style="margin:0"><h3 class="bf-card__title" style="display:flex;gap:8px;align-items:center">{i("credit-card")}Cartão de crédito</h3><a class="bf-link" href="#">Ver fatura</a></div>'
-           '<div class="bf-balance__split" style="grid-template-columns:1fr 1fr">'
-           '<div class="bf-stat"><div class="bf-stat__label">Fatura de novembro</div><div class="bf-stat__value">R$ 1.240</div></div>'
-           '<div class="bf-stat"><div class="bf-stat__label">Parcelas a vir</div><div class="bf-stat__value">R$ 2.400</div></div></div>'
-           '<div class="caption muted">Nubank fecha dia 3 · 4 compras parceladas até março</div></section>')
-tela("TelaInicioCredito", "15 · Início: quanto do mês é cartão e quanto já está comprometido",
+# 15 · Início com cartão: fatura fechada (a pagar) e aberta
+fatura_linha = lambda titulo_, meta, valor: (
+    f'<li class="bf-row" style="min-height:52px"><div class="bf-row__main"><div class="bf-row__title">{titulo_}</div>'
+    f'<div class="bf-row__meta">{meta}</div></div><span class="bf-row__amount">{valor}</span>{i("chevron-right", cls="muted")}</li>')
+credito = ('<section class="bf-card" aria-label="Cartão de crédito" style="padding-bottom:4px">'
+           f'<div class="bf-card__head" style="margin:0"><h3 class="bf-card__title" style="display:flex;gap:8px;align-items:center">{i("credit-card")}Nubank</h3></div>'
+           '<ul class="bf-list">'
+           + fatura_linha("Fatura de novembro", "Fechada · vence dia 10", "R$ 1.234,56")
+           + fatura_linha("Fatura de dezembro", "Aberta · fecha dia 3", "R$ 418,40")
+           + '</ul><div class="caption muted" style="padding:6px 0 10px">Mais R$ 800 em parcelas até fevereiro · R$ 55,80 por mês em assinaturas</div></section>')
+tela("TelaInicioCredito", "15 · Início: a fatura fechada (a pagar) e a aberta de cada cartão",
      iphone(topo_inicio("R$ 4.218,35", "R$ 9.350", "R$ 3.632", "R$ 1.500") + credito + ultimos, aba=0),
-     """O "Saiu" do mês já inclui as parcelas que caem nele. O card do cartão mostra a fatura do mês (soma do crédito
-que cai neste mês) e "Parcelas a vir": o que já está comprometido nos meses seguintes. Só aparece se houver cartão.""")
+     """Cada cartão mostra a fatura que já fechou e ainda não venceu ("Fechada · vence dia 10") e a aberta, que está
+recebendo as compras de agora ("Aberta · fecha dia 3"). Tocar numa delas abre Lançamentos no mês dela. Depois do
+vencimento, a fechada sai e fica só a aberta. Embaixo, o que já está comprometido em parcelas e assinaturas.
+Só aparece no mês atual e se houver cartão.""")
 
 # 16 · Cartões em Ajustes
-tela("TelaCartoes", "16 · Ajustes › Cartões: nome e dia de fechamento",
+tela("TelaCartoes", "16 · Ajustes › Cartões: nome, fechamento e vencimento",
      iphone(titulo("Ajustes")
             + '<section class="bf-card" style="padding-top:8px;padding-bottom:4px"><div class="bf-card__head" style="margin:0"><h3 class="bf-card__title">Cartões de crédito</h3></div><ul class="bf-list">'
-            + f'<li class="bf-row"><span class="bf-cat bf-cat--neutral">{i("credit-card")}</span><div class="bf-row__main"><div class="bf-row__title">Nubank</div><div class="bf-row__meta">Fecha dia 3</div></div>{i("chevron-right", cls="muted")}</li>'
-            + f'<li class="bf-row"><span class="bf-cat bf-cat--neutral">{i("credit-card")}</span><div class="bf-row__main"><div class="bf-row__title">Itaú</div><div class="bf-row__meta">Fecha dia 25</div></div>{i("chevron-right", cls="muted")}</li></ul>'
+            + f'<li class="bf-row"><span class="bf-cat bf-cat--neutral">{i("credit-card")}</span><div class="bf-row__main"><div class="bf-row__title">Nubank</div><div class="bf-row__meta">Fecha dia 3 · vence dia 10</div></div>{i("chevron-right", cls="muted")}</li>'
+            + f'<li class="bf-row"><span class="bf-cat bf-cat--neutral">{i("credit-card")}</span><div class="bf-row__main"><div class="bf-row__title">Itaú</div><div class="bf-row__meta">Fecha dia 25 · vence dia 5</div></div>{i("chevron-right", cls="muted")}</li></ul>'
             + f'<button class="bf-btn bf-btn--ghost" style="padding:0">{i("plus")}Adicionar cartão</button></section>', aba=4,
             sobre='<div class="bf-scrim"><div class="bf-sheet" style="display:grid;gap:16px">'
             '<div class="bf-sheet__grabber" style="margin-bottom:0"></div>'
             f'<div class="bf-sheet__head" style="margin:0"><h2 class="bf-sheet__title">Novo cartão</h2><button class="bf-iconbtn" aria-label="Fechar">{i("x")}</button></div>'
             '<label class="bf-field"><span class="bf-field__label">Nome</span><input class="bf-input" value="Nubank"></label>'
             '<div class="bf-field"><span class="bf-field__label">Dia que a fatura fecha</span><div class="bf-stepper"><button aria-label="Menos">−</button><span class="bf-stepper__valor">dia 3</span><button aria-label="Mais">+</button></div>'
-            '<span class="bf-field__hint">Está no app do banco, perto da data de vencimento. Compras a partir desse dia vão para a fatura seguinte.</span></div>'
+            '<span class="bf-field__hint">Compras a partir desse dia vão para a fatura seguinte.</span></div>'
+            '<div class="bf-field"><span class="bf-field__label">Dia do vencimento</span><div class="bf-stepper"><button aria-label="Menos">−</button><span class="bf-stepper__valor">dia 10</span><button aria-label="Mais">+</button></div></div>'
             f'<button class="bf-btn bf-btn--primary bf-btn--block">{i("check")}Salvar cartão</button></div></div>'),
-     """Cartões ficam em Ajustes: nome e dia em que a fatura fecha (1 a 31; em meses mais curtos vale o último dia).
-É o único dado necessário para saber em qual mês cada parcela cai. Tocar num cartão edita ou exclui.""")
+     """Cartões ficam em Ajustes: nome, dia em que a fatura fecha e dia em que vence (1 a 31; em meses mais curtos vale
+o último dia). O fechamento decide em qual fatura cada compra cai; o vencimento diz até quando a fatura fechada
+aparece como "a pagar" no Início. Se o vencimento é antes do fechamento (fecha 25, vence 5), vence no mês seguinte.""")
 
 # 17 · Editar compra parcelada
 QUANDO = lambda texto: (f'<div class="bf-field"><span class="bf-field__label">Quando</span><div class="bf-input" style="display:flex;justify-content:space-between;align-items:center">'
@@ -406,5 +413,44 @@ tela("TelaEditarGasto", "18 · Editar gasto: data e como pagou (Débito → Cré
 lançamento para o mês certo. Trocar de Débito/Pix para Crédito mostra cartão e parcelas, igual ao botão +: ao salvar, o
 gasto vira uma compra no cartão e cai na fatura pela data e pelo fechamento. Receitas e aportes também ganham "Quando".
 Abaixo seguem "Com o quê" e "Excluir lançamento".""")
+
+# 19 · Fatura fechada sem compras: lançar o total
+tela("TelaFaturaFechada", "19 · Fatura fechada sem compras lançadas: lançar o total de uma vez",
+     iphone(titulo("Lançamentos · Novembro", f'<button class="bf-iconbtn" aria-label="Trocar mês">{i("calendar")}</button>')
+            + '<section class="bf-card" style="display:grid;gap:10px">'
+              f'<div class="bf-card__head" style="margin:0"><h3 class="bf-card__title" style="display:flex;gap:8px;align-items:center">{i("credit-card")}Fatura Nubank</h3><span class="caption num muted">R$ 0,00</span></div>'
+              '<div class="caption muted" style="margin-top:-6px">Fechou dia 3 · vence dia 10</div>'
+              '<div class="body" style="color:var(--ink-muted)">As compras desta fatura são de antes de você usar o app.</div>'
+              f'<button class="bf-btn bf-btn--ghost" style="justify-self:start;padding:0">{i("plus")}Lançar o total da fatura</button></section>',
+            aba=1,
+            sobre='<div class="bf-scrim"><div class="bf-sheet" style="display:grid;gap:14px">'
+            + cabeca_sheet("Total da fatura")
+            + '<div class="caption muted" style="text-align:center">Nubank · fatura de novembro (fechou dia 3)</div>'
+            '<div class="bf-amount" style="padding:0"><div class="bf-amount__value"><span class="bf-amount__currency">R$</span><span class="bf-amount__digits">1.234,56</span></div></div>'
+            + f'<div class="bf-field"><span class="bf-field__label">Categoria</span>{chips([CATS[1], CATS[4], CATS[6]], "Outros")}</div>'
+            + f'<button class="bf-btn bf-btn--primary bf-btn--block">{i("check")}Salvar total</button></div></div>'),
+     """Para a fatura que já fechou (a "a pagar"), quando nenhuma compra dela foi lançada — por exemplo, as de antes de
+usar o app. "Lançar o total da fatura" grava um lançamento só, no crédito, nessa fatura: "Fatura de novembro"
+com o valor total (categoria Outros, dá para trocar). Ele entra no "Saiu" do mês e no card do cartão.""")
+
+# 20 · Todo mês (assinatura) no crédito
+SWITCH_LIGADO = ('<span style="width:51px;height:31px;border-radius:999px;background:var(--brand);position:relative;flex:none">'
+                 '<span style="position:absolute;right:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25)"></span></span>')
+tela("TelaRecorrente", "20 · No crédito: Todo mês para assinaturas que caem sempre na fatura",
+     iphone("", aba=None, sobre='<div class="bf-scrim"><div class="bf-sheet" style="display:grid;gap:14px">'
+            + cabeca_sheet("Novo lançamento")
+            + '<div class="bf-amount" style="padding:0"><div class="bf-amount__value"><span class="bf-amount__currency">R$</span><span class="bf-amount__digits">39,90</span></div></div>'
+            + f'<div class="bf-field"><span class="bf-field__label">Categoria</span>{chips(CATS[3:6], "Lazer")}</div>'
+            + f'<div class="bf-field"><span class="bf-field__label">Como pagou</span>{FORMAS}{CARTOES}</div>'
+            + '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 0">'
+              '<div><div class="body-strong">Todo mês</div><div class="caption muted">Assinatura: repete na fatura até você parar.</div></div>'
+            + SWITCH_LIGADO + '</div>'
+            + f'<div class="bf-nota">{i("repeat")}<span>Cai todo mês a partir da fatura de <b>dezembro</b>.</span></div>'
+            '<label class="bf-field"><span class="bf-field__label">Com o quê (opcional)</span><input class="bf-input" value="Netflix"></label>'
+            + f'<button class="bf-btn bf-btn--primary bf-btn--block">{i("check")}Salvar gasto</button></div></div>'),
+     """No crédito, "Todo mês" troca as parcelas por uma assinatura: o mesmo valor em toda fatura, a partir da atual,
+até você parar. Em Lançamentos aparece como "Lazer · todo mês". Tocar abre a assinatura: mudar o valor vale daqui
+para frente, "Parar de repetir" tira dos próximos meses (o que já passou fica) e "Excluir" apaga todos.
+O app mantém os próximos 24 meses lançados e vai completando sozinho.""")
 
 print("telas geradas em", RAIZ)

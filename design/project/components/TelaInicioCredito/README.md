@@ -1,2 +1,4 @@
-O "Saiu" do mês já inclui as parcelas que caem nele. O card do cartão mostra a fatura do mês (soma do crédito
-que cai neste mês) e "Parcelas a vir": o que já está comprometido nos meses seguintes. Só aparece se houver cartão.
+Cada cartão mostra a fatura que já fechou e ainda não venceu ("Fechada · vence dia 10") e a aberta, que está
+recebendo as compras de agora ("Aberta · fecha dia 3"). Tocar numa delas abre Lançamentos no mês dela. Depois do
+vencimento, a fechada sai e fica só a aberta. Embaixo, o que já está comprometido em parcelas e assinaturas.
+Só aparece no mês atual e se houver cartão.
