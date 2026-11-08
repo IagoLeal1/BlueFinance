@@ -247,30 +247,38 @@ TECLADO = ('<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px
            + "".join(f'<span style="text-align:center;padding:8px 0;border-radius:8px;background:var(--surface-sunken);font:600 17px/22px var(--font-sans)">{k}</span>' for k in "123456789,0⌫")
            + "</div>")
 cabeca = lambda sub: (f'<div class="bf-ios-prompt__titulo"><span class="bf-ios-notif__icone" style="width:22px;height:22px;border-radius:6px"></span>Gasto rápido{sub}</div>')
-tela("FluxoAtalho", "12 · Atalho no Botão de Ação: categoria → quanto (teclado numérico) → com o quê → pronto",
-     '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:16px">'
+FORMAS_ATALHO = "".join(
+    f'<div style="display:flex;align-items:center;gap:10px;padding:10px 4px;border-top:1px solid var(--line)">{i(ic)}<span class="body">{nome}</span>{dica}</div>'
+    for ic, nome, dica in [("credit-card", "Crédito · Nubank", '<span class="caption muted" style="margin-left:auto">último usado</span>'),
+                           ("wallet", "Débito", ""), ("zap", "Pix", ""), ("credit-card", "Crédito · Itaú", "")])
+tela("FluxoAtalho", "12 · Atalho no Botão de Ação: categoria → quanto → com o quê → como pagou → pronto",
+     '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:18px;padding:16px">'
      + painel("1 · Aperta o Botão de Ação e escolhe",
               f'<div class="bf-ios-prompt" style="gap:4px">{cabeca("")}'
               f'<div class="bf-ios-prompt__pergunta" style="margin:4px 0 6px">Categoria</div>{LISTA}</div>',
               "A lista vem do app (~0,35 s): categoria nova ou renomeada aparece sozinha.")
      + painel("2 · Quanto?",
-              f'<div class="bf-ios-prompt">{cabeca(" · Mercado")}'
-              '<div class="bf-ios-prompt__pergunta">Quanto?</div><div class="bf-ios-prompt__campo">32,90</div>'
+              f'<div class="bf-ios-prompt">{cabeca(" · Transporte")}'
+              '<div class="bf-ios-prompt__pergunta">Quanto?</div><div class="bf-ios-prompt__campo">18,40</div>'
               f'{TECLADO}</div>',
-              "Abre direto o teclado numérico. O Atalho manda em reais (32,9); o app converte para centavos.")
+              "Abre direto o teclado numérico. O Atalho manda em reais (18,4); o app converte para centavos.")
      + painel("3 · Com o quê? (opcional)",
-              f'<div class="bf-ios-prompt">{cabeca(" · Mercado · R$ 32,90")}'
-              '<div class="bf-ios-prompt__pergunta">Com o quê?</div><div class="bf-ios-prompt__campo">mercado do bairro</div>'
+              f'<div class="bf-ios-prompt">{cabeca(" · Transporte · R$ 18,40")}'
+              '<div class="bf-ios-prompt__pergunta">Com o quê?</div><div class="bf-ios-prompt__campo">Uber</div>'
               '<div class="bf-ios-prompt__acoes"><span>Cancelar</span><span>OK</span></div></div>',
               "Pode dar OK vazio: a descrição vira o nome da categoria.")
-     + painel("4 · Notificação de volta",
+     + painel("4 · Como pagou?",
+              f'<div class="bf-ios-prompt" style="gap:4px">{cabeca(" · Uber")}'
+              f'<div class="bf-ios-prompt__pergunta" style="margin:4px 0 6px">Como pagou?</div>{FORMAS_ATALHO}</div>',
+              "Abre com o que você usou da última vez nessa categoria. No crédito pelo Atalho é à vista (1x).")
+     + painel("5 · Notificação de volta",
               f'<div class="bf-ios-notif"><span class="bf-ios-notif__icone">{CHECK_BRANCO}</span>'
-              '<div style="flex:1"><div class="body-strong">BlueFinance</div><div class="caption">Gasto salvo: Mercado · − R$ 32,90</div></div><span class="caption muted">agora</span></div>',
-              "Uma chamada de rede para salvar, no fim. Se algo der errado, a notificação diz o quê.")
+              '<div style="flex:1"><div class="body-strong">BlueFinance</div><div class="caption">Gasto salvo: Transporte · − R$ 18,40 no crédito (Nubank, fatura de dezembro)</div></div><span class="caption muted">agora</span></div>',
+              "No crédito, diz em qual fatura caiu (pelo dia de fechamento do cartão). Se algo der errado, a notificação diz o quê.")
      + "</div>",
-     """Atalho no Botão de Ação (o Toque Traseiro falha com capinha): escolher a categoria, digitar o valor no teclado numérico
-e, se quiser, dizer com o quê. Uma chamada de rede para salvar, no fim.""",
-     altura=530, largura=1100)
+     """Atalho no Botão de Ação (o Toque Traseiro falha com capinha): escolher a categoria, digitar o valor no teclado numérico,
+se quiser dizer com o quê, e como pagou (Débito, Pix ou o cartão). Duas listas vêm do app; uma chamada salva, no fim.""",
+     altura=560, largura=1340)
 
 # 13 · Novo lançamento no crédito
 FORMAS = ('<div class="bf-seg" role="radiogroup" aria-label="Como pagou"><button class="bf-seg__opt" role="radio" aria-checked="false">Débito</button>'
