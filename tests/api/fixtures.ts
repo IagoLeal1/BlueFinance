@@ -1,7 +1,7 @@
 import { test as base, type APIRequestContext } from '@playwright/test';
 import { apagarUsuario, criarUsuario, type Usuario } from '../support/usuarios';
 
-export { clienteDe, type Usuario } from '../support/usuarios';
+export { clienteDe, semearCartao, semearLancamentos, type Usuario } from '../support/usuarios';
 
 /** Cada teste ganha usuários novos, apagados no fim — testes não dependem uns dos outros. */
 export const test = base.extend<{ usuario: Usuario; outroUsuario: Usuario }>({
