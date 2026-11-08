@@ -12,9 +12,9 @@
   },
   "groups": [],
   "lastChange": {
-    "at": "2026-11-07T21:07:22Z",
+    "at": "2026-11-07T21:30:46Z",
     "by": "Claude",
-    "note": "Atalho: categoria → Quanto? (teclado numérico) → Com o quê? (opcional) → notificação.",
+    "note": "Proposta: Débito/Pix/Crédito, parcelas pela data de fechamento do cartão, fatura em Lançamentos, cartão no Início, cartões em Ajustes, editar compra parcelada.",
     "via": "Claude Code"
   },
   "layout": "files",
