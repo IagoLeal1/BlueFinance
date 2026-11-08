@@ -1,10 +1,10 @@
 import { formatBRL } from '@/domain/money';
 import type { GastoPorCategoria } from '@/domain/summary';
 
-/** Fatura (o total de uma fatura, sem detalhe): lilás pastel, liso (design kit: TelaCoresCategoria). */
+/** Fatura (o total de uma fatura, sem detalhe): Céu, liso (design kit: TelaCoresCategoria). */
 const COR_DA_FATURA = 'var(--chart-fatura)';
 
-/** Cor fixa por categoria (chart-1 … chart-6 pela ordem da categoria); Fatura em lilás; o resto é "Outros". */
+/** Cor fixa por categoria (chart-1 … chart-6 pela ordem da categoria); Fatura em Céu; o resto é "Outros". */
 export function corDaCategoria(nome: string, ordemPorNome: Map<string, number>): string {
   if (nome === 'Fatura') return COR_DA_FATURA;
   const ordem = ordemPorNome.get(nome);

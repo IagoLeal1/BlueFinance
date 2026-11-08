@@ -44,9 +44,9 @@
   --cat-5-soft: #fcedf2;
   --cat-6: #008300;
   --cat-6-soft: #dbeedb;
-  --chart-fatura: #ab86fb;
-  --cat-fatura: #936de0;
-  --cat-fatura-soft: #f0e9fe;
+  --chart-fatura: #025884;
+  --cat-fatura: #025884;
+  --cat-fatura-soft: #d1e1e9;
   --shadow-card: 0 1px 2px rgba(12, 18, 32, 0.06), 0 2px 8px rgba(12, 18, 32, 0.04);
   --shadow-sheet: 0 -8px 32px rgba(12, 18, 32, 0.16);
 }
@@ -95,9 +95,9 @@
   --cat-5-soft: #3b2640;
   --cat-6: #178c14;
   --cat-6-soft: #0c3124;
-  --chart-fatura: #c4a6ff;
-  --cat-fatura: #c4a6ff;
-  --cat-fatura-soft: #3a3c60;
+  --chart-fatura: #8fd3ff;
+  --cat-fatura: #8fd3ff;
+  --cat-fatura-soft: #2e4660;
   --shadow-card: none;
   --shadow-sheet: 0 -8px 32px rgba(0, 0, 0, 0.5);
 }

@@ -21,7 +21,7 @@ const COR_DA_CATEGORIA = [
   'bg-cat-5-soft text-cat-5',
   'bg-cat-6-soft text-cat-6',
 ];
-/** Fatura (o total de uma fatura): lilás pastel, liso — diferente do cinza de Outros. */
+/** Fatura (o total de uma fatura): Céu, liso — azul-céu no escuro, azul-oceano no claro; diferente do cinza de Outros. */
 export const FUNDO_DA_FATURA = 'bg-cat-fatura-soft text-cat-fatura';
 export const fundoDoIcone = (l: Pick<LancamentoListado, 'tipo' | 'ordemCategoria' | 'categoria'>) =>
   l.tipo === 'despesa' && l.categoria === 'Fatura'

@@ -551,9 +551,9 @@ def linha_cor(icone, titulo_, meta, valor, categoria=None, tipo="despesa"):
     classe = "is-positive" if tipo == "receita" else "is-negative"
     return (f'<li class="bf-row">{tile}<div class="bf-row__main"><div class="bf-row__title">{titulo_}</div><div class="bf-row__meta">{meta}</div></div>'
             f'<span class="bf-row__amount {classe}">{valor}</span></li>')
-LISTRAS = "var(--chart-fatura)"
+FATURA = "var(--chart-fatura)"
 barra = ('<div style="display:flex;gap:2px;height:12px;border-radius:6px;overflow:hidden">'
-         '<span style="flex:44;background:var(--chart-1)"></span><span style="flex:26;background:' + LISTRAS + '"></span>'
+         '<span style="flex:44;background:var(--chart-1)"></span><span style="flex:26;background:' + FATURA + '"></span>'
          '<span style="flex:14;background:var(--chart-2)"></span><span style="flex:9;background:var(--chart-3)"></span><span style="flex:7;background:var(--chart-6)"></span></div>')
 legenda = lambda swatch, nome, valor, pct: (f'<li style="display:flex;align-items:center;gap:8px;font:600 13px/18px var(--font-sans)">'
                                             f'<span style="width:10px;height:10px;border-radius:3px;background:{swatch}"></span><span style="flex:1">{nome}</span>'
@@ -579,12 +579,12 @@ tela("TelaCoresCategoria", "24 · Cada categoria com a sua cor; a fatura sem det
                      + '<section class="bf-card" style="display:grid;gap:12px"><h3 class="bf-card__title">Gastos por categoria</h3>' + barra
                      + '<ul style="display:grid;gap:8px;margin:0;padding:0;list-style:none">'
                      + legenda("var(--chart-1)", "Moradia", "R$ 1.600,00", "44%")
-                     + legenda(LISTRAS, "Fatura", "R$ 1.234,56", "26%")
+                     + legenda(FATURA, "Fatura", "R$ 1.234,56", "26%")
                      + legenda("var(--chart-2)", "Mercado", "R$ 508,30", "14%")
                      + legenda("var(--chart-3)", "Transporte", "R$ 330,40", "9%")
                      + legenda("var(--chart-6)", "Saúde", "R$ 260,00", "7%")
                      + "</ul></section>", aba=0),
-              "\"Lançar o total da fatura\" agora usa a categoria Fatura (ícone de cartão). Ela tem cor própria, lisa: lilás pastel, escolhido pelo validador para se distinguir das outras categorias nos dois temas. Os totais já lançados como Outros passam para Fatura.")
+              "\"Lançar o total da fatura\" agora usa a categoria Fatura (ícone de cartão). Ela tem cor própria, lisa: Céu (azul-céu pastel no escuro, azul-oceano no claro), escolhida pelo validador para se distinguir das outras categorias nos dois temas. Os totais já lançados como Outros passam para Fatura.")
      + "</div>",
      """As categorias de gasto ganham cor própria nas linhas — a mesma da barra "Gastos por categoria" — com o ícone
 escurecido até ter 3:1 sobre o fundo nos dois temas. Receitas seguem verdes e aportes, âmbar. A cor nunca é o único
