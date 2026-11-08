@@ -23,6 +23,13 @@ type Forma = (typeof FORMAS)[number];
 const TIPOS: TipoLancamento[] = ['despesa', 'receita', 'investimento'];
 
 /** Cria um lançamento do usuário logado (o RLS garante que só grava para ele mesmo). */
+/** Id gerado no aparelho (o mesmo nas tentativas): com ele, reenviar não duplica. */
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const idDoAparelho = (form: FormData) => {
+  const id = String(form.get('id') ?? '');
+  return UUID.test(id) ? id : null;
+};
+
 export async function criarLancamento(_anterior: EstadoLancamento, form: FormData): Promise<EstadoLancamento> {
   const tipo = String(form.get('tipo')) as TipoLancamento;
   const valor = Number(form.get('valor_centavos'));
@@ -59,9 +66,11 @@ export async function criarLancamento(_anterior: EstadoLancamento, form: FormDat
     return criarCompraNoCredito(supabase, userId, form, valor, { id: categoria.id, nome: categoria.nome }, descricao);
   }
 
+  const id = idDoAparelho(form);
   const { data: criado, error } = await supabase
     .from('lancamentos')
     .insert({
+      ...(id && { id }),
       user_id: userId,
       tipo,
       valor,
@@ -71,6 +80,8 @@ export async function criarLancamento(_anterior: EstadoLancamento, form: FormDat
     })
     .select('id')
     .single();
+  // Já gravado numa tentativa anterior (ex.: reenviado depois de ficar sem internet).
+  if (error?.code === '23505' && id) return { ok: true, id };
   if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
 
   refresh();
@@ -96,7 +107,10 @@ async function criarCompraNoCredito(
   if (!cartao) return { erro: 'Escolha o cartão.' };
 
   const agora = new Date().toISOString();
-  const compraId = randomUUID();
+  const compraId = idDoAparelho(form) ?? randomUUID();
+  // Já gravada numa tentativa anterior (reenviada depois de ficar sem internet).
+  const { data: jaGravada } = await supabase.from('lancamentos').select('id').eq('compra_id', compraId).limit(1).maybeSingle();
+  if (jaGravada) return { ok: true, compraId };
   if (form.get('recorrente') === '1') {
     // Assinatura: o mesmo valor em toda fatura, a partir da aberta; o app completa os meses seguintes depois.
     const meses = mesesDasParcelas(mesDaFatura(agora, cartao.dia_fechamento), MESES_DE_ASSINATURA);

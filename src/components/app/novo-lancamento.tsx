@@ -13,6 +13,7 @@ import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { CHAVE_CARTAO, CamposCredito, FORMAS, cartaoInicial, rotuloParcelas, type Forma } from './campos-credito';
 import { CHIP } from './estilos';
+import { guardarNaFila, tirarDaFila } from './fila-offline';
 import { useFeedback } from './feedback';
 import { IconeCategoria } from './icone-categoria';
 import { Segmented } from './segmented';
@@ -107,6 +108,10 @@ export function NovoLancamento({
     if (noCredito && centavos < parcelas) return setErro('O valor é pequeno demais para tantas parcelas.');
 
     const form = new FormData(evento.currentTarget);
+    // Id gerado aqui: vai para a fila do aparelho até o servidor confirmar; reenviar não duplica.
+    const id = crypto.randomUUID();
+    form.set('id', id);
+    const campos = [...form.entries()].map(([nome, v]) => [nome, String(v)] as [string, string]);
     const descricao = String(form.get('descricao') ?? '').trim();
     const valor = centavos;
     const tipoSalvo = tipo;
@@ -115,42 +120,41 @@ export function NovoLancamento({
     if (noCredito) {
       // No crédito as parcelas podem cair em outros meses: sem linha "salvando…" aqui, só o aviso.
       localStorage.setItem(CHAVE_CARTAO, cartao!.id);
-      const n = parcelas;
-      const assinatura = todoMes;
+      const aviso = todoMes
+        ? `Assinatura salva · ${formatSigned(valor, 'despesa')} por mês`
+        : parcelas > 1
+          ? `Compra salva · ${rotuloParcelas(valor, parcelas)}`
+          : `${SALVO.despesa} · ${formatSigned(valor, 'despesa')}`;
+      guardarNaFila({ id, campos, aviso });
       setAberto(false);
       limpar();
       startTransition(async () => {
         const r = await criarLancamento({}, form);
+        tirarDaFila(id);
         if (!r.ok) return avisar({ texto: `Não salvou: ${r.erro ?? 'tente de novo.'}` });
-        avisar({
-          texto: assinatura
-            ? `Assinatura salva · ${formatSigned(valor, 'despesa')} por mês`
-            : n > 1
-              ? `Compra salva · ${rotuloParcelas(valor, n)}`
-              : `${SALVO.despesa} · ${formatSigned(valor, 'despesa')}`,
-          acao: r.compraId ? { rotulo: 'Desfazer', fazer: () => desfazer('compra_id', r.compraId!) } : undefined,
-        });
+        avisar({ texto: aviso, acao: r.compraId ? { rotulo: 'Desfazer', fazer: () => desfazer('compra_id', r.compraId!) } : undefined });
       });
       return;
     }
 
-    const idTemporario = `pendente-${crypto.randomUUID()}`;
-    adicionarPendente({
-      id: idTemporario, tipo, valor, data: new Date().toISOString(), origem: 'app',
+    const pendente = {
+      id, tipo, valor, data: new Date().toISOString(), origem: 'app' as const,
       descricao: descricao || escolhido.nome, categoria: escolhido.nome, icone: escolhido.icone,
       forma: tipo === 'despesa' ? forma : null, cartao: null, compraId: null, parcela: null, parcelas: null, totalDaCompra: null, recorrente: false,
-    });
+    };
+    const aviso = `${SALVO[tipoSalvo]} · ${formatSigned(valor, tipoSalvo)}`;
+    guardarNaFila({ id, campos, pendente, aviso });
+    adicionarPendente(pendente);
     setAberto(false);
     limpar();
 
     startTransition(async () => {
+      // Sem internet, a ação fica pendente (useOffline) e é refeita quando a conexão volta.
       const r = await criarLancamento({}, form);
-      removerPendente(idTemporario);
+      tirarDaFila(id);
+      removerPendente(id);
       if (!r.ok) return avisar({ texto: `Não salvou: ${r.erro ?? 'tente de novo.'}` });
-      avisar({
-        texto: `${SALVO[tipoSalvo]} · ${formatSigned(valor, tipoSalvo)}`,
-        acao: r.id ? { rotulo: 'Desfazer', fazer: () => desfazer('id', r.id!) } : undefined,
-      });
+      avisar({ texto: aviso, acao: r.id ? { rotulo: 'Desfazer', fazer: () => desfazer('id', r.id!) } : undefined });
     });
   }
 

@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
   // A bolinha "N" do modo dev fica em cima da aba Início no iPhone. Erros continuam aparecendo no overlay.
   devIndicators: false,
   partialPrefetching: true,
+  // Sem internet: navegação e Server Actions ficam pendentes e são refeitas quando a conexão volta.
+  experimental: { useOffline: true },
   // O service worker nunca fica em cache: uma versão nova vale na próxima abertura do app.
   async headers() {
     return [

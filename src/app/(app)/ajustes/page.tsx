@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { AvisoDaFatura } from '@/components/app/aviso-fatura';
+import { BotaoSair } from '@/components/app/botao-sair';
 import { Cartoes } from '@/components/app/cartoes';
 import { TokenAtalho } from '@/components/app/token-atalho';
-import { Button } from '@/components/ui/button';
 import { supabaseServidor } from '@/lib/supabase/server';
 import { listarCartoes } from '@/server/cartoes';
 import { tokenAtivo } from '@/server/tokens';
@@ -53,9 +53,7 @@ export default function Ajustes() {
           <EmailDaConta />
         </Suspense>
         <form action={sair}>
-          <Button type="submit" variant="ghost" className="-ml-5 text-negative">
-            Sair
-          </Button>
+          <BotaoSair />
         </form>
       </section>
     </>
