@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
 <style>
-  /* Layout: coluna de leitura (≈72ch) com diagramas largos em painéis roláveis; identidade BlueFin no tema escuro (Abismo, Atum, linha d'água), só tema escuro. */
+  /* Página de desenhos: cada seção é um diagrama com uma linha curta. Identidade BlueFin no tema escuro (Abismo, Atum, linha d'água), só tema escuro. */
   :root {
     --bg: #07101f;
     --card: #0f1a2e;
@@ -17,6 +17,7 @@
     --ink: #edf1f7;
     --muted: #9aa5b8;
     --brand: #6e9bff;
+    --brand-soft: #172548;
     --water: #3ccfc6;
     --abismo: #0b1f4d;
     --atum: #1846c8;
@@ -44,41 +45,39 @@
     padding-right: max(16px, env(safe-area-inset-right, 0px));
     display: flex;
     flex-direction: column;
-    gap: 64px;
+    gap: 56px;
   }
   p { margin: 0; }
-  p + p { margin-top: 12px; }
   a { color: var(--brand); }
   a:focus-visible { outline: 2px solid var(--water); outline-offset: 2px; border-radius: 4px; }
-  code, .mono { font-family: var(--mono); font-size: 0.86em; }
-  code { background: var(--raised); padding: 1px 6px; border-radius: 6px; overflow-wrap: anywhere; }
-  b, strong { font-weight: 800; }
+  code { font-family: var(--mono); font-size: 0.86em; background: var(--raised); padding: 1px 6px; border-radius: 6px; overflow-wrap: anywhere; }
 
   /* Topo */
-  .hero { display: flex; flex-direction: column; gap: 20px; }
+  .hero { display: flex; flex-direction: column; gap: 18px; }
   .logo { display: inline-flex; align-items: center; gap: 12px; font-weight: 800; font-size: 26px; letter-spacing: -0.03em; }
   .logo svg { width: 44px; height: 44px; flex: none; }
   .logo span span { color: var(--brand); }
   .kicker { font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--water); }
   h1 { margin: 0; font-weight: 800; font-size: clamp(38px, 7vw, 64px); line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance; }
   .onda { display: block; width: 180px; height: 14px; color: var(--water); }
-  .lede { font-size: 18px; color: var(--muted); max-width: 66ch; }
-  .lede b { color: var(--ink); }
+  .lede { font-size: 18px; color: var(--muted); }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip { border: 1px solid var(--line); background: var(--card); padding: 4px 12px; border-radius: 9999px; font-size: 14px; font-weight: 700; }
   .chip span { color: var(--muted); font-weight: 600; }
+  .indice { display: flex; flex-wrap: wrap; gap: 8px; }
+  .indice a { text-decoration: none; color: var(--ink); background: var(--raised); border-radius: 10px; padding: 6px 12px; font-size: 14px; font-weight: 700; }
+  .indice a:hover { background: var(--brand-soft); }
 
   /* Seções */
-  section { display: flex; flex-direction: column; gap: 20px; }
-  .section-head { display: flex; flex-direction: column; gap: 6px; }
-  .section-head h2 { display: flex; align-items: center; gap: 12px; margin: 0; font-weight: 800; font-size: 26px; letter-spacing: -0.02em; text-wrap: balance; }
-  .section-head h2::before { content: ""; width: 22px; height: 6px; border-radius: 3px; background: var(--water); flex: none; }
-  .section-head p { color: var(--muted); max-width: 72ch; }
+  section { display: flex; flex-direction: column; gap: 16px; }
+  section h2 { display: flex; align-items: center; gap: 12px; margin: 0; font-weight: 800; font-size: 26px; letter-spacing: -0.02em; text-wrap: balance; }
+  section h2::before { content: ""; width: 22px; height: 6px; border-radius: 3px; background: var(--water); flex: none; }
+  .uma-linha { color: var(--muted); font-size: 15px; }
 
-  figure { margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  figure { margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
   .diagram { border: 1px solid var(--line); background: var(--card); border-radius: 16px; overflow-x: auto; padding: 16px; }
-  .diagram svg { display: block; width: 100%; min-width: 780px; height: auto; }
-  figcaption { color: var(--muted); font-size: 14px; max-width: 80ch; }
+  .diagram svg { display: block; width: 100%; min-width: 760px; height: auto; }
+  figcaption { color: var(--muted); font-size: 14px; }
 
   /* Diagramas: cores pelos tokens da página. */
   .dg-box { fill: var(--raised); stroke: var(--line); stroke-width: 1.5; }
@@ -86,63 +85,42 @@
   .dg-box.ext { fill: var(--bg); stroke: var(--muted); stroke-dasharray: 5 4; }
   .dg-box.frame { fill: none; stroke: var(--muted); stroke-dasharray: 5 4; }
   .dg-box.note { fill: var(--bg); stroke: var(--line); }
+  .dg-box.water { stroke: var(--water); }
+  .dg-fill-bg { fill: var(--bg); }
+  .dg-fill-raised { fill: var(--raised); }
+  .dg-fill-water { fill: var(--water); }
+  .dg-fill-ink { fill: var(--ink); }
+  .dg-band { fill: var(--raised); }
+  .dg-band.key { fill: var(--brand-soft); stroke: var(--brand); stroke-width: 1.5; }
   .dg-title { fill: var(--ink); font-family: var(--sans); font-weight: 800; font-size: 15.5px; }
   .dg-code { fill: var(--ink); font-family: var(--mono); font-weight: 600; font-size: 14px; }
+  .dg-mono { fill: var(--muted); font-family: var(--mono); font-size: 12px; }
   .dg-sub { fill: var(--muted); font-family: var(--sans); font-size: 12.5px; font-weight: 600; }
   .dg-label { fill: var(--ink); font-family: var(--sans); font-size: 12.5px; font-weight: 700; }
-  .dg-label.water { fill: var(--water); }
+  .dg-label.water, .dg-sub.water { fill: var(--water); }
+  .dg-ex { fill: var(--water); font-family: var(--sans); font-size: 13px; font-weight: 800; }
+  .dg-big { fill: var(--ink); font-family: var(--sans); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+  .dg-big.water { fill: var(--water); }
+  .dg-num { fill: var(--water); font-family: var(--sans); font-size: 15px; font-weight: 800; }
   .dg-line { stroke: var(--muted); stroke-width: 1.75; fill: none; }
   .dg-line.water { stroke: var(--water); stroke-width: 2.25; }
+  .dg-line.dash { stroke-dasharray: 4 4; stroke-width: 1.25; }
+  .dg-line.lead { stroke: var(--line); stroke-dasharray: 2 5; stroke-width: 2; }
   .mk-muted { fill: var(--muted); }
   .mk-water { fill: var(--water); }
 
-  /* Cartões em grade */
-  .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
-  .card { border: 1px solid var(--line); background: var(--card); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-  .card.top { border-top: 3px solid var(--brand); }
-  .card h3 { margin: 0; font-weight: 800; font-size: 19px; letter-spacing: -0.01em; }
-  .card .where { font-weight: 700; font-size: 12.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--water); }
-  .card p { font-size: 14.5px; color: var(--muted); }
-  .card p em { color: var(--ink); font-style: normal; font-weight: 700; }
-  .card .writes { font-size: 13px; color: var(--ink); margin-top: auto; }
-  .card .writes code { font-size: 12px; }
+  /* Ladrilhos com ícone */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .tile { border: 1px solid var(--line); background: var(--card); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .tile svg { width: 26px; height: 26px; color: var(--water); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .tile b { font-weight: 800; font-size: 16px; }
+  .tile span { color: var(--muted); font-size: 13.5px; line-height: 1.4; }
+  .preco { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .preco span { border-radius: 9999px; padding: 6px 14px; font-weight: 800; font-size: 15px; }
+  .preco .nao { background: var(--raised); color: var(--muted); text-decoration: line-through; }
+  .preco .sim { background: var(--brand-soft); color: var(--water); }
 
-  /* Passo a passo */
-  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; counter-reset: passo; }
-  .steps li { counter-increment: passo; border: 1px solid var(--line); background: var(--card); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-  .steps li::before { content: counter(passo); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--raised); color: var(--water); font-weight: 800; font-size: 17px; }
-  .steps h3 { margin: 0; font-weight: 800; font-size: 17px; }
-  .steps p { font-size: 14px; color: var(--muted); }
-  .steps .writes { font-size: 13px; margin-top: auto; }
-  .steps .writes code { font-size: 11.5px; }
-
-  /* Exemplos com números */
-  .ex { font-variant-numeric: tabular-nums; }
-
-  /* Guardado × calculado */
-  .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
-  .panel { border: 1px solid var(--line); background: var(--card); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-  .panel.key { border-top: 3px solid var(--water); }
-  .panel h3 { margin: 0; font-weight: 800; font-size: 19px; }
-  .panel ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; }
-  .panel li::marker { color: var(--water); }
-  .panel .note { font-size: 14px; color: var(--muted); }
-
-  /* Tabelas */
-  .table-wrap { overflow-x: auto; border: 1px solid var(--line); background: var(--card); border-radius: 16px; }
-  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14.5px; }
-  th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  tr:last-child td { border-bottom: 0; }
-  th { font-weight: 700; font-size: 12.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--raised); }
-  td:first-child { font-weight: 700; }
-
-  .aside { color: var(--muted); font-size: 14px; max-width: 80ch; }
   .foot { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 20px; }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .card, .steps li, .panel { transition: border-color 0.15s ease; }
-    .card:hover, .steps li:hover { border-color: var(--muted); }
-  }
 </style>
 </head>
 <body>
@@ -165,32 +143,27 @@
     <span class="kicker">Por dentro do app</span>
     <h1>Como o BlueFin funciona</h1>
     <svg class="onda" viewBox="0 0 180 14" aria-hidden="true"><path d="M2 8 Q 17 1 32 8 T 62 8 T 92 8 T 122 8 T 152 8 T 178 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
-    <p class="lede">
-      O BlueFin é um app web instalado na Tela de Início do iPhone (um PWA), sem App Store. As telas e a
-      API rodam na Vercel, e os dados e o login ficam no Supabase, os dois em São Paulo. A peça menos
-      óbvia é o <b>Atalho do Botão de Ação</b>: ele lança um gasto sem abrir o app, falando direto com a
-      API com um token pessoal.
-    </p>
+    <p class="lede">App web na Tela de Início do iPhone. Vercel e Supabase em São Paulo. Atalho no Botão de Ação.</p>
     <div class="chips" aria-label="Tecnologias">
       <span class="chip">Next.js 16 <span>· telas e API</span></span>
-      <span class="chip">TypeScript <span>· tudo</span></span>
       <span class="chip">Supabase <span>· banco e login</span></span>
-      <span class="chip">Vercel <span>· hospedagem e agendamento</span></span>
-      <span class="chip">Tailwind v4 + shadcn/ui <span>· visual</span></span>
-      <span class="chip">Web Push <span>· aviso da fatura</span></span>
+      <span class="chip">Vercel <span>· hospedagem</span></span>
+      <span class="chip">Web Push <span>· aviso</span></span>
       <span class="chip">Atalhos do iOS <span>· gasto rápido</span></span>
       <span class="chip">Playwright <span>· testes</span></span>
     </div>
+    <nav class="indice" aria-label="Seções">
+      <a href="#mapa">Mapa</a><a href="#atalho">Atalho</a><a href="#caminhos">Caminhos</a><a href="#regras">Regras</a>
+      <a href="#camadas">Código</a><a href="#banco">Banco</a><a href="#guardado">Guardado × calculado</a>
+      <a href="#pwa">App web</a><a href="#deploy">Deploy</a><a href="#mexer">Onde mexer</a>
+    </nav>
   </header>
 
   <section aria-labelledby="mapa">
-    <div class="section-head">
-      <h2 id="mapa">Mapa geral</h2>
-      <p>Quem fala com quem. As setas em água são o caminho do gasto rápido e do aviso da fatura.</p>
-    </div>
+    <h2 id="mapa">Mapa geral</h2>
     <figure>
       <div class="diagram">
-        <svg viewBox="0 0 1040 470" role="img" aria-label="No iPhone, o app instalado abre telas e salva pela Vercel com a sessão, e o Atalho manda o gasto para a API da Vercel com o token pessoal. A Vercel lê e grava no Supabase. Todo dia às 9h o agendamento da Vercel chama os avisos, que a Vercel manda pelo Web Push da Apple até o iPhone.">
+        <svg viewBox="0 0 1040 470" role="img" aria-label="No iPhone, o app e o Atalho falam com a Vercel; a Vercel lê e grava no Supabase. Todo dia às 9h o Cron chama os avisos, que vão pelo Web Push da Apple até o iPhone.">
           <defs>
             <marker id="m-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-muted" d="M0,0 L10,5 L0,10 z"/></marker>
             <marker id="m-water" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-water" d="M0,0 L10,5 L0,10 z"/></marker>
@@ -199,194 +172,276 @@
           <rect class="dg-box frame" x="20" y="24" width="240" height="400" rx="28"/>
           <text class="dg-label" x="40" y="58">iPhone 16</text>
 
-          <rect class="dg-box key" x="35" y="84" width="210" height="124" rx="12"/>
-          <text class="dg-title" x="51" y="112">App na Tela de Início</text>
-          <text class="dg-sub" x="51" y="134">PWA aberto pelo ícone</text>
-          <text class="dg-sub" x="51" y="152">guarda as telas para</text>
-          <text class="dg-sub" x="51" y="170">abrir sem internet</text>
+          <rect class="dg-box key" x="35" y="96" width="210" height="92" rx="12"/>
+          <text class="dg-title" x="51" y="130">App na Tela de Início</text>
+          <text class="dg-sub" x="51" y="154">PWA · abre sem internet</text>
 
-          <rect class="dg-box key" x="35" y="250" width="210" height="124" rx="12"/>
-          <text class="dg-title" x="51" y="278">Atalho Gasto rápido</text>
-          <text class="dg-sub" x="51" y="300">no Botão de Ação</text>
-          <text class="dg-sub" x="51" y="318">token pessoal no</text>
-          <text class="dg-sub" x="51" y="336">primeiro passo</text>
+          <rect class="dg-box key" x="35" y="262" width="210" height="92" rx="12"/>
+          <text class="dg-title" x="51" y="296">Atalho Gasto rápido</text>
+          <text class="dg-sub" x="51" y="320">Botão de Ação · token</text>
 
-          <rect class="dg-box" x="410" y="24" width="270" height="76" rx="12"/>
+          <rect class="dg-box" x="410" y="24" width="270" height="68" rx="12"/>
           <text class="dg-title" x="426" y="54">Vercel Cron</text>
-          <text class="dg-sub" x="426" y="78">todo dia às 9h (12:00 UTC)</text>
+          <text class="dg-sub" x="426" y="76">todo dia às 9h</text>
 
-          <rect class="dg-box key" x="410" y="150" width="270" height="124" rx="12"/>
-          <text class="dg-title" x="426" y="180">Vercel · Next.js 16</text>
-          <text class="dg-sub" x="426" y="202">telas, Server Actions e /api</text>
-          <text class="dg-sub" x="426" y="220">região gru1 (São Paulo)</text>
-          <text class="dg-sub" x="426" y="238">não guarda nada entre visitas</text>
+          <rect class="dg-box key" x="410" y="150" width="270" height="100" rx="12"/>
+          <text class="dg-title" x="426" y="184">Vercel · Next.js 16</text>
+          <text class="dg-sub" x="426" y="208">telas, ações e /api</text>
+          <text class="dg-sub" x="426" y="228">São Paulo</text>
 
-          <rect class="dg-box key" x="410" y="330" width="270" height="94" rx="12"/>
-          <text class="dg-title" x="426" y="360">Supabase</text>
-          <text class="dg-sub" x="426" y="382">Postgres 17 + login</text>
-          <text class="dg-sub" x="426" y="400">sa-east-1 (São Paulo)</text>
+          <rect class="dg-box key" x="410" y="326" width="270" height="90" rx="12"/>
+          <text class="dg-title" x="426" y="362">Supabase</text>
+          <text class="dg-sub" x="426" y="386">banco + login · São Paulo</text>
 
-          <rect class="dg-box ext" x="790" y="150" width="230" height="96" rx="12"/>
-          <text class="dg-title" x="806" y="180">Web Push da Apple</text>
-          <text class="dg-sub" x="806" y="202">web.push.apple.com</text>
-          <text class="dg-sub" x="806" y="220">entrega a notificação</text>
+          <rect class="dg-box ext" x="790" y="150" width="230" height="80" rx="12"/>
+          <text class="dg-title" x="806" y="184">Web Push da Apple</text>
+          <text class="dg-sub" x="806" y="208">entrega o aviso</text>
 
-          <line class="dg-line" x1="245" y1="150" x2="404" y2="190" marker-end="url(#m-muted)"/>
-          <text class="dg-label" x="266" y="128">abre telas e salva</text>
-          <text class="dg-sub" x="266" y="144">com a sessão (cookie)</text>
+          <line class="dg-line" x1="245" y1="142" x2="404" y2="186" marker-end="url(#m-muted)"/>
+          <text class="dg-label" x="262" y="130">abre e salva</text>
 
-          <line class="dg-line water" x1="245" y1="312" x2="404" y2="250" marker-end="url(#m-water)"/>
-          <text class="dg-label water" x="266" y="324">POST /api/quick-add</text>
-          <text class="dg-sub" x="266" y="340">Bearer bf_… (token)</text>
+          <line class="dg-line water" x1="245" y1="308" x2="404" y2="240" marker-end="url(#m-water)"/>
+          <text class="dg-label water" x="262" y="336">POST /api/quick-add</text>
+          <text class="dg-sub" x="262" y="354">com o token</text>
 
-          <line class="dg-line" x1="545" y1="100" x2="545" y2="146" marker-end="url(#m-muted)"/>
-          <text class="dg-label" x="556" y="128">GET /api/avisos</text>
+          <line class="dg-line" x1="545" y1="92" x2="545" y2="146" marker-end="url(#m-muted)"/>
+          <text class="dg-label" x="556" y="124">GET /api/avisos</text>
 
-          <line class="dg-line" x1="545" y1="274" x2="545" y2="326" marker-end="url(#m-muted)"/>
-          <text class="dg-label" x="556" y="306">lê e grava</text>
+          <line class="dg-line" x1="545" y1="250" x2="545" y2="322" marker-end="url(#m-muted)"/>
+          <text class="dg-label" x="556" y="292">lê e grava</text>
 
-          <line class="dg-line water" x1="680" y1="198" x2="786" y2="198" marker-end="url(#m-water)"/>
-          <text class="dg-label water" x="690" y="188">manda o aviso</text>
-          <text class="dg-sub" x="690" y="220">chaves VAPID</text>
+          <line class="dg-line water" x1="680" y1="190" x2="786" y2="190" marker-end="url(#m-water)"/>
+          <text class="dg-label water" x="690" y="180">manda o aviso</text>
 
-          <path class="dg-line water" d="M905,246 V448 H140 V430" marker-end="url(#m-water)"/>
-          <text class="dg-label water" x="712" y="440">"A fatura vence amanhã"</text>
+          <path class="dg-line water" d="M905,230 V448 H140 V430" marker-end="url(#m-water)"/>
+          <text class="dg-label water" x="712" y="440">“A fatura vence amanhã”</text>
         </svg>
       </div>
-      <figcaption>
-        O iPhone nunca fala com o Supabase direto: tudo passa pela Vercel. As telas usam a sessão de quem
-        está logado, e o banco só devolve o que é da pessoa. A chave secreta do Supabase só aparece em três
-        lugares do servidor: na API do Atalho, ao gerar o token e no envio dos avisos.
-      </figcaption>
+      <figcaption>O iPhone nunca fala direto com o banco: tudo passa pela Vercel.</figcaption>
     </figure>
   </section>
 
-  <section aria-labelledby="backend">
-    <div class="section-head">
-      <h2 id="backend">Onde fica o backend</h2>
-      <p>Não existe servidor próprio ligado o tempo todo. O backend são dois serviços gerenciados em São Paulo, mais o serviço de notificações da Apple.</p>
-    </div>
-    <div class="grid3">
-      <article class="card top">
-        <span class="where">Vercel · região gru1 (São Paulo)</span>
-        <h3>Servidor do Next.js</h3>
-        <p>Funções que sobem a cada visita: montam as telas no servidor, rodam as ações do botão + e da edição, e respondem à API do Atalho. O agendamento diário chama os avisos às 9h.</p>
-      </article>
-      <article class="card top">
-        <span class="where">Supabase · sa-east-1 (São Paulo)</span>
-        <h3>Postgres 17 e login</h3>
-        <p>O banco e o login por e-mail e senha. <em>Toda tabela tem regra de acesso (RLS)</em>: com a sessão de alguém, o banco só lê e grava as linhas daquela pessoa.</p>
-      </article>
-      <article class="card top">
-        <span class="where">Apple · web.push.apple.com</span>
-        <h3>Web Push</h3>
-        <p>Entrega a notificação no iPhone. O BlueFin assina cada aviso com as chaves VAPID; a Apple só aceita para o app <em>aberto pela Tela de Início</em>.</p>
-      </article>
-    </div>
-  </section>
-
   <section aria-labelledby="atalho">
-    <div class="section-head">
-      <h2 id="atalho">Um gasto pelo Atalho</h2>
-      <p>Do Botão de Ação até o gasto gravado, sem abrir o app. Cada pergunta do Atalho é uma chamada à API com o token pessoal.</p>
-    </div>
-    <ol class="steps">
-      <li>
-        <h3>Botão de Ação</h3>
-        <p>Abre o Atalho "Gasto rápido". O primeiro passo guarda o token pessoal, que vai em todo pedido.</p>
-        <span class="writes">header <code>Authorization: Bearer bf_…</code></span>
-      </li>
-      <li>
-        <h3>Categoria</h3>
-        <p>A lista vem do app, na ordem das cores. A Fatura não aparece aqui.</p>
-        <span class="writes">lê <code>/api/quick-add/categorias</code></span>
-      </li>
-      <li>
-        <h3>Quanto e com o quê</h3>
-        <p class="ex">"32,90 mercado do bairro": o primeiro número é o valor, o resto é a descrição.</p>
-        <span class="writes">lê o texto em <code>domain/texto-rapido.ts</code></span>
-      </li>
-      <li>
-        <h3>Como pagou</h3>
-        <p>Débito, Pix e cada cartão. O último usado naquela categoria vem primeiro.</p>
-        <span class="writes">lê <code>/api/quick-add/formas</code></span>
-      </li>
-      <li>
-        <h3>Em quantas vezes</h3>
-        <p>Só no crédito, de 1 a 24. Vazio é à vista.</p>
-        <span class="writes">nada a gravar ainda</span>
-      </li>
-      <li>
-        <h3>Gravado</h3>
-        <p>Confere o token pelo hash, grava e devolve a frase da notificação: "… em 3x no crédito (C6bank, 1ª na fatura de dezembro)".</p>
-        <span class="writes">grava <code>lancamentos</code> com origem <code>atalho</code></span>
-      </li>
-    </ol>
+    <h2 id="atalho">Um gasto pelo Atalho</h2>
+    <figure>
+      <div class="diagram">
+        <svg viewBox="0 0 960 300" role="img" aria-label="Botão de Ação, categoria, quanto, como pagou, quantas vezes e gravado: cada passo do Atalho chama a API com o token, e no fim chega a notificação do gasto salvo.">
+          <defs>
+            <marker id="a-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-muted" d="M0,0 L10,5 L0,10 z"/></marker>
+            <marker id="a-water" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-water" d="M0,0 L10,5 L0,10 z"/></marker>
+          </defs>
+
+          <rect class="dg-box" x="10" y="20" width="134" height="150" rx="14"/>
+          <circle class="dg-fill-bg" cx="34" cy="46" r="14"/><text class="dg-num" x="34" y="51" text-anchor="middle">1</text>
+          <text class="dg-title" x="24" y="92">Botão de Ação</text>
+          <text class="dg-ex" x="24" y="118">aperta</text>
+          <text class="dg-mono" x="24" y="152">token bf_…</text>
+
+          <rect class="dg-box" x="171" y="20" width="134" height="150" rx="14"/>
+          <circle class="dg-fill-bg" cx="195" cy="46" r="14"/><text class="dg-num" x="195" y="51" text-anchor="middle">2</text>
+          <text class="dg-title" x="185" y="92">Categoria</text>
+          <text class="dg-ex" x="185" y="118">Transporte</text>
+          <text class="dg-mono" x="185" y="152">GET /categorias</text>
+
+          <rect class="dg-box" x="332" y="20" width="134" height="150" rx="14"/>
+          <circle class="dg-fill-bg" cx="356" cy="46" r="14"/><text class="dg-num" x="356" y="51" text-anchor="middle">3</text>
+          <text class="dg-title" x="346" y="92">Quanto</text>
+          <text class="dg-ex" x="346" y="118">18,40 uber</text>
+          <text class="dg-mono" x="346" y="152">texto livre</text>
+
+          <rect class="dg-box" x="493" y="20" width="134" height="150" rx="14"/>
+          <circle class="dg-fill-bg" cx="517" cy="46" r="14"/><text class="dg-num" x="517" y="51" text-anchor="middle">4</text>
+          <text class="dg-title" x="507" y="92">Como pagou</text>
+          <text class="dg-ex" x="507" y="118">Crédito · C6bank</text>
+          <text class="dg-mono" x="507" y="152">GET /formas</text>
+
+          <rect class="dg-box" x="654" y="20" width="134" height="150" rx="14"/>
+          <circle class="dg-fill-bg" cx="678" cy="46" r="14"/><text class="dg-num" x="678" y="51" text-anchor="middle">5</text>
+          <text class="dg-title" x="668" y="92">Quantas vezes</text>
+          <text class="dg-ex" x="668" y="118">1x (à vista)</text>
+          <text class="dg-mono" x="668" y="152">só no crédito</text>
+
+          <rect class="dg-box water" x="815" y="20" width="134" height="150" rx="14"/>
+          <circle class="dg-fill-bg" cx="839" cy="46" r="14"/><text class="dg-num" x="839" y="51" text-anchor="middle">6</text>
+          <text class="dg-title" x="829" y="92">Gravado</text>
+          <text class="dg-ex" x="829" y="118">✓ salvo</text>
+          <text class="dg-mono" x="829" y="152">POST /quick-add</text>
+
+          <line class="dg-line" x1="146" y1="95" x2="167" y2="95" marker-end="url(#a-muted)"/>
+          <line class="dg-line" x1="307" y1="95" x2="328" y2="95" marker-end="url(#a-muted)"/>
+          <line class="dg-line" x1="468" y1="95" x2="489" y2="95" marker-end="url(#a-muted)"/>
+          <line class="dg-line" x1="629" y1="95" x2="650" y2="95" marker-end="url(#a-muted)"/>
+          <line class="dg-line water" x1="790" y1="95" x2="811" y2="95" marker-end="url(#a-water)"/>
+
+          <path class="dg-line water" d="M882,172 V240 H766" marker-end="url(#a-water)"/>
+          <rect class="dg-box key" x="200" y="206" width="560" height="72" rx="18"/>
+          <rect x="216" y="220" width="44" height="44" rx="11" fill="#1846c8"/>
+          <path d="M224 254 C 232 252 242 245 248 230 C 246 240 248 248 256 254 Z" fill="#ffffff"/>
+          <text class="dg-title" x="274" y="238">BlueFin</text>
+          <text class="dg-sub" x="274" y="260">Gasto salvo: − R$ 18,40 no crédito (C6bank, fatura de dezembro)</text>
+        </svg>
+      </div>
+      <figcaption>Cada pergunta é uma chamada à API com o token pessoal. O app nem abre.</figcaption>
+    </figure>
   </section>
 
   <section aria-labelledby="caminhos">
-    <div class="section-head">
-      <h2 id="caminhos">Pelo app, sem internet e o aviso</h2>
-      <p>Os outros três caminhos de um dado: o botão +, a fila de quando a internet cai e o aviso diário da fatura.</p>
-    </div>
-    <div class="grid3">
-      <article class="card">
-        <h3>Pelo botão +</h3>
-        <p>O lançamento aparece na lista na hora, antes da resposta do servidor. A Server Action <em>criarLancamento</em> grava; no crédito, divide em parcelas e cada uma vai para o mês da sua fatura.</p>
-        <span class="writes"><code>src/app/(app)/actions.ts</code></span>
-      </article>
-      <article class="card">
-        <h3>Sem internet</h3>
-        <p>O id do lançamento nasce no iPhone. Sem rede, o gasto espera numa fila no aparelho (<code>bf:fila</code>) e sobe ao abrir o app de novo. <em>Mandar duas vezes não duplica</em>: o id já gravado é ignorado. As telas abrem pela última versão guardada no service worker.</p>
-        <span class="writes"><code>fila-offline.ts</code> e <code>public/sw.js</code></span>
-      </article>
-      <article class="card">
-        <h3>Aviso da fatura</h3>
-        <p>Todo dia às 9h a Vercel chama <code>/api/avisos</code> com o segredo do agendamento. Para cada pessoa com aviso ligado: fatura que vence amanhã ou hoje vira notificação. Aparelho que sumiu sai da lista.</p>
-        <span class="writes">lê <code>inscricoes_push</code> e <code>lancamentos</code></span>
-      </article>
-    </div>
+    <h2 id="caminhos">Os outros caminhos</h2>
+    <figure>
+      <div class="diagram">
+        <svg viewBox="0 0 960 330" role="img" aria-label="Pelo botão +, o lançamento aparece na hora e o servidor grava. Sem internet, ele espera na fila do iPhone e sobe quando a rede volta, uma vez só. Às 9h o Cron chama os avisos, que vão pelo Web Push até a notificação.">
+          <defs>
+            <marker id="c-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-muted" d="M0,0 L10,5 L0,10 z"/></marker>
+            <marker id="c-water" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-water" d="M0,0 L10,5 L0,10 z"/></marker>
+          </defs>
+
+          <text class="dg-title" x="14" y="62">Botão +</text>
+          <text class="dg-sub" x="14" y="82">pelo app</text>
+          <rect class="dg-box" x="190" y="28" width="170" height="64" rx="12"/>
+          <text class="dg-label" x="204" y="56">Toca Salvar</text>
+          <text class="dg-sub" x="204" y="78">no sheet do +</text>
+          <rect class="dg-box" x="382" y="28" width="170" height="64" rx="12"/>
+          <text class="dg-label" x="396" y="56">Aparece na hora</text>
+          <text class="dg-sub" x="396" y="78">antes do servidor</text>
+          <rect class="dg-box water" x="574" y="28" width="170" height="64" rx="12"/>
+          <text class="dg-label" x="588" y="56">Servidor grava</text>
+          <text class="dg-sub" x="588" y="78">Server Action</text>
+          <line class="dg-line" x1="360" y1="60" x2="378" y2="60" marker-end="url(#c-muted)"/>
+          <line class="dg-line water" x1="552" y1="60" x2="570" y2="60" marker-end="url(#c-water)"/>
+
+          <line class="dg-line dash" x1="14" y1="112" x2="946" y2="112"/>
+
+          <text class="dg-title" x="14" y="167">Sem internet</text>
+          <text class="dg-sub" x="14" y="187">fila no iPhone</text>
+          <rect class="dg-box" x="190" y="133" width="170" height="64" rx="12"/>
+          <text class="dg-label" x="204" y="161">Salva sem rede</text>
+          <text class="dg-sub" x="204" y="183">id nasce no iPhone</text>
+          <rect class="dg-box" x="382" y="133" width="170" height="64" rx="12"/>
+          <text class="dg-label" x="396" y="161">Espera na fila</text>
+          <text class="dg-sub" x="396" y="183">mesmo fechando o app</text>
+          <rect class="dg-box" x="574" y="133" width="170" height="64" rx="12"/>
+          <text class="dg-label" x="588" y="161">Internet volta</text>
+          <text class="dg-sub" x="588" y="183">sobe sozinho</text>
+          <rect class="dg-box water" x="766" y="133" width="170" height="64" rx="12"/>
+          <text class="dg-label" x="780" y="161">Grava 1 vez só</text>
+          <text class="dg-sub" x="780" y="183">id repetido é ignorado</text>
+          <line class="dg-line" x1="360" y1="165" x2="378" y2="165" marker-end="url(#c-muted)"/>
+          <line class="dg-line" x1="552" y1="165" x2="570" y2="165" marker-end="url(#c-muted)"/>
+          <line class="dg-line water" x1="744" y1="165" x2="762" y2="165" marker-end="url(#c-water)"/>
+
+          <line class="dg-line dash" x1="14" y1="217" x2="946" y2="217"/>
+
+          <text class="dg-title" x="14" y="272">Aviso da fatura</text>
+          <text class="dg-sub" x="14" y="292">todo dia</text>
+          <rect class="dg-box" x="190" y="238" width="170" height="64" rx="12"/>
+          <text class="dg-label" x="204" y="266">Vercel Cron</text>
+          <text class="dg-sub" x="204" y="288">9h da manhã</text>
+          <rect class="dg-box" x="382" y="238" width="170" height="64" rx="12"/>
+          <text class="dg-label" x="396" y="266">Vence amanhã?</text>
+          <text class="dg-sub" x="396" y="288">ou hoje · /api/avisos</text>
+          <rect class="dg-box ext" x="574" y="238" width="170" height="64" rx="12"/>
+          <text class="dg-label" x="588" y="266">Web Push</text>
+          <text class="dg-sub" x="588" y="288">da Apple</text>
+          <rect class="dg-box water" x="766" y="238" width="170" height="64" rx="12"/>
+          <text class="dg-label" x="780" y="266">Notificação</text>
+          <text class="dg-sub" x="780" y="288">toca e abre a fatura</text>
+          <line class="dg-line" x1="360" y1="270" x2="378" y2="270" marker-end="url(#c-muted)"/>
+          <line class="dg-line" x1="552" y1="270" x2="570" y2="270" marker-end="url(#c-muted)"/>
+          <line class="dg-line water" x1="744" y1="270" x2="762" y2="270" marker-end="url(#c-water)"/>
+        </svg>
+      </div>
+    </figure>
   </section>
 
   <section aria-labelledby="regras">
-    <div class="section-head">
-      <h2 id="regras">As regras do dinheiro</h2>
-      <p>O que define em que mês e em que dia cada real conta. Tudo isso mora em <code>src/domain</code>, em funções sem banco nem rede, testadas uma a uma.</p>
-    </div>
-    <div class="grid3">
-      <article class="card">
-        <h3>Centavos inteiros</h3>
-        <p class="ex">R$ 32,90 é guardado como <em>3290</em>. Nada de número com vírgula, que erra na soma.</p>
-      </article>
-      <article class="card">
-        <h3>Mês da fatura</h3>
-        <p class="ex">Compra a partir do dia do fechamento vai para a fatura seguinte. O C6bank fecha dia 4: <em>compra em 4 de novembro cai na fatura de dezembro</em>.</p>
-      </article>
-      <article class="card">
-        <h3>Dia do vencimento</h3>
-        <p class="ex">Se vence depois de fechar (fecha 4, vence 11), vence no mesmo mês; senão, no seguinte. Vencimento no dia 31 vira o último dia do mês.</p>
-      </article>
-      <article class="card">
-        <h3>O dinheiro sai no vencimento</h3>
-        <p>Compra no crédito só entra em "Saiu" no dia em que a fatura vence. Até lá fica em <em>"A pagar"</em>, e o Início mostra quanto sobra depois dela.</p>
-      </article>
-      <article class="card">
-        <h3>Parcelas</h3>
-        <p class="ex">De 1 a 24, uma linha por parcela. Os centavos que sobram vão na primeira: <em>R$ 100 em 3x = 33,34 + 33,33 + 33,33</em>.</p>
-      </article>
-      <article class="card">
-        <h3>Todo mês</h3>
-        <p>Assinatura no crédito é lançada <em>24 meses à frente</em> e completada sempre que Início ou Lançamentos abre. Parar apaga as faturas depois da aberta.</p>
-      </article>
-    </div>
-    <p class="aside">Dia e mês sempre no horário de Brasília (<code>America/Sao_Paulo</code>): o banco preenche o mês do lançamento por esse fuso.</p>
+    <h2 id="regras">As regras do dinheiro</h2>
+    <p class="uma-linha">Exemplo real: o C6bank fecha dia 4 e vence dia 11.</p>
+    <figure>
+      <div class="diagram">
+        <svg viewBox="0 0 1000 280" role="img" aria-label="Linha do tempo do cartão C6bank: a compra do dia 3 de novembro cai na fatura de novembro e sai da conta em 11 de novembro; a compra do dia 8 cai na fatura de dezembro e sai da conta em 11 de dezembro.">
+          <defs>
+            <marker id="r-water" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-water" d="M0,0 L10,5 L0,10 z"/></marker>
+          </defs>
+
+          <text class="dg-sub" x="175" y="46" text-anchor="middle">fecha dia 4</text>
+          <text class="dg-sub" x="760" y="46" text-anchor="middle">fecha dia 4</text>
+          <rect class="dg-band" x="30" y="58" width="145" height="32" rx="6"/>
+          <text class="dg-label" x="42" y="79">fatura de novembro</text>
+          <rect class="dg-band key" x="175" y="58" width="585" height="32" rx="6"/>
+          <text class="dg-label" x="190" y="79">fatura de dezembro · aberta</text>
+          <rect class="dg-band" x="760" y="58" width="220" height="32" rx="6"/>
+          <text class="dg-label" x="772" y="79">fatura de janeiro</text>
+
+          <line class="dg-line" x1="30" y1="130" x2="980" y2="130"/>
+          <line class="dg-line" x1="175" y1="122" x2="175" y2="138"/>
+          <line class="dg-line" x1="760" y1="122" x2="760" y2="138"/>
+
+          <circle class="dg-fill-ink" cx="156" cy="130" r="6"/>
+          <text class="dg-label" x="132" y="116" text-anchor="middle">compra dia 3</text>
+          <circle class="dg-fill-ink" cx="253" cy="130" r="6"/>
+          <text class="dg-label" x="262" y="116" text-anchor="middle">compra dia 8</text>
+
+          <circle class="dg-fill-water" cx="311" cy="130" r="7"/>
+          <text class="dg-label water" x="321" y="158">vence 11 nov</text>
+          <text class="dg-sub water" x="321" y="176">sai da conta</text>
+          <circle class="dg-fill-water" cx="896" cy="130" r="7"/>
+          <text class="dg-label water" x="906" y="158">vence 11 dez</text>
+          <text class="dg-sub water" x="906" y="176">sai da conta</text>
+
+          <path class="dg-line water" d="M156,138 C 156,205 311,205 311,144" marker-end="url(#r-water)"/>
+          <text class="dg-sub" x="210" y="214" text-anchor="middle">antes de fechar</text>
+          <path class="dg-line water" d="M253,138 C 253,262 896,262 896,144" marker-end="url(#r-water)"/>
+          <text class="dg-sub" x="575" y="264" text-anchor="middle">depois de fechar: fatura seguinte</text>
+          <text class="dg-label" x="575" y="190" text-anchor="middle">até o vencimento fica em “A pagar”</text>
+        </svg>
+      </div>
+    </figure>
+    <figure>
+      <div class="diagram">
+        <svg viewBox="0 0 960 170" role="img" aria-label="Três regras: R$ 32,90 é guardado como 3290 centavos; R$ 100 em 3x vira 33,34 mais 33,33 mais 33,33; uma assinatura é lançada 24 meses à frente.">
+          <defs>
+            <marker id="r2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-muted" d="M0,0 L10,5 L0,10 z"/></marker>
+          </defs>
+          <rect class="dg-box" x="10" y="10" width="300" height="150" rx="14"/>
+          <text class="dg-title" x="28" y="40">Centavos inteiros</text>
+          <text class="dg-big" x="28" y="96">R$ 32,90</text>
+          <line class="dg-line" x1="150" y1="88" x2="186" y2="88" marker-end="url(#r2)"/>
+          <text class="dg-big water" x="198" y="96">3290</text>
+          <text class="dg-sub" x="28" y="138">nada de vírgula na soma</text>
+
+          <rect class="dg-box" x="330" y="10" width="300" height="150" rx="14"/>
+          <text class="dg-title" x="348" y="40">Parcelas</text>
+          <text class="dg-sub" x="348" y="62">R$ 100 em 3x</text>
+          <rect class="dg-fill-water" x="348" y="76" width="88" height="36" rx="6"/>
+          <text class="dg-label" x="392" y="99" text-anchor="middle" style="fill:#07101f">33,34</text>
+          <rect class="dg-fill-bg" x="440" y="76" width="86" height="36" rx="6"/>
+          <text class="dg-label" x="483" y="99" text-anchor="middle">33,33</text>
+          <rect class="dg-fill-bg" x="530" y="76" width="86" height="36" rx="6"/>
+          <text class="dg-label" x="573" y="99" text-anchor="middle">33,33</text>
+          <text class="dg-sub" x="348" y="138">o centavo que sobra vai na 1ª</text>
+
+          <rect class="dg-box" x="650" y="10" width="300" height="150" rx="14"/>
+          <text class="dg-title" x="668" y="40">Todo mês</text>
+          <g>
+            <rect class="dg-fill-water" x="668" y="60" width="17" height="17" rx="4"/>
+            <rect class="dg-fill-bg" x="690" y="60" width="17" height="17" rx="4"/><rect class="dg-fill-bg" x="712" y="60" width="17" height="17" rx="4"/><rect class="dg-fill-bg" x="734" y="60" width="17" height="17" rx="4"/>
+            <rect class="dg-fill-bg" x="756" y="60" width="17" height="17" rx="4"/><rect class="dg-fill-bg" x="778" y="60" width="17" height="17" rx="4"/><rect class="dg-fill-bg" x="800" y="60" width="17" height="17" rx="4"/>
+            <rect class="dg-fill-bg" x="822" y="60" width="17" height="17" rx="4"/><rect class="dg-fill-bg" x="844" y="60" width="17" height="17" rx="4"/><rect class="dg-fill-bg" x="866" y="60" width="17" height="17" rx="4"/>
+            <rect class="dg-fill-bg" x="888" y="60" width="17" height="17" rx="4"/><rect class="dg-fill-bg" x="910" y="60" width="17" height="17" rx="4"/>
+            <rect class="dg-fill-bg" x="668" y="82" width="17" height="17" rx="4"/><rect class="dg-fill-bg" x="690" y="82" width="17" height="17" rx="4"/><rect class="dg-fill-bg" x="712" y="82" width="17" height="17" rx="4"/>
+            <rect class="dg-fill-bg" x="734" y="82" width="17" height="17" rx="4"/><rect class="dg-fill-bg" x="756" y="82" width="17" height="17" rx="4"/><rect class="dg-fill-bg" x="778" y="82" width="17" height="17" rx="4"/>
+            <rect class="dg-fill-bg" x="800" y="82" width="17" height="17" rx="4"/><rect class="dg-fill-bg" x="822" y="82" width="17" height="17" rx="4"/><rect class="dg-fill-bg" x="844" y="82" width="17" height="17" rx="4"/>
+            <rect class="dg-fill-bg" x="866" y="82" width="17" height="17" rx="4"/><rect class="dg-fill-bg" x="888" y="82" width="17" height="17" rx="4"/><rect class="dg-fill-bg" x="910" y="82" width="17" height="17" rx="4"/>
+          </g>
+          <text class="dg-sub" x="668" y="138">assinatura: 24 meses à frente</text>
+        </svg>
+      </div>
+      <figcaption>Dia e mês sempre no horário de Brasília.</figcaption>
+    </figure>
   </section>
 
   <section aria-labelledby="camadas">
-    <div class="section-head">
-      <h2 id="camadas">Camadas do código</h2>
-      <p>Três regras seguram o projeto: <code>src/domain</code> não acessa nada, <code>src/server</code> concentra as leituras, e só o servidor fala com o Supabase.</p>
-    </div>
+    <h2 id="camadas">Camadas do código</h2>
     <figure>
       <div class="diagram">
         <svg viewBox="0 0 960 400" role="img" aria-label="src/app monta as telas com src/components/app, lê e grava por src/server e formata com src/domain. src/server usa os cálculos de src/domain e consulta o Supabase por src/lib/supabase. src/proxy.ts renova o cookie da sessão antes de cada tela.">
@@ -397,7 +452,7 @@
 
           <rect class="dg-box" x="20" y="20" width="920" height="80" rx="12"/>
           <text class="dg-code" x="40" y="52">src/app</text>
-          <text class="dg-sub" x="40" y="76">abas em (app)/, entrar, api/quick-add, api/avisos, api/tokens e as Server Actions</text>
+          <text class="dg-sub" x="40" y="76">abas, entrar, api/quick-add, api/avisos e as Server Actions</text>
 
           <rect class="dg-box" x="20" y="160" width="280" height="84" rx="12"/>
           <text class="dg-code" x="40" y="192">src/components/app</text>
@@ -405,7 +460,7 @@
 
           <rect class="dg-box key" x="340" y="160" width="280" height="84" rx="12"/>
           <text class="dg-code" x="360" y="192">src/server</text>
-          <text class="dg-sub" x="360" y="216">leituras e regras no servidor</text>
+          <text class="dg-sub" x="360" y="216">leituras no servidor</text>
 
           <rect class="dg-box key" x="660" y="160" width="280" height="84" rx="12"/>
           <text class="dg-code" x="680" y="192">src/domain</text>
@@ -413,11 +468,11 @@
 
           <rect class="dg-box" x="20" y="300" width="280" height="84" rx="12"/>
           <text class="dg-code" x="40" y="332">src/proxy.ts</text>
-          <text class="dg-sub" x="40" y="356">antes de cada tela; sem login → /entrar</text>
+          <text class="dg-sub" x="40" y="356">sem login → /entrar</text>
 
           <rect class="dg-box key" x="340" y="300" width="280" height="84" rx="12"/>
           <text class="dg-code" x="360" y="332">src/lib/supabase</text>
-          <text class="dg-sub" x="360" y="356">cliente com a sessão e tipos gerados</text>
+          <text class="dg-sub" x="360" y="356">cliente com a sessão</text>
 
           <rect class="dg-box ext" x="660" y="300" width="280" height="84" rx="12"/>
           <text class="dg-title" x="680" y="332">Supabase</text>
@@ -438,79 +493,66 @@
           <text class="dg-label" x="302" y="332">renova</text>
         </svg>
       </div>
-      <figcaption>
-        <code>src/domain</code> recebe lançamentos e datas e devolve números (resumo do mês, mês da fatura,
-        vencimento, parcelas, avisos do dia). Por isso os testes de unidade rodam sem banco, e mudar uma
-        regra não mexe em tela nenhuma. A chave secreta fica em <code>src/server/supabase-admin.ts</code> e
-        só as rotas da API a usam.
-      </figcaption>
+      <figcaption><code>src/domain</code> não acessa nada: as regras são testadas sem banco.</figcaption>
     </figure>
   </section>
 
   <section aria-labelledby="banco">
-    <div class="section-head">
-      <h2 id="banco">O banco</h2>
-      <p>Seis tabelas, todas com dono (<code>user_id</code>) e com RLS. As setas vão de "um" para "muitos".</p>
-    </div>
+    <h2 id="banco">O banco</h2>
     <figure>
       <div class="diagram">
-        <svg viewBox="0 0 960 480" role="img" aria-label="Cada usuário de auth.users tem um token pessoal ativo, uma inscrição de aviso por aparelho e muitos lançamentos. Cada lançamento pode apontar para uma categoria, um cartão e um investimento. Funções no banco registram aportes, editam e excluem lançamentos e regravam compras parceladas; gatilhos preenchem o mês e criam as categorias de quem acabou de entrar.">
+        <svg viewBox="0 0 960 480" role="img" aria-label="Cada usuário de auth.users tem um token pessoal ativo, uma inscrição de aviso por aparelho e muitos lançamentos. Cada lançamento pode apontar para uma categoria, um cartão e um investimento. Funções no banco e gatilhos cuidam de aportes, edições, parcelas, mês e categorias padrão.">
           <defs>
             <marker id="m3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-muted" d="M0,0 L10,5 L0,10 z"/></marker>
           </defs>
 
           <rect class="dg-box" x="20" y="20" width="260" height="84" rx="12"/>
           <text class="dg-code" x="40" y="50">tokens_pessoais</text>
-          <text class="dg-sub" x="40" y="72">só o hash do token do Atalho</text>
+          <text class="dg-sub" x="40" y="72">só o hash do token</text>
           <text class="dg-sub" x="40" y="90">um ativo por pessoa</text>
 
           <rect class="dg-box ext" x="20" y="190" width="260" height="100" rx="12"/>
           <text class="dg-code" x="40" y="220">auth.users</text>
           <text class="dg-sub" x="40" y="242">login do Supabase</text>
-          <text class="dg-sub" x="40" y="260">e-mail e senha</text>
-          <text class="dg-sub" x="40" y="278">dono de tudo</text>
+          <text class="dg-sub" x="40" y="260">dono de tudo</text>
 
           <rect class="dg-box" x="20" y="376" width="260" height="84" rx="12"/>
           <text class="dg-code" x="40" y="406">inscricoes_push</text>
-          <text class="dg-sub" x="40" y="428">endereço do aviso</text>
-          <text class="dg-sub" x="40" y="446">de cada aparelho</text>
+          <text class="dg-sub" x="40" y="428">aviso de cada aparelho</text>
 
           <rect class="dg-box" x="350" y="20" width="260" height="84" rx="12"/>
           <text class="dg-code" x="370" y="50">categorias</text>
-          <text class="dg-sub" x="370" y="72">nome, ícone e ordem (cor)</text>
-          <text class="dg-sub" x="370" y="90">despesa ou receita</text>
+          <text class="dg-sub" x="370" y="72">nome, ícone e cor</text>
 
           <rect class="dg-box key" x="350" y="166" width="260" height="154" rx="12"/>
           <text class="dg-code" x="370" y="196">lancamentos</text>
-          <text class="dg-sub" x="370" y="218">tipo, valor em centavos, data</text>
+          <text class="dg-sub" x="370" y="218">valor em centavos, data</text>
           <text class="dg-sub" x="370" y="236">competência: o mês que conta</text>
-          <text class="dg-sub" x="370" y="254">forma: débito, pix ou crédito</text>
-          <text class="dg-sub" x="370" y="272">parcela, parcelas e compra_id</text>
+          <text class="dg-sub" x="370" y="254">débito, pix ou crédito</text>
+          <text class="dg-sub" x="370" y="272">parcela e compra_id</text>
           <text class="dg-sub" x="370" y="290">recorrente (todo mês)</text>
           <text class="dg-sub" x="370" y="308">origem: app ou atalho</text>
 
           <rect class="dg-box" x="350" y="376" width="260" height="84" rx="12"/>
           <text class="dg-code" x="370" y="406">cartoes</text>
-          <text class="dg-sub" x="370" y="428">nome, dia que fecha</text>
-          <text class="dg-sub" x="370" y="446">e dia que vence</text>
+          <text class="dg-sub" x="370" y="428">dia que fecha e que vence</text>
 
           <rect class="dg-box" x="680" y="190" width="260" height="100" rx="12"/>
           <text class="dg-code" x="700" y="220">investimentos</text>
-          <text class="dg-sub" x="700" y="242">nome, tipo e instituição</text>
+          <text class="dg-sub" x="700" y="242">tipo e instituição</text>
           <text class="dg-sub" x="700" y="260">valor atual e aportado</text>
 
           <rect class="dg-box note" x="680" y="20" width="260" height="120" rx="12"/>
           <text class="dg-title" x="700" y="50">Funções no banco</text>
           <text class="dg-sub" x="700" y="74">registrar_aporte</text>
-          <text class="dg-sub" x="700" y="92">editar_lancamento, excluir_lancamento</text>
-          <text class="dg-sub" x="700" y="110">regravar_compra (refaz as parcelas)</text>
+          <text class="dg-sub" x="700" y="92">editar / excluir_lancamento</text>
+          <text class="dg-sub" x="700" y="110">regravar_compra</text>
           <text class="dg-sub" x="700" y="128">tudo numa transação só</text>
 
           <rect class="dg-box note" x="680" y="350" width="260" height="110" rx="12"/>
           <text class="dg-title" x="700" y="380">Gatilhos</text>
-          <text class="dg-sub" x="700" y="404">preencher_lancamento:</text>
-          <text class="dg-sub" x="700" y="420">mês pelo fuso e débito por padrão</text>
-          <text class="dg-sub" x="700" y="440">criar_categorias_padrao: ao criar a conta</text>
+          <text class="dg-sub" x="700" y="404">preencher_lancamento: o mês</text>
+          <text class="dg-sub" x="700" y="424">criar_categorias_padrao</text>
 
           <line class="dg-line" x1="150" y1="190" x2="150" y2="108" marker-end="url(#m3)"/>
           <text class="dg-label" x="162" y="154">1 ativo</text>
@@ -526,133 +568,179 @@
           <text class="dg-label" x="620" y="230">aportes</text>
         </svg>
       </div>
-      <figcaption>
-        Uma compra parcelada são várias linhas de <code>lancamentos</code> com o mesmo <code>compra_id</code>,
-        cada uma já no mês da sua fatura. Um aporte é um lançamento do tipo investimento ligado ao
-        investimento. Cada mudança no banco é uma migração em <code>supabase/migrations/</code>, e os tipos do
-        TypeScript saem dele com <code>pnpm db:types</code>.
-      </figcaption>
+      <figcaption>Toda tabela tem dono e RLS: cada pessoa só vê as próprias linhas.</figcaption>
     </figure>
   </section>
 
   <section aria-labelledby="guardado">
-    <div class="section-head">
-      <h2 id="guardado">Guardado ou calculado</h2>
-      <p>O banco guarda os lançamentos e o cadastro. Os totais e as faturas são calculados toda vez que a tela abre.</p>
-    </div>
-    <div class="split">
-      <div class="panel">
-        <h3>Guardado</h3>
-        <ul>
-          <li>Cada lançamento, com uma linha por parcela, já no mês da sua fatura</li>
-          <li>Categorias, cartões (fechamento e vencimento) e investimentos</li>
-          <li>Assinaturas do "Todo mês", 24 meses à frente</li>
-          <li>O hash do token do Atalho e as inscrições de aviso</li>
-        </ul>
+    <h2 id="guardado">Guardado × calculado</h2>
+    <figure>
+      <div class="diagram">
+        <svg viewBox="0 0 960 300" role="img" aria-label="O Supabase guarda lançamentos, cadastros, assinaturas, o hash do token e os avisos. Toda vez que uma tela abre, o app calcula os totais do mês, os gastos por categoria, as faturas, os extratos e os avisos do dia.">
+          <defs>
+            <marker id="g-water" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-water" d="M0,0 L10,5 L0,10 z"/></marker>
+          </defs>
+          <path class="dg-box" d="M40,50 V250 A160,22 0 0 0 360,250 V50"/>
+          <ellipse class="dg-box" cx="200" cy="50" rx="160" ry="22"/>
+          <text class="dg-title" x="200" y="104" text-anchor="middle">Guardado no banco</text>
+          <text class="dg-sub" x="200" y="138" text-anchor="middle">lançamentos · 1 linha por parcela</text>
+          <text class="dg-sub" x="200" y="162" text-anchor="middle">categorias, cartões, investimentos</text>
+          <text class="dg-sub" x="200" y="186" text-anchor="middle">assinaturas 24 meses à frente</text>
+          <text class="dg-sub" x="200" y="210" text-anchor="middle">hash do token · avisos</text>
+
+          <line class="dg-line water" x1="372" y1="150" x2="582" y2="150" marker-end="url(#g-water)"/>
+          <text class="dg-label water" x="477" y="138" text-anchor="middle">toda vez que a tela abre</text>
+
+          <rect class="dg-box key" x="592" y="20" width="330" height="262" rx="28"/>
+          <text class="dg-title" x="757" y="58" text-anchor="middle">Calculado na hora</text>
+          <rect class="dg-fill-bg" x="614" y="76" width="286" height="32" rx="8"/>
+          <text class="dg-label" x="630" y="97">Entrou · Saiu · Sobrou · A pagar</text>
+          <rect class="dg-fill-bg" x="614" y="116" width="286" height="32" rx="8"/>
+          <text class="dg-label" x="630" y="137">Gastos por categoria</text>
+          <rect class="dg-fill-bg" x="614" y="156" width="286" height="32" rx="8"/>
+          <text class="dg-label" x="630" y="177">Fatura fechada e aberta</text>
+          <rect class="dg-fill-bg" x="614" y="196" width="286" height="32" rx="8"/>
+          <text class="dg-label" x="630" y="217">Extratos Débito e Crédito</text>
+          <rect class="dg-fill-bg" x="614" y="236" width="286" height="32" rx="8"/>
+          <text class="dg-label" x="630" y="257">Avisos do dia</text>
+        </svg>
       </div>
-      <div class="panel key">
-        <h3>Calculado ao abrir</h3>
-        <ul>
-          <li>Entrou, Saiu, Investiu, Sobrou e A pagar do mês</li>
-          <li>Gastos por categoria, com a cor de cada uma</li>
-          <li>Fatura fechada e aberta de cada cartão, e quando vence</li>
-          <li>"Depois da fatura do C6bank (dia 11)" no Início</li>
-          <li>Os extratos Débito (fatura numa linha só, no vencimento) e Crédito</li>
-          <li>Os avisos do dia</li>
-        </ul>
-        <p class="note">Mudar uma regra de cálculo muda todos os meses de uma vez, sem rodar nada no banco. O que fica gravado é o mês de cada parcela: trocar o fechamento do cartão não move compras antigas.</p>
-      </div>
-    </div>
+      <figcaption>Mudar uma regra muda todos os meses na hora, sem mexer no banco.</figcaption>
+    </figure>
   </section>
 
   <section aria-labelledby="pwa">
-    <div class="section-head">
-      <h2 id="pwa">Por que app web, sem App Store</h2>
-      <p>Um app nativo pediria a conta de desenvolvedor da Apple (US$ 99 por ano). Como PWA, o BlueFin é de graça e faz quase tudo; estes são os limites e como cada um foi resolvido.</p>
-    </div>
-    <div class="grid3">
-      <article class="card">
-        <h3>Instalar</h3>
-        <p>Safari, Compartilhar, Adicionar à Tela de Início. O ícone, o nome "BlueFin" e as cores vêm do <em>manifest</em> do app.</p>
-      </article>
-      <article class="card">
-        <h3>Aviso só instalado</h3>
-        <p>O iPhone só entrega Web Push para o app <em>aberto pela Tela de Início</em>. O aviso é ligado em Ajustes do próprio app.</p>
-      </article>
-      <article class="card">
-        <h3>Botão de Ação</h3>
-        <p>App web não aparece no Botão de Ação. <em>O Atalho faz a ponte</em>: pergunta no próprio iPhone e chama a API.</p>
-      </article>
-      <article class="card">
-        <h3>Sem internet</h3>
-        <p>O service worker guarda a última versão de cada tela (só em produção). Gastos feitos sem rede esperam na fila do aparelho.</p>
-      </article>
-      <article class="card">
-        <h3>Token do Atalho</h3>
-        <p>Aparece uma vez em Ajustes e vai no Atalho. O banco guarda só o hash. <em>Gerar outro desliga o anterior</em>: é o que fazer se o iPhone sumir.</p>
-      </article>
-      <article class="card">
-        <h3>Só quem entra</h3>
-        <p>Não há tela de criar conta: o login é por e-mail e senha. Sem sessão, toda tela manda para /entrar.</p>
-      </article>
+    <h2 id="pwa">Por que app web, sem App Store</h2>
+    <div class="preco"><span class="nao">App nativo · US$ 99 por ano</span><span class="sim">App web · R$ 0</span></div>
+    <div class="tiles">
+      <div class="tile">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+        <b>Instalar</b><span>Safari › Adicionar à Tela de Início</span>
+      </div>
+      <div class="tile">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <b>Aviso</b><span>só com o app instalado</span>
+      </div>
+      <div class="tile">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <b>Botão de Ação</b><span>o Atalho faz a ponte</span>
+      </div>
+      <div class="tile">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h.01"/><path d="M8.5 16.43a5 5 0 0 1 7 0"/><path d="M5 12.86a10 10 0 0 1 5.17-2.7"/><path d="M19 12.86a10 10 0 0 0-2-1.5"/><path d="M2 8.82a15 15 0 0 1 4.17-2.65"/><path d="M10.66 5c4.01-.36 8.14.9 11.34 3.76"/><path d="m2 2 20 20"/></svg>
+        <b>Sem internet</b><span>tela guardada + fila</span>
+      </div>
+      <div class="tile">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
+        <b>Token</b><span>gerar outro desliga o antigo</span>
+      </div>
+      <div class="tile">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <b>Login</b><span>e-mail e senha, sem cadastro</span>
+      </div>
     </div>
   </section>
 
   <section aria-labelledby="deploy">
-    <div class="section-head">
-      <h2 id="deploy">Deploy, testes e configuração</h2>
-      <p>
-        Um <code>git push</code> no <code>main</code> publica: a Vercel faz o build e põe no ar em
-        <a href="https://bluefinance-chi.vercel.app">bluefinance-chi.vercel.app</a>. Mudança no banco entra
-        como migração e é aplicada no Supabase antes do push. Cores e fontes saem de
-        <code>design/project/tokens.json</code> (o design kit) com <code>pnpm tokens</code>.
-      </p>
-      <p>
-        Os testes são Playwright, em três frentes: <b>unit</b> (as regras de <code>src/domain</code>),
-        <b>api</b> (Atalho, tokens, avisos e se uma pessoa vê dados de outra) e <b>e2e-iphone</b> (WebKit no
-        tamanho do iPhone 16, com um Supabase local). Hoje são 97, e todo recurso novo começa por um teste
-        que falha.
-      </p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Configuração</th><th>Onde fica</th><th>Para quê</th></tr>
-        </thead>
-        <tbody>
-          <tr><td class="mono">NEXT_PUBLIC_SUPABASE_URL</td><td>Vercel e .env.local</td><td>Endereço do Supabase</td></tr>
-          <tr><td class="mono">NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</td><td>Vercel e .env.local</td><td>Chave pública: só faz o que a RLS deixa</td></tr>
-          <tr><td class="mono">SUPABASE_SECRET_KEY</td><td>Vercel e .env.local</td><td>Chave secreta: API do Atalho, geração do token e avisos</td></tr>
-          <tr><td class="mono">NEXT_PUBLIC_VAPID_PUBLIC_KEY</td><td>Vercel</td><td>Inscreve o iPhone nos avisos</td></tr>
-          <tr><td class="mono">VAPID_PRIVATE_KEY</td><td>Vercel</td><td>Assina cada aviso</td></tr>
-          <tr><td class="mono">CRON_SECRET</td><td>Vercel</td><td>Só o agendamento da Vercel consegue chamar <code>/api/avisos</code></td></tr>
-        </tbody>
-      </table>
-    </div>
+    <h2 id="deploy">Deploy e testes</h2>
+    <figure>
+      <div class="diagram">
+        <svg viewBox="0 0 960 330" role="img" aria-label="Com os 97 testes passando, um git push no main faz a Vercel publicar em bluefinance-chi.vercel.app. Mudança no banco é uma migração aplicada no Supabase antes do push. Cores saem de tokens.json. Os segredos ficam só na Vercel e no .env.local.">
+          <defs>
+            <marker id="d-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-muted" d="M0,0 L10,5 L0,10 z"/></marker>
+            <marker id="d-water" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="mk-water" d="M0,0 L10,5 L0,10 z"/></marker>
+          </defs>
+
+          <rect class="dg-box" x="10" y="20" width="200" height="74" rx="12"/>
+          <text class="dg-title" x="26" y="50">97 testes passam</text>
+          <text class="dg-sub" x="26" y="74">unit · api · e2e-iphone</text>
+          <rect class="dg-box" x="255" y="20" width="200" height="74" rx="12"/>
+          <text class="dg-code" x="271" y="50">git push</text>
+          <text class="dg-sub" x="271" y="74">no main</text>
+          <rect class="dg-box" x="500" y="20" width="200" height="74" rx="12"/>
+          <text class="dg-title" x="516" y="50">Vercel</text>
+          <text class="dg-sub" x="516" y="74">build e deploy</text>
+          <rect class="dg-box water" x="745" y="20" width="205" height="74" rx="12"/>
+          <text class="dg-title" x="761" y="50">No ar</text>
+          <text class="dg-sub" x="761" y="74">bluefinance-chi.vercel.app</text>
+          <line class="dg-line" x1="210" y1="57" x2="251" y2="57" marker-end="url(#d-muted)"/>
+          <line class="dg-line" x1="455" y1="57" x2="496" y2="57" marker-end="url(#d-muted)"/>
+          <line class="dg-line water" x1="700" y1="57" x2="741" y2="57" marker-end="url(#d-water)"/>
+
+          <rect class="dg-box" x="10" y="130" width="200" height="74" rx="12"/>
+          <text class="dg-title" x="26" y="160">Migração</text>
+          <text class="dg-mono" x="26" y="184">supabase/migrations</text>
+          <rect class="dg-box key" x="255" y="130" width="200" height="74" rx="12"/>
+          <text class="dg-title" x="271" y="160">Supabase</text>
+          <text class="dg-sub" x="271" y="184">antes do push</text>
+          <line class="dg-line" x1="210" y1="167" x2="251" y2="167" marker-end="url(#d-muted)"/>
+
+          <rect class="dg-box" x="500" y="130" width="200" height="74" rx="12"/>
+          <text class="dg-code" x="516" y="160">tokens.json</text>
+          <text class="dg-sub" x="516" y="184">design kit</text>
+          <rect class="dg-box" x="745" y="130" width="205" height="74" rx="12"/>
+          <text class="dg-title" x="761" y="160">Cores do app</text>
+          <text class="dg-mono" x="761" y="184">pnpm tokens</text>
+          <line class="dg-line" x1="700" y1="167" x2="741" y2="167" marker-end="url(#d-muted)"/>
+
+          <rect class="dg-box note" x="10" y="240" width="940" height="74" rx="12"/>
+          <path d="M30 270 v-6 a8 8 0 0 1 16 0 v6" fill="none" stroke="#3ccfc6" stroke-width="2"/>
+          <rect x="26" y="270" width="24" height="18" rx="3" fill="none" stroke="#3ccfc6" stroke-width="2"/>
+          <text class="dg-title" x="66" y="270">Segredos só na Vercel e no .env.local</text>
+          <text class="dg-mono" x="66" y="294">SUPABASE_SECRET_KEY · VAPID_PRIVATE_KEY · CRON_SECRET  + 3 chaves públicas</text>
+        </svg>
+      </div>
+    </figure>
   </section>
 
   <section aria-labelledby="mexer">
-    <div class="section-head">
-      <h2 id="mexer">Onde mexer para…</h2>
-      <p>O caminho mais curto para as mudanças mais comuns.</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Quero…</th><th>Onde</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Uma regra de dinheiro ou de data</td><td><code>src/domain/</code> (<code>parcelas.ts</code>, <code>summary.ts</code>, <code>datas.ts</code>, <code>money.ts</code>) e o teste em <code>tests/unit/</code></td></tr>
-          <tr><td>Uma tela ou uma aba</td><td><code>src/app/(app)/&lt;aba&gt;/page.tsx</code> e as peças em <code>src/components/app/</code></td></tr>
-          <tr><td>Salvar algo novo pelo app</td><td>A Server Action em <code>src/app/(app)/actions.ts</code> (ou na pasta da aba) e a leitura em <code>src/server/</code></td></tr>
-          <tr><td>Uma coluna ou tabela</td><td>Uma migração nova em <code>supabase/migrations/</code>, depois <code>pnpm db:types</code></td></tr>
-          <tr><td>O que o Atalho pergunta ou responde</td><td><code>src/app/api/quick-add/</code>, <code>docs/04-atalho-ios.md</code> e o Atalho no iPhone</td></tr>
-          <tr><td>Cores, fontes e tamanhos</td><td><code>design/project/tokens.json</code>, depois <code>pnpm tokens</code></td></tr>
-          <tr><td>Horário ou texto do aviso da fatura</td><td><code>vercel.json</code> (crons) e <code>src/domain/avisos.ts</code></td></tr>
-          <tr><td>O uso sem internet</td><td><code>public/sw.js</code> e <code>src/components/app/fila-offline.ts</code></td></tr>
-        </tbody>
-      </table>
-    </div>
+    <h2 id="mexer">Onde mexer para…</h2>
+    <figure>
+      <div class="diagram">
+        <svg viewBox="0 0 960 420" role="img" aria-label="Mapa de pastas: src/domain para regras de dinheiro e data; a pasta da aba para telas; actions.ts para salvar algo novo; supabase/migrations para colunas e tabelas; api/quick-add para o Atalho; tokens.json para cores; vercel.json e avisos.ts para o aviso; sw.js e fila-offline.ts para o uso sem internet.">
+          <g>
+            <text class="dg-code" x="30" y="45">src/domain</text>
+            <line class="dg-line lead" x1="350" y1="40" x2="560" y2="40"/>
+            <rect class="dg-box" x="570" y="21" width="370" height="34" rx="10"/>
+            <text class="dg-label" x="586" y="43">regra de dinheiro ou de data</text>
+
+            <text class="dg-code" x="30" y="95">src/app/(app)/&lt;aba&gt;</text>
+            <line class="dg-line lead" x1="350" y1="90" x2="560" y2="90"/>
+            <rect class="dg-box" x="570" y="71" width="370" height="34" rx="10"/>
+            <text class="dg-label" x="586" y="93">uma tela ou uma aba</text>
+
+            <text class="dg-code" x="30" y="145">src/app/(app)/actions.ts</text>
+            <line class="dg-line lead" x1="350" y1="140" x2="560" y2="140"/>
+            <rect class="dg-box" x="570" y="121" width="370" height="34" rx="10"/>
+            <text class="dg-label" x="586" y="143">salvar algo novo pelo app</text>
+
+            <text class="dg-code" x="30" y="195">supabase/migrations</text>
+            <line class="dg-line lead" x1="350" y1="190" x2="560" y2="190"/>
+            <rect class="dg-box" x="570" y="171" width="370" height="34" rx="10"/>
+            <text class="dg-label" x="586" y="193">uma coluna ou tabela</text>
+
+            <text class="dg-code" x="30" y="245">src/app/api/quick-add</text>
+            <line class="dg-line lead" x1="350" y1="240" x2="560" y2="240"/>
+            <rect class="dg-box" x="570" y="221" width="370" height="34" rx="10"/>
+            <text class="dg-label" x="586" y="243">o que o Atalho pergunta e responde</text>
+
+            <text class="dg-code" x="30" y="295">design/project/tokens.json</text>
+            <line class="dg-line lead" x1="350" y1="290" x2="560" y2="290"/>
+            <rect class="dg-box" x="570" y="271" width="370" height="34" rx="10"/>
+            <text class="dg-label" x="586" y="293">cores, fontes e tamanhos</text>
+
+            <text class="dg-code" x="30" y="345">vercel.json · avisos.ts</text>
+            <line class="dg-line lead" x1="350" y1="340" x2="560" y2="340"/>
+            <rect class="dg-box" x="570" y="321" width="370" height="34" rx="10"/>
+            <text class="dg-label" x="586" y="343">horário e texto do aviso</text>
+
+            <text class="dg-code" x="30" y="395">sw.js · fila-offline.ts</text>
+            <line class="dg-line lead" x1="350" y1="390" x2="560" y2="390"/>
+            <rect class="dg-box" x="570" y="371" width="370" height="34" rx="10"/>
+            <text class="dg-label" x="586" y="393">o uso sem internet</text>
+          </g>
+        </svg>
+      </div>
+    </figure>
   </section>
 
   <p class="foot">Retrato do código em 08/11/2026 (commit 3d87039, repositório IagoLeal1/BlueFinance).</p>
