@@ -2,12 +2,12 @@ import { connection } from 'next/server';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { EsqueletoInicio } from '@/components/app/esqueleto';
+import { BotaoOlho } from '@/components/app/botao-olho';
 import { BalanceCard } from '@/components/app/balance-card';
 import { CartaoCredito } from '@/components/app/cartao-credito';
 import { SpendingBar } from '@/components/app/spending-bar';
 import { TransactionRow } from '@/components/app/transaction-row';
 import { diaDe, mesAtual, mesDaUrl, nomeDoMes, opcoesDeMes, rotuloDoDia, tituloDoMes } from '@/domain/datas';
-import { formatBRL } from '@/domain/money';
 import { MesPicker } from '@/components/app/mes-picker';
 import { summarizeMonth } from '@/domain/summary';
 import { listarCartoes, resumoDosCartoes } from '@/server/cartoes';
@@ -42,14 +42,13 @@ async function ResumoDoMes({ searchParams }: { searchParams: PageProps<'/'>['sea
   for (const l of caixa) {
     if (l.cartao && l.pagoEm && l.pagoEm.slice(0, 7) === mes && l.pagoEm > hoje) aPagar.set(l.cartao.nome, Number(l.pagoEm.slice(8)));
   }
-  const depoisDe = formatBRL(resumo.sobrou - resumo.aPagar);
   const [[cartaoAPagar, diaAPagar] = ['', 0]] = [...aPagar];
   const depois =
     aPagar.size === 0
       ? undefined
       : aPagar.size === 1
-        ? `Depois da fatura do ${cartaoAPagar} (dia ${diaAPagar}): ${depoisDe}`
-        : `Depois das faturas a pagar (dias ${[...aPagar.values()].sort((a, b) => a - b).join(' e ')}): ${depoisDe}`;
+        ? { texto: `Depois da fatura do ${cartaoAPagar} (dia ${diaAPagar})`, valor: resumo.sobrou - resumo.aPagar }
+        : { texto: `Depois das faturas a pagar (dias ${[...aPagar.values()].sort((a, b) => a - b).join(' e ')})`, valor: resumo.sobrou - resumo.aPagar };
   const listaDoMes = mes === mesAtual(agora) ? '/lancamentos' : `/lancamentos?mes=${mes}`;
   // O card do cartão fala de agora (fatura a pagar e aberta): só no mês atual.
   const noMesAtual = mes === mesAtual(agora);
@@ -64,7 +63,10 @@ async function ResumoDoMes({ searchParams }: { searchParams: PageProps<'/'>['sea
         topo={
           <div className="flex items-center justify-between">
             <h1 className="text-[28px] leading-[34px] font-extrabold tracking-tight">{tituloDoMes(mes, agora)}</h1>
-            <MesPicker base="/" atual={mes} meses={opcoesDeMes(agora, ultimaParcela)} sobreODegrade />
+            <div className="flex gap-2">
+              <BotaoOlho sobreODegrade />
+              <MesPicker base="/" atual={mes} meses={opcoesDeMes(agora, ultimaParcela)} sobreODegrade />
+            </div>
           </div>
         }
       />

@@ -664,4 +664,48 @@ Sobrou nem em Investiu no Início: Investiu continua sendo só o dinheiro que sa
 CDI; prefixado e IPCA+ ficam para depois.""",
      altura=1010, largura=1720)
 
+# 26 · Olhinho: esconder os valores ao mostrar o app para alguém
+M = "R$ ••••"
+def olho(fechado):
+    return f'<button class="bf-iconbtn" aria-label="{"Mostrar valores" if fechado else "Esconder valores"}">{i("eye-off" if fechado else "eye")}</button>'
+def topo_olho(fechado, sobrou, entrou, saiu, investiu, depois):
+    acoes = f'<div style="display:flex;gap:8px">{olho(fechado)}<button class="bf-iconbtn" aria-label="Trocar mês">{i("calendar")}</button></div>'
+    seta_in, seta_out, porco = i("arrow-down-left", cls="is-positive"), i("arrow-up-right", cls="is-negative"), i("piggy-bank", cls="is-invest")
+    return (f'<section class="bf-hero" aria-label="Resumo de novembro">{titulo("Novembro", acoes)}'
+            f'<div class="bf-hero__label">Sobrou em novembro</div><div class="bf-hero__value">{sobrou}</div>'
+            f'<div class="bf-hero__label" style="margin-top:6px">{depois}</div>{ONDA_HERO}</section>'
+            '<div class="bf-stats">'
+            f'<div class="bf-stat"><div class="bf-stat__label">{seta_in}Entrou</div><div class="bf-stat__value">{entrou}</div></div>'
+            f'<div class="bf-stat"><div class="bf-stat__label">{seta_out}Saiu</div><div class="bf-stat__value">{saiu}</div></div>'
+            f'<div class="bf-stat"><div class="bf-stat__label">{porco}Investiu</div><div class="bf-stat__value">{investiu}</div></div>'
+            '</div>')
+def credito_olho(a, b, rodape):
+    return ('<section class="bf-card" aria-label="Cartão de crédito" style="padding-bottom:4px">'
+            f'<div class="bf-card__head" style="margin:0"><h3 class="bf-card__title" style="display:flex;gap:8px;align-items:center">{i("credit-card")}C6bank</h3></div>'
+            '<ul class="bf-list">' + fatura_linha("Fatura de novembro", "Fechada · vence dia 11", a)
+            + fatura_linha("Fatura de dezembro", "Aberta · fecha dia 4", b)
+            + f'</ul><div class="caption muted" style="padding:6px 0 10px">{rodape}</div></section>')
+inicio_aberto = iphone(topo_olho(False, "R$ 4.218,35", "R$ 9.350", "R$ 3.632", "R$ 1.500", "Depois da fatura do C6bank (dia 11): R$ 2.983,79")
+                       + credito_olho("R$ 1.234,56", "R$ 418,40", "Mais R$ 800 em parcelas até fevereiro · R$ 55,80 por mês em assinaturas") + ultimos, aba=0)
+inicio_fechado = iphone(topo_olho(True, M, "••••", "••••", "••••", f"Depois da fatura do C6bank (dia 11): {M}")
+                        + credito_olho(M, M, f"Mais {M} em parcelas até fevereiro · {M} por mês em assinaturas") + ultimos, aba=0)
+invest_fechado = iphone(titulo("Investimentos", olho(True))
+                        + f'<section class="bf-card bf-balance"><div class="bf-balance__label">Patrimônio investido</div><div class="bf-balance__value">{M}</div>'
+                          '<div class="bf-balance__split" style="grid-template-columns:1fr 1fr"><div class="bf-stat"><div class="bf-stat__label">Aportado</div><div class="bf-stat__value">••••</div></div>'
+                          '<div class="bf-stat"><div class="bf-stat__label">Rendeu</div><div class="bf-stat__value">••••</div></div></div></section>'
+                        + f'<button class="bf-btn bf-btn--secondary bf-btn--block">{i("plus")}Adicionar investimento</button>'
+                        + grupo("C6bank", M, "CDB", "101,5% do CDI", M, "••••"), aba=3)
+tela("TelaOlhinho", "26 · Olhinho: esconde o saldo, as faturas e os investimentos para mostrar o app a alguém",
+     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:16px">'
+     + painel("1 · Início, olho aberto", inicio_aberto, "O olho fica no topo, ao lado do calendário. Tocar esconde os valores.")
+     + painel("2 · Início, olho fechado", inicio_fechado,
+              "Somem o saldo (Sobrou e o depois da fatura), Entrou, Saiu, Investiu e as faturas do cartão. Os lançamentos (Últimos) continuam aparecendo.")
+     + painel("3 · Investir, olho fechado", invest_fechado,
+              "Mesmo olho na aba Investir: some o patrimônio, o aportado, o rendeu e o valor de cada investimento. O nome e o % do CDI ficam.")
+     + "</div>",
+     """Um toque no olho esconde os valores com dinheiro do Início (saldo, Entrou/Saiu/Investiu e faturas do cartão) e
+da aba Investir. Lançamentos e gastos por categoria continuam visíveis. O app lembra a escolha neste iPhone: fechado
+fica fechado até tocar de novo, e vale para as duas telas juntas.""",
+     altura=1010, largura=1300)
+
 print("telas geradas em", RAIZ)

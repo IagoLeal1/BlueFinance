@@ -2,6 +2,7 @@ import { ArrowDownLeft, ArrowUpRight, PiggyBank } from 'lucide-react';
 import { formatBRL, formatReais } from '@/domain/money';
 import type { ResumoDoMes } from '@/domain/summary';
 import { LinhaDagua } from './marca';
+import { Privado } from './privado';
 
 /**
  * Topo do Início (design kit: Identidade A · BlueFin): título e saldo sobre o degradê Abismo → Atum,
@@ -17,7 +18,7 @@ export function BalanceCard({
   nomeMes: string;
   topo?: React.ReactNode;
   /** "Depois da fatura do C6bank (dia 11): R$ …" — quando há fatura do mês ainda a pagar. */
-  depois?: string;
+  depois?: { texto: string; valor: number };
 }) {
   const stats = [
     { rotulo: 'Entrou', valor: resumo.entrou, Icone: ArrowDownLeft, cor: 'text-positive' },
@@ -29,8 +30,12 @@ export function BalanceCard({
       <div className="relative -mx-4 -mt-[max(env(safe-area-inset-top),16px)] bg-linear-to-br from-hero to-hero-end px-4 pt-[calc(max(env(safe-area-inset-top),16px)+8px)] pb-11 text-on-hero">
         {topo}
         <p className="mt-5 text-[13px] leading-[18px] font-semibold text-on-hero/80">Sobrou em {nomeMes}</p>
-        <p className="mt-1 text-[40px] leading-[44px] font-extrabold tracking-[-0.02em] tabular-nums">{formatBRL(resumo.sobrou)}</p>
-        {depois && <p className="mt-1.5 text-[13px] leading-[18px] font-semibold text-on-hero/80">{depois}</p>}
+        <p className="mt-1 text-[40px] leading-[44px] font-extrabold tracking-[-0.02em] tabular-nums"><Privado>{formatBRL(resumo.sobrou)}</Privado></p>
+        {depois && (
+          <p className="mt-1.5 text-[13px] leading-[18px] font-semibold text-on-hero/80">
+            {depois.texto}: <Privado>{formatBRL(depois.valor)}</Privado>
+          </p>
+        )}
         <LinhaDagua className="absolute inset-x-0 -bottom-px h-6 w-full text-background" />
       </div>
       <div className="grid grid-cols-3 gap-2">
@@ -40,7 +45,9 @@ export function BalanceCard({
               <Icone className={`size-3.5 ${cor}`} aria-hidden />
               {rotulo}
             </p>
-            <p className="mt-0.5 text-base font-extrabold tabular-nums">{formatReais(valor)}</p>
+            <p className="mt-0.5 text-base font-extrabold tabular-nums">
+              <Privado mascara="••••">{formatReais(valor)}</Privado>
+            </p>
           </div>
         ))}
       </div>

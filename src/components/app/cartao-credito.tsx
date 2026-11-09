@@ -3,6 +3,7 @@ import { ChevronRight, CreditCard } from 'lucide-react';
 import { nomeDoMes } from '@/domain/datas';
 import { formatBRL, formatReais } from '@/domain/money';
 import type { ResumoDoCartao } from '@/server/cartoes';
+import { Privado } from './privado';
 
 /** Uma fatura do cartão, que abre Lançamentos no mês dela. */
 function LinhaFatura({ mes, meta, total, mesAtual }: { mes: string; meta: string; total: number; mesAtual: string }) {
@@ -13,7 +14,9 @@ function LinhaFatura({ mes, meta, total, mesAtual }: { mes: string; meta: string
           <span className="block font-bold">Fatura de {nomeDoMes(mes)}</span>
           <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">{meta}</span>
         </span>
-        <span className="font-extrabold tabular-nums">{formatBRL(total)}</span>
+        <span className="font-extrabold tabular-nums">
+          <Privado>{formatBRL(total)}</Privado>
+        </span>
         <ChevronRight className="size-5 text-muted-foreground" aria-hidden />
       </Link>
     </li>
@@ -37,8 +40,20 @@ export function CartaoCredito({
   mesAtual: string;
 }) {
   const legenda = [
-    ...(aVir.total > 0 && aVir.ultimoMes ? [`Mais ${formatReais(aVir.total)} em parcelas até ${nomeDoMes(aVir.ultimoMes)}`] : []),
-    ...(assinaturas > 0 ? [`${formatBRL(assinaturas)} por mês em assinaturas`] : []),
+    ...(aVir.total > 0 && aVir.ultimoMes
+      ? [
+          <span key="parcelas">
+            Mais <Privado>{formatReais(aVir.total)}</Privado> em parcelas até {nomeDoMes(aVir.ultimoMes)}
+          </span>,
+        ]
+      : []),
+    ...(assinaturas > 0
+      ? [
+          <span key="assinaturas">
+            <Privado>{formatBRL(assinaturas)}</Privado> por mês em assinaturas
+          </span>,
+        ]
+      : []),
   ];
   return (
     <section aria-label="Cartão de crédito" className="grid gap-1 rounded-lg bg-card px-4 pt-3 pb-2 shadow-card">
@@ -56,7 +71,9 @@ export function CartaoCredito({
           </ul>
         </div>
       ))}
-      {legenda.length > 0 && <p className="pb-1 text-xs font-semibold text-muted-foreground">{legenda.join(' · ')}</p>}
+      {legenda.length > 0 && (
+        <p className="pb-1 text-xs font-semibold text-muted-foreground">{legenda.flatMap((parte, k) => (k === 0 ? [parte] : [' · ', parte]))}</p>
+      )}
     </section>
   );
 }

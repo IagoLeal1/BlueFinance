@@ -19,6 +19,7 @@ import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { CamposInvestimento, type ValoresInvestimento } from './campos-investimento';
 import { NotaAporte } from './nota-aporte';
+import { Privado } from './privado';
 
 const ICONE: Record<string, typeof Landmark> = { 'Renda fixa': Landmark, FII: Building2 };
 
@@ -124,14 +125,16 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
               <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">{i.cdi ? percentualDoCdi(i.cdi.percentual) : i.tipo}</span>
             </span>
             <span className="text-right">
-              <span className="block font-bold tabular-nums">{formatBRL(i.valorAtual)}</span>
+              <span className="block font-bold tabular-nums">
+                <Privado>{formatBRL(i.valorAtual)}</Privado>
+              </span>
               <span
                 className={cn(
                   'block text-[13px] leading-[18px] font-bold tabular-nums',
                   rendimento.startsWith('▲') ? 'text-positive' : rendimento.startsWith('▼') ? 'text-negative' : 'text-muted-foreground',
                 )}
               >
-                {rendimento}
+                <Privado mascara="••••">{rendimento}</Privado>
               </span>
             </span>
           </button>

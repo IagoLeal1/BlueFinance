@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
+import { SCRIPT_PRIVADO } from "@/components/app/privado";
 import { ServiceWorker } from "@/components/app/service-worker";
 import "./globals.css";
 
@@ -27,7 +28,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={`${manrope.variable} h-full antialiased`}>
+    // suppressHydrationWarning: o olhinho marca o <html> (data-privado) antes do React chegar.
+    <html lang="pt-BR" className={`${manrope.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: SCRIPT_PRIVADO }} />
+      </head>
       <body className="min-h-full flex flex-col">
         {children}
         <ServiceWorker />

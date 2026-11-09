@@ -100,3 +100,11 @@ input[type="date"]::-webkit-date-and-time-value {
   text-align: left;
 }
 
+
+/* Olhinho: com <html data-privado>, os valores com dinheiro do Início e do Investir viram "R$ ••••". */
+html[data-privado] .privado-valor {
+  display: none;
+}
+html[data-privado] .privado::after {
+  content: attr(data-mascara);
+}
