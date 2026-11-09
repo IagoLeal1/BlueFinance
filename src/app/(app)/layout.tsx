@@ -29,7 +29,7 @@ async function BotaoNovoLancamento() {
   const supabase = await supabaseServidor();
   const [{ data: cats }, { data: invs }, cartoes] = await Promise.all([
     supabase.from('categorias').select('nome, tipo, icone, ordem').order('ordem'),
-    supabase.from('investimentos').select('id, nome').order('nome'),
+    supabase.from('investimentos').select('id, nome, instituicao, percentual_cdi').order('nome'),
     listarCartoes(),
   ]);
   // "Fatura" é só para o total de uma fatura (Lançamentos › Crédito), não para o dia a dia.

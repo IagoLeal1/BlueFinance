@@ -28,5 +28,7 @@ export default defineConfig({
     command: `pnpm next dev --port ${WEB_PORT}`,
     url: `http://localhost:${WEB_PORT}`,
     reuseExistingServer: !process.env.CI,
+    // Sem buscar o CDI no Banco Central: os testes semeiam as taxas.
+    env: { BCB_SGS_URL: 'off' },
   },
 });

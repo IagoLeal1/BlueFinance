@@ -23,7 +23,27 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "cartoes": {
+            "ajustes_investimento": {
+                  Row: {
+                    "criado_em": string,"dia": string,"id": string,"investimento_id": string,"user_id": string,"valor": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "criado_em"?: string,"dia": string,"id"?: string,"investimento_id": string,"user_id": string,"valor": number
+                  }
+                  Update: {
+                    "criado_em"?: string,"dia"?: string,"id"?: string,"investimento_id"?: string,"user_id"?: string,"valor"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "ajustes_investimento_investimento_id_fkey"
+      columns: ["investimento_id"]
+isOneToOne: false
+      referencedRelation: "investimentos"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"cartoes": {
                   Row: {
                     "criado_em": string,"dia_fechamento": number,"dia_vencimento": number | null,"id": string,"nome": string,"user_id": string
                   }
@@ -51,6 +71,20 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"cdi_sincronizacao": {
+                  Row: {
+                    "desde": string,"id": boolean,"verificado_em": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "desde": string,"id"?: boolean,"verificado_em": string
+                  }
+                  Update: {
+                    "desde"?: string,"id"?: boolean,"verificado_em"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"inscricoes_push": {
                   Row: {
                     "auth": string,"criado_em": string,"endpoint": string,"id": string,"p256dh": string,"user_id": string
@@ -67,14 +101,14 @@ export type Database = {
                   ]
                 },"investimentos": {
                   Row: {
-                    "aportado": number,"criado_em": string,"id": string,"instituicao": string,"nome": string,"tipo": string,"user_id": string,"valor_atual": number
+                    "aplicado_em": string | null,"aportado": number,"criado_em": string,"id": string,"instituicao": string,"isento_ir": boolean,"nome": string,"percentual_cdi": number | null,"tipo": string,"user_id": string,"valor_atual": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "aportado"?: number,"criado_em"?: string,"id"?: string,"instituicao": string,"nome": string,"tipo": string,"user_id": string,"valor_atual"?: number
+                    "aplicado_em"?: string | null,"aportado"?: number,"criado_em"?: string,"id"?: string,"instituicao": string,"isento_ir"?: boolean,"nome": string,"percentual_cdi"?: number | null,"tipo": string,"user_id": string,"valor_atual"?: number
                   }
                   Update: {
-                    "aportado"?: number,"criado_em"?: string,"id"?: string,"instituicao"?: string,"nome"?: string,"tipo"?: string,"user_id"?: string,"valor_atual"?: number
+                    "aplicado_em"?: string | null,"aportado"?: number,"criado_em"?: string,"id"?: string,"instituicao"?: string,"isento_ir"?: boolean,"nome"?: string,"percentual_cdi"?: number | null,"tipo"?: string,"user_id"?: string,"valor_atual"?: number
                   }
                   Relationships: [
                     
@@ -110,6 +144,20 @@ isOneToOne: false
       referencedRelation: "investimentos"
       referencedColumns: ["id"]
     }
+                  ]
+                },"taxas_cdi": {
+                  Row: {
+                    "dia": string,"taxa": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "dia": string,"taxa": number
+                  }
+                  Update: {
+                    "dia"?: string,"taxa"?: number
+                  }
+                  Relationships: [
+                    
                   ]
                 },"tokens_pessoais": {
                   Row: {

@@ -92,3 +92,35 @@ export async function semearCartao(usuario: Usuario, nome: string, diaFechamento
     .insert({ user_id: usuario.id, nome, dia_fechamento: diaFechamento, dia_vencimento: diaVencimento });
   if (error) throw error;
 }
+
+/** Cadastra um investimento do usuário pelo acesso do app (com RLS). Com `cdi`, rende sozinho a esse % do CDI. */
+export async function semearInvestimento(
+  usuario: Usuario,
+  { nome, instituicao, aplicado, cdi }: { nome: string; instituicao: string; aplicado: number; cdi?: { percentual: number; aplicadoEm: string; isentoIr?: boolean } },
+) {
+  const { data, error } = await clienteDe(usuario)
+    .from('investimentos')
+    .insert({
+      user_id: usuario.id,
+      nome,
+      tipo: 'Renda fixa',
+      instituicao,
+      valor_atual: aplicado,
+      aportado: aplicado,
+      percentual_cdi: cdi?.percentual ?? null,
+      aplicado_em: cdi?.aplicadoEm ?? null,
+      isento_ir: cdi?.isentoIr ?? false,
+    })
+    .select('id')
+    .single();
+  if (error) throw error;
+  return data.id;
+}
+
+/** Troca todas as taxas do CDI guardadas por estas (% ao dia). Só no Supabase local dos testes. */
+export async function semearTaxasCdi(taxas: { dia: string; taxa: number }[]) {
+  const apagar = await admin.from('taxas_cdi').delete().gte('dia', '1900-01-01');
+  if (apagar.error) throw apagar.error;
+  const { error } = await admin.from('taxas_cdi').insert(taxas);
+  if (error) throw error;
+}

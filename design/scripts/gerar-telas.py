@@ -591,4 +591,77 @@ escurecido até ter 3:1 sobre o fundo nos dois temas. Receitas seguem verdes e a
 sinal: toda linha tem ícone e nome. A nova categoria Fatura junta o total das faturas lançadas sem detalhe.""",
      altura=980, largura=900)
 
+# 25 · Investimento que rende sozinho pelo CDI
+seg = lambda rotulo, opcoes, marcada: (f'<div class="bf-seg" role="radiogroup" aria-label="{rotulo}">' + "".join(
+    f'<button class="bf-seg__opt" role="radio" aria-checked="{"true" if o == marcada else "false"}">{o}</button>' for o in opcoes) + '</div>')
+par = lambda a, va, b, vb, cor_b="is-positive": (
+    '<div class="bf-balance__split" style="grid-template-columns:1fr 1fr">'
+    f'<div class="bf-stat"><div class="bf-stat__label">{a}</div><div class="bf-stat__value">{va}</div></div>'
+    f'<div class="bf-stat"><div class="bf-stat__label">{b}</div><div class="bf-stat__value {cor_b}">{vb}</div></div></div>')
+item = lambda esquerda, direita, meta="": (
+    '<li class="bf-row" style="min-height:40px;padding:6px 0"><div class="bf-row__main">'
+    f'<div class="body">{esquerda}</div>' + (f'<div class="bf-row__meta">{meta}</div>' if meta else "") + '</div>'
+    f'<span class="bf-row__amount">{direita}</span></li>')
+aba_cdi = iphone(titulo("Investimentos")
+                 + '<section class="bf-card bf-balance"><div class="bf-balance__label">Patrimônio investido</div><div class="bf-balance__value">R$ 4.451,34</div>'
+                   '<div class="caption" style="color:var(--positive);margin:-4px 0 12px">▲ + R$ 2,30 no último dia útil (5 nov)</div>'
+                 + par("Aportado", "R$ 4.449,04", "Rendeu", "+ R$ 2,30") + '</section>'
+                 + f'<button class="bf-btn bf-btn--secondary bf-btn--block">{i("plus")}Adicionar investimento</button>'
+                 + grupo("C6bank", "R$ 4.451,34", "CDB", "101,5% do CDI", "R$ 4.451,34", "▲ R$ 2,30")
+                 + f'<div class="bf-nota">{i("landmark")}<span>CDI de 5 nov: 0,0508% ao dia (13,65% ao ano), do Banco Central. Sábado, domingo e feriado não rendem.</span></div>', aba=3)
+sheet_cdb = iphone("", aba=None, sobre='<div class="bf-scrim"><div class="bf-sheet" style="display:grid;gap:12px">'
+                   + cabeca_sheet("CDB")
+                   + '<div class="caption muted" style="margin-top:-6px">C6bank · 101,5% do CDI · tem IR</div>'
+                   '<div class="bf-amount" style="padding:0"><span class="bf-field__label">Valor bruto hoje</span><div class="bf-amount__value"><span class="bf-amount__currency">R$</span><span class="bf-amount__digits">4.451,34</span></div></div>'
+                   '<div class="bf-card" style="background:var(--surface-sunken);box-shadow:none;padding:12px;display:grid;gap:2px">'
+                   '<div style="display:flex;justify-content:space-between"><span class="body-strong">Se resgatar hoje</span><span class="body-strong num">R$ 4.449,22</span></div>'
+                   '<div class="caption muted">Líquido: sai o IOF (R$ 2,07) e o IR (R$ 0,05) do rendimento. Do 30º dia em diante, só o IR.</div></div>'
+                   + par("Aportado", "R$ 4.449,04", "Rendeu", "+ R$ 2,30")
+                   + '<div><span class="bf-field__label">Aportes</span><ul class="bf-list" style="padding:0 4px">'
+                   + item("5 nov 2026", "R$ 4.449,04", "rendendo há 1 dia útil · o IR cai para 20% em 4 mai")
+                   + '</ul></div>'
+                   f'<button class="bf-btn bf-btn--primary bf-btn--block">{i("plus")}Aportar</button>'
+                   f'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="bf-btn bf-btn--secondary">{i("scale")}Ajustar valor</button>'
+                   f'<button class="bf-btn bf-btn--secondary">{i("pencil")}Editar</button></div></div></div>')
+aporte = iphone("", aba=None, sobre='<div class="bf-scrim"><div class="bf-sheet" style="display:grid;gap:14px">'
+                + cabeca_sheet("Novo lançamento")
+                + seg("Tipo", ["Despesa", "Receita", "Investimento"], "Investimento")
+                + '<div class="bf-amount" style="padding:0"><div class="bf-amount__value"><span class="bf-amount__currency">R$</span><span class="bf-amount__digits">1.000,00</span></div></div>'
+                + f'<div class="bf-field"><span class="bf-field__label">Para onde</span>{chips([("piggy-bank", "CDB · C6bank")], "CDB · C6bank")}</div>'
+                + QUANDO("Hoje · dom, 8 nov")
+                + f'<div class="bf-nota">{i("trending-up")}<span>Entra no <b>CDB</b> (C6bank), no mesmo acúmulo, e rende 101,5% do CDI a partir de <b>segunda, 9 nov</b> (fim de semana não rende). Patrimônio vai a R$ 5.451,34.</span></div>'
+                + f'<button class="bf-btn bf-btn--primary bf-btn--block">{i("check")}Salvar aporte</button></div></div>')
+editar_cdb = iphone("", aba=None, sobre='<div class="bf-scrim"><div class="bf-sheet" style="display:grid;gap:10px">'
+                    + cabeca_sheet("Editar investimento")
+                    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
+                      '<label class="bf-field"><span class="bf-field__label">Nome</span><input class="bf-input" value="CDB"></label>'
+                      '<label class="bf-field"><span class="bf-field__label">Onde está</span><input class="bf-input" value="C6bank"></label></div>'
+                    + f'<div class="bf-field"><span class="bf-field__label">Como rende</span>{seg("Como rende", ["% do CDI", "Não calcular"], "% do CDI")}</div>'
+                    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
+                      '<label class="bf-field"><span class="bf-field__label">Quanto do CDI</span><div class="bf-input" style="display:flex;justify-content:space-between;align-items:center"><span class="num">101,5</span><span class="muted">%</span></div></label>'
+                      f'<div class="bf-field"><span class="bf-field__label">Aplicado em</span><div class="bf-input" style="display:flex;justify-content:space-between;align-items:center"><span>5 nov 2026</span>{i("calendar", cls="muted")}</div></div></div>'
+                    + '<div class="bf-amount" style="padding:0"><span class="bf-field__label">Quanto aplicou</span><div class="bf-amount__value"><span class="bf-amount__currency">R$</span><span class="bf-amount__digits">4.449,04</span></div></div>'
+                    + f'<div class="bf-field"><span class="bf-field__label">Imposto de renda</span>{seg("Imposto de renda", ["Tem IR (CDB)", "Isento (LCI, LCA)"], "Tem IR (CDB)")}</div>'
+                    + f'<div class="bf-nota">{i("calculator")}<span>Pelo CDI, hoje vale <b>R$ 4.451,34</b>. Confira com o app do banco.</span></div>'
+                    + f'<button class="bf-btn bf-btn--primary bf-btn--block">{i("check")}Salvar</button></div></div>')
+tela("TelaInvestimentoCdi", "25 · Investimento que rende sozinho: % do CDI, aportes no mesmo acúmulo, bruto e líquido",
+     '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:16px">'
+     + painel("1 · Aba Investir", aba_cdi,
+              "O CDB sobe sozinho todo dia útil: o app pega o CDI que o Banco Central publica e aplica os 101,5%. Patrimônio, Aportado e Rendeu se atualizam juntos.")
+     + painel("2 · Tocar no CDB", sheet_cdb,
+              "Bruto (o que o banco mostra) e quanto cai na conta se resgatar hoje. Cada aporte com a sua data, que decide o IR. \"Ajustar valor\": digita o valor do app do banco e a diferença vira rendimento.")
+     + painel("3 · Aporte pelo +", aporte,
+              "Aportar mais no CDB soma no mesmo investimento (o mesmo acúmulo). O aporte rende a partir do primeiro dia útil desde a data dele.")
+     + painel("4 · Como rende (cadastro e edição)", editar_cdb,
+              "% do CDI liga o cálculo; \"Não calcular\" mantém o valor digitado à mão (ações, FII, cripto). Aplicado em e Quanto aplicou acertam o seu CDB: o aportado fica R$ 4.449,04 e o rendeu, R$ 2,30.")
+     + "</div>",
+     """O investimento em renda fixa pós-fixada rende sozinho. Valor bruto = cada aporte × (1 + CDI do dia × 101,5%) em cada
+dia útil desde a data dele, somados. O CDI vem do Banco Central (SGS 12), que publica com 1 dia útil de atraso: o app pode
+ficar 1 dia atrás do app do banco, e "Ajustar valor" acerta a diferença (vira rendimento, e o cálculo segue do valor
+ajustado). Líquido se resgatar hoje: IOF nos primeiros 30 dias (96% do rendimento no 1º dia, zero no 30º) e IR regressivo
+por aporte (22,5% até 180 dias, 20% até 360, 17,5% até 720, 15% depois); LCI e LCA são isentas. O rendimento não entra em
+Sobrou nem em Investiu no Início: Investiu continua sendo só o dinheiro que saiu da conta (aportes). Por enquanto só % do
+CDI; prefixado e IPCA+ ficam para depois.""",
+     altura=1010, largura=1720)
+
 print("telas geradas em", RAIZ)

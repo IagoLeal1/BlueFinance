@@ -16,6 +16,7 @@ import { CHIP } from './estilos';
 import { guardarNaFila, tirarDaFila } from './fila-offline';
 import { useFeedback } from './feedback';
 import { IconeCategoria } from './icone-categoria';
+import { NotaAporte } from './nota-aporte';
 import { Segmented } from './segmented';
 
 export interface CategoriaOpcao {
@@ -41,6 +42,9 @@ const lerUltima = (tipo: TipoLancamento) => (typeof localStorage === 'undefined'
 export interface InvestimentoOpcao {
   id: string;
   nome: string;
+  instituicao: string;
+  /** Rende a esse % do CDI (null: "Não calcular"). */
+  percentual_cdi: number | null;
 }
 
 export function NovoLancamento({
@@ -72,6 +76,7 @@ export function NovoLancamento({
       ? investimentos.map((i) => ({ valor: i.id, nome: i.nome, icone: 'piggy-bank', ordem: 0 }))
       : categorias.filter((c) => c.tipo === t).map((c) => ({ valor: c.nome, nome: c.nome, icone: c.icone, ordem: c.ordem }));
   const opcoes = opcoesDe(tipo);
+  const aporteNoCdi = investimentos.find((i) => i.id === categoria[0] && i.percentual_cdi !== null);
 
   const ultimaDe = (t: TipoLancamento, lista = opcoesDe(t)) => {
     const ultima = lerUltima(t);
@@ -217,6 +222,9 @@ export function NovoLancamento({
               </ToggleGroup>
               <input type="hidden" name={tipo === 'investimento' ? 'investimento_id' : 'categoria'} value={categoria[0] ?? ''} />
             </div>
+          )}
+          {tipo === 'investimento' && aporteNoCdi && (
+            <NotaAporte nome={aporteNoCdi.nome} instituicao={aporteNoCdi.instituicao} percentual={aporteNoCdi.percentual_cdi!} />
           )}
 
           {tipo === 'despesa' && (
