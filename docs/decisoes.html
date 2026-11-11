@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Decisões do BlueFin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
+<!-- Gerado de docs/decisoes.md (a fonte). Edite o .md e gere de novo. -->
+<style>
+  /* Layout: uma coluna de leitura (≈72ch); identidade BlueFin no tema escuro, só tema escuro. */
+  :root {
+    --bg: #07101f; --card: #0f1a2e; --raised: #162440; --line: #22314b;
+    --ink: #edf1f7; --muted: #9aa5b8; --brand: #6e9bff; --water: #3ccfc6;
+    --sans: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 500 16px/1.65 var(--sans); }
+  main {
+    max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px;
+    padding: calc(40px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(72px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  }
+  h1 { margin: 0 0 4px; font-weight: 800; font-size: clamp(34px, 6vw, 52px); line-height: 1.05; letter-spacing: -0.035em; text-wrap: balance; }
+  h1 + p { color: var(--muted); font-size: 17px; }
+  h2 { display: flex; align-items: center; gap: 12px; margin: 34px 0 4px; font-weight: 800; font-size: 23px; letter-spacing: -0.02em; text-wrap: balance; }
+  h2::before { content: ""; width: 22px; height: 6px; border-radius: 3px; background: var(--water); flex: none; }
+  p, ul { margin: 0; }
+  ul { padding-left: 20px; display: flex; flex-direction: column; gap: 10px; }
+  li::marker { color: var(--water); }
+  strong { font-weight: 800; }
+  a { color: var(--brand); overflow-wrap: anywhere; }
+  a:focus-visible { outline: 2px solid var(--water); outline-offset: 2px; border-radius: 4px; }
+  code { font-family: var(--mono); font-size: 0.86em; background: var(--raised); padding: 1px 6px; border-radius: 6px; overflow-wrap: anywhere; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); background: var(--card); border-radius: 16px; }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14.5px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  th { font-weight: 700; font-size: 12.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--raised); }
+  td:first-child { font-weight: 700; white-space: nowrap; }
+</style>
+</head>
+<body>
+<main>
+<h1>BlueFin — tudo o que foi decidido</h1>
+<p>Registro das decisões do projeto (07 a 11/11/2026), com o porquê de cada uma. Serve para quem continuar o trabalho, pessoa ou Claude, não refazer uma discussão que já foi resolvida. Quando uma decisão mudar, atualize aqui.</p>
+<h2>Onde está cada coisa</h2>
+<div class="table-wrap"><table><thead><tr><th>O quê</th><th>Onde</th></tr></thead><tbody><tr><td>App em produção</td><td><a href="https://bluefinance-chi.vercel.app">https://bluefinance-chi.vercel.app</a> (instalado no iPhone como "BlueFin")</td></tr><tr><td>Código</td><td><a href="https://github.com/IagoLeal1/BlueFinance">https://github.com/IagoLeal1/BlueFinance</a> (repositório público, branch <code>main</code>)</td></tr><tr><td>Design kit (fonte)</td><td><code>design/project/</code> — tokens em <code>tokens.json</code>, telas em <code>components/Tela*/</code> (geradas por <code>design/scripts/gerar-telas.py</code>)</td></tr><tr><td>Design System publicado</td><td><a href="https://claude.ai/artifact/H45MoajMVUH6by18cdb4Dc">https://claude.ai/artifact/H45MoajMVUH6by18cdb4Dc</a></td></tr><tr><td>Arquitetura</td><td><code>docs/arquitetura.html</code>, publicada em <a href="https://claude.ai/artifact/APQibxK778Eo6kid9Jht6A">https://claude.ai/artifact/APQibxK778Eo6kid9Jht6A</a></td></tr><tr><td>Análise e stack (fase 1)</td><td><code>docs/01-analise-e-stack.md</code></td></tr><tr><td>Plano de testes</td><td><code>docs/03-plano-de-testes.md</code></td></tr><tr><td>Atalho do iPhone</td><td><code>docs/04-atalho-ios.md</code></td></tr><tr><td>Publicação (Supabase + Vercel)</td><td><code>docs/05-publicacao.md</code></td></tr></tbody></table></div>
+<h2>Como o trabalho é feito</h2>
+<ul><li><strong>Em português (pt-BR)</strong>, no app e nas conversas.</li><li><strong>Design primeiro, depois aprovação, depois código.</strong> Toda mudança visível ganha uma tela no design kit (publicada no Design System) e só é implementada depois de "Aprovado, implementar".</li><li><strong>TDD com Playwright, em fatias verticais:</strong> um teste que falha (vermelho), o mínimo de código para passar (verde), e assim por diante. Três frentes: <code>unit</code> (regras de <code>src/domain</code>), <code>api</code> (Atalho, tokens, avisos, isolamento entre pessoas) e <code>e2e-iphone</code> (WebKit no tamanho do iPhone 16).</li><li><strong>Commit e push no <code>main</code> ao fim de cada entrega</strong>; o push publica na Vercel.</li><li><strong>O dono confirma antes</strong> de migração no banco de produção e de qualquer publicação externa.</li><li><strong>Segredos só passam pelas mãos do dono:</strong> chave secreta do Supabase, chave privada VAPID, <code>CRON_SECRET</code> e o token do Atalho nunca são digitados nem repetidos por quem ajuda.</li></ul>
+<h2>Plataforma</h2>
+<ul><li><strong>App web instalado (PWA) + Supabase + Atalho do iOS, sem app nativo.</strong> Um app nativo pediria a conta de desenvolvedor da Apple (US$ 99 por ano); o dono recusou. Sem Xcode, sem App Store. Empacotar com Capacitor fica como caminho aberto para o futuro.</li><li><strong>Stack:</strong> Next.js 16 (App Router, Server Actions, <code>proxy.ts</code>), TypeScript, Tailwind v4 + shadcn/ui (Base UI), Supabase (Postgres 17, login, RLS) em São Paulo, Vercel na região <code>gru1</code>.</li><li><strong>Lançamento rápido pelo Botão de Ação</strong>, com um Atalho do iOS. A Dynamic Island não aceita digitação, e app web não aparece no Botão de Ação: o Atalho faz a ponte chamando a API.</li><li><strong>Login por e-mail e senha, sem tela de criar conta.</strong> É um app de uma pessoa; o cadastro está fechado no Supabase. Criar conta para outra pessoa foi proposto e recusado por enquanto.</li></ul>
+<h2>Identidade visual</h2>
+<ul><li><strong>Direção A, "BlueFin"</strong> (entre três propostas: BlueFin, Caderneta e Cobalto): a barbatana do atum-azul cortando a linha d'água. Ícone com degradê <strong>Abismo → Atum</strong> (<code>#0b1f4d</code> → <code>#1846c8</code>), barbatana branca e linha d'água em <strong>Água</strong> (<code>#3ccfc6</code>). Nome curto "BlueFin", logotipo "bluefin" com "fin" na cor da marca.</li><li><strong>Fonte Manrope.</strong> O dono usa o <strong>tema escuro</strong>; os dois temas existem e são validados.</li><li><strong>O topo do Início</strong> é o degradê da marca com a onda da linha d'água recortando o fundo.</li></ul>
+<h2>Cores das categorias</h2>
+<ul><li><strong>Cada categoria de gasto tem a sua cor</strong>, a mesma nas linhas e na barra "Gastos por categoria": Moradia azul, Mercado laranja, Transporte verde-água, Alimentação âmbar, Lazer rosa, Saúde verde. Outros é cinza. Receita continua verde e aporte, âmbar.</li><li><strong>A cor nunca é o único sinal:</strong> toda linha tem ícone e nome. O valor continua vermelho (saiu) ou verde (entrou); a cor da categoria diz "o quê".</li><li><strong>Fatura é uma categoria própria, na cor Céu:</strong> azul-céu pastel no escuro (<code>#8fd3ff</code>, fundo do ícone <code>#2e4660</code>) e azul-oceano no claro (<code>#025884</code>, fundo <code>#d1e1e9</code>). Antes foram recusadas as listras azul e água ("nada a ver com o app") e o lilás ("não orna com o tema"). O dono quer cor lisa, que combine com o azul do app; Céu foi a mais distinta das outras categorias pelo validador de cores nos dois temas.</li><li><strong>Cores são conferidas por script, não no olho:</strong> separação entre categorias (ΔE) para visão normal e daltonismo, e contraste do ícone de pelo menos 3:1 sobre o fundo dele.</li></ul>
+<h2>Dinheiro e datas</h2>
+<ul><li><strong>Valores em centavos inteiros</strong> (R$ 32,90 = 3290). Nunca número com vírgula.</li><li><strong>Fuso de Brasília</strong> (<code>America/Sao_Paulo</code>) para dia e mês.</li><li><strong>Mês da fatura:</strong> compra a partir do dia do fechamento vai para a fatura seguinte.</li><li><strong>Vencimento:</strong> se o dia de vencer é depois do de fechar, vence no mesmo mês; senão, no seguinte. Dia 31 vira o último dia do mês. Cada cartão tem dia de fechar e de vencer (o do dono: C6bank, fecha 4, vence 11).</li><li><strong>O dinheiro do crédito sai no vencimento (regime de caixa).</strong> Compra no crédito só entra em "Saiu" no dia em que a fatura vence; até lá aparece em "A pagar", e o Início mostra "Depois da fatura do C6bank (dia 11): R$ …". Pedido do dono: a fatura de novembro só desconta no dia de pagar.</li><li><strong>Parcelas de 1 a 24</strong>, uma linha por parcela, cada uma já no mês da sua fatura. Os centavos que sobram vão na primeira (R$ 100 em 3x = 33,34 + 33,33 + 33,33).</li><li><strong>"Todo mês" (assinatura) no crédito:</strong> o mesmo valor em toda fatura, lançado 24 meses à frente e completado sozinho. Mudar o valor vale da fatura aberta em diante; parar apaga as faturas depois da aberta.</li></ul>
+<h2>Cartão e fatura</h2>
+<ul><li><strong>No Início, cada cartão mostra a fatura fechada (a pagar, com o vencimento) e a aberta.</strong></li><li><strong>"Lançar o total da fatura":</strong> quando uma fatura fechou sem compras lançadas (de antes de usar o app), dá para lançar o total de uma vez, na categoria Fatura.</li><li><strong>Lançamentos tem dois extratos:</strong> Débito é a conta (receitas, débito, Pix, aportes e cada fatura numa linha só, no dia do vencimento); Crédito são as compras no cartão, juntas por fatura.</li></ul>
+<h2>Lançar e editar</h2>
+<ul><li><strong>Botão +:</strong> valor primeiro, categoria em um toque, "Como pagou" (Débito, Pix ou Crédito, com cartão e parcelas). O lançamento aparece na hora, antes da resposta do servidor.</li><li><strong>Editar:</strong> valor, categoria, descrição, data ("Quando", até hoje) e como pagou. Débito → Crédito leva o gasto para a fatura certa. Tocar numa parcela abre a compra inteira (total, data, cartão, parcelas); trocar para Débito ou Pix volta a ser à vista.</li></ul>
+<h2>Atalho do iPhone ("Gasto rápido")</h2>
+<ul><li><strong>Ordem das perguntas:</strong> Categoria → quanto e com o quê ("32,90 mercado do bairro") → Como pagou? (o último usado naquela categoria vem primeiro) → Em quantas vezes? (só no crédito). A Fatura não aparece na lista de categorias.</li><li><strong>Visual no iPhone:</strong> a pergunta se chama "Categoria"; o Atalho é azul-escuro com o ícone de peixe.</li><li><strong>Token pessoal:</strong> gerado em Ajustes › Atalho do iPhone, aparece uma vez; o banco guarda só o hash; gerar outro desliga o anterior. Fica no primeiro passo do Atalho, então <strong>não compartilhe o Atalho como está</strong>: duplique, apague o token da cópia e compartilhe a cópia.</li></ul>
+<h2>Aviso da fatura e uso sem internet</h2>
+<ul><li><strong>Aviso por Web Push</strong> no dia anterior e no dia do vencimento, às 9h (agendamento da Vercel). Só funciona com o app aberto pela Tela de Início; liga em Ajustes.</li><li><strong>Sem internet:</strong> as telas abrem pela última versão guardada (service worker, só em produção) e os lançamentos esperam numa fila no aparelho; reenviar não duplica.</li></ul>
+<h2>Investimentos</h2>
+<ul><li><strong>Rendimento automático por % do CDI</strong> (CDB, LCI, LCA): o CDI diário vem do Banco Central (série SGS 12). Cada aporte rende desde a própria data, só em dias úteis; o app pode ficar 1 dia útil atrás do app do banco.</li><li><strong>Aporte novo entra no mesmo investimento</strong> e soma no mesmo acúmulo.</li><li><strong>Bruto e líquido:</strong> o valor principal é o bruto (como o banco mostra); o detalhe mostra o líquido se resgatar hoje (IOF nos 30 primeiros dias, IR regressivo de 22,5% a 15% por aporte; LCI e LCA isentas).</li><li><strong>"Ajustar valor":</strong> a diferença para o valor do banco vira rendimento, e o cálculo segue dali.</li><li><strong>Rendimento não entra em Sobrou nem em Investiu</strong> (Investiu são os aportes, dinheiro que saiu da conta).</li><li>Prefixado e IPCA+ ficam para depois.</li></ul>
+<h2>Privacidade na tela</h2>
+<ul><li><strong>Olhinho</strong> no topo do Início e da aba Investir: troca os valores com dinheiro por "R$ ••••" (saldo, "Depois da fatura", Entrou, Saiu, Investiu, faturas e investimentos). Os lançamentos continuam visíveis. A escolha fica guardada no aparelho.</li></ul>
+</main>
+</body>
+</html>
