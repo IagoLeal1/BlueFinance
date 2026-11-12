@@ -4,9 +4,11 @@ import { AvisoDaFatura } from '@/components/app/aviso-fatura';
 import { BotaoSair } from '@/components/app/botao-sair';
 import { Cartoes } from '@/components/app/cartoes';
 import { TokenAtalho } from '@/components/app/token-atalho';
+import { ConfigurarVr } from '@/components/app/vr-ajustes';
 import { supabaseServidor } from '@/lib/supabase/server';
 import { listarCartoes } from '@/server/cartoes';
 import { tokenAtivo } from '@/server/tokens';
+import { vrDoUsuario } from '@/server/vr';
 import { sair } from './actions';
 
 export const metadata: Metadata = { title: 'Ajustes · BlueFinance' };
@@ -19,6 +21,9 @@ export default function Ajustes() {
       <h1 className="mt-2 text-[28px] leading-[34px] font-extrabold tracking-tight">Ajustes</h1>
       <Suspense fallback={null}>
         <CartoesDoUsuario />
+      </Suspense>
+      <Suspense fallback={null}>
+        <VrDoUsuario />
       </Suspense>
       <AvisoDaFatura />
       <section aria-label="Lançar sem abrir o app" className="grid gap-3 rounded-lg bg-card p-4 shadow-card">
@@ -62,6 +67,11 @@ export default function Ajustes() {
 
 async function CartoesDoUsuario() {
   return <Cartoes cartoes={await listarCartoes()} />;
+}
+
+async function VrDoUsuario() {
+  const vr = await vrDoUsuario();
+  return <ConfigurarVr vr={vr && { valorMensal: vr.valorMensal, dia: vr.dia, saldo: vr.saldo }} />;
 }
 
 async function EmailDaConta() {

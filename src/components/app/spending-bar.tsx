@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { formatBRL } from '@/domain/money';
 import type { GastoPorCategoria } from '@/domain/summary';
 
@@ -16,10 +17,13 @@ export function SpendingBar({
   gastos,
   ordemPorNome,
   maxLegenda = 3,
+  hrefDe,
 }: {
   gastos: GastoPorCategoria[];
   ordemPorNome: Map<string, number>;
   maxLegenda?: number;
+  /** Tocar numa categoria abre Lançamentos filtrado nela (design kit: TelaFiltroCategoria). */
+  hrefDe?: (categoria: string) => string;
 }) {
   if (gastos.length === 0) return null;
   const descricao = gastos.map((g) => `${g.categoria} ${g.percentual}%`).join(', ');
@@ -37,14 +41,27 @@ export function SpendingBar({
       </div>
       <ul className="grid gap-2">
         {gastos.slice(0, maxLegenda).map((g) => (
-          <li key={g.categoria} className="grid grid-cols-[10px_1fr_auto_44px] items-center gap-2 text-sm font-semibold">
-            <span className="size-2.5 rounded-[3px]" style={{ background: corDaCategoria(g.categoria, ordemPorNome) }} />
-            <span>{g.categoria}</span>
-            <span className="tabular-nums">{formatBRL(g.total)}</span>
-            <span className="text-right text-muted-foreground tabular-nums">{g.percentual}%</span>
+          <li key={g.categoria}>
+            <Legenda href={hrefDe?.(g.categoria)}>
+              <span className="size-2.5 rounded-[3px]" style={{ background: corDaCategoria(g.categoria, ordemPorNome) }} />
+              <span>{g.categoria}</span>
+              <span className="tabular-nums">{formatBRL(g.total)}</span>
+              <span className="text-right text-muted-foreground tabular-nums">{g.percentual}%</span>
+            </Legenda>
           </li>
         ))}
       </ul>
     </section>
+  );
+}
+
+const LINHA = 'grid min-h-6 grid-cols-[10px_1fr_auto_44px] items-center gap-2 text-sm font-semibold';
+function Legenda({ href, children }: { href?: string; children: React.ReactNode }) {
+  return href ? (
+    <Link href={href} className={`${LINHA} rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring`}>
+      {children}
+    </Link>
+  ) : (
+    <div className={LINHA}>{children}</div>
   );
 }

@@ -17,7 +17,7 @@ export interface EstadoLancamento {
   compraId?: string;
 }
 
-const FORMAS = ['debito', 'pix', 'credito'] as const;
+const FORMAS = ['debito', 'pix', 'credito', 'vr'] as const;
 type Forma = (typeof FORMAS)[number];
 
 const TIPOS: TipoLancamento[] = ['despesa', 'receita', 'investimento'];
@@ -207,7 +207,9 @@ export async function editarLancamento(_anterior: EstadoLancamento, form: FormDa
 
   const mudancas: { data?: string; competencia?: string; forma_pagamento?: Forma } = {};
   if (novaData) Object.assign(mudancas, { data: novaData, competencia: mesDe(novaData) });
-  if (atual.tipo === 'despesa' && (forma === 'debito' || forma === 'pix') && forma !== atual.forma_pagamento) mudancas.forma_pagamento = forma;
+  if (atual.tipo === 'despesa' && (forma === 'debito' || forma === 'pix' || forma === 'vr') && forma !== atual.forma_pagamento) {
+    mudancas.forma_pagamento = forma;
+  }
   if (Object.keys(mudancas).length > 0) {
     const { error: erroData } = await supabase.from('lancamentos').update(mudancas).eq('id', id);
     if (erroData) return { erro: 'Não foi possível salvar. Tente de novo.' };

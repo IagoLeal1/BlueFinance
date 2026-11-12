@@ -13,7 +13,7 @@ import type { LancamentoListado } from '@/server/lancamentos';
 import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { CampoQuando, dataDoDia } from './campo-quando';
-import { CamposCredito, FORMAS, cartaoInicial, type Forma } from './campos-credito';
+import { CamposCredito, cartaoInicial, formasCom, type Forma } from './campos-credito';
 import { CHIP } from './estilos';
 import { IconeCategoria } from './icone-categoria';
 import { metaDe } from './meta';
@@ -65,7 +65,18 @@ export function ChipsDeCategoria({
  * Linha de lançamento que, ao tocar, abre o sheet para editar (valor, data, categoria, como pagou, descrição)
  * ou excluir (design kit: TelaEditar, TelaEditarGasto). Débito/Pix → Crédito vira compra no cartão.
  */
-export function LinhaEditavel({ l, categorias, cartoes }: { l: LancamentoListado; categorias: CategoriaEditavel[]; cartoes: Cartao[] }) {
+export function LinhaEditavel({
+  l,
+  categorias,
+  cartoes,
+  temVr = false,
+}: {
+  l: LancamentoListado;
+  categorias: CategoriaEditavel[];
+  cartoes: Cartao[];
+  /** Mostra VR em "Como pagou" (quem configurou o VR, ou um gasto que já foi no VR). */
+  temVr?: boolean;
+}) {
   const [aberto, setAberto] = useState(false);
   const opcoes = l.tipo === 'investimento' ? [] : categorias.filter((c) => c.tipo === l.tipo);
   const atual = opcoes.find((c) => c.nome === l.categoria)?.id;
@@ -120,7 +131,7 @@ export function LinhaEditavel({ l, categorias, cartoes }: { l: LancamentoListado
               <Segmented
               nome="forma"
               rotulo="Como pagou"
-              opcoes={FORMAS}
+              opcoes={formasCom(temVr || l.forma === 'vr')}
               valor={forma}
               onChange={(f) => {
                 setForma(f);

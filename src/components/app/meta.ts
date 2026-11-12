@@ -1,13 +1,15 @@
-import { diaCurto } from '@/domain/datas';
+import { diaCurto, diaDe } from '@/domain/datas';
 import type { LancamentoListado } from '@/server/lancamentos';
 
-const FORMA = { debito: 'Débito', pix: 'Pix', credito: 'Crédito' } as const;
+const FORMA = { debito: 'Débito', pix: 'Pix', credito: 'Crédito', vr: 'VR' } as const;
 
 /**
  * Texto de baixo da linha (design kit: TelaFatura): "Lazer · 1/3 · comprado em 7 nov",
  * "Mercado · à vista · 20 nov", "Transporte · Débito · pelo Atalho", "Salário".
  */
 export function metaDe(l: LancamentoListado): string {
+  if (l.origem === 'vr') return `VR · todo dia ${Number(diaDe(l.data).slice(8))}`;
+  if (l.origem === 'acerto') return 'VR · saldo informado';
   const partes = [l.categoria];
   if (l.recorrente) {
     partes.push('todo mês');

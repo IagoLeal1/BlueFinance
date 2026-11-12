@@ -173,6 +173,20 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"vr": {
+                  Row: {
+                    "criado_em": string,"desde": string,"dia": number,"user_id": string,"valor_mensal": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "criado_em"?: string,"desde"?: string,"dia": number,"user_id": string,"valor_mensal": number
+                  }
+                  Update: {
+                    "criado_em"?: string,"desde"?: string,"dia"?: number,"user_id"?: string,"valor_mensal"?: number
+                  }
+                  Relationships: [
+                    
+                  ]
                 }
           }
           Views: {

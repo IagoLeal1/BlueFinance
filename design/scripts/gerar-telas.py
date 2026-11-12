@@ -708,4 +708,128 @@ da aba Investir. Lançamentos e gastos por categoria continuam visíveis. O app 
 fica fechado até tocar de novo, e vale para as duas telas juntas.""",
      altura=1010, largura=1300)
 
+# 27 · VR: um segundo saldo, separado da conta
+SEG3 = lambda ativo: ('<div class="bf-seg" role="radiogroup" aria-label="Extrato">' + "".join(
+    f'<button class="bf-seg__opt" role="radio" aria-checked="{"true" if o == ativo else "false"}">{o}</button>' for o in ("Débito", "Crédito", "VR")) + '</div>')
+FORMAS_VR = ('<div class="bf-seg" role="radiogroup" aria-label="Como pagou">' + "".join(
+    f'<button class="bf-seg__opt" role="radio" aria-checked="{"true" if o == "VR" else "false"}">{o}</button>' for o in ("Débito", "Pix", "Crédito", "VR")) + '</div>')
+CALENDARIO = f'<button class="bf-iconbtn" aria-label="Trocar mês">{i("calendar")}</button>'
+def card_vr(saldo, meta):
+    return ('<section class="bf-card" aria-label="VR" style="display:flex;align-items:center;gap:12px;padding-top:12px;padding-bottom:12px">'
+            f'<span class="bf-cat bf-cat--neutral">{i("wallet-cards")}</span>'
+            f'<div class="bf-row__main"><div class="bf-row__title">VR</div><div class="bf-row__meta">{meta}</div></div>'
+            f'<div style="text-align:right"><div class="caption muted">Saldo</div><div class="body-strong num" style="font-size:20px;line-height:26px">{saldo}</div></div>'
+            f'{i("chevron-right", cls="muted")}</section>')
+inicio_vr = iphone(topo_inicio("R$ 4.218,35", "R$ 9.350", "R$ 3.632", "R$ 1.500", depois="Depois da fatura do C6bank (dia 11): R$ 2.983,79")
+                   + card_vr("R$ 412,30", "Próximo: R$ 900 em 5 dez") + credito, aba=0)
+ajustes_vr = iphone(titulo("Ajustes")
+                    + '<section class="bf-card" style="padding-top:8px;padding-bottom:4px"><div class="bf-card__head" style="margin:0"><h3 class="bf-card__title">Vale-refeição</h3></div><ul class="bf-list">'
+                    + f'<li class="bf-row"><span class="bf-cat bf-cat--neutral">{i("wallet-cards")}</span><div class="bf-row__main"><div class="bf-row__title">VR</div>'
+                      f'<div class="bf-row__meta">R$ 900,00 todo dia 5 · saldo R$ 412,30</div></div>{i("chevron-right", cls="muted")}</li></ul></section>', aba=4,
+                    sobre='<div class="bf-scrim"><div class="bf-sheet" style="display:grid;gap:12px">'
+                    + cabeca_sheet("VR")
+                    + '<div class="bf-amount" style="padding:0"><span class="bf-field__label">Quanto cai por mês</span><div class="bf-amount__value"><span class="bf-amount__currency">R$</span><span class="bf-amount__digits">900,00</span></div></div>'
+                    '<div class="bf-field"><span class="bf-field__label">Dia que cai</span><div class="bf-stepper"><button aria-label="Menos">−</button><span class="bf-stepper__valor">dia 5</span><button aria-label="Mais">+</button></div>'
+                    '<span class="bf-field__hint">Em mês mais curto, cai no último dia.</span></div>'
+                    '<div class="bf-amount" style="padding:0"><span class="bf-field__label">Saldo de hoje</span><div class="bf-amount__value"><span class="bf-amount__currency">R$</span><span class="bf-amount__digits">412,30</span></div></div>'
+                    + f'<div class="bf-nota">{i("repeat")}<span>Todo dia 5 entram <b>R$ 900,00</b> no VR. O que sobra passa para o mês seguinte. Se o saldo não bater com o app do VR, corrija aqui.</span></div>'
+                    + f'<button class="bf-btn bf-btn--primary bf-btn--block">{i("check")}Salvar VR</button></div></div>')
+lancar_vr = iphone("", aba=None, sobre='<div class="bf-scrim"><div class="bf-sheet" style="display:grid;gap:14px">'
+                   + cabeca_sheet("Novo lançamento")
+                   + seg("Tipo", ["Despesa", "Receita", "Investimento"], "Despesa")
+                   + '<div class="bf-amount" style="padding:0"><div class="bf-amount__value"><span class="bf-amount__currency">R$</span><span class="bf-amount__digits">32,90</span></div></div>'
+                   + f'<div class="bf-field"><span class="bf-field__label">Categoria</span>{chips(CATS[:4], "Alimentação")}</div>'
+                   + f'<div class="bf-field"><span class="bf-field__label">Como pagou</span>{FORMAS_VR}</div>'
+                   + '<label class="bf-field"><span class="bf-field__label">Com o quê (opcional)</span><input class="bf-input" value="Almoço"></label>'
+                   + f'<div class="bf-nota">{i("wallet-cards")}<span>Sai do <b>VR</b>: sobram R$ 379,40. Não mexe no Sobrou da conta.</span></div>'
+                   + f'<button class="bf-btn bf-btn--primary bf-btn--block">{i("check")}Salvar gasto</button></div></div>')
+FORMAS_ATALHO_VR = "".join(
+    f'<div style="display:flex;align-items:center;gap:10px;padding:10px 4px;border-top:1px solid var(--line)">{i(ic)}<span class="body">{nome}</span>{dica}</div>'
+    for ic, nome, dica in [("wallet-cards", "VR", '<span class="caption muted" style="margin-left:auto">último usado</span>'),
+                           ("wallet", "Débito", ""), ("zap", "Pix", ""), ("credit-card", "Crédito · C6bank", "")])
+atalho_vr = (f'<div style="display:grid;gap:12px"><div class="bf-ios-prompt" style="gap:4px">{cabeca(" · Almoço")}'
+             f'<div class="bf-ios-prompt__pergunta" style="margin:4px 0 6px">Como pagou?</div>{FORMAS_ATALHO_VR}</div>'
+             f'<div class="bf-ios-notif"><span class="bf-ios-notif__icone">{CHECK_BRANCO}</span>'
+             '<div style="flex:1"><div class="body-strong">BlueFin</div><div class="caption">Gasto salvo: Alimentação · − R$ 32,90 no VR (sobram R$ 379,40)</div></div>'
+             '<span class="caption muted">agora</span></div></div>')
+extrato_vr = iphone(titulo("Lançamentos", CALENDARIO) + SEG3("VR")
+                    + '<section class="bf-card" style="display:flex;justify-content:space-between;align-items:center;gap:12px">'
+                      '<div><div class="caption muted">Saldo do VR</div><div class="body-strong num" style="font-size:22px;line-height:28px">R$ 379,40</div></div>'
+                      '<div class="caption muted" style="text-align:right">Próximo depósito<br><span class="num">R$ 900,00</span> · 5 dez</div></section>'
+                    + '<section class="bf-card" style="padding-top:0;padding-bottom:4px"><div class="bf-list__day">Hoje · 12 nov</div><ul class="bf-list">'
+                    + linha_cor("utensils", "Almoço", "Alimentação · VR · pelo Atalho", "− R$ 32,90", "Alimentação")
+                    + '</ul><div class="bf-list__day">10 nov</div><ul class="bf-list">'
+                    + linha_cor("shopping-cart", "Hortifruti", "Mercado · VR", "− R$ 100,00", "Mercado")
+                    + linha_cor("utensils", "Restaurante", "Alimentação · VR", "− R$ 64,50", "Alimentação")
+                    + '</ul><div class="bf-list__day">5 nov</div><ul class="bf-list">'
+                    + linha_cor("wallet-cards", "Depósito do VR", "VR · todo dia 5", "+ R$ 900,00", tipo="receita")
+                    + "</ul></section>", aba=1)
+tela("TelaVr", "27 · VR: um segundo saldo, separado da conta, com depósito todo mês e no Atalho",
+     '<div style="display:grid;grid-template-columns:repeat(3,393px) 360px 393px;gap:18px;padding:16px">'
+     + painel("1 · Início com o VR", inicio_vr,
+              "Um card menor abaixo do saldo da conta: quanto tem no VR agora e quando cai o próximo depósito. Tocar abre o extrato do VR.")
+     + painel("2 · Ajustes › VR", ajustes_vr,
+              "Quanto cai por mês, o dia que cai e o saldo de hoje (para começar do número do app do VR). O depósito entra sozinho todo mês nesse dia.")
+     + painel("3 · Botão + pago no VR", lancar_vr,
+              "VR entra em \"Como pagou\", ao lado de Débito, Pix e Crédito. O gasto sai só do VR, sem parcelas.")
+     + painel("4 · Atalho: VR em \"Como pagou?\"", atalho_vr,
+              "O VR aparece sozinho na lista do Atalho, sem editar nada no iPhone. No VR não pergunta em quantas vezes. A notificação diz quanto sobra.")
+     + painel("5 · Lançamentos › VR", extrato_vr,
+              "Uma terceira aba, VR: o extrato do VR, com o saldo, os depósitos e os gastos pagos com ele.")
+     + "</div>",
+     """VR (vale-refeição) é um segundo saldo, separado da conta. Em Ajustes › VR ficam quanto cai por mês, o dia que cai
+e o saldo de hoje. Todo mês, nesse dia, o depósito entra sozinho (dia 31 em mês curto cai no último dia), e o que sobra
+acumula para o mês seguinte. Gasto pago com VR, pelo + ou pelo Atalho, desconta só do VR: o depósito não entra em
+Entrou e o gasto não entra em Saiu nem em Sobrou. Mas o gasto conta em "Gastos por categoria", porque continua sendo
+dinheiro gasto em Mercado ou Alimentação. No Início, o card do VR aparece no mês atual, com o saldo de agora; o olhinho
+esconde o saldo do VR também. Em Lançamentos, a aba VR é o extrato do VR. Corrigir o "Saldo de hoje" em Ajustes lança
+a diferença como um acerto no extrato. Editar um gasto também permite trocar para VR e voltar para Débito, Pix ou Crédito.""",
+     altura=1010, largura=2040)
+
+# 28 · Lançamentos: quanto foi em cada categoria
+FILTRO = lambda marcada: ('<div class="bf-chips" role="group" aria-label="Categoria" style="flex:none;flex-wrap:nowrap;overflow:hidden;margin:0 -16px;padding:0 16px">' + "".join(
+    f'<button class="bf-chip" aria-pressed="{"true" if n == marcada else "false"}" style="flex:none">{i(ic) if ic else ""}{n}</button>'
+    for ic, n in [(None, "Tudo"), ("house", "Moradia"), ("shopping-cart", "Mercado"), ("car", "Transporte"), ("utensils", "Alimentação"), ("heart-pulse", "Saúde")]) + '</div>')
+filtro_tudo = iphone(titulo("Lançamentos", CALENDARIO) + FILTRO("Tudo") + SEG3("Débito")
+                     + '<section class="bf-card" style="padding-top:0;padding-bottom:4px"><div class="bf-list__day">A pagar</div><ul class="bf-list">'
+                     + linha_cor("credit-card", "Fatura C6bank", "Crédito · vence 11 nov", "− R$ 1.234,56", "Fatura")
+                     + '</ul><div class="bf-list__day">Hoje · 12 nov</div><ul class="bf-list">'
+                     + linha_cor("shopping-cart", "Mercado do bairro", "Mercado · Débito", "− R$ 32,90", "Mercado")
+                     + linha_cor("car", "Uber", "Transporte · Pix", "− R$ 18,40", "Transporte")
+                     + '</ul><div class="bf-list__day">5 nov</div><ul class="bf-list">'
+                     + linha_cor("house", "Aluguel", "Moradia · Pix", "− R$ 1.600,00", "Moradia")
+                     + linha_cor("briefcase", "Salário", "Salário", "+ R$ 8.500,00", tipo="receita")
+                     + "</ul></section>", aba=1)
+filtro_mercado = iphone(titulo("Lançamentos", CALENDARIO) + FILTRO("Mercado")
+                        + '<section class="bf-card bf-balance"><div class="bf-balance__label">Mercado em novembro</div><div class="bf-balance__value">R$ 642,10</div>'
+                          '<div class="caption muted" style="margin:-4px 0 12px">4 gastos · 18% do que você gastou no mês</div>'
+                          '<div class="bf-balance__split">'
+                          '<div class="bf-stat"><div class="bf-stat__label">Débito e Pix</div><div class="bf-stat__value">R$ 210</div></div>'
+                          '<div class="bf-stat"><div class="bf-stat__label">Crédito</div><div class="bf-stat__value">R$ 332</div></div>'
+                          '<div class="bf-stat"><div class="bf-stat__label">VR</div><div class="bf-stat__value">R$ 100</div></div></div></section>'
+                        + '<section class="bf-card" style="padding-top:0;padding-bottom:4px"><div class="bf-list__day">Hoje · 12 nov</div><ul class="bf-list">'
+                        + linha_cor("shopping-cart", "Mercado do bairro", "Mercado · Débito", "− R$ 32,90", "Mercado")
+                        + '</ul><div class="bf-list__day">10 nov</div><ul class="bf-list">'
+                        + linha_cor("shopping-cart", "Hortifruti", "Mercado · VR", "− R$ 100,00", "Mercado")
+                        + '</ul><div class="bf-list__day">3 nov</div><ul class="bf-list">'
+                        + linha_cor("shopping-cart", "Atacadão", "Mercado · Débito", "− R$ 176,80", "Mercado")
+                        + '</ul><div class="bf-list__day">Na fatura de novembro · C6bank</div><ul class="bf-list">'
+                        + linha_cor("shopping-cart", "Compra do mês", "Mercado · Crédito · 20 out", "− R$ 332,40", "Mercado")
+                        + "</ul></section>", aba=1)
+tela("TelaFiltroCategoria", "28 · Lançamentos: tocar numa categoria mostra quanto foi nela no mês",
+     '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;padding:16px">'
+     + painel("1 · Lançamentos, em Tudo", filtro_tudo,
+              "Uma fileira de categorias em cima do extrato. Em \"Tudo\", nada muda: Débito, Crédito e VR como antes. A fileira rola para o lado.")
+     + painel("2 · Tocar em Mercado", filtro_mercado,
+              "O total da categoria no mês, de qualquer jeito que você pagou, e quanto foi em Débito e Pix, no Crédito e no VR. Embaixo, só os gastos dela.")
+     + "</div>",
+     """Em Lançamentos, uma fileira de categorias fica em cima do extrato. "Tudo" é o extrato de sempre. Tocar numa
+categoria mostra quanto você gastou nela no mês, somando Débito, Pix, Crédito e VR, e lista só os gastos dela: débito,
+Pix e VR por dia, e depois as compras que estão na fatura do mês. Com uma categoria marcada, as abas Débito, Crédito e
+VR saem, porque a categoria junta tudo. O total é o mesmo número de "Gastos por categoria" no Início (as compras no
+crédito contam no mês da fatura, pagas ou não). Só aparecem as categorias com gasto no mês, na ordem do app. A troca é
+na hora, no aparelho, sem ir ao servidor. No Início, tocar numa categoria de "Gastos por categoria" abre Lançamentos já
+filtrado nela.""",
+     altura=1010, largura=900)
+
 print("telas geradas em", RAIZ)

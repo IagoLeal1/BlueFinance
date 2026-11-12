@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { nomeDoMes } from '@/domain/datas';
-import { formatSigned } from '@/domain/money';
+import { formatBRL, formatSigned } from '@/domain/money';
 import { dividirParcelas, mesDaFatura, mesesDasParcelas } from '@/domain/parcelas';
 import { lerTextoRapido } from '@/domain/texto-rapido';
 import { bearer } from '@/server/auth';
@@ -8,6 +8,7 @@ import { lerFormaDoAtalho } from '@/server/formas-atalho';
 import { erro } from '@/server/http';
 import { supabaseAdmin } from '@/server/supabase-admin';
 import { usuarioDoToken } from '@/server/tokens';
+import { vrPeloAtalho } from '@/server/vr';
 
 interface Corpo {
   categoria?: unknown;
@@ -18,7 +19,7 @@ interface Corpo {
   descricao?: unknown;
   /** Formato antigo, ainda aceito: valor em centavos. */
   valor_centavos?: unknown;
-  /** "Como pagou?": "Débito" (padrão), "Pix" ou "Crédito · {cartão}". */
+  /** "Como pagou?": "Débito" (padrão), "Pix", "VR" ou "Crédito · {cartão}". */
   forma?: unknown;
   /** "Em quantas vezes?" (só no crédito): 1 a 24; vazio é à vista. Número ou texto ("3"). */
   parcelas?: unknown;
@@ -112,12 +113,16 @@ export async function POST(request: Request) {
   if (error) throw error;
   const lancamento = gravados[0]!;
 
+  // No VR, a notificação diz quanto sobra nele.
+  const vr = pagamento.forma === 'vr' ? await vrPeloAtalho(userId) : null;
   const ondeCaiu =
-    pagamento.forma !== 'credito'
-      ? ''
-      : parcelas > 1
-        ? ` em ${parcelas}x no crédito (${pagamento.cartao.nome}, 1ª na fatura de ${nomeDoMes(lancamento.competencia)})`
-        : ` no crédito (${pagamento.cartao.nome}, fatura de ${nomeDoMes(lancamento.competencia)})`;
+    pagamento.forma === 'vr'
+      ? ` no VR (sobram ${formatBRL(vr?.saldo ?? 0)})`
+      : pagamento.forma !== 'credito'
+        ? ''
+        : parcelas > 1
+          ? ` em ${parcelas}x no crédito (${pagamento.cartao.nome}, 1ª na fatura de ${nomeDoMes(lancamento.competencia)})`
+          : ` no crédito (${pagamento.cartao.nome}, fatura de ${nomeDoMes(lancamento.competencia)})`;
   return Response.json(
     {
       mensagem: `Gasto salvo: ${categoria.nome} · ${formatSigned(valor, 'despesa')}${ondeCaiu}`,

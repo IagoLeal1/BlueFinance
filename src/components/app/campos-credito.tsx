@@ -11,12 +11,14 @@ import type { Cartao } from '@/server/cartoes';
 import { CHIP } from './estilos';
 import { Stepper } from './stepper';
 
-export type Forma = 'debito' | 'pix' | 'credito';
+export type Forma = 'debito' | 'pix' | 'credito' | 'vr';
 export const FORMAS: { valor: Forma; rotulo: string }[] = [
   { valor: 'debito', rotulo: 'Débito' },
   { valor: 'pix', rotulo: 'Pix' },
   { valor: 'credito', rotulo: 'Crédito' },
 ];
+/** "Como pagou" com o VR no fim, para quem configurou o VR (design kit: TelaVr). */
+export const formasCom = (temVr: boolean) => (temVr ? [...FORMAS, { valor: 'vr' as const, rotulo: 'VR' }] : FORMAS);
 export const CHAVE_CARTAO = 'bf:ultimo-cartao';
 
 /** "3x de R$ 400,00" — o valor de cada parcela (os centavos que sobram vão na 1ª). */

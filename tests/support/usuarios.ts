@@ -47,8 +47,8 @@ export interface LancamentoSemente {
   descricao: string;
   /** ISO 8601; padrão: agora. */
   data?: string;
-  /** Despesa à vista: débito (padrão) ou Pix. */
-  forma?: 'debito' | 'pix';
+  /** Despesa à vista: débito (padrão), Pix ou VR. */
+  forma?: 'debito' | 'pix' | 'vr';
   /**
    * Parcela de uma compra no crédito, no mês de fatura `competencia` ("2026-12").
    * Parcelas com o mesmo rótulo `compra` são da mesma compra.
@@ -83,6 +83,24 @@ export async function semearLancamentos(usuario: Usuario, lancamentos: Lancament
   });
   const { error } = await db.from('lancamentos').insert(linhas);
   if (error) throw error;
+}
+
+/**
+ * Configura o VR do usuário pelo acesso do app (com RLS): quanto cai por mês, o dia e, se houver, o saldo
+ * informado em `desde` (padrão: agora), que entra como "Saldo inicial do VR".
+ */
+export async function semearVr(
+  usuario: Usuario,
+  { valorMensal, dia, desde = new Date().toISOString(), saldo = 0 }: { valorMensal: number; dia: number; desde?: string; saldo?: number },
+) {
+  const db = clienteDe(usuario);
+  const { error } = await db.from('vr').insert({ user_id: usuario.id, valor_mensal: valorMensal, dia, desde });
+  if (error) throw error;
+  if (saldo === 0) return;
+  const { error: erroSaldo } = await db.from('lancamentos').insert({
+    user_id: usuario.id, tipo: 'receita', valor: saldo, descricao: 'Saldo inicial do VR', data: desde, forma_pagamento: 'vr', origem: 'acerto',
+  });
+  if (erroSaldo) throw erroSaldo;
 }
 
 /** Cadastra um cartão de crédito do usuário pelo acesso do app (com RLS). Vencimento padrão: dia 10. */

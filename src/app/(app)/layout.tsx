@@ -5,6 +5,7 @@ import { AvisoSemInternet, ReenviarFila } from '@/components/app/sem-internet';
 import { TabBar } from '@/components/app/tab-bar';
 import { supabaseServidor } from '@/lib/supabase/server';
 import { listarCartoes } from '@/server/cartoes';
+import { vrDoUsuario } from '@/server/vr';
 
 export default function AppLayout({ children }: LayoutProps<'/'>) {
   return (
@@ -27,12 +28,13 @@ export default function AppLayout({ children }: LayoutProps<'/'>) {
 
 async function BotaoNovoLancamento() {
   const supabase = await supabaseServidor();
-  const [{ data: cats }, { data: invs }, cartoes] = await Promise.all([
+  const [{ data: cats }, { data: invs }, cartoes, vr] = await Promise.all([
     supabase.from('categorias').select('nome, tipo, icone, ordem').order('ordem'),
     supabase.from('investimentos').select('id, nome, instituicao, percentual_cdi').order('nome'),
     listarCartoes(),
+    vrDoUsuario(),
   ]);
   // "Fatura" é só para o total de uma fatura (Lançamentos › Crédito), não para o dia a dia.
   const categorias = (cats ?? []).filter((c) => !(c.tipo === 'despesa' && c.nome === 'Fatura')).map((c) => ({ ...c, tipo: c.tipo as 'despesa' | 'receita' }));
-  return <NovoLancamento categorias={categorias} investimentos={invs ?? []} cartoes={cartoes} />;
+  return <NovoLancamento categorias={categorias} investimentos={invs ?? []} cartoes={cartoes} vr={vr && { saldo: vr.saldo }} />;
 }

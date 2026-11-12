@@ -23,7 +23,7 @@ Só existe um token ativo: gerar outro desliga o anterior — use isso se o iPho
 
 ## `GET /api/quick-add/formas?categoria=Transporte`
 
-"Como pagou?": Débito, Pix e cada cartão cadastrado em Ajustes. A forma usada por último naquela categoria vem primeiro.
+"Como pagou?": Débito, Pix, VR (só para quem configurou o VR em Ajustes) e cada cartão cadastrado em Ajustes. A forma usada por último naquela categoria vem primeiro.
 
 ```json
 { "formas": ["Crédito · Nubank", "Débito", "Pix", "Crédito · Itaú"] }
@@ -39,8 +39,8 @@ Pedido (Atalho com teclado numérico):
 
 - `valor`: em reais, como vem do "Pedir Número" (32.9). A API arredonda para centavos.
 - `descricao`: opcional; vazia usa o nome da categoria.
-- `forma`: opcional; um item da lista de `/formas` ("Débito", "Pix", "Crédito · Nubank"). Sem `forma` vale Débito. No crédito a compra cai na fatura pelo dia de fechamento do cartão.
-- `parcelas`: opcional, só no crédito; 1 a 24, número ou texto ("3"). Vazio é à vista. No Débito e no Pix é ignorado.
+- `forma`: opcional; um item da lista de `/formas` ("Débito", "Pix", "VR", "Crédito · Nubank"). Sem `forma` vale Débito. No crédito a compra cai na fatura pelo dia de fechamento do cartão. No VR o gasto sai só do saldo do VR.
+- `parcelas`: opcional, só no crédito; 1 a 24, número ou texto ("3"). Vazio é à vista. No Débito, no Pix e no VR é ignorado.
 - Também aceitos: `{ "categoria", "texto": "32,90 mercado do bairro" }` (valor + descrição num campo) e `{ "categoria", "descricao", "valor_centavos" }`.
 
 Respostas — **toda resposta traz `mensagem`**, que o Atalho mostra numa notificação:
@@ -50,11 +50,12 @@ Respostas — **toda resposta traz `mensagem`**, que o Atalho mostra numa notifi
 | 201 | gasto criado | "Gasto salvo: Mercado · − R$ 32,90" |
 | 201 | gasto no crédito | "Gasto salvo: Transporte · − R$ 18,40 no crédito (Nubank, fatura de dezembro)" |
 | 201 | parcelado | "Gasto salvo: Lazer · − R$ 1.200,00 em 3x no crédito (Nubank, 1ª na fatura de dezembro)" |
+| 201 | gasto no VR | "Gasto salvo: Alimentação · − R$ 32,90 no VR (sobram R$ 379,40)" |
 | 400 | parcelas fora de 1 a 24 | "Em quantas vezes? Use um número de 1 a 24." |
 | 400 | texto sem valor | "Não achei o valor. Escreva assim: 32,90 mercado" |
 | 401 | sem token / token inválido | "Token inválido. Gere um novo em Ajustes." |
 | 422 | categoria não existe | "Categoria de despesa não encontrada. Atualize a lista no Atalho." |
-| 422 | forma fora da lista (ex.: cartão excluído) | "Forma de pagamento não encontrada. Atualize a lista no Atalho." |
+| 422 | forma fora da lista (ex.: cartão excluído, VR sem VR configurado) | "Forma de pagamento não encontrada. Atualize a lista no Atalho." |
 
 ## Passos do Atalho (disparado pelo Botão de Ação)
 

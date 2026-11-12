@@ -11,16 +11,27 @@ import { Segmented } from './segmented';
 import { LinhaAssinatura } from './editar-assinatura';
 import { LinhaCompra } from './editar-compra';
 import { LinhaEditavel, type CategoriaEditavel } from './editar-lancamento';
+import { ChipsDeFiltro, VistaDaCategoria } from './filtro-categoria';
 import { LancarTotalFatura } from './total-fatura';
 import { useFeedback } from './feedback';
 import { metaDe } from './meta';
+import { Privado } from './privado';
 import { FUNDO_DA_FATURA, TransactionRow } from './transaction-row';
 
-export type Extrato = 'debito' | 'credito';
+export type Extrato = 'debito' | 'credito' | 'vr';
 const EXTRATOS: { valor: Extrato; rotulo: string }[] = [
   { valor: 'debito', rotulo: 'Débito' },
   { valor: 'credito', rotulo: 'Crédito' },
 ];
+const EXTRATOS_COM_VR: { valor: Extrato; rotulo: string }[] = [...EXTRATOS, { valor: 'vr', rotulo: 'VR' }];
+
+/** Saldo do VR agora e o próximo depósito, no topo do extrato do VR. */
+export interface ResumoVr {
+  saldo: number;
+  valorMensal: number;
+  /** "2026-12-05". */
+  proximo: string;
+}
 
 /** O pagamento de uma fatura no extrato da conta: uma linha só, no dia do vencimento. */
 export interface PagamentoFatura {
@@ -73,9 +84,10 @@ function LinhaPagamentoFatura({ f, aPagar }: { f: PagamentoFatura; aPagar: boole
 }
 
 /**
- * Lançamentos do mês em dois extratos (design kit: TelaExtratoDebito e TelaExtratoCredito). "Débito" é a
+ * Lançamentos do mês em extratos (design kit: TelaExtratoDebito, TelaExtratoCredito e TelaVr). "Débito" é a
  * conta: receitas, débito, Pix, aportes e cada fatura numa linha só, no vencimento ("A pagar" até lá).
- * "Crédito" são as compras no cartão, juntas no card da fatura de cada cartão.
+ * "Crédito" são as compras no cartão, juntas no card da fatura de cada cartão. "VR" (para quem usa) é o
+ * extrato do vale-refeição: o saldo, os depósitos e os gastos pagos com ele.
  */
 export function ListaLancamentos({
   extratoInicial,
@@ -84,6 +96,11 @@ export function ListaLancamentos({
   aPagar,
   categorias,
   cartoes,
+  vr = null,
+  diasVr = [],
+  mes,
+  gastos = [],
+  categoriaInicial = null,
 }: {
   extratoInicial: Extrato;
   faturas: Fatura[];
@@ -91,21 +108,76 @@ export function ListaLancamentos({
   aPagar: PagamentoFatura[];
   categorias: CategoriaEditavel[];
   cartoes: Cartao[];
+  vr?: ResumoVr | null;
+  diasVr?: DiaDeLancamentos[];
+  /** Mês da tela ("2026-11"). */
+  mes: string;
+  /** Gastos que contam no mês (o mesmo critério de "Gastos por categoria"), para o filtro por categoria. */
+  gastos?: LancamentoListado[];
+  /** Categoria já marcada ao abrir (?categoria=Mercado, vindo do Início). */
+  categoriaInicial?: string | null;
 }) {
-  const [extrato, setExtrato] = useState<Extrato>(extratoInicial);
-  const { pendentes } = useFeedback();
+  const comVr = !!vr || diasVr.length > 0;
+  // Só as categorias com gasto no mês, na ordem do app (as que não estão mais na lista vão no fim).
+  const ordem = categorias.filter((c) => c.tipo === 'despesa');
+  const posicao = (nome: string) => {
+    const i = ordem.findIndex((c) => c.nome === nome);
+    return i === -1 ? ordem.length : i;
+  };
+  const opcoesFiltro = [...new Set(gastos.map((l) => l.categoria))]
+    .sort((a, b) => posicao(a) - posicao(b))
+    .map((nome) => ({ nome, icone: gastos.find((l) => l.categoria === nome)!.icone }));
+  const [categoria, setCategoria] = useState<string | null>(
+    categoriaInicial && opcoesFiltro.some((c) => c.nome === categoriaInicial) ? categoriaInicial : null,
+  );
+  const [extrato, setExtrato] = useState<Extrato>(extratoInicial === 'vr' && !comVr ? 'debito' : extratoInicial);
+  const { pendentes: todosPendentes } = useFeedback();
   const noDebito = extrato === 'debito';
-  const vazio = noDebito ? dias.length === 0 && aPagar.length === 0 && pendentes.length === 0 : faturas.length === 0;
+  const noVr = extrato === 'vr';
+  const pendentes = todosPendentes.filter((l) => (l.forma === 'vr') === noVr);
+  const vazio = noDebito
+    ? dias.length === 0 && aPagar.length === 0 && pendentes.length === 0
+    : noVr
+      ? diasVr.length === 0 && pendentes.length === 0
+      : faturas.length === 0;
 
   return (
     <>
-      <Segmented nome="extrato" rotulo="Extrato" opcoes={EXTRATOS} valor={extrato} onChange={setExtrato} />
+      {opcoesFiltro.length > 0 && <ChipsDeFiltro opcoes={opcoesFiltro} valor={categoria} onChange={setCategoria} />}
+      {categoria ? (
+        <VistaDaCategoria categoria={categoria} mes={mes} gastos={gastos} comVr={comVr} categorias={categorias} cartoes={cartoes} />
+      ) : (
+        extratos()
+      )}
+    </>
+  );
+
+  /** Débito, Crédito e VR: o extrato de sempre ("Tudo" no filtro). Chamada como função, não como componente. */
+  function extratos() {
+  return (
+    <>
+      <Segmented nome="extrato" rotulo="Extrato" opcoes={comVr ? EXTRATOS_COM_VR : EXTRATOS} valor={extrato} onChange={setExtrato} />
+      {noVr && vr && (
+        <section aria-label="Saldo do VR" className="flex items-center justify-between gap-3 rounded-lg bg-card p-4 shadow-card">
+          <div>
+            <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">Saldo do VR</p>
+            <p className="text-[22px] leading-7 font-extrabold tabular-nums">
+              <Privado>{formatBRL(vr.saldo)}</Privado>
+            </p>
+          </div>
+          <p className="text-right text-[13px] leading-[18px] font-semibold text-muted-foreground">
+            Próximo depósito
+            <br />
+            <span className="tabular-nums">{formatBRL(vr.valorMensal)}</span> · {diaCurto(`${vr.proximo}T12:00:00-03:00`)}
+          </p>
+        </section>
+      )}
       {vazio && (
         <p className="rounded-lg bg-card p-5 text-center font-bold shadow-card">
-          {noDebito ? 'Nenhum lançamento neste mês.' : 'Nenhuma compra no crédito neste mês.'}
+          {noDebito ? 'Nenhum lançamento neste mês.' : noVr ? 'Nada no VR neste mês.' : 'Nenhuma compra no crédito neste mês.'}
         </p>
       )}
-      {noDebito && pendentes.length > 0 && (
+      {(noDebito || noVr) && pendentes.length > 0 && (
         <section aria-label="Salvando" className="rounded-lg bg-card px-4 pb-1 shadow-card">
           <ul>
             {pendentes.map((l) => (
@@ -124,7 +196,7 @@ export function ListaLancamentos({
           </ul>
         </section>
       )}
-      {!noDebito && faturas.map((f) => (
+      {extrato === 'credito' && faturas.map((f) => (
         <section key={f.id} aria-label={`Fatura ${f.nome}`} className="rounded-lg bg-card px-4 pt-3 pb-1 shadow-card">
           <div className="flex items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 text-[15px] font-extrabold">
@@ -145,9 +217,9 @@ export function ListaLancamentos({
               l.recorrente ? (
                 <LinhaAssinatura key={l.id} l={l} categorias={categorias} />
               ) : l.compraId ? (
-                <LinhaCompra key={l.id} l={l} categorias={categorias} cartoes={cartoes} />
+                <LinhaCompra key={l.id} l={l} categorias={categorias} cartoes={cartoes} temVr={comVr} />
               ) : (
-                <LinhaEditavel key={l.id} l={l} categorias={categorias} cartoes={cartoes} />
+                <LinhaEditavel key={l.id} l={l} categorias={categorias} cartoes={cartoes} temVr={comVr} />
               ),
             )}
           </ul>
@@ -163,8 +235,27 @@ export function ListaLancamentos({
                   <LinhaPagamentoFatura key={f.id} f={f} aPagar={false} />
                 ))}
                 {d.lancamentos.map((l) => (
-                  <LinhaEditavel key={l.id} l={l} categorias={categorias} cartoes={cartoes} />
+                  <LinhaEditavel key={l.id} l={l} categorias={categorias} cartoes={cartoes} temVr={comVr} />
                 ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      )}
+      {noVr && diasVr.length > 0 && (
+        <div className="rounded-lg bg-card px-4 pb-1 shadow-card">
+          {diasVr.map((d) => (
+            <section key={d.rotulo} aria-label={d.rotulo}>
+              <h2 className="pt-4 pb-1 text-xs font-bold tracking-[0.02em] text-muted-foreground">{d.rotulo}</h2>
+              <ul>
+                {d.lancamentos.map((l) =>
+                  // Depósito e acerto do VR não se editam: o saldo se corrige em Ajustes › Vale-refeição.
+                  l.origem === 'vr' || l.origem === 'acerto' ? (
+                    <TransactionRow key={l.id} l={l} meta={metaDe(l)} />
+                  ) : (
+                    <LinhaEditavel key={l.id} l={l} categorias={categorias} cartoes={cartoes} temVr />
+                  ),
+                )}
               </ul>
             </section>
           ))}
@@ -172,4 +263,5 @@ export function ListaLancamentos({
       )}
     </>
   );
+  }
 }

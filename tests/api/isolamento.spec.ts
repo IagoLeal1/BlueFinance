@@ -1,4 +1,4 @@
-import { test, expect, tokenDe, clienteDe } from './fixtures';
+import { test, expect, tokenDe, clienteDe, semearVr } from './fixtures';
 
 test.describe('isolamento entre usuários', () => {
   test('um usuário não enxerga nem altera os dados de outro', async ({ request, usuario, outroUsuario }) => {
@@ -9,6 +9,7 @@ test.describe('isolamento entre usuários', () => {
     });
     const intruso = clienteDe(outroUsuario);
     await clienteDe(usuario).from('cartoes').insert({ user_id: usuario.id, nome: 'Meu cartão', dia_fechamento: 3 });
+    await semearVr(usuario, { valorMensal: 90000, dia: 5 });
 
     // Não lê lançamentos nem categorias do outro, nem tokens de ninguém.
     expect((await intruso.from('lancamentos').select('descricao')).data).toEqual([]);
@@ -16,6 +17,9 @@ test.describe('isolamento entre usuários', () => {
     expect(categorias.every((c) => c.user_id === outroUsuario.id)).toBe(true);
     expect((await intruso.from('tokens_pessoais').select('id')).data).toEqual([]);
     expect((await intruso.from('cartoes').select('id')).data).toEqual([]);
+    expect((await intruso.from('vr').select('user_id')).data).toEqual([]);
+    // Nem configura o VR em nome do outro.
+    expect((await intruso.from('vr').insert({ user_id: usuario.id, valor_mensal: 1, dia: 1 })).error).not.toBeNull();
 
     // Não cria lançamento em nome do outro.
     const invasao = await intruso.from('lancamentos').insert({ user_id: usuario.id, tipo: 'despesa', valor: 1 });

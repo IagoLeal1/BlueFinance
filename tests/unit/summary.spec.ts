@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { summarizeMonth, type Lancamento } from '../../src/domain/summary';
+import { gastosDaCategoria, noMes, summarizeMonth, type Lancamento } from '../../src/domain/summary';
 
 const l = (tipo: Lancamento['tipo'], valor: number, categoria: string, data: string): Lancamento => ({ tipo, valor, categoria, data });
 
@@ -103,5 +103,72 @@ test.describe('resumo do mês', () => {
     ];
     expect(summarizeMonth(virada, '2026-11', '2026-11-08').saiu).toBe(1000);
     expect(summarizeMonth(virada, '2026-10', '2026-11-08').saiu).toBe(0);
+  });
+
+  test('VR fica separado da conta, mas o gasto no VR conta em gastos por categoria', () => {
+    const d = '2026-11-10T12:00:00-03:00';
+    const lancamentos: Lancamento[] = [
+      l('receita', 850000, 'Salário', d),
+      l('despesa', 30000, 'Mercado', d),
+      // Depósito e saldo inicial do VR: não entram em Entrou.
+      { tipo: 'receita', valor: 90000, categoria: 'VR', data: d, forma: 'vr', origem: 'vr' },
+      { tipo: 'receita', valor: 41230, categoria: 'VR', data: d, forma: 'vr', origem: 'acerto' },
+      // Gasto pago com VR: fora do Saiu e do Sobrou, dentro de Alimentação.
+      { tipo: 'despesa', valor: 10000, categoria: 'Alimentação', data: d, forma: 'vr' },
+      // Acerto para baixo do saldo do VR: não é gasto de categoria nenhuma.
+      { tipo: 'despesa', valor: 500, categoria: 'VR', data: d, forma: 'vr', origem: 'acerto' },
+    ];
+
+    const r = summarizeMonth(lancamentos, '2026-11');
+
+    expect(r).toMatchObject({ entrou: 850000, saiu: 30000, sobrou: 820000, aPagar: 0 });
+    expect(r.porCategoria).toEqual([
+      { categoria: 'Mercado', total: 30000, percentual: 75 },
+      { categoria: 'Alimentação', total: 10000, percentual: 25 },
+    ]);
+  });
+});
+
+test.describe('gastos de uma categoria no mês', () => {
+  const d = (dia: number) => `2026-11-${String(dia).padStart(2, '0')}T12:00:00-03:00`;
+  const lancamentos: Lancamento[] = [
+    { tipo: 'despesa', valor: 17680, categoria: 'Mercado', data: d(3), forma: 'debito' },
+    { tipo: 'despesa', valor: 3290, categoria: 'Mercado', data: d(12), forma: 'pix' },
+    { tipo: 'despesa', valor: 10000, categoria: 'Mercado', data: d(10), forma: 'vr' },
+    // Compra de outubro na fatura de novembro: conta em novembro, como em "Gastos por categoria".
+    { tipo: 'despesa', valor: 33240, categoria: 'Mercado', data: '2026-10-20T12:00:00-03:00', forma: 'credito', mes: '2026-11', pagoEm: '2026-11-11' },
+    // Parcela da fatura de dezembro: fica fora de novembro.
+    { tipo: 'despesa', valor: 5000, categoria: 'Mercado', data: d(8), forma: 'credito', mes: '2026-12', pagoEm: '2026-12-11' },
+    { tipo: 'despesa', valor: 184000, categoria: 'Moradia', data: d(5), forma: 'pix' },
+    { tipo: 'receita', valor: 850000, categoria: 'Salário', data: d(5) },
+  ];
+
+  test('soma o mês de qualquer jeito que foi pago e separa por forma', () => {
+    expect(gastosDaCategoria(lancamentos, '2026-11', 'Mercado')).toEqual({
+      categoria: 'Mercado',
+      total: 64210,
+      quantidade: 4,
+      percentual: 26,
+      porForma: { debitoPix: 20970, credito: 33240, vr: 10000 },
+    });
+  });
+
+  test('categoria sem gasto no mês dá zero', () => {
+    expect(gastosDaCategoria(lancamentos, '2026-11', 'Lazer')).toEqual({
+      categoria: 'Lazer',
+      total: 0,
+      quantidade: 0,
+      percentual: 0,
+      porForma: { debitoPix: 0, credito: 0, vr: 0 },
+    });
+  });
+
+  test('o mesmo critério do resumo: o total bate com "Gastos por categoria"', () => {
+    const doResumo = summarizeMonth(lancamentos, '2026-11', '2026-11-12').porCategoria.find((c) => c.categoria === 'Mercado');
+    const daCategoria = gastosDaCategoria(lancamentos, '2026-11', 'Mercado');
+    expect(daCategoria.total).toBe(doResumo!.total);
+    expect(daCategoria.percentual).toBe(doResumo!.percentual);
+    expect(noMes(lancamentos[3]!, '2026-11')).toBe(true);
+    expect(noMes(lancamentos[4]!, '2026-11')).toBe(false);
   });
 });

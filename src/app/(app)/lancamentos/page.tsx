@@ -6,9 +6,11 @@ import { ListaLancamentos, type DiaDeLancamentos, type Fatura, type PagamentoFat
 import { MesPicker } from '@/components/app/mes-picker';
 import { diaDe, mesAtual, mesDaUrl, nomeDoMes, opcoesDeMes, rotuloDoDia, somarMeses, tituloDoMes } from '@/domain/datas';
 import { diaDoFechamento, faturasDoCartao } from '@/domain/parcelas';
+import { noMes } from '@/domain/summary';
 import { listarCartoes } from '@/server/cartoes';
 import { categoriasDoUsuario } from '@/server/categorias';
 import { completarAssinaturas, lancamentosDoCaixa, ultimoMesComParcelas } from '@/server/lancamentos';
+import { vrDoUsuario } from '@/server/vr';
 
 export const metadata: Metadata = { title: 'Lançamentos · BlueFinance' };
 
@@ -25,13 +27,15 @@ async function ListaDoMes({ searchParams }: { searchParams: PageProps<'/lancamen
   const agora = new Date();
   const params = await searchParams;
   const mes = mesDaUrl(params.mes, agora);
-  const extrato = params.ver === 'credito' ? 'credito' : 'debito';
+  const extrato = params.ver === 'credito' ? 'credito' : params.ver === 'vr' ? 'vr' : 'debito';
+  const categoria = typeof params.categoria === 'string' ? params.categoria : null;
   await completarAssinaturas(agora);
-  const [caixa, categorias, ultimaParcela, cartoes] = await Promise.all([
+  const [caixa, categorias, ultimaParcela, cartoes, vr] = await Promise.all([
     lancamentosDoCaixa(mes),
     categoriasDoUsuario(),
     ultimoMesComParcelas(mesAtual(agora)),
     listarCartoes(),
+    vrDoUsuario(),
   ]);
 
   // Crédito: as compras da fatura do mês, juntas por cartão. Débito: a conta, dia a dia — e cada fatura
@@ -40,6 +44,8 @@ async function ListaDoMes({ searchParams }: { searchParams: PageProps<'/lancamen
   const faturas = new Map<string, Fatura>();
   const pagamentos = new Map<string, PagamentoFatura>();
   const itens: { dia: string; rotulo: string; l?: (typeof caixa)[number]; f?: PagamentoFatura }[] = [];
+  // VR: um extrato à parte, com o saldo dele (depósitos, acertos e os gastos pagos com VR).
+  const itensVr: typeof itens = [];
   for (const l of caixa) {
     if (l.forma === 'credito' && l.cartao && l.pagoEm && l.pagoEm.slice(0, 7) === mes) {
       const id = `${l.cartao.id}@${l.mes}`;
@@ -66,19 +72,23 @@ async function ListaDoMes({ searchParams }: { searchParams: PageProps<'/lancamen
       faturas.set(id, { ...f, total: f.total + l.valor, lancamentos: [...f.lancamentos, l] });
       continue;
     }
-    itens.push({ dia: diaDe(l.data), rotulo: rotuloDoDia(l.data, agora), l });
+    (l.forma === 'vr' ? itensVr : itens).push({ dia: diaDe(l.data), rotulo: rotuloDoDia(l.data, agora), l });
   }
   const aPagar = [...pagamentos.values()].filter((f) => f.vence > hoje).sort((a, b) => a.vence.localeCompare(b.vence));
   for (const f of pagamentos.values()) {
     if (f.vence <= hoje) itens.push({ dia: f.vence, rotulo: rotuloDoDia(`${f.vence}T12:00:00-03:00`, agora), f });
   }
-  const dias: DiaDeLancamentos[] = [];
-  for (const item of itens.sort((a, b) => b.dia.localeCompare(a.dia))) {
-    let d = dias.at(-1);
-    if (!d || d.rotulo !== item.rotulo) dias.push((d = { rotulo: item.rotulo, lancamentos: [], faturas: [] }));
-    if (item.l) d.lancamentos.push(item.l);
-    if (item.f) d.faturas.push(item.f);
-  }
+  const porDia = (lista: typeof itens) => {
+    const dias: DiaDeLancamentos[] = [];
+    for (const item of lista.sort((a, b) => b.dia.localeCompare(a.dia))) {
+      let d = dias.at(-1);
+      if (!d || d.rotulo !== item.rotulo) dias.push((d = { rotulo: item.rotulo, lancamentos: [], faturas: [] }));
+      if (item.l) d.lancamentos.push(item.l);
+      if (item.f) d.faturas.push(item.f);
+    }
+    return dias;
+  };
+  const dias = porDia(itens);
   // A última fatura que fechou, se nada dela foi lançado, aparece vazia com "Lançar o total da fatura".
   for (const c of cartoes) {
     const fechada = somarMeses(faturasDoCartao(agora.toISOString(), c.diaFechamento, c.diaVencimento).aberta, -1);
@@ -101,13 +111,18 @@ async function ListaDoMes({ searchParams }: { searchParams: PageProps<'/lancamen
         <MesPicker base="/lancamentos" atual={mes} meses={opcoesDeMes(agora, ultimaParcela)} />
       </div>
       <ListaLancamentos
-        key={`${mes}-${extrato}`}
+        key={`${mes}-${extrato}-${categoria ?? ''}`}
         extratoInicial={extrato}
         faturas={[...faturas.values()]}
         dias={dias}
         aPagar={aPagar}
         categorias={categorias}
         cartoes={cartoes}
+        vr={vr && { saldo: vr.saldo, valorMensal: vr.valorMensal, proximo: vr.proximo }}
+        diasVr={porDia(itensVr)}
+        mes={mes}
+        gastos={caixa.filter((l) => l.tipo === 'despesa' && l.origem !== 'acerto' && noMes(l, mes))}
+        categoriaInicial={categoria}
       />
     </>
   );

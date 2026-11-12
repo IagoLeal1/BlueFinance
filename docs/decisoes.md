@@ -1,6 +1,6 @@
 # BlueFin — tudo o que foi decidido
 
-Registro das decisões do projeto (07 a 11/11/2026), com o porquê de cada uma. Serve para quem continuar o
+Registro das decisões do projeto (07 a 12/11/2026), com o porquê de cada uma. Serve para quem continuar o
 trabalho, pessoa ou Claude, não refazer uma discussão que já foi resolvida. Quando uma decisão mudar,
 atualize aqui.
 
@@ -87,7 +87,13 @@ atualize aqui.
 - **"Lançar o total da fatura":** quando uma fatura fechou sem compras lançadas (de antes de usar o app),
   dá para lançar o total de uma vez, na categoria Fatura.
 - **Lançamentos tem dois extratos:** Débito é a conta (receitas, débito, Pix, aportes e cada fatura numa
-  linha só, no dia do vencimento); Crédito são as compras no cartão, juntas por fatura.
+  linha só, no dia do vencimento); Crédito são as compras no cartão, juntas por fatura. Quem usa VR ganha um
+  terceiro, VR (ver abaixo).
+- **Filtro por categoria em Lançamentos** (tela 28): uma fileira de categorias em cima do extrato. Tocar numa
+  mostra o total dela no mês, somando Débito, Pix, Crédito e VR, separado por forma, e só os gastos dela; as
+  abas de extrato saem enquanto uma categoria está marcada. O total é o mesmo número de "Gastos por categoria"
+  do Início (crédito no mês da fatura). Só aparecem categorias com gasto no mês, na ordem do app; a troca é no
+  aparelho. No Início, tocar numa categoria de "Gastos por categoria" abre Lançamentos já filtrado.
 
 ## Lançar e editar
 
@@ -102,6 +108,8 @@ atualize aqui.
 - **Ordem das perguntas:** Categoria → quanto e com o quê ("32,90 mercado do bairro") → Como pagou? (o
   último usado naquela categoria vem primeiro) → Em quantas vezes? (só no crédito). A Fatura não aparece na
   lista de categorias.
+- **VR em "Como pagou?"**, depois do Pix, para quem configurou o VR. A lista vem da API, então o Atalho não
+  precisa ser editado. No VR não pergunta em quantas vezes; a notificação diz quanto sobra no VR.
 - **Visual no iPhone:** a pergunta se chama "Categoria"; o Atalho é azul-escuro com o ícone de peixe.
 - **Token pessoal:** gerado em Ajustes › Atalho do iPhone, aparece uma vez; o banco guarda só o hash; gerar
   outro desliga o anterior. Fica no primeiro passo do Atalho, então **não compartilhe o Atalho como está**:
@@ -126,8 +134,29 @@ atualize aqui.
 - **Rendimento não entra em Sobrou nem em Investiu** (Investiu são os aportes, dinheiro que saiu da conta).
 - Prefixado e IPCA+ ficam para depois.
 
+## VR (vale-refeição)
+
+Pedido do dono em 12/11/2026 (tela 27).
+
+- **Um segundo saldo, separado da conta.** O depósito do VR não entra em "Entrou" e o gasto pago com VR não
+  entra em "Saiu" nem em "Sobrou". O gasto no VR **conta em "Gastos por categoria"**: continua sendo dinheiro
+  gasto em Mercado ou Alimentação.
+- **O que sobra acumula** para o mês seguinte, como nos cartões de VR em geral.
+- **Ajustes › Vale-refeição:** quanto cai por mês, o dia que cai (31 em mês curto cai no último dia) e o saldo
+  de hoje. O depósito de cada mês entra sozinho, como um lançamento "Depósito do VR" no dia dele, a partir do
+  dia seguinte ao da configuração (o saldo informado já inclui os anteriores). Um depósito por mês, garantido
+  por índice único no banco.
+- **Saldo de hoje:** na primeira vez entra como "Saldo inicial do VR"; depois, a diferença para o saldo que o
+  app calculou vira um "Acerto do saldo do VR". Depósito e acerto não se editam na lista; o saldo se corrige em
+  Ajustes. Acerto não é gasto de categoria nenhuma.
+- **Pagar com VR** pelo botão +, pela edição de um gasto e pelo Atalho. Sem parcelas.
+- **Onde aparece:** no Início, um card menor abaixo do saldo da conta (só no mês atual) com o saldo e o
+  próximo depósito; em Lançamentos, a aba VR com o saldo, os depósitos e os gastos pagos com ele.
+- **No banco:** a tabela `vr` guarda a configuração; o resto são lançamentos com `forma_pagamento = 'vr'`
+  (origem `vr` para o depósito e `acerto` para o saldo inicial e as correções). O saldo é a soma deles.
+
 ## Privacidade na tela
 
 - **Olhinho** no topo do Início e da aba Investir: troca os valores com dinheiro por "R$ ••••" (saldo,
-  "Depois da fatura", Entrou, Saiu, Investiu, faturas e investimentos). Os lançamentos continuam
+  "Depois da fatura", Entrou, Saiu, Investiu, faturas, investimentos e o saldo do VR). Os lançamentos continuam
   visíveis. A escolha fica guardada no aparelho.

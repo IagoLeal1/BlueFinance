@@ -2,10 +2,11 @@ import 'server-only';
 import type { TipoLancamento } from '@/domain/money';
 import { somarMeses } from '@/domain/datas';
 import { MESES_DE_ASSINATURA, vencimentoDaFatura, vencimentoPadrao } from '@/domain/parcelas';
-import { mesDe, type Lancamento } from '@/domain/summary';
+import { mesDe, type FormaPagamento, type Lancamento } from '@/domain/summary';
 import { supabaseServidor } from '@/lib/supabase/server';
 
-export type FormaPagamento = 'debito' | 'pix' | 'credito';
+export type { FormaPagamento };
+const ORIGENS = ['app', 'atalho', 'vr', 'acerto'] as const;
 
 export interface LancamentoListado extends Lancamento {
   id: string;
@@ -13,7 +14,8 @@ export interface LancamentoListado extends Lancamento {
   icone: string;
   /** Ordem da categoria de gasto (1 a 6 têm cor própria, a mesma dos gráficos). */
   ordemCategoria: number | null;
-  origem: 'app' | 'atalho';
+  /** "vr": o depósito do mês no VR; "acerto": saldo inicial ou correção do VR. */
+  origem: (typeof ORIGENS)[number];
   forma: FormaPagamento | null;
   cartao: { id: string; nome: string; diaFechamento: number; diaVencimento: number } | null;
   /** Compra parcelada: id da compra e posição ("2 de 3"). */
@@ -68,9 +70,9 @@ async function buscar(meses: string[]): Promise<LancamentoListado[]> {
     data: l.data,
     mes: l.competencia,
     descricao: l.descricao,
-    categoria: l.categorias?.nome ?? l.investimentos?.nome ?? 'Sem categoria',
-    origem: l.origem === 'atalho' ? 'atalho' : 'app',
-    icone: l.categorias?.icone ?? (l.tipo === 'investimento' ? 'piggy-bank' : 'circle'),
+    categoria: l.categorias?.nome ?? l.investimentos?.nome ?? (l.forma_pagamento === 'vr' ? 'VR' : 'Sem categoria'),
+    origem: (ORIGENS as readonly string[]).includes(l.origem) ? (l.origem as LancamentoListado['origem']) : 'app',
+    icone: l.categorias?.icone ?? (l.tipo === 'investimento' ? 'piggy-bank' : l.forma_pagamento === 'vr' ? 'wallet-cards' : 'circle'),
     ordemCategoria: l.categorias?.ordem ?? null,
     forma: (l.forma_pagamento as FormaPagamento | null) ?? null,
     cartao: l.cartoes

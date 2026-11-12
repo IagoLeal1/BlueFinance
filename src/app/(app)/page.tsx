@@ -5,6 +5,7 @@ import { EsqueletoInicio } from '@/components/app/esqueleto';
 import { BotaoOlho } from '@/components/app/botao-olho';
 import { BalanceCard } from '@/components/app/balance-card';
 import { CartaoCredito } from '@/components/app/cartao-credito';
+import { CartaoVr } from '@/components/app/cartao-vr';
 import { SpendingBar } from '@/components/app/spending-bar';
 import { TransactionRow } from '@/components/app/transaction-row';
 import { diaDe, mesAtual, mesDaUrl, nomeDoMes, opcoesDeMes, rotuloDoDia, tituloDoMes } from '@/domain/datas';
@@ -13,6 +14,7 @@ import { summarizeMonth } from '@/domain/summary';
 import { listarCartoes, resumoDosCartoes } from '@/server/cartoes';
 import { ordemDasCategorias } from '@/server/categorias';
 import { completarAssinaturas, lancamentosDoCaixa, ultimoMesComParcelas } from '@/server/lancamentos';
+import { vrDoUsuario } from '@/server/vr';
 
 export default function Inicio({ searchParams }: PageProps<'/'>) {
   return (
@@ -28,11 +30,12 @@ async function ResumoDoMes({ searchParams }: { searchParams: PageProps<'/'>['sea
   const mes = mesDaUrl((await searchParams).mes, agora);
   const nome = nomeDoMes(mes);
   await completarAssinaturas(agora);
-  const [caixa, ordem, ultimaParcela, cartoes] = await Promise.all([
+  const [caixa, ordem, ultimaParcela, cartoes, vr] = await Promise.all([
     lancamentosDoCaixa(mes),
     ordemDasCategorias(),
     ultimoMesComParcelas(mesAtual(agora)),
     listarCartoes(),
+    vrDoUsuario(),
   ]);
   // A fatura sai da conta no vencimento: até lá fica "a pagar", fora do Saiu e do Sobrou.
   const hoje = diaDe(agora);
@@ -70,8 +73,13 @@ async function ResumoDoMes({ searchParams }: { searchParams: PageProps<'/'>['sea
           </div>
         }
       />
+      {noMesAtual && vr && <CartaoVr vr={vr} />}
       {cartao && cartao.cartoes.length > 0 && <CartaoCredito resumos={cartao.cartoes} aVir={cartao.aVir} assinaturas={cartao.assinaturas} mesAtual={mesAtual(agora)} />}
-      <SpendingBar gastos={resumo.porCategoria} ordemPorNome={ordem} />
+      <SpendingBar
+        gastos={resumo.porCategoria}
+        ordemPorNome={ordem}
+        hrefDe={(c) => `/lancamentos?categoria=${encodeURIComponent(c)}${noMesAtual ? '' : `&mes=${mes}`}`}
+      />
       {lancamentos.length > 0 && (
         <section aria-label="Últimos" className="rounded-lg bg-card px-4 pt-3 pb-1 shadow-card">
           <div className="flex items-center justify-between">

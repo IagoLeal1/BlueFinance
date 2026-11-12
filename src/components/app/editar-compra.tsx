@@ -15,7 +15,7 @@ import type { LancamentoListado } from '@/server/lancamentos';
 import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { CampoQuando, dataDoDia } from './campo-quando';
-import { CamposCredito, FORMAS, type Forma } from './campos-credito';
+import { CamposCredito, formasCom, type Forma } from './campos-credito';
 import { ChipsDeCategoria, type CategoriaEditavel } from './editar-lancamento';
 import { metaDe } from './meta';
 import { Segmented } from './segmented';
@@ -26,7 +26,17 @@ import { TransactionRow } from './transaction-row';
  * sozinha: tocar abre a compra inteira — total, parcelas, descrição e categoria; mudar o total ou
  * o número de parcelas refaz a divisão. Excluir apaga todas as parcelas.
  */
-export function LinhaCompra({ l, categorias, cartoes }: { l: LancamentoListado; categorias: CategoriaEditavel[]; cartoes: Cartao[] }) {
+export function LinhaCompra({
+  l,
+  categorias,
+  cartoes,
+  temVr = false,
+}: {
+  l: LancamentoListado;
+  categorias: CategoriaEditavel[];
+  cartoes: Cartao[];
+  temVr?: boolean;
+}) {
   const totalOriginal = l.totalDaCompra ?? l.valor;
   const parcelasOriginais = l.parcelas ?? 1;
   const opcoes = categorias.filter((c) => c.tipo === 'despesa');
@@ -91,7 +101,7 @@ export function LinhaCompra({ l, categorias, cartoes }: { l: LancamentoListado; 
           <CampoQuando id={l.id} dia={dia} onChange={setDia} />
           <div className="grid gap-2">
             <Label>Como pagou</Label>
-            <Segmented nome="forma" rotulo="Como pagou" opcoes={FORMAS} valor={forma} onChange={setForma} />
+            <Segmented nome="forma" rotulo="Como pagou" opcoes={formasCom(temVr)} valor={forma} onChange={setForma} />
           </div>
           {forma === 'credito' ? (
             <>

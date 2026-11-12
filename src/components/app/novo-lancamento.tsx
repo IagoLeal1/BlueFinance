@@ -1,17 +1,17 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Check, Plus } from 'lucide-react';
+import { Check, Plus, WalletCards } from 'lucide-react';
 import { criarLancamento, excluirCompra, excluirLancamento } from '@/app/(app)/actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { formatSigned, type TipoLancamento } from '@/domain/money';
+import { formatBRL, formatSigned, type TipoLancamento } from '@/domain/money';
 import type { Cartao } from '@/server/cartoes';
 import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
-import { CHAVE_CARTAO, CamposCredito, FORMAS, cartaoInicial, rotuloParcelas, type Forma } from './campos-credito';
+import { CHAVE_CARTAO, CamposCredito, cartaoInicial, formasCom, rotuloParcelas, type Forma } from './campos-credito';
 import { CHIP } from './estilos';
 import { guardarNaFila, tirarDaFila } from './fila-offline';
 import { useFeedback } from './feedback';
@@ -51,10 +51,13 @@ export function NovoLancamento({
   categorias,
   investimentos,
   cartoes,
+  vr = null,
 }: {
   categorias: CategoriaOpcao[];
   investimentos: InvestimentoOpcao[];
   cartoes: Cartao[];
+  /** Quem configurou o VR pode pagar com ele (design kit: TelaVr). */
+  vr?: { saldo: number } | null;
 }) {
   const [aberto, setAberto] = useState(false);
   const [tipo, setTipo] = useState<TipoLancamento>('despesa');
@@ -233,7 +236,7 @@ export function NovoLancamento({
               <Segmented
                 nome="forma"
                 rotulo="Como pagou"
-                opcoes={FORMAS}
+                opcoes={formasCom(!!vr)}
                 valor={forma}
                 onChange={(f) => {
                   setForma(f);
@@ -241,6 +244,15 @@ export function NovoLancamento({
                 }}
               />
             </div>
+          )}
+
+          {tipo === 'despesa' && forma === 'vr' && vr && (
+            <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+              <WalletCards className="mt-px size-4 shrink-0" aria-hidden />
+              <span>
+                Sai do <b className="text-foreground">VR</b>: sobram {formatBRL(vr.saldo - centavos)}. Não mexe no Sobrou da conta.
+              </span>
+            </p>
           )}
 
           {noCredito && (

@@ -6,6 +6,7 @@ import { supabaseAdmin } from '@/server/supabase-admin';
 import { redirect } from 'next/navigation';
 import { supabaseServidor } from '@/lib/supabase/server';
 import { criarTokenPessoal } from '@/server/tokens';
+import { vrDoUsuario } from '@/server/vr';
 
 export interface EstadoToken {
   token?: string;
@@ -54,6 +55,57 @@ export async function salvarCartao(_anterior: EstadoCartao, form: FormData): Pro
     if (!userId) return { erro: 'Sua sessão expirou. Entre de novo.' };
     const { error } = await supabase.from('cartoes').insert({ user_id: userId, nome, dia_fechamento: dia, dia_vencimento: vence });
     if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
+  }
+  refresh();
+  return { ok: true };
+}
+
+/**
+ * Configura o VR: quanto cai por mês, o dia e o saldo de hoje (design kit: TelaVr). Na primeira vez o saldo
+ * entra como "Saldo inicial do VR"; depois, a diferença para o saldo que o app calculou vira um acerto.
+ */
+export async function salvarVr(_anterior: EstadoCartao, form: FormData): Promise<EstadoCartao> {
+  const valorMensal = Number(form.get('valor_mensal'));
+  const dia = Number(form.get('dia'));
+  const saldo = Number(form.get('saldo'));
+  if (!Number.isSafeInteger(valorMensal) || valorMensal <= 0) return { erro: 'Digite quanto cai por mês.' };
+  if (!Number.isInteger(dia) || dia < 1 || dia > 31) return { erro: 'Escolha o dia que cai (1 a 31).' };
+  if (!Number.isSafeInteger(saldo) || saldo < 0) return { erro: 'Digite o saldo de hoje.' };
+
+  const supabase = await supabaseServidor();
+  const { data } = await supabase.auth.getClaims();
+  const userId = data?.claims.sub;
+  if (!userId) return { erro: 'Sua sessão expirou. Entre de novo.' };
+  const { data: existente } = await supabase.from('vr').select('user_id').maybeSingle();
+  const agora = new Date().toISOString();
+  const acerto = (diferenca: number, descricao: string) =>
+    supabase.from('lancamentos').insert({
+      user_id: userId,
+      tipo: diferenca > 0 ? 'receita' : 'despesa',
+      valor: Math.abs(diferenca),
+      descricao,
+      data: agora,
+      forma_pagamento: 'vr',
+      origem: 'acerto',
+    });
+
+  if (!existente) {
+    const { error } = await supabase.from('vr').insert({ user_id: userId, valor_mensal: valorMensal, dia, desde: agora });
+    if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
+    if (saldo > 0) {
+      const { error: erroSaldo } = await acerto(saldo, 'Saldo inicial do VR');
+      if (erroSaldo) return { erro: 'Não foi possível salvar o saldo. Tente de novo.' };
+    }
+  } else {
+    const { error } = await supabase.from('vr').update({ valor_mensal: valorMensal, dia }).eq('user_id', userId);
+    if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
+    // Com o dia novo já valendo, completa os depósitos e compara com o saldo que você viu no app do VR.
+    const atual = await vrDoUsuario();
+    const diferenca = saldo - (atual?.saldo ?? 0);
+    if (diferenca !== 0) {
+      const { error: erroAcerto } = await acerto(diferenca, 'Acerto do saldo do VR');
+      if (erroAcerto) return { erro: 'Não foi possível salvar o saldo. Tente de novo.' };
+    }
   }
   refresh();
   return { ok: true };
