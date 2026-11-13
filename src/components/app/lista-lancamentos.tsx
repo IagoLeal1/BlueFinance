@@ -11,7 +11,7 @@ import { Segmented } from './segmented';
 import { LinhaAssinatura } from './editar-assinatura';
 import { LinhaCompra } from './editar-compra';
 import { LinhaEditavel, type CategoriaEditavel } from './editar-lancamento';
-import { ChipsDeFiltro, VistaDaCategoria } from './filtro-categoria';
+import { ChipsDeFiltro, ResumoDaCategoria } from './filtro-categoria';
 import { LancarTotalFatura } from './total-fatura';
 import { useFeedback } from './feedback';
 import { metaDe } from './meta';
@@ -134,30 +134,51 @@ export function ListaLancamentos({
   const { pendentes: todosPendentes } = useFeedback();
   const noDebito = extrato === 'debito';
   const noVr = extrato === 'vr';
-  const pendentes = todosPendentes.filter((l) => (l.forma === 'vr') === noVr);
-  const vazio = noDebito
-    ? dias.length === 0 && aPagar.length === 0 && pendentes.length === 0
-    : noVr
-      ? diasVr.length === 0 && pendentes.length === 0
-      : faturas.length === 0;
+
+  // Com uma categoria marcada, cada aba fica só com os gastos dela: somem pagamento de fatura, "A pagar",
+  // depósito e acerto do VR, e o total de cada fatura passa a ser o dessas compras.
+  const daCategoria = (l: LancamentoListado) => l.tipo === 'despesa' && l.origem !== 'acerto' && l.categoria === categoria;
+  const soDaCategoria = (lista: DiaDeLancamentos[]) =>
+    categoria
+      ? lista.map((d) => ({ ...d, faturas: [], lancamentos: d.lancamentos.filter(daCategoria) })).filter((d) => d.lancamentos.length > 0)
+      : lista;
+  const diasVisiveis = soDaCategoria(dias);
+  const diasVrVisiveis = soDaCategoria(diasVr);
+  const faturasVisiveis = categoria
+    ? faturas
+        .map((f) => {
+          const compras = f.lancamentos.filter(daCategoria);
+          return { ...f, lancamentos: compras, total: compras.reduce((t, l) => t + l.valor, 0), semCompras: undefined };
+        })
+        .filter((f) => f.lancamentos.length > 0)
+    : faturas;
+  const aPagarVisivel = categoria ? [] : aPagar;
+  const pendentes = todosPendentes.filter((l) => (l.forma === 'vr') === noVr && (!categoria || daCategoria(l)));
+  const itensDaAba = (
+    extrato === 'credito' ? faturasVisiveis : (noVr ? diasVrVisiveis : diasVisiveis)
+  ).flatMap((x) => x.lancamentos);
+  const vazio =
+    !categoria &&
+    (noDebito
+      ? dias.length === 0 && aPagar.length === 0 && pendentes.length === 0
+      : noVr
+        ? diasVr.length === 0 && pendentes.length === 0
+        : faturas.length === 0);
 
   return (
     <>
       {opcoesFiltro.length > 0 && <ChipsDeFiltro opcoes={opcoesFiltro} valor={categoria} onChange={setCategoria} />}
-      {categoria ? (
-        <VistaDaCategoria categoria={categoria} mes={mes} gastos={gastos} comVr={comVr} categorias={categorias} cartoes={cartoes} />
-      ) : (
-        extratos()
-      )}
-    </>
-  );
-
-  /** Débito, Crédito e VR: o extrato de sempre ("Tudo" no filtro). Chamada como função, não como componente. */
-  function extratos() {
-  return (
-    <>
       <Segmented nome="extrato" rotulo="Extrato" opcoes={comVr ? EXTRATOS_COM_VR : EXTRATOS} valor={extrato} onChange={setExtrato} />
-      {noVr && vr && (
+      {categoria && (
+        <ResumoDaCategoria
+          categoria={categoria}
+          aba={noDebito ? 'Débito' : noVr ? 'VR' : 'Crédito'}
+          mes={mes}
+          itens={itensDaAba}
+          gastos={gastos}
+        />
+      )}
+      {!categoria && noVr && vr && (
         <section aria-label="Saldo do VR" className="flex items-center justify-between gap-3 rounded-lg bg-card p-4 shadow-card">
           <div>
             <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">Saldo do VR</p>
@@ -186,17 +207,17 @@ export function ListaLancamentos({
           </ul>
         </section>
       )}
-      {noDebito && aPagar.length > 0 && (
+      {noDebito && aPagarVisivel.length > 0 && (
         <section aria-label="A pagar" className="rounded-lg bg-card px-4 pb-1 shadow-card">
           <h2 className="pt-4 pb-1 text-xs font-bold tracking-[0.02em] text-muted-foreground">A pagar</h2>
           <ul>
-            {aPagar.map((f) => (
+            {aPagarVisivel.map((f) => (
               <LinhaPagamentoFatura key={f.id} f={f} aPagar />
             ))}
           </ul>
         </section>
       )}
-      {extrato === 'credito' && faturas.map((f) => (
+      {extrato === 'credito' && faturasVisiveis.map((f) => (
         <section key={f.id} aria-label={`Fatura ${f.nome}`} className="rounded-lg bg-card px-4 pt-3 pb-1 shadow-card">
           <div className="flex items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 text-[15px] font-extrabold">
@@ -225,9 +246,9 @@ export function ListaLancamentos({
           </ul>
         </section>
       ))}
-      {noDebito && dias.length > 0 && (
+      {noDebito && diasVisiveis.length > 0 && (
         <div className="rounded-lg bg-card px-4 pb-1 shadow-card">
-          {dias.map((d) => (
+          {diasVisiveis.map((d) => (
             <section key={d.rotulo} aria-label={d.rotulo}>
               <h2 className="pt-4 pb-1 text-xs font-bold tracking-[0.02em] text-muted-foreground">{d.rotulo}</h2>
               <ul>
@@ -242,9 +263,9 @@ export function ListaLancamentos({
           ))}
         </div>
       )}
-      {noVr && diasVr.length > 0 && (
+      {noVr && diasVrVisiveis.length > 0 && (
         <div className="rounded-lg bg-card px-4 pb-1 shadow-card">
-          {diasVr.map((d) => (
+          {diasVrVisiveis.map((d) => (
             <section key={d.rotulo} aria-label={d.rotulo}>
               <h2 className="pt-4 pb-1 text-xs font-bold tracking-[0.02em] text-muted-foreground">{d.rotulo}</h2>
               <ul>
@@ -263,5 +284,4 @@ export function ListaLancamentos({
       )}
     </>
   );
-  }
 }

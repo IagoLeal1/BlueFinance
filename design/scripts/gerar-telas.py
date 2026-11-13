@@ -790,46 +790,48 @@ a diferença como um acerto no extrato. Editar um gasto também permite trocar p
 FILTRO = lambda marcada: ('<div class="bf-chips" role="group" aria-label="Categoria" style="flex:none;flex-wrap:nowrap;overflow:hidden;margin:0 -16px;padding:0 16px">' + "".join(
     f'<button class="bf-chip" aria-pressed="{"true" if n == marcada else "false"}" style="flex:none">{i(ic) if ic else ""}{n}</button>'
     for ic, n in [(None, "Tudo"), ("house", "Moradia"), ("shopping-cart", "Mercado"), ("car", "Transporte"), ("utensils", "Alimentação"), ("heart-pulse", "Saúde")]) + '</div>')
-filtro_tudo = iphone(titulo("Lançamentos", CALENDARIO) + FILTRO("Tudo") + SEG3("Débito")
-                     + '<section class="bf-card" style="padding-top:0;padding-bottom:4px"><div class="bf-list__day">A pagar</div><ul class="bf-list">'
-                     + linha_cor("credit-card", "Fatura C6bank", "Crédito · vence 11 nov", "− R$ 1.234,56", "Fatura")
-                     + '</ul><div class="bf-list__day">Hoje · 12 nov</div><ul class="bf-list">'
-                     + linha_cor("shopping-cart", "Mercado do bairro", "Mercado · Débito", "− R$ 32,90", "Mercado")
-                     + linha_cor("car", "Uber", "Transporte · Pix", "− R$ 18,40", "Transporte")
-                     + '</ul><div class="bf-list__day">5 nov</div><ul class="bf-list">'
-                     + linha_cor("house", "Aluguel", "Moradia · Pix", "− R$ 1.600,00", "Moradia")
-                     + linha_cor("briefcase", "Salário", "Salário", "+ R$ 8.500,00", tipo="receita")
-                     + "</ul></section>", aba=1)
-filtro_mercado = iphone(titulo("Lançamentos", CALENDARIO) + FILTRO("Mercado")
-                        + '<section class="bf-card bf-balance"><div class="bf-balance__label">Mercado em novembro</div><div class="bf-balance__value">R$ 642,10</div>'
-                          '<div class="caption muted" style="margin:-4px 0 12px">4 gastos · 18% do que você gastou no mês</div>'
-                          '<div class="bf-balance__split">'
-                          '<div class="bf-stat"><div class="bf-stat__label">Débito e Pix</div><div class="bf-stat__value">R$ 210</div></div>'
-                          '<div class="bf-stat"><div class="bf-stat__label">Crédito</div><div class="bf-stat__value">R$ 332</div></div>'
-                          '<div class="bf-stat"><div class="bf-stat__label">VR</div><div class="bf-stat__value">R$ 100</div></div></div></section>'
+def fatura_cartao(total, linhas_):
+    return ('<section class="bf-card" style="padding-top:8px;padding-bottom:4px">'
+            f'<div class="bf-card__head" style="margin:0"><h3 class="bf-card__title" style="display:flex;gap:8px;align-items:center">{i("credit-card")}Fatura C6bank</h3><span class="caption num muted">{total}</span></div>'
+            '<div class="caption muted">Fechou dia 4 · vence dia 11</div><ul class="bf-list">' + linhas_ + '</ul></section>')
+def resumo_cat(titulo_, valor, legenda):
+    return ('<section class="bf-card" style="display:grid;gap:2px">'
+            f'<div class="caption muted">{titulo_}</div>'
+            f'<div class="num" style="font:800 30px/36px var(--font-sans);letter-spacing:-0.02em">{valor}</div>'
+            f'<div class="caption muted">{legenda}</div></section>')
+COMPRA_MES = linha_cor("shopping-cart", "Compra do mês", "Mercado · à vista · 20 out", "− R$ 332,40", "Mercado")
+EM_TUDO = "Mercado no mês, somando tudo: R$ 642,10 (28%)"
+credito_tudo = iphone(titulo("Lançamentos", CALENDARIO) + FILTRO("Tudo") + SEG3("Crédito")
+                      + fatura_cartao("R$ 772,30", COMPRA_MES
+                                      + linha_cor("ticket", "Fone de ouvido", "Lazer · 1/3 · comprado em 7 out", "− R$ 400,00", "Lazer")
+                                      + linha_cor("ticket", "Netflix", "Lazer · todo mês", "− R$ 39,90", "Lazer")), aba=1)
+credito_mercado = iphone(titulo("Lançamentos", CALENDARIO) + FILTRO("Mercado") + SEG3("Crédito")
+                         + resumo_cat("Mercado no Crédito · novembro", "R$ 332,40", f"1 compra · {EM_TUDO}")
+                         + fatura_cartao("R$ 332,40", COMPRA_MES), aba=1)
+debito_mercado = iphone(titulo("Lançamentos", CALENDARIO) + FILTRO("Mercado") + SEG3("Débito")
+                        + resumo_cat("Mercado no Débito · novembro", "R$ 209,70", f"2 gastos · {EM_TUDO}")
                         + '<section class="bf-card" style="padding-top:0;padding-bottom:4px"><div class="bf-list__day">Hoje · 12 nov</div><ul class="bf-list">'
-                        + linha_cor("shopping-cart", "Mercado do bairro", "Mercado · Débito", "− R$ 32,90", "Mercado")
-                        + '</ul><div class="bf-list__day">10 nov</div><ul class="bf-list">'
-                        + linha_cor("shopping-cart", "Hortifruti", "Mercado · VR", "− R$ 100,00", "Mercado")
+                        + linha_cor("shopping-cart", "Mercado do bairro", "Mercado · Pix", "− R$ 32,90", "Mercado")
                         + '</ul><div class="bf-list__day">3 nov</div><ul class="bf-list">'
                         + linha_cor("shopping-cart", "Atacadão", "Mercado · Débito", "− R$ 176,80", "Mercado")
-                        + '</ul><div class="bf-list__day">Na fatura de novembro · C6bank</div><ul class="bf-list">'
-                        + linha_cor("shopping-cart", "Compra do mês", "Mercado · Crédito · 20 out", "− R$ 332,40", "Mercado")
                         + "</ul></section>", aba=1)
-tela("TelaFiltroCategoria", "28 · Lançamentos: tocar numa categoria mostra quanto foi nela no mês",
-     '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;padding:16px">'
-     + painel("1 · Lançamentos, em Tudo", filtro_tudo,
-              "Uma fileira de categorias em cima do extrato. Em \"Tudo\", nada muda: Débito, Crédito e VR como antes. A fileira rola para o lado.")
-     + painel("2 · Tocar em Mercado", filtro_mercado,
-              "O total da categoria no mês, de qualquer jeito que você pagou, e quanto foi em Débito e Pix, no Crédito e no VR. Embaixo, só os gastos dela.")
+tela("TelaFiltroCategoria", "28 · Lançamentos: a categoria filtra a aba em que você está (Débito, Crédito ou VR)",
+     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:16px">'
+     + painel("1 · Crédito, em Tudo", credito_tudo,
+              "Uma fileira de categorias em cima das abas. Em \"Tudo\", nada muda: a fatura do cartão com todas as compras.")
+     + painel("2 · No Crédito, tocar em Mercado", credito_mercado,
+              "As abas continuam. A fatura mostra só as compras de Mercado, com o total delas. No topo, quanto foi Mercado no cartão e quanto ele soma no mês, em tudo.")
+     + painel("3 · Trocar para o Débito, ainda em Mercado", debito_mercado,
+              "A categoria fica marcada ao trocar de aba: no Débito, só os gastos de Mercado na conta. No VR, só os pagos com VR.")
      + "</div>",
-     """Em Lançamentos, uma fileira de categorias fica em cima do extrato. "Tudo" é o extrato de sempre. Tocar numa
-categoria mostra quanto você gastou nela no mês, somando Débito, Pix, Crédito e VR, e lista só os gastos dela: débito,
-Pix e VR por dia, e depois as compras que estão na fatura do mês. Com uma categoria marcada, as abas Débito, Crédito e
-VR saem, porque a categoria junta tudo. O total é o mesmo número de "Gastos por categoria" no Início (as compras no
-crédito contam no mês da fatura, pagas ou não). Só aparecem as categorias com gasto no mês, na ordem do app. A troca é
-na hora, no aparelho, sem ir ao servidor. No Início, tocar numa categoria de "Gastos por categoria" abre Lançamentos já
-filtrado nela.""",
-     altura=1010, largura=900)
+     """Em Lançamentos, uma fileira de categorias fica em cima das abas Débito, Crédito e VR. "Tudo" é o extrato de
+sempre. Tocar numa categoria filtra a aba em que você está: no Crédito, só as compras dela nas faturas do mês, com o
+total da fatura refeito; no Débito, só os gastos dela na conta; no VR, só os pagos com VR. No topo, quanto foi a
+categoria naquela aba e quanto ela soma no mês em tudo (o mesmo número de "Gastos por categoria" do Início). Trocar de
+aba mantém a categoria. Enquanto há categoria marcada, somem o que não é gasto dela: pagamento de fatura, "A pagar",
+depósito e acerto do VR (no VR, o saldo dá lugar ao total da categoria). Só aparecem as categorias com gasto no mês, na
+ordem do app; a troca é no aparelho, sem ir ao servidor. No Início, tocar numa categoria de "Gastos por categoria"
+abre Lançamentos já filtrado nela.""",
+     altura=1010, largura=1300)
 
 print("telas geradas em", RAIZ)

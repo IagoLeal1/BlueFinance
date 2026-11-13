@@ -89,11 +89,14 @@ atualize aqui.
 - **Lançamentos tem dois extratos:** Débito é a conta (receitas, débito, Pix, aportes e cada fatura numa
   linha só, no dia do vencimento); Crédito são as compras no cartão, juntas por fatura. Quem usa VR ganha um
   terceiro, VR (ver abaixo).
-- **Filtro por categoria em Lançamentos** (tela 28): uma fileira de categorias em cima do extrato. Tocar numa
-  mostra o total dela no mês, somando Débito, Pix, Crédito e VR, separado por forma, e só os gastos dela; as
-  abas de extrato saem enquanto uma categoria está marcada. O total é o mesmo número de "Gastos por categoria"
-  do Início (crédito no mês da fatura). Só aparecem categorias com gasto no mês, na ordem do app; a troca é no
-  aparelho. No Início, tocar numa categoria de "Gastos por categoria" abre Lançamentos já filtrado.
+- **Filtro por categoria em Lançamentos** (tela 28): uma fileira de categorias em cima das abas. A categoria
+  **filtra a aba aberta** e as abas continuam (pedido do dono em 12/11/2026, depois de usar a 1ª versão, que
+  misturava tudo e escondia as abas): no Crédito, só as compras dela nas faturas do mês, com o total da fatura
+  refeito; no Débito, só os gastos dela na conta; no VR, só os pagos com VR. No topo, quanto foi a categoria
+  naquela aba e quanto ela soma no mês somando tudo (o mesmo número de "Gastos por categoria" do Início).
+  Trocar de aba mantém a categoria; somem pagamento de fatura, "A pagar", depósito e acerto do VR. Só aparecem
+  categorias com gasto no mês, na ordem do app; a troca é no aparelho. No Início, tocar numa categoria de
+  "Gastos por categoria" abre Lançamentos já filtrado.
 
 ## Lançar e editar
 

@@ -133,7 +133,7 @@ Cada linha é **um** teste. O nome do teste é o comportamento.
 - Regras (`unit`): dia do depósito (31 em mês curto), depósitos devidos depois do dia da configuração até hoje (horário de São Paulo), próximo depósito, saldo; VR fora de Entrou/Saiu/Sobrou e dentro de "Gastos por categoria"; acerto fora das categorias; total de uma categoria por forma, com o mesmo critério do resumo.
 - VR (`e2e`): configurar em Ajustes e ver no Início; gasto no VR pelo + (fora do Sobrou, dentro das categorias); depósito do mês entra sozinho uma vez só; editar um gasto do débito para o VR; corrigir o saldo lança o acerto.
 - Atalho (`api`): VR na lista depois do Pix e primeiro quando foi o último usado; sem VR a lista fica como antes; lançar no VR diz quanto sobra; VR sem VR configurado → 422.
-- Filtro (`e2e`): só categorias com gasto, na ordem do app; total por forma e só os gastos dela, com a fatura do mês; "Tudo" volta ao extrato; do Início abre já filtrado.
+- Filtro (`e2e`): só categorias com gasto, na ordem do app; a categoria filtra a aba aberta (Crédito: só as compras dela, com o total da fatura refeito; Débito: sem pagamento de fatura; VR: sem saldo, depósito e acerto) e continua marcada ao trocar de aba; total da aba e "somando tudo"; "Tudo" volta ao extrato; do Início abre já filtrado.
 
 ## Dados de teste
 

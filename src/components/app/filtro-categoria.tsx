@@ -1,20 +1,16 @@
 'use client';
 
-import { diaDe, nomeDoMes, rotuloDoDia } from '@/domain/datas';
-import { formatBRL, formatReais } from '@/domain/money';
+import { nomeDoMes } from '@/domain/datas';
+import { formatBRL } from '@/domain/money';
 import { gastosDaCategoria } from '@/domain/summary';
 import { cn } from '@/lib/utils';
-import type { Cartao } from '@/server/cartoes';
 import type { LancamentoListado } from '@/server/lancamentos';
-import { LinhaAssinatura } from './editar-assinatura';
-import { LinhaCompra } from './editar-compra';
-import { LinhaEditavel, type CategoriaEditavel } from './editar-lancamento';
 import { CHIP } from './estilos';
 import { IconeCategoria } from './icone-categoria';
 
 /**
- * Fileira de categorias em cima do extrato (design kit: TelaFiltroCategoria): "Tudo" e as categorias com gasto
- * no mês, na ordem do app. A troca é no aparelho, sem ir ao servidor.
+ * Fileira de categorias em cima das abas (design kit: TelaFiltroCategoria): "Tudo" e as categorias com gasto no
+ * mês, na ordem do app. Marcar uma filtra a aba aberta; a troca é no aparelho, sem ir ao servidor.
  */
 export function ChipsDeFiltro({
   opcoes,
@@ -46,86 +42,41 @@ export function ChipsDeFiltro({
 }
 
 /**
- * Uma categoria no mês: o total de qualquer jeito que foi pago (o mesmo número de "Gastos por categoria" no
- * Início), separado em Débito e Pix, Crédito e VR, e só os gastos dela — débito, Pix e VR por dia, depois as
- * compras que estão na fatura do mês.
+ * Com uma categoria marcada, o topo da aba aberta (design kit: TelaFiltroCategoria): quanto foi a categoria naquela
+ * aba e quanto ela soma no mês somando tudo — o mesmo número de "Gastos por categoria" do Início.
  */
-export function VistaDaCategoria({
+export function ResumoDaCategoria({
   categoria,
+  aba,
   mes,
+  itens,
   gastos,
-  comVr,
-  categorias,
-  cartoes,
 }: {
   categoria: string;
+  aba: 'Débito' | 'Crédito' | 'VR';
   mes: string;
+  /** Os gastos da categoria que a aba está mostrando. */
+  itens: LancamentoListado[];
+  /** Todos os gastos que contam no mês, para o total "somando tudo". */
   gastos: LancamentoListado[];
-  comVr: boolean;
-  categorias: CategoriaEditavel[];
-  cartoes: Cartao[];
 }) {
-  const resumo = gastosDaCategoria(gastos, mes, categoria);
-  const daCategoria = gastos.filter((l) => l.categoria === categoria).sort((a, b) => b.data.localeCompare(a.data));
-  const grupos: { rotulo: string; lancamentos: LancamentoListado[] }[] = [];
-  const grupo = (rotulo: string) => {
-    let g = grupos.find((x) => x.rotulo === rotulo);
-    if (!g) grupos.push((g = { rotulo, lancamentos: [] }));
-    return g;
-  };
-  for (const l of daCategoria.filter((x) => x.forma !== 'credito').sort((a, b) => diaDe(b.data).localeCompare(diaDe(a.data)))) {
-    grupo(rotuloDoDia(l.data)).lancamentos.push(l);
-  }
-  for (const l of daCategoria.filter((x) => x.forma === 'credito')) {
-    grupo(`Na fatura de ${nomeDoMes(l.mes ?? mes)} · ${l.cartao?.nome ?? 'cartão excluído'}`).lancamentos.push(l);
-  }
-  const formas = [
-    { rotulo: 'Débito e Pix', valor: resumo.porForma.debitoPix },
-    { rotulo: 'Crédito', valor: resumo.porForma.credito },
-    ...(comVr || resumo.porForma.vr > 0 ? [{ rotulo: 'VR', valor: resumo.porForma.vr }] : []),
-  ];
-
+  const titulo = `${categoria} no ${aba} · ${nomeDoMes(mes)}`;
+  const total = itens.reduce((t, l) => t + l.valor, 0);
+  const noMes = gastosDaCategoria(gastos, mes, categoria);
+  const n = itens.length;
+  const quantos =
+    n === 0
+      ? `Nenhum gasto de ${categoria} no ${aba}`
+      : aba === 'Crédito'
+        ? `${n} ${n === 1 ? 'compra' : 'compras'}`
+        : `${n} ${n === 1 ? 'gasto' : 'gastos'}`;
   return (
-    <>
-      <section aria-label={`${categoria} em ${nomeDoMes(mes)}`} className="rounded-lg bg-card p-4 shadow-card">
-        <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
-          {categoria} em {nomeDoMes(mes)}
-        </p>
-        <p className="mt-1 text-[34px] leading-[40px] font-extrabold tracking-[-0.02em] tabular-nums">{formatBRL(resumo.total)}</p>
-        <p className="mt-1 text-[13px] leading-[18px] font-semibold text-muted-foreground">
-          {resumo.quantidade} {resumo.quantidade === 1 ? 'gasto' : 'gastos'} · {resumo.percentual}% do que você gastou no mês
-        </p>
-        <div className={cn('mt-3 grid gap-2', formas.length === 3 ? 'grid-cols-3' : 'grid-cols-2')}>
-          {formas.map((f) => (
-            <div key={f.rotulo} role="group" aria-label={f.rotulo} className="rounded-md bg-muted p-3">
-              <p aria-hidden className="text-xs font-semibold text-muted-foreground">
-                {f.rotulo}
-              </p>
-              <p className="mt-0.5 text-base font-extrabold tabular-nums">{formatReais(f.valor)}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-      {grupos.length > 0 && (
-        <div className="rounded-lg bg-card px-4 pb-1 shadow-card">
-          {grupos.map((g) => (
-            <section key={g.rotulo} aria-label={g.rotulo}>
-              <h2 className="pt-4 pb-1 text-xs font-bold tracking-[0.02em] text-muted-foreground">{g.rotulo}</h2>
-              <ul>
-                {g.lancamentos.map((l) =>
-                  l.recorrente ? (
-                    <LinhaAssinatura key={l.id} l={l} categorias={categorias} />
-                  ) : l.compraId ? (
-                    <LinhaCompra key={l.id} l={l} categorias={categorias} cartoes={cartoes} temVr={comVr} />
-                  ) : (
-                    <LinhaEditavel key={l.id} l={l} categorias={categorias} cartoes={cartoes} temVr={comVr} />
-                  ),
-                )}
-              </ul>
-            </section>
-          ))}
-        </div>
-      )}
-    </>
+    <section aria-label={titulo} className="rounded-lg bg-card p-4 shadow-card">
+      <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">{titulo}</p>
+      <p className="mt-0.5 text-[30px] leading-9 font-extrabold tracking-[-0.02em] tabular-nums">{formatBRL(total)}</p>
+      <p className="mt-0.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+        {quantos} · {categoria} no mês, somando tudo: {formatBRL(noMes.total)} ({noMes.percentual}%)
+      </p>
+    </section>
   );
 }
