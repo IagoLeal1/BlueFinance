@@ -834,4 +834,122 @@ ordem do app; a troca é no aparelho, sem ir ao servidor. No Início, tocar numa
 abre Lançamentos já filtrado nela.""",
      altura=1010, largura=1300)
 
+# 29 · App nativo: Gasto rápido pelo Botão de Ação, com confirmação na Dynamic Island
+BRANCO = "color:#fff"
+CINZA_ILHA = "#9aa3b5"
+AMBAR_ILHA = ("#3d2a05", "#f2b84b")  # Alimentação sobre o preto da ilha
+def tela_sistema(miolo, fundo="linear-gradient(160deg,#1b2a4a 0%,#0b1220 70%)", sobre=""):
+    """iPhone fora do app (Tela de Início ou Bloqueada): papel de parede e a ilha por cima."""
+    return (f'<div class="bf-phone" style="background:{fundo};{BRANCO}">{STATUS}'
+            f'<div class="bf-phone__body" style="padding:0 20px;{BRANCO}">{miolo}</div>{sobre}</div>')
+def icones_inicio(n=8, de=0):
+    nomes = ["Mensagens", "Fotos", "Câmera", "Ajustes", "Mapas", "Clima", "Música", "Notas", "Safari", "BlueFin", "Relógio", "Atalhos"]
+    return ('<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px 14px;margin-top:22px">' + "".join(
+        f'<div style="display:grid;justify-items:center;gap:5px"><span style="width:62px;height:62px;border-radius:15px;'
+        f'background:{"linear-gradient(135deg,var(--hero),var(--hero-end))" if nome == "BlueFin" else "rgba(255,255,255,.14)"}"></span>'
+        f'<span style="font:500 11px/13px var(--font-sans);{BRANCO}">{nome}</span></div>' for nome in nomes[de:de + n]) + '</div>')
+def tile_ilha(tamanho=40, icone="utensils"):
+    fundo, cor = AMBAR_ILHA
+    px = 14 if tamanho < 30 else 20
+    icone_ = i(icone, ' style="width:%dpx;height:%dpx"' % (px, px))
+    return (f'<span style="width:{tamanho}px;height:{tamanho}px;border-radius:{tamanho * 0.3:.0f}px;background:{fundo};color:{cor};'
+            f'display:grid;place-items:center;flex:none">{icone_}</span>')
+def confirmacao(fundo="#000", raio=36, extra=""):
+    return (f'<div style="background:{fundo};{BRANCO};border-radius:{raio}px;padding:14px 18px 16px;display:grid;gap:12px;{extra}">'
+            f'<div style="display:flex;align-items:center;gap:10px">{tile_ilha()}'
+            '<div style="flex:1;min-width:0"><div style="font:700 15px/20px var(--font-sans)">Almoço</div>'
+            f'<div style="font:600 13px/18px var(--font-sans);color:{CINZA_ILHA}">Alimentação · VR</div></div>'
+            '<div class="num" style="font:800 22px/26px var(--font-sans);color:#ff9b6b">− R$ 32,90</div></div>'
+            '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">'
+            f'<span style="font:600 13px/18px var(--font-sans);color:{CINZA_ILHA}">Sobram <b class="num" style="color:#fff">R$ 379,40</b> no VR</span>'
+            '<span style="font:700 13px/1 var(--font-sans);background:#2c2c2e;color:#fff;border-radius:999px;padding:9px 14px">Desfazer</span></div></div>')
+ILHA_EXPANDIDA = f'<div style="position:absolute;top:8px;left:10px;right:10px;z-index:5">{confirmacao()}</div>'
+ILHA_COMPACTA = ('<div style="position:absolute;top:11px;left:50%;transform:translateX(-50%);width:206px;height:37px;background:#000;'
+                 'border-radius:20px;display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 7px;z-index:5">'
+                 f'{tile_ilha(24)}<span class="num" style="font:700 14px/1 var(--font-sans);color:#ff9b6b">− R$ 32,90</span></div>')
+CAT_GRADE = [("house", "Moradia"), ("shopping-cart", "Mercado"), ("car", "Transporte"), ("utensils", "Alimentação"), ("ticket", "Lazer"), ("heart-pulse", "Saúde")]
+def grade_categorias(marcada):
+    out = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">'
+    for ic, nome in CAT_GRADE:
+        fundo, cor = CORES_CAT[nome]
+        borda = "border:2px solid var(--brand)" if nome == marcada else "border:2px solid transparent"
+        out += (f'<div style="display:grid;justify-items:center;gap:4px;padding:10px 4px;border-radius:14px;background:var(--surface);{borda}">'
+                f'<span style="width:34px;height:34px;border-radius:10px;background:{fundo};color:{cor};display:grid;place-items:center">{i(ic)}</span>'
+                f'<span style="font:600 12px/16px var(--font-sans)">{nome}</span></div>')
+    return out + '</div>'
+gasto_rapido = iphone(
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">'
+    f'<h1 class="bf-screen-title" style="font-size:22px;line-height:28px">Gasto rápido</h1><button class="bf-iconbtn" aria-label="Fechar">{i("x")}</button></div>'
+    '<div class="bf-amount" style="padding:2px 0"><div class="bf-amount__value"><span class="bf-amount__currency">R$</span><span class="bf-amount__digits">32,90</span><span class="bf-amount__caret"></span></div></div>'
+    + grade_categorias("Alimentação") + FORMAS_VR
+    + '<input class="bf-input" placeholder="Com o quê (opcional)" value="Almoço">'
+    + TECLADO
+    + f'<button class="bf-btn bf-btn--primary bf-btn--block">{i("check")}Salvar · − R$ 32,90</button>')
+tela("TelaGastoRapidoNativo", "29 · App nativo: Gasto rápido pelo Botão de Ação, com a confirmação na Dynamic Island",
+     '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:16px">'
+     + painel("1 · Aperta o Botão de Ação", gasto_rapido,
+              "O app abre na hora, direto no teclado, sem o Atalho. A última categoria e a última forma vêm marcadas. Cada tecla vibra de leve e o valor entra pela direita, com os números rolando.")
+     + painel("2 · Salvou: a ilha se expande", tela_sistema(icones_inicio(12), sobre=ILHA_EXPANDIDA),
+              "A tela fecha e a Dynamic Island se abre com uma mola: o ícone da categoria pula e o valor sobe rolando até − R$ 32,90. No VR, mostra quanto sobra. \"Desfazer\" apaga na hora.")
+     + painel("3 · Depois de 4 segundos", tela_sistema(icones_inicio(12), sobre=ILHA_COMPACTA),
+              "A ilha encolhe para o ícone e o valor e, logo depois, some. Tocar nela antes de sumir abre o lançamento no app.")
+     + painel("4 · Com o iPhone bloqueado", tela_sistema(
+                  '<div style="text-align:center;margin-top:28px;font:600 17px/22px var(--font-sans)">segunda-feira, 17 de novembro</div>'
+                  '<div class="num" style="text-align:center;font:700 86px/1 var(--font-sans);letter-spacing:-2px">9:41</div>'
+                  '<div style="flex:1"></div>' + confirmacao(fundo="rgba(20,24,36,.72)", raio=24, extra="margin-bottom:96px;backdrop-filter:blur(20px)"),
+                  fundo="linear-gradient(170deg,#0b1f4d 0%,#1846c8 55%,#0b1220 100%)"),
+              "Se o lançamento sai pelo Apple Pay ou pelo Botão de Ação com o iPhone bloqueado, a mesma confirmação aparece na Tela Bloqueada.")
+     + "</div>",
+     """O BlueFin como app nativo, um app só (conta gratuita da Apple, instalado pelo Xcode). O Botão de Ação abre o app
+direto numa tela própria de Gasto rápido: valor no teclado numérico do app, categoria em um toque (as mesmas cores das
+categorias), como pagou (Débito, Pix, Crédito, VR) e, se quiser, com o quê. Salvar fecha a tela e a confirmação aparece
+na Dynamic Island por alguns segundos, com Desfazer; com o iPhone bloqueado, na Tela Bloqueada. A Dynamic Island não
+aceita digitação: ela confirma, não pergunta. É uma Live Activity iniciada pelo próprio app, sem push (que a conta
+gratuita não tem). Movimento: a ilha abre com mola, o ícone pula uma vez e o valor rola até o número final; com
+"Reduzir movimento" ligado, só aparece e some. O app vence a cada 7 dias e é reinstalado pelo Xcode.""",
+     altura=1010, largura=1720)
+
+# 30 · App nativo: widgets de saldo, VR e fatura
+def widget(conteudo, largura, altura=158, fundo="linear-gradient(135deg,var(--hero),var(--hero-end))"):
+    return (f'<div style="width:{largura}px;height:{altura}px;border-radius:22px;background:{fundo};{BRANCO};padding:14px 16px;'
+            f'display:flex;flex-direction:column;justify-content:space-between;box-sizing:border-box">{conteudo}</div>')
+ROTULO_W = "font:600 12px/16px var(--font-sans);opacity:.8"
+ICONE_13 = ' style="width:13px;height:13px"'
+widget_pequeno = widget(
+    f'<div style="{ROTULO_W}">Sobrou em novembro</div>'
+    '<div class="num" style="font:800 24px/28px var(--font-sans);letter-spacing:-0.5px">R$ 4.218</div>'
+    f'<div style="{ROTULO_W}">VR <b class="num" style="opacity:1">R$ 379</b></div>', 158)
+widget_medio = widget(
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start">'
+    f'<div><div style="{ROTULO_W}">Sobrou em novembro</div><div class="num" style="font:800 28px/32px var(--font-sans);letter-spacing:-0.5px">R$ 4.218,35</div></div>'
+    f'<span style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;box-shadow:0 0 0 3px var(--water)">{i("plus")}</span></div>'
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">'
+    f'<div><div style="{ROTULO_W}">Saiu</div><div class="num" style="font:700 15px/20px var(--font-sans)">R$ 3.632</div></div>'
+    f'<div><div style="{ROTULO_W}">Fatura C6 · dia 11</div><div class="num" style="font:700 15px/20px var(--font-sans)">R$ 1.235</div></div>'
+    f'<div><div style="{ROTULO_W}">VR</div><div class="num" style="font:700 15px/20px var(--font-sans)">R$ 379</div></div></div>', 338)
+bloqueio_widgets = ('<div style="display:flex;gap:10px;justify-content:center;margin-top:14px">'
+                    '<div style="width:150px;height:62px;border-radius:14px;background:rgba(255,255,255,.16);padding:8px 12px;box-sizing:border-box">'
+                    f'<div style="font:600 12px/16px var(--font-sans);opacity:.8;display:flex;gap:5px;align-items:center">{i("wallet-cards", ICONE_13)}VR</div>'
+                    '<div class="num" style="font:800 20px/26px var(--font-sans)">R$ 379,40</div></div>'
+                    '<div style="width:150px;height:62px;border-radius:14px;background:rgba(255,255,255,.16);padding:8px 12px;box-sizing:border-box">'
+                    f'<div style="font:600 12px/16px var(--font-sans);opacity:.8;display:flex;gap:5px;align-items:center">{i("credit-card", ICONE_13)}Fatura C6</div>'
+                    '<div class="num" style="font:800 16px/26px var(--font-sans)">R$ 1.235 · dia 11</div></div></div>')
+tela("TelaWidgets", "30 · App nativo: widgets de saldo, VR e fatura (Tela de Início e Tela Bloqueada)",
+     '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;padding:16px">'
+     + painel("1 · Tela de Início", tela_sistema(
+                  '<div style="display:flex;gap:16px;margin-top:20px">' + widget_pequeno
+                  + '<div style="flex:1">' + icones_inicio(4).replace("repeat(4,1fr)", "repeat(2,1fr)").replace("margin-top:22px", "margin-top:0") + '</div></div>'
+                  + '<div style="margin-top:18px">' + widget_medio + '</div>' + icones_inicio(8, de=4)),
+              "Dois tamanhos, no degradê da marca. O pequeno mostra o Sobrou e o VR; o médio, Sobrou, Saiu, a fatura a pagar e o VR, e o + abre o Gasto rápido. Valores arredondados, como nos cards pequenos.")
+     + painel("2 · Tela Bloqueada", tela_sistema(
+                  '<div style="text-align:center;margin-top:28px;font:600 17px/22px var(--font-sans)">segunda-feira, 17 de novembro</div>'
+                  '<div class="num" style="text-align:center;font:700 86px/1 var(--font-sans);letter-spacing:-2px">9:41</div>' + bloqueio_widgets,
+                  fundo="linear-gradient(170deg,#0b1f4d 0%,#1846c8 55%,#0b1220 100%)"),
+              "Embaixo do relógio: o saldo do VR e a fatura a pagar, com o dia em que vence.")
+     + "</div>",
+     """Widgets do BlueFin nativo, na Tela de Início e na Tela Bloqueada. Atualizam quando o app salva um lançamento e
+algumas vezes por dia (o iOS decide quando); sem push. O olhinho vale para os widgets também: com ele fechado, os
+valores aparecem como "R$ ••••". Tocar no widget abre o app; o + do widget médio abre direto o Gasto rápido.""",
+     altura=1010, largura=900)
+
 print("telas geradas em", RAIZ)

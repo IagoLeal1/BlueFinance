@@ -1,0 +1,7 @@
+// Copie para Segredos.xcconfig (fica fora do git) e preencha. Não compartilhe o arquivo preenchido.
+// Time: Xcode › Settings › Accounts › seu Apple ID › "Personal Team" (o ID de 10 letras e números).
+BLUEFIN_TEAM = SEUTIME123
+// Identificador único do app na sua conta Apple (troque "seunome").
+BLUEFIN_BUNDLE_ID = com.seunome.bluefin
+// O mesmo token do Atalho: BlueFin › Ajustes › Token do Atalho.
+BLUEFIN_TOKEN = bf_cole_o_token_aqui

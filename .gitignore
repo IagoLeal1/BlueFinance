@@ -16,3 +16,8 @@ out/
 next-env.d.ts
 *.tsbuildinfo
 .vercel
+
+# App do iPhone
+ios/Segredos.xcconfig
+ios/build/
+ios/**/xcuserdata/

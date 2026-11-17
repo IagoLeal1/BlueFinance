@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>BlueFinToken</key>
+	<string>$(BLUEFIN_TOKEN)</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>BlueFin</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>bluefin</string>
+			</array>
+		</dict>
+	</array>
+	<key>WKAppBoundDomains</key>
+	<array>
+		<string>bluefinance-chi.vercel.app</string>
+	</array>
+</dict>
+</plist>

@@ -17,6 +17,7 @@ atualize aqui.
 | Plano de testes | `docs/03-plano-de-testes.md` |
 | Atalho do iPhone | `docs/04-atalho-ios.md` |
 | Publicação (Supabase + Vercel) | `docs/05-publicacao.md` |
+| App do iPhone (nativo) | `docs/06-app-ios.md`, código em `ios/` |
 
 ## Como o trabalho é feito
 
@@ -199,3 +200,6 @@ segundo app. Muda a decisão "sem app nativo" (acima, em Plataforma). Telas 29 e
 - **Aviso da fatura:** dentro do app nativo o Web Push não funciona; vira notificação agendada no próprio iPhone.
 - A Dynamic Island continua sem aceitar digitação: ela confirma, não pergunta.
 - Depois, se valer a pena: Siri, controle na Central de Controle, Face ID.
+- **Feito em 17/11/2026** (código em `ios/`, guia em `docs/06-app-ios.md`). O teclado do Gasto rápido tem "00" no
+  lugar da vírgula (o valor entra pela direita, como na maquininha). O olhinho não chega aos widgets: cada widget tem
+  "Esconder valores" na edição.

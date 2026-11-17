@@ -7,9 +7,8 @@ test.describe('lançamento rápido (Atalho do iOS)', () => {
     const res = await request.get('/api/quick-add/categorias', { headers: { Authorization: `Bearer ${token}` } });
 
     expect(res.status()).toBe(200);
-    expect(await res.json()).toEqual({
-      categorias: ['Moradia', 'Mercado', 'Transporte', 'Alimentação', 'Lazer', 'Saúde', 'Outros'],
-    });
+    // O Atalho lê `categorias` (só os nomes); `itens` é do app do iPhone (tests/api/app-ios.spec.ts).
+    expect((await res.json()).categorias).toEqual(['Moradia', 'Mercado', 'Transporte', 'Alimentação', 'Lazer', 'Saúde', 'Outros']);
   });
 
   test('cria um gasto com token válido e devolve a confirmação', async ({ request, usuario }) => {

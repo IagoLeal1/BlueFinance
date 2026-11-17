@@ -1,6 +1,6 @@
 import 'server-only';
 import { diaDoFechamento, faturasDoCartao, vencimentoPadrao } from '@/domain/parcelas';
-import { supabaseServidor } from '@/lib/supabase/server';
+import { clienteDe } from './acesso';
 
 export interface Cartao {
   id: string;
@@ -10,9 +10,11 @@ export interface Cartao {
 }
 
 /** Cartões de crédito do usuário logado, em ordem de cadastro. */
-export async function listarCartoes(): Promise<Cartao[]> {
-  const supabase = await supabaseServidor();
-  const { data, error } = await supabase.from('cartoes').select('id, nome, dia_fechamento, dia_vencimento').order('criado_em');
+export async function listarCartoes(dono?: string): Promise<Cartao[]> {
+  const supabase = await clienteDe(dono);
+  let consulta = supabase.from('cartoes').select('id, nome, dia_fechamento, dia_vencimento');
+  if (dono) consulta = consulta.eq('user_id', dono);
+  const { data, error } = await consulta.order('criado_em');
   if (error) throw error;
   return data.map((c) => ({
     id: c.id,
@@ -35,13 +37,14 @@ export interface ResumoDoCartao {
 export async function resumoDosCartoes(
   cartoes: Cartao[],
   agora: Date,
+  dono?: string,
 ): Promise<{ cartoes: ResumoDoCartao[]; aVir: { total: number; ultimoMes: string | null }; assinaturas: number }> {
   if (cartoes.length === 0) return { cartoes: [], aVir: { total: 0, ultimoMes: null }, assinaturas: 0 };
   const hoje = agora.toISOString();
   const faturas = cartoes.map((c) => ({ cartao: c, ...faturasDoCartao(hoje, c.diaFechamento, c.diaVencimento) }));
   const desde = faturas.map((f) => f.fechada?.mes ?? f.aberta).sort()[0]!;
 
-  const supabase = await supabaseServidor();
+  const supabase = await clienteDe(dono);
   const { data, error } = await supabase
     .from('lancamentos')
     .select('valor, competencia, cartao_id, recorrente')

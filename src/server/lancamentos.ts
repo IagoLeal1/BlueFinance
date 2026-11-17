@@ -4,6 +4,7 @@ import { somarMeses } from '@/domain/datas';
 import { MESES_DE_ASSINATURA, vencimentoDaFatura, vencimentoPadrao } from '@/domain/parcelas';
 import { mesDe, type FormaPagamento, type Lancamento } from '@/domain/summary';
 import { supabaseServidor } from '@/lib/supabase/server';
+import { clienteDe } from './acesso';
 
 export type { FormaPagamento };
 const ORIGENS = ['app', 'atalho', 'vr', 'acerto'] as const;
@@ -40,15 +41,15 @@ export function lancamentosDoMes(mes: string): Promise<LancamentoListado[]> {
  * Para o que passa na conta no mês: os lançamentos dele e também a fatura do mês anterior, que pode vencer
  * neste (cartão que fecha 25 e vence 5). Quem usa filtra por `mes` (competência) ou por `pagoEm`.
  */
-export function lancamentosDoCaixa(mes: string): Promise<LancamentoListado[]> {
-  return buscar([somarMeses(mes, -1), mes]);
+export function lancamentosDoCaixa(mes: string, dono?: string): Promise<LancamentoListado[]> {
+  return buscar([somarMeses(mes, -1), mes], dono);
 }
 
-async function buscar(meses: string[]): Promise<LancamentoListado[]> {
-  const supabase = await supabaseServidor();
-  const { data, error } = await supabase
-    .from('lancamentos')
-    .select(CAMPOS)
+async function buscar(meses: string[], dono?: string): Promise<LancamentoListado[]> {
+  const supabase = await clienteDe(dono);
+  let consulta = supabase.from('lancamentos').select(CAMPOS);
+  if (dono) consulta = consulta.eq('user_id', dono);
+  const { data, error } = await consulta
     .in('competencia', meses)
     .order('data', { ascending: false })
     .order('parcela', { ascending: true });

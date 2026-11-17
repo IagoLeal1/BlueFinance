@@ -1,0 +1,7 @@
+// App do iPhone (design kit: TelaGastoRapidoNativo e TelaWidgets).
+// O que é pessoal fica em Segredos.xcconfig, fora do git: o time da Apple, o identificador do app e o token do
+// Atalho (Ajustes › Token do Atalho). Copie Segredos.exemplo.xcconfig para Segredos.xcconfig e preencha.
+BLUEFIN_TEAM =
+BLUEFIN_BUNDLE_ID = br.bluefin.pessoal
+BLUEFIN_TOKEN =
+#include? "Segredos.xcconfig"

@@ -127,6 +127,9 @@ export async function POST(request: Request) {
     {
       mensagem: `Gasto salvo: ${categoria.nome} · ${formatSigned(valor, 'despesa')}${ondeCaiu}`,
       lancamento: { ...lancamento, categoria: categoria.nome },
+      // Para o "Desfazer" do app do iPhone (POST /api/quick-add/desfazer): a compra inteira, no crédito.
+      desfazer: pagamento.forma === 'credito' ? (linhas[0] as { compra_id: string }).compra_id : lancamento.id,
+      ...(vr && { vr: { saldo: vr.saldo } }),
     },
     { status: 201 },
   );
