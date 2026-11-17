@@ -200,6 +200,9 @@ segundo app. Muda a decisão "sem app nativo" (acima, em Plataforma). Telas 29 e
 - **Aviso da fatura:** dentro do app nativo o Web Push não funciona; vira notificação agendada no próprio iPhone.
 - A Dynamic Island continua sem aceitar digitação: ela confirma, não pergunta.
 - Depois, se valer a pena: Siri, controle na Central de Controle, Face ID.
+- **Dois comandos para o Botão de Ação:** "Lançar gasto" não abre o app (as perguntas são as do iOS: categoria,
+  quanto, como pagou e, no crédito, em quantas vezes; sem "com o quê", para ser mais rápido) e confirma na Dynamic
+  Island; "Gasto rápido" abre a tela própria do app, com teclado e animações. Pedido do dono: mais rápido sem abrir.
 - **Feito em 17/11/2026** (código em `ios/`, guia em `docs/06-app-ios.md`). O teclado do Gasto rápido tem "00" no
   lugar da vírgula (o valor entra pela direita, como na maquininha). O olhinho não chega aos widgets: cada widget tem
   "Esconder valores" na edição.

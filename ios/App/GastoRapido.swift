@@ -22,6 +22,11 @@ struct AtalhosDoBlueFin: AppShortcutsProvider {
             phrases: ["Gasto rápido no \(.applicationName)", "Lançar gasto no \(.applicationName)"],
             shortTitle: "Gasto rápido",
             systemImageName: "plus.circle")
+        AppShortcut(
+            intent: LancarGastoIntent(),
+            phrases: ["Lançar gasto sem abrir o \(.applicationName)", "Gasto no \(.applicationName)"],
+            shortTitle: "Lançar gasto",
+            systemImageName: "bolt.circle")
     }
 }
 

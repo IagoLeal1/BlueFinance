@@ -25,7 +25,8 @@ a confirmação na Dynamic Island e os widgets (design kit: telas 29 e 30; decis
 4. **Abrir** `ios/BlueFin.xcodeproj`, escolher o iPhone lá em cima e **Run** (⌘R).
 5. **Na primeira abertura**, o iPhone bloqueia: Ajustes › Geral › VPN e Gerenciamento de Dispositivos › o seu e-mail
    › Confiar. Abra o BlueFin e entre com o seu e-mail e senha (é o mesmo site, dentro do app).
-6. **Botão de Ação:** Ajustes do iPhone › Botão de Ação › Atalho › escolha **BlueFin › Gasto rápido**.
+6. **Botão de Ação:** Ajustes do iPhone › Botão de Ação › Atalho › escolha **BlueFin › Lançar gasto** (sem abrir o
+   app: o iOS pergunta categoria, quanto e como pagou) ou **BlueFin › Gasto rápido** (abre a tela própria do app).
 7. **Widgets:** segure a Tela de Início › Editar › Adicionar widget › BlueFin. Na Tela Bloqueada: VR e Fatura.
 8. Pode apagar o ícone antigo do BlueFin (o do Safari): o app novo já abre o site.
 
