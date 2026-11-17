@@ -187,6 +187,10 @@ Objetivo do dono: não precisar usar o Atalho toda hora. Segue o fluxo de sempre
 
 ### O BlueFin vira app nativo, um app só (combinado em 17/11/2026)
 
+> **Testado e deixado de lado em 17/11/2026.** O dono instalou, usou e não gostou; voltou ao PWA + Atalho
+> (a decisão de Plataforma, acima, vale de novo). O código fica em `ios/`, parado. A API que ele usa (`/api/resumo`,
+> desfazer, `id` no POST para não duplicar) continua no ar e não atrapalha o site nem o Atalho.
+
 O dono baixou o Xcode e quer o Gasto rápido com Dynamic Island e animações, tudo **no próprio BlueFin**, sem um
 segundo app. Muda a decisão "sem app nativo" (acima, em Plataforma). Telas 29 e 30 no design kit.
 
