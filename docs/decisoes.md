@@ -19,6 +19,7 @@ atualize aqui.
 | Publicação (Supabase + Vercel) | `docs/05-publicacao.md` |
 | App do iPhone (nativo) | `docs/06-app-ios.md`, código em `ios/` |
 | Open Finance (Meu Pluggy) | `docs/07-open-finance.md` |
+| Apple Pay (automação da Carteira) | `docs/08-apple-pay.md` |
 
 ## Como o trabalho é feito
 
@@ -179,6 +180,9 @@ Pedido do dono em 17/11/2026 (tela 31). Guia e passos do dono em `docs/07-open-f
 - **Categoria aprendida por estabelecimento** (a descrição do banco em maiúsculas, sem acento e sem números): ao
   lançar algo de "Para conferir", a categoria e o "com o quê" ficam guardados (`regras_banco`); da próxima vez o
   mesmo estabelecimento vira lançamento sozinho (origem `banco`, "do banco" na lista).
+- **Aprender com tudo** (pedido do dono em 17/11/2026): quando o banco confere um gasto que você lançou (pelo
+  Atalho, pelo app ou pelo Apple Pay confirmado), aquele estabelecimento aprende a categoria e o nome desse gasto,
+  se ainda não tinha. O que está "a confirmar" e o que o próprio banco lançou não ensinam.
 - **Para conferir** (topo do Débito e do Crédito em Lançamentos): o que não bateu nem é conhecido, com a categoria
   sugerida (a da Pluggy traduzida; gasto sem par vai em Outros; receita só sugere Salário). Lançar em um toque,
   Ignorar, ou tocar para trocar categoria e "com o quê". Some quando há categoria no filtro.
@@ -188,6 +192,26 @@ Pedido do dono em 17/11/2026 (tela 31). Guia e passos do dono em `docs/07-open-f
 - **Crédito:** a compra vai para o cartão do app de nome parecido com o do banco; senão o primeiro cartão.
 - **No banco:** `bancos` (a conexão, o último problema em `erro`), `transacoes_banco` (cada transação e a situação:
   conferir, conferido, lancado, ignorado; só a busca grava) e `regras_banco`.
+
+## Apple Pay
+
+Pedido do dono em 17/11/2026 (tela 32). Guia e passos em `docs/08-apple-pay.md`.
+
+- **Automação "Carteira" do Atalhos** ("Transação" no iOS 17 a 25), com "Executar Imediatamente": ao encostar o
+  iPhone ou o Watch, o Atalho manda valor, lugar e cartão para `POST /api/apple-pay` (token do Atalho) e mostra a
+  notificação de volta. Nada para tocar. Só pega Apple Pay na maquininha; o resto vem pelo banco.
+- **Cartões da Carteira:** o dono usa C6 no débito, C6 no crédito e VR. Cada cartão aparece em Ajustes › Apple Pay
+  no primeiro pagamento, com a forma adivinhada pelo nome ("Crédito" → crédito no cartão do app de nome parecido;
+  VR, Alelo, Pluxee… → VR; senão débito), e o dono troca ali. Crédito sem cartão no app, ou VR sem VR configurado,
+  entra como débito.
+- **Lugar conhecido** (a mesma tabela `regras_banco`, com a chave do nome do lugar): entra com a categoria e o nome
+  aprendidos. **Lugar novo:** entra na hora em Outros, **já conta no mês**, marcado "a confirmar"
+  (`lancamentos.a_confirmar`), e aparece em Para conferir com **Confirmar** (tocar na linha troca categoria e
+  nome). Confirmar, ou editar o gasto, ensina o lugar.
+- **Sem duplicar:** se você lançou o mesmo valor e forma pelo Atalho nos últimos 30 minutos, o Apple Pay só
+  confere, e o lugar aprende a sua categoria e o seu nome. A automação rodando duas vezes (mesmo lugar e valor em
+  2 minutos) não grava de novo. No dia seguinte, o banco confere o gasto do Apple Pay ("✓ banco").
+- **Para conferir** aparece em todas as abas de Lançamentos (o gasto do VR também precisa de confirmação).
 
 ## Privacidade na tela
 
@@ -206,7 +230,7 @@ Objetivo do dono: não precisar usar o Atalho toda hora. Segue o fluxo de sempre
   API; o cartão diz a forma (C6 crédito → crédito; VR na Carteira → VR). Só pega Apple Pay. Depois de atualizar o
   iOS ela pode voltar para "Perguntar antes de executar".
 - **Open Finance pelo Meu Pluggy, no dia seguinte:** **feito em 17/11/2026** (ver "Open Finance (Meu Pluggy)",
-  acima); o Apple Pay continua por fazer. Gratuito só para uso pessoal (até 5 conexões), atualiza a
+  acima). O Apple Pay também foi **feito em 17/11/2026** (ver "Apple Pay", acima). Gratuito só para uso pessoal (até 5 conexões), atualiza a
   cada 24 horas (sem atualização na hora), traz os últimos 7 dias, autorização vale 1 ano. Pega Pix, débito,
   cartão físico e compras online. Leitura apenas. O Client Secret da Pluggy fica só com o dono (Vercel).
 - **Sem duplicar:** o gasto que já entrou (Apple Pay ou Atalho) é reconhecido pelo valor, data próxima e forma, e

@@ -19,7 +19,7 @@ export interface Lancamento {
   /** No VR (gasto pago com ele, depósito, acerto), fica fora de Entrou, Saiu e Sobrou: o VR tem saldo próprio. */
   forma?: FormaPagamento | null;
   /** "vr": o depósito do mês no VR; "acerto": saldo inicial ou correção do VR — não é gasto de categoria nenhuma. */
-  origem?: 'app' | 'atalho' | 'vr' | 'acerto' | 'banco';
+  origem?: 'app' | 'atalho' | 'vr' | 'acerto' | 'banco' | 'applepay';
 }
 
 export interface ResumoDoMes {

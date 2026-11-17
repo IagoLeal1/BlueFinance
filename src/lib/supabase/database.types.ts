@@ -71,6 +71,26 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"cartoes_carteira": {
+                  Row: {
+                    "cartao_id": string | null,"criado_em": string,"forma": string,"nome": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "cartao_id"?: string | null,"criado_em"?: string,"forma": string,"nome": string,"user_id": string
+                  }
+                  Update: {
+                    "cartao_id"?: string | null,"criado_em"?: string,"forma"?: string,"nome"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "cartoes_carteira_cartao_id_fkey"
+      columns: ["cartao_id"]
+isOneToOne: false
+      referencedRelation: "cartoes"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"categorias": {
                   Row: {
                     "icone": string,"id": string,"nome": string,"ordem": number,"tipo": string,"user_id": string
@@ -129,14 +149,14 @@ isOneToOne: false
                   ]
                 },"lancamentos": {
                   Row: {
-                    "cartao_id": string | null,"categoria_id": string | null,"competencia": string,"compra_id": string | null,"criado_em": string,"data": string,"descricao": string,"forma_pagamento": string | null,"id": string,"investimento_id": string | null,"origem": string,"parcela": number | null,"parcelas": number | null,"recorrente": boolean,"tipo": string,"user_id": string,"valor": number
+                    "a_confirmar": boolean,"cartao_id": string | null,"categoria_id": string | null,"competencia": string,"compra_id": string | null,"criado_em": string,"data": string,"descricao": string,"estabelecimento": string | null,"forma_pagamento": string | null,"id": string,"investimento_id": string | null,"origem": string,"parcela": number | null,"parcelas": number | null,"recorrente": boolean,"tipo": string,"user_id": string,"valor": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "cartao_id"?: string | null,"categoria_id"?: string | null,"competencia"?: string,"compra_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"forma_pagamento"?: string | null,"id"?: string,"investimento_id"?: string | null,"origem"?: string,"parcela"?: number | null,"parcelas"?: number | null,"recorrente"?: boolean,"tipo": string,"user_id": string,"valor": number
+                    "a_confirmar"?: boolean,"cartao_id"?: string | null,"categoria_id"?: string | null,"competencia"?: string,"compra_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"estabelecimento"?: string | null,"forma_pagamento"?: string | null,"id"?: string,"investimento_id"?: string | null,"origem"?: string,"parcela"?: number | null,"parcelas"?: number | null,"recorrente"?: boolean,"tipo": string,"user_id": string,"valor": number
                   }
                   Update: {
-                    "cartao_id"?: string | null,"categoria_id"?: string | null,"competencia"?: string,"compra_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"forma_pagamento"?: string | null,"id"?: string,"investimento_id"?: string | null,"origem"?: string,"parcela"?: number | null,"parcelas"?: number | null,"recorrente"?: boolean,"tipo"?: string,"user_id"?: string,"valor"?: number
+                    "a_confirmar"?: boolean,"cartao_id"?: string | null,"categoria_id"?: string | null,"competencia"?: string,"compra_id"?: string | null,"criado_em"?: string,"data"?: string,"descricao"?: string,"estabelecimento"?: string | null,"forma_pagamento"?: string | null,"id"?: string,"investimento_id"?: string | null,"origem"?: string,"parcela"?: number | null,"parcelas"?: number | null,"recorrente"?: boolean,"tipo"?: string,"user_id"?: string,"valor"?: number
                   }
                   Relationships: [
                     {

@@ -1014,4 +1014,78 @@ lista. Estabelecimento já conhecido entra direto, sem passar por conferir. O At
 na hora; o banco confere no dia seguinte. Entradas (salário, Pix recebido) também aparecem para conferir, como receita.""",
      altura=1010, largura=1300)
 
+# 32 · Apple Pay: encostou o iPhone, o gasto entra sozinho, do seu jeito
+def notif_bloqueio(titulo_, texto, quando="agora"):
+    return ('<div style="background:rgba(28,32,46,.78);border-radius:22px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;'
+            'backdrop-filter:blur(20px)">'
+            '<span style="width:36px;height:36px;border-radius:9px;flex:none;background:linear-gradient(135deg,#ff4f9a,#6a5cff 60%,#2fb3ff)"></span>'
+            f'<div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;font:700 14px/19px var(--font-sans)">'
+            f'<span>{titulo_}</span><span style="font-weight:500;color:{CINZA_ILHA}">{quando}</span></div>'
+            f'<div style="font:500 14px/19px var(--font-sans)">{texto}</div></div></div>')
+bloqueio_apple_pay = tela_sistema(
+    '<div style="text-align:center;margin-top:28px;font:600 17px/22px var(--font-sans)">segunda-feira, 17 de novembro</div>'
+    '<div class="num" style="text-align:center;font:700 86px/1 var(--font-sans);letter-spacing:-2px">12:41</div>'
+    '<div style="flex:1"></div><div style="display:grid;gap:8px;margin-bottom:70px">'
+    + notif_bloqueio("BlueFin", "Gasto salvo: Mercado · Atacadão · − R$ 187,40")
+    + notif_bloqueio("BlueFin", "Lugar novo: Padaria Real · − R$ 8,50 em Outros. Confirme em Lançamentos.", "12:05")
+    + notif_bloqueio("BlueFin", "Gasto salvo: Lazer · Cinema · − R$ 64,00 no crédito (C6bank, fatura de dezembro)", "11:40")
+    + notif_bloqueio("BlueFin", "Gasto salvo: Alimentação · Almoço · − R$ 32,90 no VR (sobram R$ 379,40)", "11:02")
+    + '</div>', fundo="linear-gradient(170deg,#0b1f4d 0%,#1846c8 55%,#0b1220 100%)")
+def linha_confirmar(icone, categoria, titulo_, meta, valor):
+    fundo, cor = CORES_CAT.get(categoria, ("var(--surface-sunken)", "var(--ink-muted)"))
+    chip_cat = (f'<span class="bf-chip" aria-pressed="false" style="height:30px;padding:0 10px;font-size:13px">'
+                f'<span style="display:inline-grid;place-items:center;width:18px;height:18px;border-radius:6px;background:{fundo};color:{cor}">{i(icone)}</span>'
+                f'{categoria}</span>')
+    return ('<li class="bf-row" style="display:grid;gap:8px;padding:12px 0;align-items:stretch">'
+            f'<div style="display:flex;align-items:center;gap:12px"><div class="bf-row__main"><div class="bf-row__title">{titulo_}</div>'
+            f'<div class="bf-row__meta">{meta}</div></div><span class="bf-row__amount is-negative">{valor}</span></div>'
+            f'<div style="display:flex;align-items:center;gap:8px">{chip_cat}<span style="flex:1"></span>'
+            f'<button class="bf-btn bf-btn--primary" style="height:34px;padding:0 14px;font-size:14px">{i("check")}Confirmar</button></div></li>')
+conferir_ap = ('<section class="bf-card" style="padding-top:10px;padding-bottom:4px">'
+               f'<div class="bf-card__head" style="margin:0"><h3 class="bf-card__title" style="display:flex;gap:8px;align-items:center">{i("landmark")}Para conferir</h3><span class="caption muted">2</span></div>'
+               '<div class="caption muted">O que é do Apple Pay já conta no mês: confirme a categoria e o nome. O que é do banco espera você lançar.</div><ul class="bf-list">'
+               + linha_confirmar("circle-ellipsis", "Outros", "Padaria Real", "Hoje · Débito · Apple Pay · já conta no mês", "− R$ 8,50")
+               + linha_conferir("circle-ellipsis", "Outros", "PIX ENVIADO JOAO S SILVA", "Ontem · Pix · do banco", "− R$ 50,00")
+               + '</ul></section>')
+lanc_ap = iphone(titulo("Lançamentos", CALENDARIO) + FILTRO("Tudo") + SEG3("Débito") + conferir_ap
+                 + '<section class="bf-card" style="padding-top:0;padding-bottom:4px"><div class="bf-list__day">Hoje · 17 nov</div><ul class="bf-list">'
+                 + linha_cor("shopping-cart", "Atacadão", "Mercado · Débito · Apple Pay", "− R$ 187,40", "Mercado")
+                 + linha_cor("circle-ellipsis", "Padaria Real", "Outros · Débito · Apple Pay · a confirmar", "− R$ 8,50")
+                 + "</ul></section>", aba=1)
+def cartao_carteira(nome, marcada):
+    opcoes = ["Débito", "Crédito · C6bank", "VR"]
+    seg = ('<div class="bf-seg" role="radiogroup" style="margin-top:6px">' + "".join(
+        f'<button class="bf-seg__opt" role="radio" aria-checked="{"true" if o == marcada else "false"}" style="font-size:13px">{o}</button>' for o in opcoes) + '</div>')
+    return (f'<li style="padding:10px 0;border-top:1px solid var(--line)"><div style="display:flex;align-items:center;gap:10px">'
+            f'<span class="bf-cat bf-cat--neutral">{i("credit-card")}</span><div class="bf-row__main"><div class="bf-row__title">{nome}</div>'
+            '<div class="bf-row__meta">na Carteira do iPhone</div></div></div>' + seg + '</li>')
+ajustes_ap = iphone(titulo("Ajustes")
+                    + '<section class="bf-card" style="display:grid;gap:10px"><h3 class="bf-card__title">Apple Pay</h3>'
+                    + '<div class="caption muted">Cada cartão aparece aqui depois do primeiro pagamento. Escolha como ele entra.</div>'
+                    + '<ul style="list-style:none;margin:0;padding:0">' + cartao_carteira("C6 Débito", "Débito") + cartao_carteira("C6 Crédito", "Crédito · C6bank") + cartao_carteira("VR Refeição", "VR") + '</ul>'
+                    + '<div class="label muted" style="margin-top:4px">Montar a automação (uma vez)</div><ol style="margin:0;padding-left:18px;display:grid;gap:6px" class="body">'
+                    + '<li>Atalhos › Automação › + › <b>Carteira</b></li>'
+                    + '<li>Marque os cartões do C6 e o VR · <b>Executar Imediatamente</b></li>'
+                    + '<li>Ação: <b>BlueFin · Apple Pay</b> (com o token do Atalho)</li></ol>'
+                    + f'<div class="bf-nota">{i("info")}<span>Só pega o Apple Pay (encostando o iPhone ou o Watch). Cartão físico e compra online chegam pelo banco, no dia seguinte.</span></div>'
+                    + '</section>', aba=4)
+tela("TelaApplePay", "32 · Apple Pay: encostou o iPhone, o gasto entra sozinho, com a sua categoria e o seu nome",
+     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:16px">'
+     + painel("1 · Encostou o iPhone", bloqueio_apple_pay,
+              "Lugar conhecido: entra com a categoria e o nome que você já usou ali. Lugar novo: entra na hora em uma categoria sugerida e pede para você confirmar. No VR, diz quanto sobra.")
+     + painel("2 · Lançamentos", lanc_ap,
+              "O que veio do Apple Pay já conta no mês. Lugar novo fica em Para conferir até você confirmar ou trocar a categoria e o nome (tocar na linha). Dali em diante, aquele lugar entra sempre assim.")
+     + painel("3 · Ajustes › Apple Pay", ajustes_ap,
+              "Como cada cartão da Carteira entra (C6 no débito ou no crédito, na fatura certa; VR no VR) e o passo a passo da automação. Cartão novo entra pelo nome (\"Crédito\" no nome → crédito; VR, Alelo, Pluxee... → VR; senão Débito) até você escolher.")
+     + "</div>",
+     """Apple Pay pela automação "Carteira" (Transação) do app Atalhos, com "Executar Imediatamente": ao encostar o
+iPhone ou o Watch, o Atalho manda o valor, o nome do lugar e o cartão para o BlueFin (com o token do Atalho) e mostra a
+notificação de volta. O cartão diz a forma (C6 débito → Débito, C6 crédito → Crédito na fatura do C6bank, VR → VR; escolhido em Ajustes). Lugar conhecido entra com a
+categoria e o nome aprendidos; lugar novo entra na hora numa categoria sugerida, já conta no mês, e fica em Para
+conferir até você confirmar. O app aprende com tudo: confirmar, lançar do banco, e também quando o banco ou o Apple
+Pay confere um gasto que você lançou pelo Atalho (o lugar fica com a sua categoria e o seu nome, se ainda não tinha).
+Sem duplicar: se você já lançou pelo Atalho o mesmo valor minutos antes, o Apple Pay só confere; no dia seguinte, o
+banco confere o que veio do Apple Pay ("✓ banco").""",
+     altura=1010, largura=1300)
+
 print("telas geradas em", RAIZ)

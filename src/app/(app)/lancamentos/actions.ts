@@ -81,3 +81,39 @@ export async function ignorarDoBanco(_anterior: EstadoDoBanco, form: FormData): 
   refresh();
   return { ok: true };
 }
+
+/**
+ * Para conferir › Confirmar (Apple Pay em lugar novo): o gasto já conta no mês; aqui ele fica com a categoria e o
+ * "com o quê" escolhidos, e o lugar aprende — da próxima vez entra sozinho assim.
+ */
+export async function confirmarApplePay(_anterior: EstadoDoBanco, form: FormData): Promise<EstadoDoBanco> {
+  const id = String(form.get('id') ?? '');
+  const supabase = await supabaseServidor();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims.sub;
+  if (!userId) return { erro: 'Sua sessão expirou. Entre de novo.' };
+
+  const { data: l } = await supabase.from('lancamentos').select('id, descricao, estabelecimento').eq('id', id).maybeSingle();
+  if (!l) return { erro: 'Não achei esse gasto.' };
+  const { data: categoria } = await supabase
+    .from('categorias')
+    .select('id')
+    .eq('id', String(form.get('categoria_id') ?? ''))
+    .eq('tipo', 'despesa')
+    .maybeSingle();
+  if (!categoria) return { erro: 'Escolha a categoria.' };
+  const descricao = String(form.get('descricao') ?? '').trim() || l.descricao;
+
+  const { error } = await supabase.from('lancamentos').update({ categoria_id: categoria.id, descricao, a_confirmar: false }).eq('id', l.id);
+  if (error) return { erro: 'Não foi possível confirmar. Tente de novo.' };
+  if (l.estabelecimento) {
+    await supabase
+      .from('regras_banco')
+      .upsert(
+        { user_id: userId, tipo: 'despesa', estabelecimento: l.estabelecimento, categoria_id: categoria.id, descricao },
+        { onConflict: 'user_id,tipo,estabelecimento' },
+      );
+  }
+  refresh();
+  return { ok: true };
+}

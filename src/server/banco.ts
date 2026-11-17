@@ -182,10 +182,10 @@ async function sincronizarUm(chave: string, banco: { user_id: string; item_id: s
   // Lançamentos de alguns dias antes da conexão em diante (e as assinaturas, que repetem a data da 1ª).
   const folga = new Date(Date.parse(`${banco.desde}T00:00:00-03:00`) - 4 * 86_400_000).toISOString();
   const [jaVieram, lancamentos, regras, categorias, cartoes] = await Promise.all([
-    db.from('transacoes_banco').select('id, pluggy_id, situacao, lancamento_id, tipo, forma, valor, parcelas, data').eq('user_id', u),
+    db.from('transacoes_banco').select('id, pluggy_id, situacao, lancamento_id, tipo, forma, valor, parcelas, data, estabelecimento').eq('user_id', u),
     db
       .from('lancamentos')
-      .select('id, tipo, forma_pagamento, valor, data, parcela, parcelas, recorrente, competencia')
+      .select('id, tipo, forma_pagamento, valor, data, parcela, parcelas, recorrente, competencia, categoria_id, descricao, origem, a_confirmar')
       .eq('user_id', u)
       .or(`data.gte.${folga},recorrente.eq.true`),
     db.from('regras_banco').select('tipo, estabelecimento, categoria_id, descricao').eq('user_id', u),
@@ -216,12 +216,26 @@ async function sincronizarUm(chave: string, banco: { user_id: string; item_id: s
   };
   const resultado = { novas: 0, conferidas: 0, lancadas: 0, paraConferir: 0 };
 
+  // Aprender com tudo: o lugar que bateu com um gasto seu fica com a sua categoria e o seu nome, se ainda não tinha.
+  // O que está "a confirmar" (Apple Pay em lugar novo) e o que o próprio banco lançou não ensinam.
+  const porId = new Map(lancamentos.data!.map((l) => [l.id, l]));
+  const aprendidas: { user_id: string; tipo: string; estabelecimento: string; categoria_id: string; descricao: string }[] = [];
+  const aprender = (tipo: string, estabelecimento: string, lancamentoId: string) => {
+    const l = porId.get(lancamentoId);
+    if (!l?.categoria_id || l.a_confirmar || l.origem === 'banco' || !estabelecimento) return;
+    if (regras.data!.some((r) => r.tipo === tipo && r.estabelecimento === estabelecimento)) return;
+    const regra = { user_id: u, tipo, estabelecimento, categoria_id: l.categoria_id, descricao: l.descricao };
+    regras.data!.push(regra);
+    aprendidas.push(regra);
+  };
+
   // O que estava para conferir e você lançou depois.
   for (const p of jaVieram.data!.filter((t) => t.situacao === 'conferir')) {
     const par = parDe({ tipo: p.tipo as DoBanco['tipo'], forma: p.forma as DoBanco['forma'], valor: p.valor, parcelas: p.parcelas, data: p.data });
     if (!par) continue;
     const { error } = await db.from('transacoes_banco').update({ situacao: 'conferido', lancamento_id: par }).eq('id', p.id).eq('situacao', 'conferir');
     if (error) throw error;
+    aprender(p.tipo, p.estabelecimento, par);
     resultado.conferidas++;
   }
 
@@ -248,7 +262,10 @@ async function sincronizarUm(chave: string, banco: { user_id: string; item_id: s
       categoria_pluggy: t.categoriaPluggy,
     };
     const par = parDe(t);
-    if (par) return { ...base, situacao: 'conferido', lancamento_id: par };
+    if (par) {
+      aprender(t.tipo, t.estabelecimento, par);
+      return { ...base, situacao: 'conferido', lancamento_id: par };
+    }
     const regra = regras.data!.find((r) => r.tipo === t.tipo && r.estabelecimento === t.estabelecimento);
     const cartao = t.forma === 'credito' ? escolherCartao(cartoesDoApp, t.nomeDaConta) : null;
     if (regra && (t.forma !== 'credito' || cartao)) {
@@ -289,6 +306,13 @@ async function sincronizarUm(chave: string, banco: { user_id: string; item_id: s
       await db.from('transacoes_banco').update({ lancamento_id: criados[0]!.id }).eq('id', g.id);
       resultado.lancadas++;
     }
+  }
+
+  if (aprendidas.length > 0) {
+    const { error: erroRegras } = await db
+      .from('regras_banco')
+      .upsert(aprendidas, { onConflict: 'user_id,tipo,estabelecimento', ignoreDuplicates: true });
+    if (erroRegras) throw erroRegras;
   }
 
   const { error } = await db

@@ -51,7 +51,7 @@ export interface DoBanco {
 const FICA_DE_FORA = /credit card payment|same person transfer|investment|fixed income|variable income|pension|savings/i;
 const FATURA = /\b(PAGAMENTO|PGTO|PAG)\.?\s+(DE\s+|DA\s+)?FATURA/i;
 
-const semAcento = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+const semAcento = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 const titulo = (s: string) =>
   s
     .toLowerCase()

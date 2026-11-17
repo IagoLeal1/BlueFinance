@@ -168,7 +168,7 @@ export async function editarLancamento(_anterior: EstadoLancamento, form: FormDa
   const supabase = await supabaseServidor();
   const { data: atual } = await supabase
     .from('lancamentos')
-    .select('tipo, data, descricao, categoria_id, forma_pagamento')
+    .select('user_id, tipo, data, descricao, categoria_id, forma_pagamento, estabelecimento')
     .eq('id', id)
     .maybeSingle();
   if (!atual) return { erro: 'Lançamento não encontrado.' };
@@ -213,6 +213,21 @@ export async function editarLancamento(_anterior: EstadoLancamento, form: FormDa
   if (Object.keys(mudancas).length > 0) {
     const { error: erroData } = await supabase.from('lancamentos').update(mudancas).eq('id', id);
     if (erroData) return { erro: 'Não foi possível salvar. Tente de novo.' };
+  }
+  // Gasto do Apple Pay (ou que o Apple Pay conferiu): editar também confirma e ensina o lugar.
+  const categoriaFinal = p_categoria ?? atual.categoria_id;
+  if (atual.estabelecimento && atual.tipo === 'despesa' && categoriaFinal) {
+    await supabase.from('lancamentos').update({ a_confirmar: false }).eq('id', id);
+    await supabase.from('regras_banco').upsert(
+      {
+        user_id: atual.user_id,
+        tipo: 'despesa',
+        estabelecimento: atual.estabelecimento,
+        categoria_id: categoriaFinal,
+        descricao: descricao || atual.descricao,
+      },
+      { onConflict: 'user_id,tipo,estabelecimento' },
+    );
   }
   refresh();
   return { ok: true };

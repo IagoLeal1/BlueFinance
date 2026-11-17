@@ -7,6 +7,7 @@ import { MesPicker } from '@/components/app/mes-picker';
 import { diaDe, mesAtual, mesDaUrl, nomeDoMes, opcoesDeMes, rotuloDoDia, somarMeses, tituloDoMes } from '@/domain/datas';
 import { diaDoFechamento, faturasDoCartao } from '@/domain/parcelas';
 import { noMes } from '@/domain/summary';
+import { applePayAConfirmar } from '@/server/apple-pay';
 import { buscarSeAntigo, paraConferir } from '@/server/banco';
 import { listarCartoes } from '@/server/cartoes';
 import { categoriasDoUsuario } from '@/server/categorias';
@@ -32,13 +33,14 @@ async function ListaDoMes({ searchParams }: { searchParams: PageProps<'/lancamen
   const extrato = params.ver === 'credito' ? 'credito' : params.ver === 'vr' ? 'vr' : 'debito';
   const categoria = typeof params.categoria === 'string' ? params.categoria : null;
   await completarAssinaturas(agora);
-  const [caixa, categorias, ultimaParcela, cartoes, vr, doBanco, claims] = await Promise.all([
+  const [caixa, categorias, ultimaParcela, cartoes, vr, doBanco, applePay, claims] = await Promise.all([
     lancamentosDoCaixa(mes),
     categoriasDoUsuario(),
     ultimoMesComParcelas(mesAtual(agora)),
     listarCartoes(),
     vrDoUsuario(),
     paraConferir(),
+    applePayAConfirmar(),
     supabaseServidor().then((s) => s.auth.getClaims()),
   ]);
   // Open Finance: se a última busca no banco foi há horas, busca de novo depois de mostrar a tela.
@@ -131,6 +133,7 @@ async function ListaDoMes({ searchParams }: { searchParams: PageProps<'/lancamen
         gastos={caixa.filter((l) => l.tipo === 'despesa' && l.origem !== 'acerto' && noMes(l, mes))}
         categoriaInicial={categoria}
         doBanco={doBanco}
+        applePay={applePay}
       />
     </>
   );

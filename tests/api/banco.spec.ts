@@ -133,6 +133,33 @@ test.describe('Open Finance: a busca diária no banco', () => {
     expect(await doBanco(usuario)).toEqual([{ id: 't-uber', situacao: 'conferido', lancado: true, sugestao: 'Outros' }]);
   });
 
+  test('o que o banco confere ensina o lugar: a sua categoria e o seu nome (o que está a confirmar, não)', async ({ request, usuario }) => {
+    const hoje = diaAtras(0);
+    const db = clienteDe(usuario);
+    await semearLancamentos(usuario, [{ valor: 3290, categoria: 'Alimentação', descricao: 'Almoço', data: `${hoje}T12:30:00-03:00` }]);
+    const { data: outros } = await db.from('categorias').select('id').eq('nome', 'Outros').single();
+    await db.from('lancamentos').insert({
+      user_id: usuario.id, tipo: 'despesa', valor: 850, categoria_id: outros!.id, descricao: 'Padaria Real', data: `${hoje}T08:00:00-03:00`,
+      forma_pagamento: 'debito', origem: 'applepay', a_confirmar: true, estabelecimento: 'PADARIA REAL',
+    });
+    const itemId = await montarPluggy([
+      {
+        type: 'BANK',
+        name: 'C6 Bank',
+        transacoes: [
+          { id: 't-almoco', description: 'RESTAURANTE BOM PRATO', amount: -32.9, date: naPluggy(hoje) },
+          { id: 't-padaria', description: 'PADARIA REAL LTDA', amount: -8.5, date: naPluggy(hoje) },
+        ],
+      },
+    ]);
+    await semearBanco(usuario, itemId, hoje);
+    await buscar(request);
+
+    expect((await doBanco(usuario)).map((t) => t.situacao)).toEqual(['conferido', 'conferido']);
+    const { data: regras } = await db.from('regras_banco').select('estabelecimento, descricao, categorias(nome)');
+    expect(regras).toEqual([{ estabelecimento: 'RESTAURANTE BOM PRATO', descricao: 'Almoço', categorias: { nome: 'Alimentação' } }]);
+  });
+
   test('conexão que não existe mais na Pluggy: guarda o problema para mostrar em Ajustes', async ({ request, usuario }) => {
     await semearBanco(usuario, 'item-que-nao-existe', diaAtras(0));
     expect((await buscar(request)).status()).toBe(200);

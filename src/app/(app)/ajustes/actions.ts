@@ -189,3 +189,23 @@ export async function conectarBanco(_anterior: EstadoCartao, form: FormData): Pr
   refresh();
   return { ok: true };
 }
+
+/**
+ * Ajustes › Apple Pay: como um cartão da Carteira entra. `forma` é "debito", "vr" ou "credito:{id do cartão}".
+ */
+export async function salvarCartaoCarteira(nome: string, forma: string): Promise<EstadoCartao> {
+  const supabase = await supabaseServidor();
+  const [tipo, cartaoId] = forma.split(':');
+  if (tipo !== 'debito' && tipo !== 'vr' && tipo !== 'credito') return { erro: 'Escolha como o cartão entra.' };
+  if (tipo === 'credito') {
+    const { data: cartao } = await supabase.from('cartoes').select('id').eq('id', cartaoId ?? '').maybeSingle();
+    if (!cartao) return { erro: 'Cartão não encontrado.' };
+  }
+  const { error } = await supabase
+    .from('cartoes_carteira')
+    .update({ forma: tipo, cartao_id: tipo === 'credito' ? cartaoId! : null })
+    .eq('nome', nome);
+  if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
+  refresh();
+  return { ok: true };
+}

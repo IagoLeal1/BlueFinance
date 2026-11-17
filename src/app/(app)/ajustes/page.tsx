@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
+import { ApplePayAjustes } from '@/components/app/apple-pay-ajustes';
 import { AvisoDaFatura } from '@/components/app/aviso-fatura';
 import { BancoAjustes } from '@/components/app/banco-ajustes';
 import { BotaoSair } from '@/components/app/botao-sair';
@@ -7,6 +8,7 @@ import { Cartoes } from '@/components/app/cartoes';
 import { TokenAtalho } from '@/components/app/token-atalho';
 import { ConfigurarVr } from '@/components/app/vr-ajustes';
 import { supabaseServidor } from '@/lib/supabase/server';
+import { cartoesDaCarteira } from '@/server/apple-pay';
 import { bancoDoUsuario } from '@/server/banco';
 import { listarCartoes } from '@/server/cartoes';
 import { tokenAtivo } from '@/server/tokens';
@@ -29,6 +31,9 @@ export default function Ajustes() {
       </Suspense>
       <Suspense fallback={null}>
         <BancoDoUsuario />
+      </Suspense>
+      <Suspense fallback={null}>
+        <ApplePayDoUsuario />
       </Suspense>
       <AvisoDaFatura />
       <section aria-label="Lançar sem abrir o app" className="grid gap-3 rounded-lg bg-card p-4 shadow-card">
@@ -81,6 +86,11 @@ async function VrDoUsuario() {
 
 async function BancoDoUsuario() {
   return <BancoAjustes banco={await bancoDoUsuario()} />;
+}
+
+async function ApplePayDoUsuario() {
+  const [cartoes, doApp, vr] = await Promise.all([cartoesDaCarteira(), listarCartoes(), vrDoUsuario()]);
+  return <ApplePayAjustes cartoes={cartoes} doApp={doApp.map((c) => ({ id: c.id, nome: c.nome }))} temVr={!!vr} />;
 }
 
 async function EmailDaConta() {

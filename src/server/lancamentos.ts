@@ -7,7 +7,7 @@ import { supabaseServidor } from '@/lib/supabase/server';
 import { clienteDe } from './acesso';
 
 export type { FormaPagamento };
-const ORIGENS = ['app', 'atalho', 'vr', 'acerto', 'banco'] as const;
+const ORIGENS = ['app', 'atalho', 'vr', 'acerto', 'banco', 'applepay'] as const;
 
 export interface LancamentoListado extends Lancamento {
   id: string;
@@ -15,7 +15,7 @@ export interface LancamentoListado extends Lancamento {
   icone: string;
   /** Ordem da categoria de gasto (1 a 6 têm cor própria, a mesma dos gráficos). */
   ordemCategoria: number | null;
-  /** "vr": o depósito do mês no VR; "acerto": saldo inicial ou correção do VR; "banco": veio do Open Finance. */
+  /** "vr": o depósito do mês no VR; "acerto": saldo inicial ou correção do VR; "banco": veio do Open Finance; "applepay": da automação da Carteira. */
   origem: (typeof ORIGENS)[number];
   forma: FormaPagamento | null;
   cartao: { id: string; nome: string; diaFechamento: number; diaVencimento: number } | null;
@@ -29,10 +29,12 @@ export interface LancamentoListado extends Lancamento {
   recorrente: boolean;
   /** Bateu com uma transação do banco (Open Finance): "✓ banco". */
   conferido?: boolean;
+  /** Apple Pay em lugar novo: já conta no mês, esperando você confirmar a categoria e o nome. */
+  aConfirmar?: boolean;
 }
 
 const CAMPOS =
-  'id, tipo, valor, data, descricao, origem, competencia, forma_pagamento, compra_id, parcela, parcelas, recorrente, categorias(nome, icone, ordem), investimentos(nome), cartoes(id, nome, dia_fechamento, dia_vencimento), transacoes_banco(id)';
+  'id, tipo, valor, data, descricao, origem, competencia, forma_pagamento, compra_id, parcela, parcelas, recorrente, a_confirmar, categorias(nome, icone, ordem), investimentos(nome), cartoes(id, nome, dia_fechamento, dia_vencimento), transacoes_banco(id)';
 
 /** Lançamentos do usuário logado num mês de competência, do mais novo ao mais antigo (RLS: só os dele). */
 export function lancamentosDoMes(mes: string): Promise<LancamentoListado[]> {
@@ -97,6 +99,7 @@ async function buscar(meses: string[], dono?: string): Promise<LancamentoListado
     totalDaCompra: l.compra_id && !l.recorrente ? (totais.get(l.compra_id) ?? null) : null,
     recorrente: l.recorrente,
     conferido: l.transacoes_banco.length > 0,
+    aConfirmar: l.a_confirmar,
   }));
 }
 

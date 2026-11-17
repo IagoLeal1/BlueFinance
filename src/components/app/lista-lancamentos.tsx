@@ -6,6 +6,7 @@ import { CreditCard } from 'lucide-react';
 import { diaCurto, nomeDoMes } from '@/domain/datas';
 import { formatBRL, formatSigned } from '@/domain/money';
 import type { Cartao } from '@/server/cartoes';
+import type { ApplePayAConfirmar } from '@/server/apple-pay';
 import type { ParaConferir as ItemDoBanco } from '@/server/banco';
 import type { LancamentoListado } from '@/server/lancamentos';
 import { Segmented } from './segmented';
@@ -104,6 +105,7 @@ export function ListaLancamentos({
   gastos = [],
   categoriaInicial = null,
   doBanco = [],
+  applePay = [],
 }: {
   extratoInicial: Extrato;
   faturas: Fatura[];
@@ -119,8 +121,10 @@ export function ListaLancamentos({
   gastos?: LancamentoListado[];
   /** Categoria já marcada ao abrir (?categoria=Mercado, vindo do Início). */
   categoriaInicial?: string | null;
-  /** Open Finance: o que veio do banco e espera você conferir (no topo do Débito e do Crédito). */
+  /** Open Finance: o que veio do banco e espera você conferir (no topo de cada aba). */
   doBanco?: ItemDoBanco[];
+  /** Apple Pay em lugar novo, esperando você confirmar (também em Para conferir). */
+  applePay?: ApplePayAConfirmar[];
 }) {
   const comVr = !!vr || diasVr.length > 0;
   // Só as categorias com gasto no mês, na ordem do app (as que não estão mais na lista vão no fim).
@@ -198,7 +202,7 @@ export function ListaLancamentos({
           </p>
         </section>
       )}
-      {!categoria && !noVr && <ParaConferir itens={doBanco} categorias={categorias} />}
+      {!categoria && <ParaConferir itens={doBanco} applePay={applePay} categorias={categorias} />}
       {vazio && (
         <p className="rounded-lg bg-card p-5 text-center font-bold shadow-card">
           {noDebito ? 'Nenhum lançamento neste mês.' : noVr ? 'Nada no VR neste mês.' : 'Nenhuma compra no crédito neste mês.'}

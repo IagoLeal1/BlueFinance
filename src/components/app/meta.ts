@@ -22,6 +22,8 @@ export function metaDe(l: LancamentoListado): string {
     partes.push(FORMA[l.forma]);
   }
   if (l.origem === 'atalho') partes.push('pelo Atalho');
+  if (l.origem === 'applepay') partes.push('Apple Pay');
+  if (l.aConfirmar) partes.push('a confirmar');
   // Open Finance: veio do banco, ou bateu com uma transação dele.
   if (l.origem === 'banco') partes.push('do banco');
   else if (l.conferido) partes.push('✓\u00a0banco');
