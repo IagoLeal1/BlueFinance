@@ -163,3 +163,23 @@ Pedido do dono em 12/11/2026 (tela 27).
 - **Olhinho** no topo do Início e da aba Investir: troca os valores com dinheiro por "R$ ••••" (saldo,
   "Depois da fatura", Entrou, Saiu, Investiu, faturas, investimentos e o saldo do VR). Os lançamentos continuam
   visíveis. A escolha fica guardada no aparelho.
+
+## Próximas mudanças (combinadas, ainda não feitas)
+
+### Lançar sozinho: Apple Pay + Open Finance (combinado em 17/11/2026)
+
+Objetivo do dono: não precisar usar o Atalho toda hora. Segue o fluxo de sempre (design, aprovação, código).
+
+- **Apple Pay, na hora:** automação "Transação" (iOS 17 a 25; "Carteira" no iOS 26) no app Atalhos, com
+  "Executar Imediatamente". Ao pagar encostando o iPhone ou o Watch, manda valor, estabelecimento e cartão para a
+  API; o cartão diz a forma (C6 crédito → crédito; VR na Carteira → VR). Só pega Apple Pay. Depois de atualizar o
+  iOS ela pode voltar para "Perguntar antes de executar".
+- **Open Finance pelo Meu Pluggy, no dia seguinte:** gratuito só para uso pessoal (até 5 conexões), atualiza a
+  cada 24 horas (sem atualização na hora), traz os últimos 7 dias, autorização vale 1 ano. Pega Pix, débito,
+  cartão físico e compras online. Leitura apenas. O Client Secret da Pluggy fica só com o dono (Vercel).
+- **Sem duplicar:** o gasto que já entrou (Apple Pay ou Atalho) é reconhecido pelo valor, data próxima e forma, e
+  fica "conferido"; o resto vai para uma lista "Para conferir".
+- **Categoria aprendida por estabelecimento:** na primeira vez o dono diz que "UBER *TRIP" é Transporte; depois
+  é automático (a sugestão da Pluggy ajuda). Só estabelecimento novo vai para "Para conferir".
+- **O Atalho vira exceção:** dinheiro vivo, ou quando quiser categorizar na hora.
+- Se outras pessoas passarem a usar o app, o Meu Pluggy deixa de valer (uso comercial é plano pago).
