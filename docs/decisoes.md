@@ -183,3 +183,17 @@ Objetivo do dono: não precisar usar o Atalho toda hora. Segue o fluxo de sempre
   é automático (a sugestão da Pluggy ajuda). Só estabelecimento novo vai para "Para conferir".
 - **O Atalho vira exceção:** dinheiro vivo, ou quando quiser categorizar na hora.
 - Se outras pessoas passarem a usar o app, o Meu Pluggy deixa de valer (uso comercial é plano pago).
+
+### App nativo pequeno, ao lado do PWA (combinado em 17/11/2026)
+
+O dono baixou o Xcode e quer o Gasto rápido com Dynamic Island e animações. Muda a decisão "sem app nativo"
+(acima, em Plataforma) só para um app pequeno; o PWA, a API e o Supabase continuam. Telas 29 e 30 no design kit.
+
+- **Conta gratuita (Personal Team no Xcode), sem App Store e sem pagar.** O app vence a cada 7 dias e é
+  reinstalado pelo Xcode (cabo ou Wi-Fi); até 3 apps assim no iPhone; sem push e sem iCloud; só no iPhone do dono.
+  Usar um Apple ID próprio para isso é recomendado, nunca terceirizar o login.
+- **Fase 1:** Botão de Ação → o app direto (sem o Atalho com token), numa tela própria de Gasto rápido com teclado,
+  categorias em um toque, vibração e animações; ao salvar, a confirmação aparece na **Dynamic Island** (Live
+  Activity iniciada pelo próprio app, sem push) com "Desfazer"; e um **widget** de saldo, VR e fatura.
+- A Dynamic Island continua sem aceitar digitação: ela confirma, não pergunta.
+- Depois, se valer a pena: Siri, controle na Central de Controle, Face ID e aviso da fatura agendado no iPhone.
