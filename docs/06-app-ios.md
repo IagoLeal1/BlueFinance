@@ -52,6 +52,15 @@ Se vencer, o site no Safari continua funcionando.
   widgets: cada widget tem "Esconder valores" na edição dele.
 - **Aviso da fatura:** ao abrir o app, ele agenda no iPhone os avisos de um dia antes e do dia do vencimento, às 9h.
 
+## Testar no simulador (com o servidor local)
+
+Com o Supabase local e `pnpm next dev --port 3100` rodando, um usuário de teste e o token dele, o app pode apontar
+para o servidor local sem mexer no código (o `BLUEFIN_SITE` só vale nessa compilação):
+
+```bash
+cd ios && xcodebuild -project BlueFin.xcodeproj -scheme BlueFin -destination 'platform=iOS Simulator,name=iPhone 16' -derivedDataPath build BLUEFIN_SITE=http://localhost:3100 BLUEFIN_TOKEN=bf_token_de_teste build
+```
+
 ## Conferir que compila (sem iPhone)
 
 ```bash

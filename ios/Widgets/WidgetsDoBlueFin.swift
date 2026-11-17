@@ -130,7 +130,7 @@ struct ResumoView: View {
             HStack(alignment: .bottom) {
                 coluna("Saiu", valor(Dinheiro.reais(r.saiu)))
                 if let f = r.faturas.first {
-                    coluna("Fatura \(f.cartao) · dia \(Datas.dia(f.vence))", valor(Dinheiro.reais(f.total)))
+                    coluna("Fatura dia \(Datas.dia(f.vence))", valor(Dinheiro.reais(f.total)))
                 }
                 if let vr = r.vr { coluna("VR", valor(Dinheiro.reais(vr.saldo))) }
             }

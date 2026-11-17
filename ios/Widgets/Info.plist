@@ -4,6 +4,13 @@
 <dict>
 	<key>BlueFinToken</key>
 	<string>$(BLUEFIN_TOKEN)</string>
+	<key>BlueFinSite</key>
+	<string>$(BLUEFIN_SITE)</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionPointIdentifier</key>

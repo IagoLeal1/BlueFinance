@@ -107,7 +107,7 @@ enum Visual {
         case "car": "car"
         case "utensils": "fork.knife"
         case "ticket": "ticket"
-        case "heart-pulse": "heart.text.square"
+        case "heart-pulse": "heart"
         case "circle-ellipsis": "ellipsis.circle"
         case "credit-card": "creditcard"
         case "wallet-cards": "wallet.pass"

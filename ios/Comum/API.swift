@@ -3,7 +3,15 @@ import Foundation
 /// Endereço do BlueFin e o token pessoal (o mesmo do Atalho), que entra no app na hora de compilar,
 /// vindo de ios/Segredos.xcconfig. O app e os widgets falam com a mesma API do site.
 enum Config {
-    static let site = URL(string: "https://bluefinance-chi.vercel.app")!
+    static let producao = URL(string: "https://bluefinance-chi.vercel.app")!
+
+    /// Produção; para testar no simulador, o servidor local (BLUEFIN_SITE na hora de compilar).
+    static var site: URL {
+        let valor = (Bundle.main.object(forInfoDictionaryKey: "BlueFinSite") as? String) ?? ""
+        return valor.hasPrefix("http") ? URL(string: valor) ?? producao : producao
+    }
+
+    static var ehLocal: Bool { site.host() == "localhost" || site.host() == "127.0.0.1" }
 
     static var token: String {
         let valor = (Bundle.main.object(forInfoDictionaryKey: "BlueFinToken") as? String) ?? ""

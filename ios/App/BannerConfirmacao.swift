@@ -18,12 +18,12 @@ struct BannerConfirmacao: View {
                 TileCategoria(icone: confirmacao.icone, ordem: confirmacao.ordem, lado: 40)
                     .scaleEffect(aberto ? 1 : 0.5)
                 VStack(alignment: .leading, spacing: 1) {
-                    Text(confirmacao.titulo).font(.subheadline.weight(.bold)).lineLimit(1)
+                    Text(confirmacao.titulo).font(.subheadline.weight(.bold)).lineLimit(1).minimumScaleFactor(0.8)
                     Text(confirmacao.detalhe).font(.footnote.weight(.semibold)).foregroundStyle(Color(hex: 0x9aa3b5)).lineLimit(1)
                 }
                 Spacer(minLength: 4)
                 Text(Dinheiro.gasto(valor))
-                    .font(.system(size: 22, weight: .heavy, design: .rounded))
+                    .font(.system(size: 21, weight: .heavy, design: .rounded))
                     .monospacedDigit()
                     .contentTransition(.numericText(value: Double(valor)))
                     .foregroundStyle(Visual.negativoNoPreto)
@@ -53,10 +53,14 @@ struct BannerConfirmacao: View {
         }
         .foregroundStyle(.white)
         .padding(.horizontal, 18)
-        .padding(.vertical, 14)
+        // Em cima fica o recorte da Dynamic Island: o conteúdo começa logo abaixo dele.
+        .padding(.top, aberto ? 40 : 14)
+        .padding(.bottom, 14)
         .background(.black, in: RoundedRectangle(cornerRadius: aberto ? 36 : 20, style: .continuous))
         .padding(.horizontal, 10)
-        .padding(.top, 8)
+        // Sai de dentro da Dynamic Island: o cartão começa na altura dela, por cima da barra de status.
+        .padding(.top, 11)
+        .ignoresSafeArea(.container, edges: .top)
         .onTapGesture {}
         .task {
             if reduzirMovimento {

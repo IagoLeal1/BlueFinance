@@ -70,6 +70,8 @@ struct Raiz: View {
                     .zIndex(1)
             }
         }
+        // Como a ilha expandida, a confirmação cobre a barra de status enquanto aparece.
+        .statusBarHidden(navegacao.confirmacao != nil)
         .fullScreenCover(isPresented: $nav.gastoRapido) {
             GastoRapido().environment(navegacao)
         }
@@ -85,7 +87,7 @@ struct Site: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let configuracao = WKWebViewConfiguration()
         // Domínio do app (WKAppBoundDomains): o service worker funciona e o site abre sem internet, como no PWA.
-        configuracao.limitsNavigationsToAppBoundDomains = true
+        configuracao.limitsNavigationsToAppBoundDomains = !Config.ehLocal
         configuracao.websiteDataStore = .default()
         let web = WKWebView(frame: .zero, configuration: configuracao)
         web.allowsBackForwardNavigationGestures = true

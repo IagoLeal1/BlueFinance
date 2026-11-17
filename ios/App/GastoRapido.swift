@@ -54,6 +54,8 @@ struct GastoRapido: View {
     @State private var categoria = Lembranca.ultimaCategoria
     @State private var formas = Lembranca.formas
     @State private var forma = Lembranca.formas.first ?? "Débito"
+    /// Você tocou na forma: a lista que chega da internet não muda mais a escolha.
+    @State private var formaTocada = false
     @State private var parcelas = 1
     @State private var descricao = ""
     @State private var salvando = false
@@ -70,8 +72,10 @@ struct GastoRapido: View {
                 Text("Gasto rápido").font(.title2.bold())
                 Spacer()
                 Button { fechar() } label: {
-                    Image(systemName: "xmark").font(.body.weight(.bold)).frame(width: 40, height: 40).background(Visual.superficie, in: Circle())
+                    Image(systemName: "xmark").font(.body.weight(.bold)).foregroundStyle(.primary)
+                        .frame(width: 40, height: 40).background(Visual.superficie, in: Circle())
                 }
+                .buttonStyle(.plain)
                 .accessibilityLabel("Fechar")
             }
 
@@ -92,7 +96,7 @@ struct GastoRapido: View {
                 }
             }
 
-            Picker("Como pagou", selection: $forma) {
+            Picker("Como pagou", selection: Binding(get: { forma }, set: { forma = $0; formaTocada = true })) {
                 ForEach(formasEmOrdem, id: \.self) { f in Text(rotulo(f)).tag(f) }
             }
             .pickerStyle(.segmented)
@@ -133,6 +137,7 @@ struct GastoRapido: View {
         }
         .padding(.horizontal, 16)
         .padding(.top, 8)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(Visual.fundo.ignoresSafeArea())
         .animation(.snappy, value: noCredito)
         .task { await atualizar() }
@@ -152,6 +157,7 @@ struct GastoRapido: View {
 
     private func escolher(_ nome: String) {
         categoria = nome
+        formaTocada = false
         Task { await carregarFormas(nome) }
     }
 
@@ -169,7 +175,7 @@ struct GastoRapido: View {
         guard let lista = try? await API.formas(categoria: nome), !lista.isEmpty else { return }
         formas = lista
         Lembranca.formas = lista
-        forma = lista[0]
+        if !formaTocada || !lista.contains(forma) { forma = lista[0] }
     }
 
     private func salvar() {
@@ -182,10 +188,12 @@ struct GastoRapido: View {
                     categoria: categoria, centavos: centavos, descricao: descricao, forma: forma, parcelas: noCredito ? parcelas : 1)
                 Lembranca.ultimaCategoria = categoria
                 let c = categorias.first { $0.nome == categoria }
-                let detalhe = noCredito && parcelas > 1 ? "\(categoria) · \(parcelas)x no \(rotulo(forma))" : "\(categoria) · \(rotulo(forma))"
+                let semDescricao = descricao.trimmingCharacters(in: .whitespaces).isEmpty
+                let comoPagou = noCredito && parcelas > 1 ? "\(parcelas)x no \(rotulo(forma))" : rotulo(forma)
                 navegacao.confirmar(Confirmacao(
-                    titulo: descricao.trimmingCharacters(in: .whitespaces).isEmpty ? categoria : descricao,
-                    detalhe: detalhe, valor: centavos, sobraVr: resposta.vr?.saldo,
+                    titulo: semDescricao ? categoria : descricao,
+                    detalhe: semDescricao ? comoPagou : "\(categoria) · \(comoPagou)",
+                    valor: centavos, sobraVr: resposta.vr?.saldo,
                     icone: c?.icone ?? "circle", ordem: c?.ordem ?? 0, desfazer: resposta.desfazer))
                 fechar()
             } catch {

@@ -4,4 +4,6 @@
 BLUEFIN_TEAM =
 BLUEFIN_BUNDLE_ID = br.bluefin.pessoal
 BLUEFIN_TOKEN =
+// Só para testar no simulador com o servidor local (na linha de comando: BLUEFIN_SITE=http://localhost:3100).
+BLUEFIN_SITE =
 #include? "Segredos.xcconfig"
