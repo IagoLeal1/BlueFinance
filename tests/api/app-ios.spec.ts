@@ -70,6 +70,27 @@ test.describe('API do app do iPhone', () => {
     expect(data).toEqual([{ descricao: 'Aluguel' }, { descricao: 'Pão' }]);
   });
 
+  test('reenviar o mesmo gasto (a rede caiu antes da resposta) não duplica', async ({ request, usuario }) => {
+    const token = await tokenDe(request, usuario);
+    await semearCartao(usuario, 'C6bank', 4, 11);
+    const lancar = (id: string, extra: object) =>
+      request.post('/api/quick-add', { headers: { Authorization: `Bearer ${token}` }, data: { id, categoria: 'Mercado', valor: 25, ...extra } });
+
+    const id = crypto.randomUUID();
+    const primeira = await lancar(id, { descricao: 'Pão' });
+    const reenvio = await lancar(id, { descricao: 'Pão' });
+    expect(primeira.status()).toBe(201);
+    expect(reenvio.status()).toBe(201);
+    expect((await reenvio.json()).desfazer).toBe(id);
+
+    const compra = crypto.randomUUID();
+    await lancar(compra, { descricao: 'Feira', forma: 'Crédito · C6bank', parcelas: '2' });
+    await lancar(compra, { descricao: 'Feira', forma: 'Crédito · C6bank', parcelas: '2' });
+
+    const { data } = await clienteDe(usuario).from('lancamentos').select('descricao').order('descricao');
+    expect(data).toEqual([{ descricao: 'Feira' }, { descricao: 'Feira' }, { descricao: 'Pão' }]);
+  });
+
   test('resumo para os widgets: o mês, a fatura a pagar e o VR', async ({ request, usuario }) => {
     const token = await tokenDe(request, usuario);
     const mes = mesAtual();

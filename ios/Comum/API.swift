@@ -72,6 +72,7 @@ struct Resumo: Codable {
 
 struct ErroDaAPI: LocalizedError {
     let mensagem: String
+    var status = 0
     var errorDescription: String? { mensagem }
 }
 
@@ -92,14 +93,30 @@ enum API {
             requisicao.setValue("application/json", forHTTPHeaderField: "Content-Type")
             requisicao.httpBody = try JSONSerialization.data(withJSONObject: corpo)
         }
-        let (dados, resposta) = try await URLSession.shared.data(for: requisicao)
+        let (dados, resposta) = try await enviar(requisicao)
         let status = (resposta as? HTTPURLResponse)?.statusCode ?? 0
         guard (200..<300).contains(status) else {
             // Toda resposta de erro da API traz "mensagem" em português.
             let mensagem = (try? JSONDecoder().decode([String: String].self, from: dados))?["mensagem"]
-            throw ErroDaAPI(mensagem: mensagem ?? "Não deu para falar com o BlueFin (\(status)).")
+            throw ErroDaAPI(mensagem: mensagem ?? "Não deu para falar com o BlueFin (\(status)).", status: status)
         }
         return dados
+    }
+
+    /// Se a rede cai no meio (comum quando o iOS acorda o app só para o Botão de Ação), tenta de novo. Seguro porque
+    /// o lançamento leva um id próprio (reenviar não duplica) e o resto só lê.
+    private static func enviar(_ requisicao: URLRequest, tentativas: Int = 3) async throws -> (Data, URLResponse) {
+        let quedas: Set<URLError.Code> = [.networkConnectionLost, .timedOut, .cannotConnectToHost, .cannotFindHost, .dnsLookupFailed]
+        for tentativa in 1... {
+            do {
+                return try await URLSession.shared.data(for: requisicao)
+            } catch let erro as URLError where quedas.contains(erro.code) && tentativa < tentativas {
+                try await Task.sleep(for: .milliseconds(400 * tentativa))
+            } catch let erro as URLError {
+                throw ErroDaAPI(mensagem: erro.code == .notConnectedToInternet ? "Sem internet. Tente de novo quando ela voltar." : "A conexão caiu. Tente de novo.")
+            }
+        }
+        fatalError("inalcançável")
     }
 
     static func categorias() async throws -> [CategoriaApp] {
@@ -116,7 +133,9 @@ enum API {
     }
 
     static func lancar(categoria: String, centavos: Int, descricao: String, forma: String, parcelas: Int) async throws -> RespostaGasto {
+        // O mesmo id em todas as tentativas: se a resposta se perder, reenviar não grava duas vezes.
         let corpo: [String: Any] = [
+            "id": UUID().uuidString.lowercased(),
             "categoria": categoria, "valor_centavos": centavos, "descricao": descricao, "forma": forma, "parcelas": String(parcelas),
         ]
         let dados = try await pedido("/api/quick-add", metodo: "POST", corpo: corpo)
@@ -124,7 +143,11 @@ enum API {
     }
 
     static func desfazer(_ id: String) async throws {
-        _ = try await pedido("/api/quick-add/desfazer", metodo: "POST", corpo: ["desfazer": id])
+        do {
+            _ = try await pedido("/api/quick-add/desfazer", metodo: "POST", corpo: ["desfazer": id])
+        } catch let erro as ErroDaAPI where erro.status == 404 {
+            // Uma tentativa anterior já apagou.
+        }
     }
 
     static func resumo() async throws -> Resumo {

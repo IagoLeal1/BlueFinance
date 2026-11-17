@@ -7,7 +7,7 @@ a confirmação na Dynamic Island e os widgets (design kit: telas 29 e 30; decis
   Island) e `Comum/` (o que os dois usam: a API, as cores e a confirmação).
 - O app fala com a mesma API do site, com o **token do Atalho** (`Authorization: Bearer bf_…`):
   `GET /api/quick-add/categorias` (com `itens`: nome, ícone e ordem), `GET /api/quick-add/formas`,
-  `POST /api/quick-add` (devolve `desfazer` e, no VR, `vr.saldo`), `POST /api/quick-add/desfazer` e `GET /api/resumo`.
+  `POST /api/quick-add` (com `id` do app, para reenviar sem duplicar; devolve `desfazer` e, no VR, `vr.saldo`), `POST /api/quick-add/desfazer` e `GET /api/resumo`.
 - Conta gratuita da Apple (Personal Team): sem App Store e sem pagar. O app **vence a cada 7 dias** e é reinstalado
   pelo Xcode. Sem push e sem iCloud: o aviso da fatura é agendado no próprio iPhone.
 

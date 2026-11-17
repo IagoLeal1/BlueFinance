@@ -3,6 +3,7 @@ import { nomeDoMes } from '@/domain/datas';
 import { formatBRL, formatSigned } from '@/domain/money';
 import { dividirParcelas, mesDaFatura, mesesDasParcelas } from '@/domain/parcelas';
 import { lerTextoRapido } from '@/domain/texto-rapido';
+import type { Database } from '@/lib/supabase/database.types';
 import { bearer } from '@/server/auth';
 import { lerFormaDoAtalho } from '@/server/formas-atalho';
 import { erro } from '@/server/http';
@@ -23,7 +24,15 @@ interface Corpo {
   forma?: unknown;
   /** "Em quantas vezes?" (só no crédito): 1 a 24; vazio é à vista. Número ou texto ("3"). */
   parcelas?: unknown;
+  /**
+   * Id gerado no app do iPhone (UUID), o mesmo em cada tentativa: reenviar depois de a rede cair não duplica.
+   * Vira o id do lançamento ou, no crédito, o da compra.
+   */
+  id?: unknown;
 }
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const CAMPOS = 'id, tipo, valor, descricao, data, origem, competencia, parcela';
 
 /** Parcelas do Atalho: vazio é 1x; aceita número ou texto com um inteiro de 1 a 24. */
 function lerParcelas(valor: unknown): number | null {
@@ -79,6 +88,19 @@ export async function POST(request: Request) {
   // No crédito, a compra cai na fatura pelo dia de fechamento do cartão e pode ser parcelada.
   const parcelas = pagamento.forma === 'credito' ? lerParcelas(corpo.parcelas) : 1;
   if (parcelas === null || valor < parcelas) return erro(400, 'Em quantas vezes? Use um número de 1 a 24.');
+  const idDoApp = typeof corpo.id === 'string' && UUID.test(corpo.id) ? corpo.id : null;
+  // Já gravado numa tentativa anterior (a resposta se perdeu): devolve o mesmo, sem gravar de novo.
+  const jaGravados = async () =>
+    idDoApp
+      ? (
+          await supabaseAdmin
+            .from('lancamentos')
+            .select(CAMPOS)
+            .eq('user_id', userId)
+            .or(`id.eq.${idDoApp},compra_id.eq.${idDoApp}`)
+            .order('parcela')
+        ).data ?? []
+      : [];
   const agora = new Date().toISOString();
   const base = {
     user_id: userId,
@@ -89,10 +111,10 @@ export async function POST(request: Request) {
     data: agora,
     forma_pagamento: pagamento.forma,
   };
-  const linhas =
+  const linhas: Database['public']['Tables']['lancamentos']['Insert'][] =
     pagamento.forma === 'credito'
       ? (() => {
-          const compraId = randomUUID();
+          const compraId = idDoApp ?? randomUUID();
           const meses = mesesDasParcelas(mesDaFatura(agora, pagamento.cartao.diaFechamento), parcelas);
           return dividirParcelas(valor, parcelas).map((v, i) => ({
             ...base,
@@ -104,13 +126,14 @@ export async function POST(request: Request) {
             competencia: meses[i]!,
           }));
         })()
-      : [{ ...base, valor }];
-  const { data: gravados, error } = await supabaseAdmin
-    .from('lancamentos')
-    .insert(linhas)
-    .select('id, tipo, valor, descricao, data, origem, competencia, parcela')
-    .order('parcela');
-  if (error) throw error;
+      : [{ ...base, valor, ...(idDoApp && { id: idDoApp }) }];
+  let gravados = await jaGravados();
+  if (gravados.length === 0) {
+    const { data, error } = await supabaseAdmin.from('lancamentos').insert(linhas).select(CAMPOS).order('parcela');
+    // 23505: outra tentativa com o mesmo id gravou primeiro.
+    if (error && !(error.code === '23505' && idDoApp)) throw error;
+    gravados = data ?? (await jaGravados());
+  }
   const lancamento = gravados[0]!;
 
   // No VR, a notificação diz quanto sobra nele.
@@ -128,7 +151,7 @@ export async function POST(request: Request) {
       mensagem: `Gasto salvo: ${categoria.nome} · ${formatSigned(valor, 'despesa')}${ondeCaiu}`,
       lancamento: { ...lancamento, categoria: categoria.nome },
       // Para o "Desfazer" do app do iPhone (POST /api/quick-add/desfazer): a compra inteira, no crédito.
-      desfazer: pagamento.forma === 'credito' ? (linhas[0] as { compra_id: string }).compra_id : lancamento.id,
+      desfazer: (pagamento.forma === 'credito' ? linhas[0]!.compra_id : null) ?? lancamento.id,
       ...(vr && { vr: { saldo: vr.saldo } }),
     },
     { status: 201 },
