@@ -184,16 +184,18 @@ Objetivo do dono: não precisar usar o Atalho toda hora. Segue o fluxo de sempre
 - **O Atalho vira exceção:** dinheiro vivo, ou quando quiser categorizar na hora.
 - Se outras pessoas passarem a usar o app, o Meu Pluggy deixa de valer (uso comercial é plano pago).
 
-### App nativo pequeno, ao lado do PWA (combinado em 17/11/2026)
+### O BlueFin vira app nativo, um app só (combinado em 17/11/2026)
 
-O dono baixou o Xcode e quer o Gasto rápido com Dynamic Island e animações. Muda a decisão "sem app nativo"
-(acima, em Plataforma) só para um app pequeno; o PWA, a API e o Supabase continuam. Telas 29 e 30 no design kit.
+O dono baixou o Xcode e quer o Gasto rápido com Dynamic Island e animações, tudo **no próprio BlueFin**, sem um
+segundo app. Muda a decisão "sem app nativo" (acima, em Plataforma). Telas 29 e 30 no design kit.
 
+- **Um app só:** uma casca nativa (Swift) que abre as telas que já existem (o mesmo site, a mesma API e o mesmo
+  Supabase) e soma as partes nativas: Gasto rápido em tela própria pelo Botão de Ação, confirmação na **Dynamic
+  Island** (Live Activity iniciada pelo próprio app, sem push) com "Desfazer", e **widgets** de saldo, VR e fatura.
+  O ícone do BlueFin na Tela de Início passa a ser o app; o site continua no ar como reserva.
 - **Conta gratuita (Personal Team no Xcode), sem App Store e sem pagar.** O app vence a cada 7 dias e é
-  reinstalado pelo Xcode (cabo ou Wi-Fi); até 3 apps assim no iPhone; sem push e sem iCloud; só no iPhone do dono.
-  Usar um Apple ID próprio para isso é recomendado, nunca terceirizar o login.
-- **Fase 1:** Botão de Ação → o app direto (sem o Atalho com token), numa tela própria de Gasto rápido com teclado,
-  categorias em um toque, vibração e animações; ao salvar, a confirmação aparece na **Dynamic Island** (Live
-  Activity iniciada pelo próprio app, sem push) com "Desfazer"; e um **widget** de saldo, VR e fatura.
+  reinstalado pelo Xcode (cabo ou Wi-Fi); sem push e sem iCloud; só no iPhone do dono. Se vencer, o site no Safari
+  continua funcionando.
+- **Aviso da fatura:** dentro do app nativo o Web Push não funciona; vira notificação agendada no próprio iPhone.
 - A Dynamic Island continua sem aceitar digitação: ela confirma, não pergunta.
-- Depois, se valer a pena: Siri, controle na Central de Controle, Face ID e aviso da fatura agendado no iPhone.
+- Depois, se valer a pena: Siri, controle na Central de Controle, Face ID.
