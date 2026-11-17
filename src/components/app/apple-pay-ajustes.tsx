@@ -89,13 +89,13 @@ export function ApplePayAjustes({
       <p className="text-[13px] leading-[18px] font-bold text-muted-foreground">Montar a automação (uma vez)</p>
       <ol className="grid gap-2 pl-5 text-sm font-semibold [list-style:decimal]">
         <li>
-          Atalhos › Automação › + › <b>Carteira</b>
+          Atalhos › + › atalho <b>BlueFin · Apple Pay</b>
         </li>
         <li>
-          Marque os cartões do C6 e o VR · <b>Executar Imediatamente</b>
+          1º bloco: Automação › <b>Carteira</b> (quando qualquer cartão for aproximado)
         </li>
         <li>
-          Ação: <b>BlueFin · Apple Pay</b> (com o token do Atalho)
+          Depois: o token do Atalho e o envio para o BlueFin (guia do projeto)
         </li>
       </ol>
       <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">

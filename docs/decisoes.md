@@ -197,9 +197,10 @@ Pedido do dono em 17/11/2026 (tela 31). Guia e passos do dono em `docs/07-open-f
 
 Pedido do dono em 17/11/2026 (tela 32). Guia e passos em `docs/08-apple-pay.md`.
 
-- **Automação "Carteira" do Atalhos** ("Transação" no iOS 17 a 25), com "Executar Imediatamente": ao encostar o
-  iPhone ou o Watch, o Atalho manda valor, lugar e cartão para `POST /api/apple-pay` (token do Atalho) e mostra a
-  notificação de volta. Nada para tocar. Só pega Apple Pay na maquininha; o resto vem pelo banco.
+- **Automação "Carteira" do Atalhos**: no iOS do dono, o gatilho "Quando qualquer cartão for aproximado" é o 1º bloco
+  do atalho "BlueFin · Apple Pay" (montado em 17/11/2026). Ao encostar o iPhone ou o Watch, o atalho manda valor,
+  comerciante e cartão para `POST /api/apple-pay` (token do Atalho) e mostra a notificação de volta. Nada para
+  tocar. Só pega Apple Pay na maquininha; o resto vem pelo banco.
 - **Cartões da Carteira:** o dono usa C6 no débito, C6 no crédito e VR. Cada cartão aparece em Ajustes › Apple Pay
   no primeiro pagamento, com a forma adivinhada pelo nome ("Crédito" → crédito no cartão do app de nome parecido;
   VR, Alelo, Pluxee… → VR; senão débito), e o dono troca ali. Crédito sem cartão no app, ou VR sem VR configurado,

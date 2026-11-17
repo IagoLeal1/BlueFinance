@@ -30,22 +30,24 @@ Contrato coberto por `tests/api/apple-pay.spec.ts`.
 
 ## Montar no iPhone (uma vez)
 
-**1. O atalho "BlueFin · Apple Pay"** (app Atalhos › +). Nos detalhes do atalho, ligue "Receber entrada" (do
-tipo qualquer). Ações:
+Montado em 17/11/2026 no iPhone do dono. Nesta versão do iOS o gatilho da automação é o **primeiro bloco do próprio
+atalho** (o + da aba Automação cria um atalho). Atalho **"BlueFin · Apple Pay"** (app Atalhos › +, "Editar" para
+montar à mão):
 
-1. **Texto** → o token do Atalho (o mesmo do "Gasto rápido").
-2. **Obter Conteúdo de URL** → `https://bluefinance-chi.vercel.app/api/apple-pay`, Método **POST**, Cabeçalho
-   `Authorization` = `Bearer ` + Texto, Corpo **JSON**:
-   - `valor` (Texto) = Entrada do Atalho › **Valor**
-   - `lugar` (Texto) = Entrada do Atalho › **Estabelecimento**
-   - `cartao` (Texto) = Entrada do Atalho › **Cartão ou Passe**
-3. **Obter Valor do Dicionário** `mensagem` → **Mostrar Notificação**.
+1. **Gatilho:** busca › categoria **Automação** › **Carteira**: "Quando **Qualquer Cartão** for aproximado"
+   (Categorias e Comerciantes: qualquer; **Automação** ligada; Notificar desligado). Ele entrega a variável
+   **Transação**.
+2. **Texto** → o token do Atalho (o mesmo do "Gasto rápido"; quem cola é o dono).
+3. **Obter Conteúdo do URL** → `https://bluefinance-chi.vercel.app/api/apple-pay`, Método **POST**, Cabeçalho
+   `Authorization` = `Bearer ` + Texto, Corpo **JSON** (campos de Texto):
+   - `valor` = Transação › **Valor**
+   - `lugar` = Transação › **Comerciante**
+   - `cartao` = Transação › **Cartão ou Tíquete**
+4. **Obter Valor do Dicionário** `mensagem` em Conteúdos do URL → **Mostrar Notificação** (Valor do Dicionário).
 
-**2. A automação** (Atalhos › Automação › +): **Carteira** (no iOS 17 a 25 o nome é "Transação"). Marque os
-cartões do C6 (débito e crédito) e o do VR, escolha **Executar Imediatamente** e, como ação, **Executar Atalho ›
-BlueFin · Apple Pay**, com a Entrada do Atalho como entrada.
-
-Na primeira vez, o iPhone pergunta se o atalho pode acessar o BlueFin: toque em **Sempre Permitir**.
+Em versões mais antigas (iOS 17 a 18), o mesmo vai numa automação "Transação" da aba Automação, com "Executar
+Imediatamente" e as mesmas ações. Na primeira vez, o iPhone pergunta se o atalho pode acessar o BlueFin: toque em
+**Sempre Permitir**.
 
 **3. Ajustes › Apple Pay**, depois do primeiro pagamento com cada cartão: confira como cada um entra (C6 Débito →
 Débito; C6 Crédito → Crédito, na fatura do C6bank; VR → VR).

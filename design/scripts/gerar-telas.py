@@ -1064,9 +1064,9 @@ ajustes_ap = iphone(titulo("Ajustes")
                     + '<div class="caption muted">Cada cartão aparece aqui depois do primeiro pagamento. Escolha como ele entra.</div>'
                     + '<ul style="list-style:none;margin:0;padding:0">' + cartao_carteira("C6 Débito", "Débito") + cartao_carteira("C6 Crédito", "Crédito · C6bank") + cartao_carteira("VR Refeição", "VR") + '</ul>'
                     + '<div class="label muted" style="margin-top:4px">Montar a automação (uma vez)</div><ol style="margin:0;padding-left:18px;display:grid;gap:6px" class="body">'
-                    + '<li>Atalhos › Automação › + › <b>Carteira</b></li>'
-                    + '<li>Marque os cartões do C6 e o VR · <b>Executar Imediatamente</b></li>'
-                    + '<li>Ação: <b>BlueFin · Apple Pay</b> (com o token do Atalho)</li></ol>'
+                    + '<li>Atalhos › + › atalho <b>BlueFin · Apple Pay</b></li>'
+                    + '<li>1º bloco: Automação › <b>Carteira</b> (quando qualquer cartão for aproximado)</li>'
+                    + '<li>Depois: o token do Atalho e o envio para o BlueFin (guia do projeto)</li></ol>'
                     + f'<div class="bf-nota">{i("info")}<span>Só pega o Apple Pay (encostando o iPhone ou o Watch). Cartão físico e compra online chegam pelo banco, no dia seguinte.</span></div>'
                     + '</section>', aba=4)
 tela("TelaApplePay", "32 · Apple Pay: encostou o iPhone, o gasto entra sozinho, com a sua categoria e o seu nome",
