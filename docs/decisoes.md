@@ -18,6 +18,7 @@ atualize aqui.
 | Atalho do iPhone | `docs/04-atalho-ios.md` |
 | Publicação (Supabase + Vercel) | `docs/05-publicacao.md` |
 | App do iPhone (nativo) | `docs/06-app-ios.md`, código em `ios/` |
+| Open Finance (Meu Pluggy) | `docs/07-open-finance.md` |
 
 ## Como o trabalho é feito
 
@@ -159,6 +160,35 @@ Pedido do dono em 12/11/2026 (tela 27).
 - **No banco:** a tabela `vr` guarda a configuração; o resto são lançamentos com `forma_pagamento = 'vr'`
   (origem `vr` para o depósito e `acerto` para o saldo inicial e as correções). O saldo é a soma deles.
 
+## Open Finance (Meu Pluggy)
+
+Pedido do dono em 17/11/2026 (tela 31). Guia e passos do dono em `docs/07-open-finance.md`.
+
+- **Meu Pluggy, só leitura, uso pessoal.** O dono conecta o banco em meu.pluggy.ai; o BlueFin lê pelo app dele na
+  Pluggy (Client ID e Client Secret só na Vercel, com o dono). Em Ajustes › Banco cola-se o **código da conexão**
+  (itemId) uma vez.
+- **Daqui para frente:** importa só transações do dia da conexão em diante (`bancos.desde`). O que já estava no
+  app antes não é tocado. Reconectar recomeça do dia da reconexão.
+- **Quando busca:** uma vez por dia (agendamento da Vercel, `/api/banco`, 07h de Brasília), ao conectar e, sem
+  segurar a tela, ao abrir Lançamentos se a última busca tem mais de 3 horas. O próprio Meu Pluggy só atualiza a
+  cada 24 horas.
+- **Conferir sem duplicar:** cada transação nova é comparada com os lançamentos: mesmo valor, mesma conta (débito
+  e Pix valem igual), até 3 dias de diferença, o mais perto ganha. No cartão, a 1ª parcela da compra no mesmo
+  número de vezes (a sobra da divisão fica na 1ª); assinatura bate com a do mês. Bateu → "conferido", e o
+  lançamento mostra "✓ banco".
+- **Categoria aprendida por estabelecimento** (a descrição do banco em maiúsculas, sem acento e sem números): ao
+  lançar algo de "Para conferir", a categoria e o "com o quê" ficam guardados (`regras_banco`); da próxima vez o
+  mesmo estabelecimento vira lançamento sozinho (origem `banco`, "do banco" na lista).
+- **Para conferir** (topo do Débito e do Crédito em Lançamentos): o que não bateu nem é conhecido, com a categoria
+  sugerida (a da Pluggy traduzida; gasto sem par vai em Outros; receita só sugere Salário). Lançar em um toque,
+  Ignorar, ou tocar para trocar categoria e "com o quê". Some quando há categoria no filtro.
+- **Fica de fora:** pagamento de fatura (a fatura já aparece no vencimento), pagamento e estorno no cartão,
+  parcelas seguintes de compra parcelada (a 1ª já lança todas), transferência para si mesmo e investimentos (os
+  aportes são lançados no app).
+- **Crédito:** a compra vai para o cartão do app de nome parecido com o do banco; senão o primeiro cartão.
+- **No banco:** `bancos` (a conexão, o último problema em `erro`), `transacoes_banco` (cada transação e a situação:
+  conferir, conferido, lancado, ignorado; só a busca grava) e `regras_banco`.
+
 ## Privacidade na tela
 
 - **Olhinho** no topo do Início e da aba Investir: troca os valores com dinheiro por "R$ ••••" (saldo,
@@ -175,7 +205,8 @@ Objetivo do dono: não precisar usar o Atalho toda hora. Segue o fluxo de sempre
   "Executar Imediatamente". Ao pagar encostando o iPhone ou o Watch, manda valor, estabelecimento e cartão para a
   API; o cartão diz a forma (C6 crédito → crédito; VR na Carteira → VR). Só pega Apple Pay. Depois de atualizar o
   iOS ela pode voltar para "Perguntar antes de executar".
-- **Open Finance pelo Meu Pluggy, no dia seguinte:** gratuito só para uso pessoal (até 5 conexões), atualiza a
+- **Open Finance pelo Meu Pluggy, no dia seguinte:** **feito em 17/11/2026** (ver "Open Finance (Meu Pluggy)",
+  acima); o Apple Pay continua por fazer. Gratuito só para uso pessoal (até 5 conexões), atualiza a
   cada 24 horas (sem atualização na hora), traz os últimos 7 dias, autorização vale 1 ano. Pega Pix, débito,
   cartão físico e compras online. Leitura apenas. O Client Secret da Pluggy fica só com o dono (Vercel).
 - **Sem duplicar:** o gasto que já entrou (Apple Pay ou Atalho) é reconhecido pelo valor, data próxima e forma, e

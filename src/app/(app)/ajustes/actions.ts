@@ -1,7 +1,9 @@
 'use server';
 
 import { refresh } from 'next/cache';
+import { diaDe } from '@/domain/datas';
 import { enviarAviso } from '@/server/avisos';
+import { sincronizarBanco, validarConexao } from '@/server/banco';
 import { supabaseAdmin } from '@/server/supabase-admin';
 import { redirect } from 'next/navigation';
 import { supabaseServidor } from '@/lib/supabase/server';
@@ -163,4 +165,27 @@ export async function enviarAvisoDeTeste(): Promise<{ ok?: true; erro?: string }
   // Mostra o que o serviço de avisos respondeu, para dar para entender o problema.
   const motivo = resultados.find((r) => r.detalhe)?.detalhe;
   return { erro: `O aviso não saiu${motivo ? ` (resposta: ${motivo})` : ''}. Desative e ative de novo.` };
+}
+
+/**
+ * Ajustes › Banco › Conectar: guarda o código da conexão do Meu Pluggy (o itemId), importando daqui para frente
+ * (de hoje em diante), e já faz a primeira busca.
+ */
+export async function conectarBanco(_anterior: EstadoCartao, form: FormData): Promise<EstadoCartao> {
+  const itemId = String(form.get('item_id') ?? '').trim();
+  if (!itemId) return { erro: 'Cole o código da conexão do Meu Pluggy.' };
+  const supabase = await supabaseServidor();
+  const { data } = await supabase.auth.getClaims();
+  const userId = data?.claims.sub;
+  if (!userId) return { erro: 'Sua sessão expirou. Entre de novo.' };
+
+  const problema = await validarConexao(itemId);
+  if (problema) return { erro: problema };
+  const { error } = await supabase
+    .from('bancos')
+    .upsert({ user_id: userId, item_id: itemId, desde: diaDe(new Date()), erro: null, buscado_em: null }, { onConflict: 'user_id' });
+  if (error) return { erro: 'Não foi possível conectar. Tente de novo.' };
+  await sincronizarBanco({ userId });
+  refresh();
+  return { ok: true };
 }

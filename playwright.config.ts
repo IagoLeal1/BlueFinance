@@ -5,6 +5,7 @@ import { defineConfig, devices } from '@playwright/test';
 if (existsSync('.env.local')) process.loadEnvFile('.env.local');
 
 const WEB_PORT = 3100; // porta própria para não reaproveitar outro servidor rodando na 3000
+const PLUGGY_FALSO = 3199; // Pluggy de mentira (tests/support/pluggy-falso.mjs)
 
 export default defineConfig({
   fullyParallel: true,
@@ -24,11 +25,24 @@ export default defineConfig({
       use: { ...devices['iPhone 16'], baseURL: `http://localhost:${WEB_PORT}` },
     },
   ],
-  webServer: {
-    command: `pnpm next dev --port ${WEB_PORT}`,
-    url: `http://localhost:${WEB_PORT}`,
-    reuseExistingServer: !process.env.CI,
-    // Sem buscar o CDI no Banco Central: os testes semeiam as taxas.
-    env: { BCB_SGS_URL: 'off' },
-  },
+  webServer: [
+    {
+      command: `pnpm next dev --port ${WEB_PORT}`,
+      url: `http://localhost:${WEB_PORT}`,
+      reuseExistingServer: !process.env.CI,
+      // Sem buscar o CDI no Banco Central: os testes semeiam as taxas. A Pluggy é a de mentira.
+      env: {
+        BCB_SGS_URL: 'off',
+        PLUGGY_URL: `http://127.0.0.1:${PLUGGY_FALSO}`,
+        PLUGGY_CLIENT_ID: 'cliente-teste',
+        PLUGGY_CLIENT_SECRET: 'segredo-teste',
+      },
+    },
+    {
+      command: 'node tests/support/pluggy-falso.mjs',
+      url: `http://127.0.0.1:${PLUGGY_FALSO}`,
+      reuseExistingServer: !process.env.CI,
+      env: { PLUGGY_FALSO_PORTA: String(PLUGGY_FALSO) },
+    },
+  ],
 });

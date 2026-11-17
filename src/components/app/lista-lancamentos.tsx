@@ -6,6 +6,7 @@ import { CreditCard } from 'lucide-react';
 import { diaCurto, nomeDoMes } from '@/domain/datas';
 import { formatBRL, formatSigned } from '@/domain/money';
 import type { Cartao } from '@/server/cartoes';
+import type { ParaConferir as ItemDoBanco } from '@/server/banco';
 import type { LancamentoListado } from '@/server/lancamentos';
 import { Segmented } from './segmented';
 import { LinhaAssinatura } from './editar-assinatura';
@@ -15,6 +16,7 @@ import { ChipsDeFiltro, ResumoDaCategoria } from './filtro-categoria';
 import { LancarTotalFatura } from './total-fatura';
 import { useFeedback } from './feedback';
 import { metaDe } from './meta';
+import { ParaConferir } from './para-conferir';
 import { Privado } from './privado';
 import { FUNDO_DA_FATURA, TransactionRow } from './transaction-row';
 
@@ -101,6 +103,7 @@ export function ListaLancamentos({
   mes,
   gastos = [],
   categoriaInicial = null,
+  doBanco = [],
 }: {
   extratoInicial: Extrato;
   faturas: Fatura[];
@@ -116,6 +119,8 @@ export function ListaLancamentos({
   gastos?: LancamentoListado[];
   /** Categoria já marcada ao abrir (?categoria=Mercado, vindo do Início). */
   categoriaInicial?: string | null;
+  /** Open Finance: o que veio do banco e espera você conferir (no topo do Débito e do Crédito). */
+  doBanco?: ItemDoBanco[];
 }) {
   const comVr = !!vr || diasVr.length > 0;
   // Só as categorias com gasto no mês, na ordem do app (as que não estão mais na lista vão no fim).
@@ -193,6 +198,7 @@ export function ListaLancamentos({
           </p>
         </section>
       )}
+      {!categoria && !noVr && <ParaConferir itens={doBanco} categorias={categorias} />}
       {vazio && (
         <p className="rounded-lg bg-card p-5 text-center font-bold shadow-card">
           {noDebito ? 'Nenhum lançamento neste mês.' : noVr ? 'Nada no VR neste mês.' : 'Nenhuma compra no crédito neste mês.'}

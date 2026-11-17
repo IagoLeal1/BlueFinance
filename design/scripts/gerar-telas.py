@@ -952,4 +952,66 @@ algumas vezes por dia (o iOS decide quando); sem push. O olhinho vale para os wi
 valores aparecem como "R$ ••••". Tocar no widget abre o app; o + do widget médio abre direto o Gasto rápido.""",
      altura=1010, largura=900)
 
+# 31 · Open Finance (Meu Pluggy): o banco confere o que você lançou e traz o que faltou
+def linha_conferir(icone, categoria, titulo_, meta, valor, sugerida=True):
+    fundo, cor = CORES_CAT.get(categoria, ("var(--surface-sunken)", "var(--ink-muted)"))
+    chip_cat = (f'<span class="bf-chip" aria-pressed="false" style="height:30px;padding:0 10px;font-size:13px">'
+                f'<span style="display:inline-grid;place-items:center;width:18px;height:18px;border-radius:6px;background:{fundo};color:{cor}">{i(icone)}</span>'
+                f'{categoria}</span>')
+    return ('<li class="bf-row" style="display:grid;gap:8px;padding:12px 0;align-items:stretch">'
+            f'<div style="display:flex;align-items:center;gap:12px"><div class="bf-row__main"><div class="bf-row__title">{titulo_}</div>'
+            f'<div class="bf-row__meta">{meta}</div></div><span class="bf-row__amount is-negative">{valor}</span></div>'
+            f'<div style="display:flex;align-items:center;gap:8px">{chip_cat}<span style="flex:1"></span>'
+            '<button class="bf-btn bf-btn--ghost" style="height:34px;padding:0 10px;font-size:14px">Ignorar</button>'
+            '<button class="bf-btn bf-btn--primary" style="height:34px;padding:0 14px;font-size:14px">Lançar</button></div></li>')
+conferir = ('<section class="bf-card" style="padding-top:10px;padding-bottom:4px">'
+            f'<div class="bf-card__head" style="margin:0"><h3 class="bf-card__title" style="display:flex;gap:8px;align-items:center">{i("landmark")}Para conferir</h3><span class="caption muted">3 do banco</span></div>'
+            '<div class="caption muted">Vieram do C6 Bank e não batem com nada que você lançou. A categoria é uma sugestão: toque para trocar.</div><ul class="bf-list">'
+            + linha_conferir("car", "Transporte", "UBER *TRIP", "Ontem · Pix", "− R$ 23,70")
+            + linha_conferir("shopping-cart", "Mercado", "PAG*ATACADAO", "15 nov · Débito", "− R$ 187,40")
+            + linha_conferir("circle-ellipsis", "Outros", "PIX JOAO S SILVA", "15 nov · Pix", "− R$ 50,00")
+            + '</ul></section>')
+lanc_conferir = iphone(titulo("Lançamentos", CALENDARIO) + FILTRO("Tudo") + SEG3("Débito") + conferir
+                       + '<section class="bf-card" style="padding-top:0;padding-bottom:4px"><div class="bf-list__day">Hoje · 17 nov</div><ul class="bf-list">'
+                       + linha_cor("utensils", "Almoço", "Alimentação · Débito · pelo Atalho · ✓ banco", "− R$ 32,90", "Alimentação")
+                       + "</ul></section>", aba=1)
+ajustes_banco = iphone(titulo("Ajustes")
+                       + '<section class="bf-card" style="display:grid;gap:10px"><h3 class="bf-card__title">Banco (Open Finance)</h3>'
+                       + f'<div style="display:flex;align-items:center;gap:12px"><span class="bf-cat bf-cat--neutral">{i("landmark")}</span>'
+                         '<div class="bf-row__main"><div class="bf-row__title">C6 Bank</div><div class="bf-row__meta">Conta e cartão · pelo Meu Pluggy</div></div>'
+                         '<span class="caption" style="color:var(--positive);font-weight:700">Conectado</span></div>'
+                       + '<ul class="bf-list" style="padding:0">'
+                       + item("Última atualização", "hoje, 07:12")
+                       + item("Importa desde", "17 nov 2026")
+                       + item("Autorização vale até", "17 nov 2027")
+                       + '</ul>'
+                       + f'<div class="bf-nota">{i("info")}<span>O banco atualiza uma vez por dia, sozinho. O que você lança pelo Atalho continua entrando na hora; quando o banco chega, ele confere.</span></div>'
+                       + '</section>', aba=4)
+sheet_conferir = iphone("", aba=None, sobre='<div class="bf-scrim"><div class="bf-sheet" style="display:grid;gap:12px">'
+                        + cabeca_sheet("Do banco")
+                        + '<div class="bf-amount" style="padding:0"><div class="bf-amount__value"><span class="bf-amount__currency">R$</span><span class="bf-amount__digits">23,70</span></div></div>'
+                        + '<div class="caption muted" style="text-align:center;margin-top:-6px">UBER *TRIP · ontem · Pix · C6 Bank</div>'
+                        + f'<div class="bf-field"><span class="bf-field__label">Categoria</span>{chips(CATS[:6], "Transporte")}</div>'
+                        + '<label class="bf-field"><span class="bf-field__label">Com o quê</span><input class="bf-input" value="Uber"></label>'
+                        + f'<div class="bf-nota">{i("sparkles")}<span>Da próxima vez, <b>UBER *TRIP</b> entra sozinho em Transporte.</span></div>'
+                        + f'<button class="bf-btn bf-btn--primary bf-btn--block">{i("check")}Lançar</button>'
+                        + '<button class="bf-btn bf-btn--ghost bf-btn--block">Ignorar este</button></div></div>')
+tela("TelaOpenFinance", "31 · Open Finance (Meu Pluggy): o banco confere o que você lançou e traz o que faltou",
+     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:16px">'
+     + painel("1 · Lançamentos com Para conferir", lanc_conferir,
+              "O que veio do banco e não bate com nada lançado aparece no topo, com a categoria sugerida. Lançar ou Ignorar em um toque. O que bate com o que você lançou ganha \"✓ banco\".")
+     + painel("2 · Tocar numa linha", sheet_conferir,
+              "Dá para trocar a categoria e o \"com o quê\" antes de lançar. A escolha fica guardada: o mesmo estabelecimento entra sozinho na próxima vez.")
+     + painel("3 · Ajustes › Banco", ajustes_banco,
+              "Mostra a conexão do C6 pelo Meu Pluggy, quando atualizou e até quando vale a autorização (1 ano; depois, renova no Meu Pluggy).")
+     + "</div>",
+     """Open Finance pelo Meu Pluggy (gratuito, só para uso pessoal). Uma vez por dia o banco manda as transações da conta
+e do cartão do C6, de hoje em diante. Cada uma é comparada com o que já foi lançado (mesmo valor, mesma forma, até 3
+dias de diferença): se bate, o lançamento ganha "✓ banco" e nada novo entra. Se não bate, vai para "Para conferir", em
+Lançamentos, com a categoria sugerida (a que você usou para o mesmo estabelecimento, senão a da Pluggy). Lançar cria o
+lançamento normal (débito, Pix ou crédito na fatura certa) e ensina a categoria do estabelecimento; Ignorar tira da
+lista. Estabelecimento já conhecido entra direto, sem passar por conferir. O Atalho continua sendo o jeito de lançar
+na hora; o banco confere no dia seguinte. Entradas (salário, Pix recebido) também aparecem para conferir, como receita.""",
+     altura=1010, largura=1300)
+
 print("telas geradas em", RAIZ)

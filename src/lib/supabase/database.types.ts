@@ -43,6 +43,20 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"bancos": {
+                  Row: {
+                    "atualizado_em": string | null,"autorizacao_ate": string | null,"buscado_em": string | null,"contas": string,"criado_em": string,"desde": string,"erro": string | null,"instituicao": string,"item_id": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "atualizado_em"?: string | null,"autorizacao_ate"?: string | null,"buscado_em"?: string | null,"contas"?: string,"criado_em"?: string,"desde": string,"erro"?: string | null,"instituicao"?: string,"item_id": string,"user_id": string
+                  }
+                  Update: {
+                    "atualizado_em"?: string | null,"autorizacao_ate"?: string | null,"buscado_em"?: string | null,"contas"?: string,"criado_em"?: string,"desde"?: string,"erro"?: string | null,"instituicao"?: string,"item_id"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"cartoes": {
                   Row: {
                     "criado_em": string,"dia_fechamento": number,"dia_vencimento": number | null,"id": string,"nome": string,"user_id": string
@@ -145,6 +159,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"regras_banco": {
+                  Row: {
+                    "categoria_id": string,"criado_em": string,"descricao": string,"estabelecimento": string,"tipo": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "categoria_id": string,"criado_em"?: string,"descricao": string,"estabelecimento": string,"tipo": string,"user_id": string
+                  }
+                  Update: {
+                    "categoria_id"?: string,"criado_em"?: string,"descricao"?: string,"estabelecimento"?: string,"tipo"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "regras_banco_categoria_id_fkey"
+      columns: ["categoria_id"]
+isOneToOne: false
+      referencedRelation: "categorias"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"taxas_cdi": {
                   Row: {
                     "dia": string,"taxa": number
@@ -172,6 +206,32 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"transacoes_banco": {
+                  Row: {
+                    "categoria_id": string | null,"categoria_pluggy": string | null,"conta": string,"criado_em": string,"data": string,"descricao": string,"estabelecimento": string,"forma": string,"id": string,"lancamento_id": string | null,"nome": string,"nome_da_conta": string,"parcelas": number,"pluggy_id": string,"situacao": string,"tipo": string,"user_id": string,"valor": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "categoria_id"?: string | null,"categoria_pluggy"?: string | null,"conta": string,"criado_em"?: string,"data": string,"descricao": string,"estabelecimento": string,"forma": string,"id"?: string,"lancamento_id"?: string | null,"nome"?: string,"nome_da_conta"?: string,"parcelas"?: number,"pluggy_id": string,"situacao"?: string,"tipo": string,"user_id": string,"valor": number
+                  }
+                  Update: {
+                    "categoria_id"?: string | null,"categoria_pluggy"?: string | null,"conta"?: string,"criado_em"?: string,"data"?: string,"descricao"?: string,"estabelecimento"?: string,"forma"?: string,"id"?: string,"lancamento_id"?: string | null,"nome"?: string,"nome_da_conta"?: string,"parcelas"?: number,"pluggy_id"?: string,"situacao"?: string,"tipo"?: string,"user_id"?: string,"valor"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "transacoes_banco_categoria_id_fkey"
+      columns: ["categoria_id"]
+isOneToOne: false
+      referencedRelation: "categorias"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "transacoes_banco_lancamento_id_fkey"
+      columns: ["lancamento_id"]
+isOneToOne: false
+      referencedRelation: "lancamentos"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"vr": {
                   Row: {

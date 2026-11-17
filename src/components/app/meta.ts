@@ -5,7 +5,7 @@ const FORMA = { debito: 'Débito', pix: 'Pix', credito: 'Crédito', vr: 'VR' } a
 
 /**
  * Texto de baixo da linha (design kit: TelaFatura): "Lazer · 1/3 · comprado em 7 nov",
- * "Mercado · à vista · 20 nov", "Transporte · Débito · pelo Atalho", "Salário".
+ * "Mercado · à vista · 20 nov", "Transporte · Débito · pelo Atalho · ✓ banco", "Uber · Pix · do banco", "Salário".
  */
 export function metaDe(l: LancamentoListado): string {
   if (l.origem === 'vr') return `VR · todo dia ${Number(diaDe(l.data).slice(8))}`;
@@ -22,5 +22,8 @@ export function metaDe(l: LancamentoListado): string {
     partes.push(FORMA[l.forma]);
   }
   if (l.origem === 'atalho') partes.push('pelo Atalho');
+  // Open Finance: veio do banco, ou bateu com uma transação dele.
+  if (l.origem === 'banco') partes.push('do banco');
+  else if (l.conferido) partes.push('✓\u00a0banco');
   return partes.join(' · ');
 }

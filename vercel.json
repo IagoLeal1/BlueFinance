@@ -1,4 +1,7 @@
 {
   "regions": ["gru1"],
-  "crons": [{ "path": "/api/avisos", "schedule": "0 12 * * *" }]
+  "crons": [
+    { "path": "/api/avisos", "schedule": "0 12 * * *" },
+    { "path": "/api/banco", "schedule": "0 10 * * *" }
+  ]
 }

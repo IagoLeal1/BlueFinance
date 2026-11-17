@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { AvisoDaFatura } from '@/components/app/aviso-fatura';
+import { BancoAjustes } from '@/components/app/banco-ajustes';
 import { BotaoSair } from '@/components/app/botao-sair';
 import { Cartoes } from '@/components/app/cartoes';
 import { TokenAtalho } from '@/components/app/token-atalho';
 import { ConfigurarVr } from '@/components/app/vr-ajustes';
 import { supabaseServidor } from '@/lib/supabase/server';
+import { bancoDoUsuario } from '@/server/banco';
 import { listarCartoes } from '@/server/cartoes';
 import { tokenAtivo } from '@/server/tokens';
 import { vrDoUsuario } from '@/server/vr';
@@ -24,6 +26,9 @@ export default function Ajustes() {
       </Suspense>
       <Suspense fallback={null}>
         <VrDoUsuario />
+      </Suspense>
+      <Suspense fallback={null}>
+        <BancoDoUsuario />
       </Suspense>
       <AvisoDaFatura />
       <section aria-label="Lançar sem abrir o app" className="grid gap-3 rounded-lg bg-card p-4 shadow-card">
@@ -72,6 +77,10 @@ async function CartoesDoUsuario() {
 async function VrDoUsuario() {
   const vr = await vrDoUsuario();
   return <ConfigurarVr vr={vr && { valorMensal: vr.valorMensal, dia: vr.dia, saldo: vr.saldo }} />;
+}
+
+async function BancoDoUsuario() {
+  return <BancoAjustes banco={await bancoDoUsuario()} />;
 }
 
 async function EmailDaConta() {

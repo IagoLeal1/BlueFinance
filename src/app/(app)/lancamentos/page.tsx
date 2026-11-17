@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { connection } from 'next/server';
+import { after, connection } from 'next/server';
 import { Suspense } from 'react';
 import { EsqueletoLista } from '@/components/app/esqueleto';
 import { ListaLancamentos, type DiaDeLancamentos, type Fatura, type PagamentoFatura } from '@/components/app/lista-lancamentos';
@@ -7,10 +7,12 @@ import { MesPicker } from '@/components/app/mes-picker';
 import { diaDe, mesAtual, mesDaUrl, nomeDoMes, opcoesDeMes, rotuloDoDia, somarMeses, tituloDoMes } from '@/domain/datas';
 import { diaDoFechamento, faturasDoCartao } from '@/domain/parcelas';
 import { noMes } from '@/domain/summary';
+import { buscarSeAntigo, paraConferir } from '@/server/banco';
 import { listarCartoes } from '@/server/cartoes';
 import { categoriasDoUsuario } from '@/server/categorias';
 import { completarAssinaturas, lancamentosDoCaixa, ultimoMesComParcelas } from '@/server/lancamentos';
 import { vrDoUsuario } from '@/server/vr';
+import { supabaseServidor } from '@/lib/supabase/server';
 
 export const metadata: Metadata = { title: 'Lançamentos · BlueFinance' };
 
@@ -30,13 +32,18 @@ async function ListaDoMes({ searchParams }: { searchParams: PageProps<'/lancamen
   const extrato = params.ver === 'credito' ? 'credito' : params.ver === 'vr' ? 'vr' : 'debito';
   const categoria = typeof params.categoria === 'string' ? params.categoria : null;
   await completarAssinaturas(agora);
-  const [caixa, categorias, ultimaParcela, cartoes, vr] = await Promise.all([
+  const [caixa, categorias, ultimaParcela, cartoes, vr, doBanco, claims] = await Promise.all([
     lancamentosDoCaixa(mes),
     categoriasDoUsuario(),
     ultimoMesComParcelas(mesAtual(agora)),
     listarCartoes(),
     vrDoUsuario(),
+    paraConferir(),
+    supabaseServidor().then((s) => s.auth.getClaims()),
   ]);
+  // Open Finance: se a última busca no banco foi há horas, busca de novo depois de mostrar a tela.
+  const userId = claims.data?.claims.sub;
+  if (userId) after(() => buscarSeAntigo(userId).catch((e) => console.error('Busca no banco:', e)));
 
   // Crédito: as compras da fatura do mês, juntas por cartão. Débito: a conta, dia a dia — e cada fatura
   // que vence no mês numa linha só, no vencimento ("A pagar" até lá).
@@ -123,6 +130,7 @@ async function ListaDoMes({ searchParams }: { searchParams: PageProps<'/lancamen
         mes={mes}
         gastos={caixa.filter((l) => l.tipo === 'despesa' && l.origem !== 'acerto' && noMes(l, mes))}
         categoriaInicial={categoria}
+        doBanco={doBanco}
       />
     </>
   );
