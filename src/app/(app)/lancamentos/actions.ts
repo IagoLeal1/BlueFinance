@@ -117,3 +117,22 @@ export async function confirmarApplePay(_anterior: EstadoDoBanco, form: FormData
   refresh();
   return { ok: true };
 }
+
+/**
+ * Extrato do VR › Depósito do VR: quanto caiu de verdade naquele mês (design kit: TelaDepositoVr). Muda só esse
+ * depósito; o valor de Ajustes continua sendo o previsto dos próximos meses.
+ */
+export async function acertarDepositoVr(_anterior: EstadoDoBanco, form: FormData): Promise<EstadoDoBanco> {
+  const valor = Number(form.get('valor_centavos'));
+  if (!Number.isSafeInteger(valor) || valor <= 0) return { erro: 'Digite quanto caiu, maior que zero.' };
+  const supabase = await supabaseServidor();
+  const { data, error } = await supabase
+    .from('lancamentos')
+    .update({ valor })
+    .eq('id', String(form.get('id') ?? ''))
+    .eq('origem', 'vr')
+    .select('id');
+  if (error || !data?.length) return { erro: 'Não foi possível salvar. Tente de novo.' };
+  refresh();
+  return { ok: true };
+}

@@ -1088,4 +1088,42 @@ Sem duplicar: se você já lançou pelo Atalho o mesmo valor minutos antes, o Ap
 banco confere o que veio do Apple Pay ("✓ banco").""",
      altura=1010, largura=1300)
 
+# 33 · VR: o depósito de cada mês pode vir diferente — tocar nele e acertar o valor
+def saldo_vr_card(saldo, proximo):
+    return ('<section class="bf-card" style="display:flex;justify-content:space-between;align-items:center;gap:12px">'
+            f'<div><div class="caption muted">Saldo do VR</div><div class="body-strong num" style="font-size:22px;line-height:28px">{saldo}</div></div>'
+            f'<div class="caption muted" style="text-align:right">Próximo depósito<br><span class="num">{proximo}</span></div></section>')
+def lista_vr(valor_deposito, meta_deposito, destaque=False):
+    borda = "box-shadow:0 0 0 2px var(--brand);border-radius:14px;padding:0 6px;margin:0 -6px" if destaque else ""
+    return ('<section class="bf-card" style="padding-top:0;padding-bottom:4px"><div class="bf-list__day">Ontem · 18 nov</div><ul class="bf-list">'
+            f'<li class="bf-row" style="{borda}"><span class="bf-cat bf-cat--positive">{i("wallet-cards")}</span><div class="bf-row__main"><div class="bf-row__title">Depósito do VR</div>'
+            f'<div class="bf-row__meta">{meta_deposito}</div></div><span class="bf-row__amount is-positive">{valor_deposito}</span>{i("chevron-right", cls="muted")}</li></ul>'
+            '<div class="bf-list__day">12 nov</div><ul class="bf-list">'
+            + linha_cor("utensils", "Almoço", "Alimentação · VR", "− R$ 32,90", "Alimentação")
+            + '</ul></section>')
+extrato_dep = iphone(titulo("Lançamentos", CALENDARIO) + SEG3("VR") + saldo_vr_card("R$ 768,66", "R$ 800,80 · 18 dez")
+                     + lista_vr("+ R$ 800,80", "VR · todo dia 18", destaque=True), aba=1)
+sheet_dep = iphone("", aba=None, sobre='<div class="bf-scrim"><div class="bf-sheet" style="display:grid;gap:12px">'
+                   + cabeca_sheet("Depósito do VR")
+                   + '<div class="caption muted" style="text-align:center">Novembro · caiu dia 18</div>'
+                   + '<div class="bf-amount" style="padding:0"><span class="bf-field__label">Quanto caiu</span><div class="bf-amount__value"><span class="bf-amount__currency">R$</span><span class="bf-amount__digits">812,40</span><span class="bf-amount__caret"></span></div></div>'
+                   + f'<div class="bf-nota">{i("info")}<span>Previsto: <b>R$ 800,80</b>. Muda só o depósito de novembro: o saldo do VR se ajusta sozinho. Os próximos meses continuam com R$ 800,80 (muda em Ajustes).</span></div>'
+                   + f'<button class="bf-btn bf-btn--primary bf-btn--block">{i("check")}Salvar depósito</button></div></div>')
+extrato_dep_depois = iphone(titulo("Lançamentos", CALENDARIO) + SEG3("VR") + saldo_vr_card("R$ 780,26", "R$ 800,80 · 18 dez")
+                            + lista_vr("+ R$ 812,40", "VR · todo dia 18"), aba=1)
+tela("TelaDepositoVr", "33 · VR: o depósito de cada mês pode vir diferente — toque nele e acerte o valor",
+     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:16px">'
+     + painel("1 · Extrato do VR", extrato_dep,
+              "O depósito do mês entra sozinho no dia, com o valor de Ajustes. A linha \"Depósito do VR\" agora abre.")
+     + painel("2 · Tocar no depósito", sheet_dep,
+              "Digita quanto caiu de verdade. Muda só aquele mês; o valor de Ajustes continua sendo o previsto dos próximos.")
+     + painel("3 · Salvou", extrato_dep_depois,
+              "O depósito mostra o valor do mês e o saldo do VR se ajusta (+ R$ 11,60). Dá para acertar de novo quando quiser.")
+     + "</div>",
+     """Pedido do dono em 19/11/2026: o VR vem com valor diferente a cada mês. O depósito do mês continua entrando sozinho
+no dia, com o valor de Ajustes (o previsto). Tocar em "Depósito do VR" no extrato do VR abre o valor daquele mês para
+trocar: muda só aquele depósito, e o saldo do VR se ajusta sozinho. O valor de Ajustes não muda (é o previsto dos
+próximos meses). Saldo inicial e acertos continuam sem edição (o saldo se corrige em Ajustes).""",
+     altura=1010, largura=1300)
+
 print("telas geradas em", RAIZ)

@@ -152,9 +152,13 @@ Pedido do dono em 12/11/2026 (tela 27).
   de hoje. O depósito de cada mês entra sozinho, como um lançamento "Depósito do VR" no dia dele, a partir do
   dia seguinte ao da configuração (o saldo informado já inclui os anteriores). Um depósito por mês, garantido
   por índice único no banco.
-- **Saldo de hoje:** na primeira vez entra como "Saldo inicial do VR"; depois, a diferença para o saldo que o
-  app calculou vira um "Acerto do saldo do VR". Depósito e acerto não se editam na lista; o saldo se corrige em
-  Ajustes. Acerto não é gasto de categoria nenhuma.
+- **Saldo de hoje:** na primeira vez entra como "Saldo inicial do VR"; depois, se você mudou o saldo, a diferença
+  para o saldo que o app calculou vira um "Acerto do saldo do VR". Sem mexer no saldo não há acerto (bug de
+  18/11/2026: mudar o dia para hoje lançou o depósito e um acerto que o anulava). O acerto não se edita na lista; o
+  saldo se corrige em Ajustes. Acerto não é gasto de categoria nenhuma.
+- **Quanto caiu no mês** (pedido do dono em 19/11/2026, tela 33): o VR vem com valor diferente a cada mês. O
+  depósito entra sozinho com o valor de Ajustes (o previsto); tocar em "Depósito do VR" no extrato do VR acerta
+  quanto caiu naquele mês. Muda só aquele depósito, e o saldo se ajusta; o previsto dos próximos meses não muda.
 - **Pagar com VR** pelo botão +, pela edição de um gasto e pelo Atalho. Sem parcelas.
 - **Onde aparece:** no Início, um card menor abaixo do saldo da conta (só no mês atual) com o saldo e o
   próximo depósito; em Lançamentos, a aba VR com o saldo, os depósitos e os gastos pagos com ele.

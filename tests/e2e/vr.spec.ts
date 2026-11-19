@@ -140,4 +140,31 @@ test.describe('VR (vale-refeição)', () => {
     await expect(linha(page, 'Depósito do VR')).toContainText('+ R$ 800,80');
     await expect(linha(page, 'Acerto do saldo do VR')).toHaveCount(0);
   });
+
+  test('acertar quanto caiu no depósito do mês: muda só aquele depósito e o saldo', async ({ page, usuario }) => {
+    const ontem = diaDe(new Date(Date.now() - 86_400_000));
+    const hoje = diaDe(new Date());
+    const diaHoje = Number(hoje.slice(8));
+    // Configurado ontem para cair hoje: o depósito de hoje entra sozinho, com o valor previsto.
+    await semearVr(usuario, { valorMensal: 80080, dia: diaHoje, desde: `${ontem}T12:00:00-03:00`, saldo: 76 });
+    await entrar(page, usuario);
+    await page.goto('/lancamentos?ver=vr');
+    await expect(page.getByRole('region', { name: 'Saldo do VR' })).toContainText('R$ 801,56');
+
+    await linha(page, 'Depósito do VR').getByRole('button').click();
+    const sheet = page.getByRole('dialog', { name: 'Depósito do VR' });
+    const mes = nomeDoMes(hoje.slice(0, 7));
+    await expect(sheet).toContainText(`${mes[0]!.toUpperCase()}${mes.slice(1)} · caiu dia ${diaHoje}`);
+    await expect(sheet.getByLabel('Quanto caiu')).toHaveValue('R$ 800,80');
+    await expect(sheet).toContainText('Previsto: R$ 800,80');
+    await sheet.getByLabel('Quanto caiu').fill('81240');
+    await sheet.getByRole('button', { name: 'Salvar depósito' }).click();
+    await expect(sheet).toBeHidden();
+    await expect(page.getByRole('region', { name: 'Saldo do VR' })).toContainText('R$ 813,16');
+    await expect(linha(page, 'Depósito do VR')).toContainText('+ R$ 812,40');
+
+    // O previsto dos próximos meses continua o de Ajustes.
+    await page.goto('/ajustes');
+    await expect(page.getByRole('region', { name: 'Vale-refeição' }).getByRole('listitem')).toContainText('R$ 800,80 todo dia');
+  });
 });

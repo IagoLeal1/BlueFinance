@@ -10,6 +10,7 @@ import type { ApplePayAConfirmar } from '@/server/apple-pay';
 import type { ParaConferir as ItemDoBanco } from '@/server/banco';
 import type { LancamentoListado } from '@/server/lancamentos';
 import { Segmented } from './segmented';
+import { LinhaDepositoVr } from './deposito-vr';
 import { LinhaAssinatura } from './editar-assinatura';
 import { LinhaCompra } from './editar-compra';
 import { LinhaEditavel, type CategoriaEditavel } from './editar-lancamento';
@@ -280,8 +281,11 @@ export function ListaLancamentos({
               <h2 className="pt-4 pb-1 text-xs font-bold tracking-[0.02em] text-muted-foreground">{d.rotulo}</h2>
               <ul>
                 {d.lancamentos.map((l) =>
-                  // Depósito e acerto do VR não se editam: o saldo se corrige em Ajustes › Vale-refeição.
-                  l.origem === 'vr' || l.origem === 'acerto' ? (
+                  // O depósito do mês abre para acertar quanto caiu; o acerto não se edita (o saldo se corrige em
+                  // Ajustes › Vale-refeição).
+                  l.origem === 'vr' ? (
+                    <LinhaDepositoVr key={l.id} l={l} previsto={vr?.valorMensal ?? null} />
+                  ) : l.origem === 'acerto' ? (
                     <TransactionRow key={l.id} l={l} meta={metaDe(l)} />
                   ) : (
                     <LinhaEditavel key={l.id} l={l} categorias={categorias} cartoes={cartoes} temVr />
