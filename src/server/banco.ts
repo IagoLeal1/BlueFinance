@@ -5,6 +5,7 @@ import {
   categoriaSugerida,
   escolherCartao,
   lerTransacao,
+  motivoDeFora,
   linhasDoLancamento,
   type Candidato,
   type DoBanco,
@@ -177,9 +178,9 @@ async function sincronizarUm(chave: string, banco: { user_id: string; item_id: s
   // Diagnóstico (bancos.ultima_busca): quanto a Pluggy mandou por conta, sem descrições nem valores. A busca pega
   // também a semana anterior à conexão, só para saber se o banco tem transações e até que dia elas vão.
   const semanaAntes = diaDe(new Date(Date.parse(`${banco.desde}T12:00:00-03:00`) - 7 * 86_400_000));
-  const diagnostico: { tipo: string; recebidas: number; aproveitadas: number; antes: number; maisRecente: string | null }[] = [];
+  const diagnostico: { tipo: string; recebidas: number; aproveitadas: number; antes: number; maisRecente: string | null; deFora: Record<string, number> }[] = [];
   for (const conta of conexao.listaDeContas) {
-    const d = { tipo: conta.type, recebidas: 0, aproveitadas: 0, antes: 0, maisRecente: null as string | null };
+    const d = { tipo: conta.type, recebidas: 0, aproveitadas: 0, antes: 0, maisRecente: null as string | null, deFora: {} as Record<string, number> };
     for (const t of await transacoesDa(chave, conta.id, semanaAntes)) {
       const dia = (t.date ?? '').slice(0, 10);
       if (dia && (!d.maisRecente || dia > d.maisRecente)) d.maisRecente = dia;
@@ -189,6 +190,8 @@ async function sincronizarUm(chave: string, banco: { user_id: string; item_id: s
         continue;
       }
       d.recebidas++;
+      const motivo = motivoDeFora(conta.type, t);
+      if (motivo) d.deFora[motivo] = (d.deFora[motivo] ?? 0) + 1;
       const lida = lerTransacao(conta.type, t);
       if (lida && diaDe(lida.data) >= banco.desde) {
         lidas.push({ ...lida, nomeDaConta: conta.marketingName || conta.name });

@@ -89,8 +89,8 @@ test.describe('Open Finance: a busca diária no banco', () => {
     // Diagnóstico da busca: quanto a Pluggy mandou por conta (de `desde` em diante e na semana anterior) e quanto entrou.
     const { data: diagnostico } = await clienteDe(usuario).from('bancos').select('ultima_busca').single();
     expect(diagnostico!.ultima_busca).toEqual([
-      { tipo: 'BANK', recebidas: 4, aproveitadas: 3, antes: 1, maisRecente: hoje },
-      { tipo: 'CREDIT', recebidas: 4, aproveitadas: 2, antes: 0, maisRecente: hoje },
+      { tipo: 'BANK', recebidas: 4, aproveitadas: 3, antes: 1, maisRecente: hoje, deFora: { 'pagamento de fatura': 1 } },
+      { tipo: 'CREDIT', recebidas: 4, aproveitadas: 2, antes: 0, maisRecente: hoje, deFora: { 'cartão: parcela seguinte': 1, 'cartão: não é compra': 1 } },
     ]);
   });
 

@@ -6,6 +6,7 @@ import {
   estabelecimentoDe,
   lerTransacao,
   linhasDoLancamento,
+  motivoDeFora,
   nomeDe,
   type Candidato,
   type TransacaoPluggy,
@@ -78,6 +79,19 @@ test.describe('Open Finance: ler a transação do banco', () => {
     expect(lerTransacao('BANK', t({ description: 'PIX ENVIADO IAGO', amount: -100, category: 'Same person transfer - PIX' }))).toBeNull();
     expect(lerTransacao('BANK', t({ description: 'CDB C6', amount: -100, category: 'Fixed Income Investment' }))).toBeNull();
     expect(lerTransacao('BANK', t({ description: 'X', amount: 0 }))).toBeNull();
+  });
+
+  test('motivo de ficar de fora (para o diagnóstico da busca), sem descrição nem valor', () => {
+    expect(motivoDeFora('BANK', t({ description: 'UBER *TRIP', amount: -23.7 }))).toBeNull();
+    expect(motivoDeFora('BANK', t({ description: 'X', amount: 0 }))).toBe('sem valor');
+    expect(motivoDeFora('BANK', t({ description: '', amount: -5 }))).toBe('sem descrição');
+    expect(motivoDeFora('BANK', t({ description: 'X', amount: -100, operationType: 'PAGAMENTO_FATURA' }))).toBe('pagamento de fatura');
+    expect(motivoDeFora('BANK', t({ description: 'PGTO FATURA CARTAO', amount: -100 }))).toBe('pagamento de fatura');
+    expect(motivoDeFora('BANK', t({ description: 'CDB C6', amount: -100, category: 'Fixed Income Investment' }))).toBe('categoria: Fixed Income Investment');
+    expect(motivoDeFora('CREDIT', t({ description: 'PAGAMENTO RECEBIDO', amount: -500, type: 'CREDIT' }))).toBe('cartão: não é compra');
+    expect(motivoDeFora('CREDIT', t({ description: 'LOJA', amount: 10, type: 'DEBIT', creditCardMetadata: { installmentNumber: 2, totalInstallments: 3 } }))).toBe(
+      'cartão: parcela seguinte',
+    );
   });
 
   test('estabelecimento: a descrição em maiúsculas, sem acento e sem números (a chave da categoria aprendida)', () => {

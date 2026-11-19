@@ -82,15 +82,36 @@ export function nomeDe(t: Pick<TransacaoPluggy, 'description' | 'merchant'>): st
   return titulo(limpo) || titulo(t.description);
 }
 
-/** Lê uma transação da Pluggy; devolve null para o que não entra no app (ver FICA_DE_FORA). */
+const descricaoDe = (t: TransacaoPluggy) => (t.description || t.descriptionRaw || '').trim();
+const centavosDe = (t: TransacaoPluggy) => Math.round(Math.abs(t.amount) * 100);
+
+/**
+ * Por que uma transação não entra no app (null se entra). Vai para o diagnóstico da busca, então não leva descrição
+ * nem valor: só o motivo e, quando é o caso, a categoria da Pluggy.
+ */
+export function motivoDeFora(tipoDaConta: TipoDaConta, t: TransacaoPluggy): string | null {
+  const descricao = descricaoDe(t);
+  if (!centavosDe(t)) return 'sem valor';
+  if (!descricao) return 'sem descrição';
+  if (t.operationType === 'PAGAMENTO_FATURA' || FATURA.test(descricao)) return 'pagamento de fatura';
+  if (FICA_DE_FORA.test(t.category ?? '')) return `categoria: ${t.category}`;
+  if (tipoDaConta === 'CREDIT') {
+    // A Pluggy normaliza o cartão: compra é sempre DEBIT; pagamento da fatura e estorno, CREDIT. Sem o tipo, vale o
+    // sinal (positivo é compra).
+    const compra = t.type ? t.type === 'DEBIT' : t.amount > 0;
+    if (!compra || t.operationType === 'ESTORNO' || t.operationType === 'CASHBACK') return 'cartão: não é compra';
+    if ((t.creditCardMetadata?.installmentNumber ?? 1) > 1) return 'cartão: parcela seguinte';
+  }
+  return null;
+}
+
+/** Lê uma transação da Pluggy; devolve null para o que não entra no app (ver motivoDeFora). */
 export function lerTransacao(tipoDaConta: TipoDaConta, t: TransacaoPluggy): DoBanco | null {
-  const valor = Math.round(Math.abs(t.amount) * 100);
-  const descricao = (t.description || t.descriptionRaw || '').trim();
-  if (!valor || !descricao) return null;
-  if (t.operationType === 'PAGAMENTO_FATURA' || FICA_DE_FORA.test(t.category ?? '') || FATURA.test(descricao)) return null;
+  if (motivoDeFora(tipoDaConta, t)) return null;
+  const descricao = descricaoDe(t);
   const comum = {
     pluggyId: t.id,
-    valor,
+    valor: centavosDe(t),
     descricao,
     estabelecimento: estabelecimentoDe(descricao),
     nome: nomeDe(t),
@@ -99,12 +120,7 @@ export function lerTransacao(tipoDaConta: TipoDaConta, t: TransacaoPluggy): DoBa
   const meioDia = (iso: string) => `${iso.slice(0, 10)}T12:00:00-03:00`;
 
   if (tipoDaConta === 'CREDIT') {
-    // A Pluggy normaliza o cartão: compra é sempre DEBIT; pagamento da fatura e estorno, CREDIT. Sem o tipo, vale o
-    // sinal (positivo é compra).
-    const compra = t.type ? t.type === 'DEBIT' : t.amount > 0;
-    if (!compra || t.operationType === 'ESTORNO' || t.operationType === 'CASHBACK') return null;
     const cc = t.creditCardMetadata;
-    if ((cc?.installmentNumber ?? 1) > 1) return null;
     const parcelas = Math.min(24, Math.max(1, cc?.totalInstallments ?? 1));
     return { ...comum, conta: 'cartao', tipo: 'despesa', forma: 'credito', parcelas, data: meioDia(cc?.purchaseDate ?? t.date) };
   }
