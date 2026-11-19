@@ -234,3 +234,16 @@ test.describe('redesenho: Mac', () => {
     }).toBe(640);
   });
 });
+
+test.describe('redesenho: o motor do Safari', () => {
+  test('entende vidro, molas em linear(), color-mix() e a aresta com máscara', async ({ page }) => {
+    await page.goto('/entrar');
+    const suporte = await page.evaluate(() => ({
+      linear: CSS.supports('transition-timing-function', 'linear(0, 0.5, 1)'),
+      vidro: CSS.supports('-webkit-backdrop-filter', 'blur(2px)') || CSS.supports('backdrop-filter', 'blur(2px)'),
+      colorMix: CSS.supports('color', 'color-mix(in srgb, red 50%, transparent)'),
+      maskComposite: CSS.supports('-webkit-mask-composite', 'xor') || CSS.supports('mask-composite', 'exclude'),
+    }));
+    expect(suporte).toEqual({ linear: true, vidro: true, colorMix: true, maskComposite: true });
+  });
+});

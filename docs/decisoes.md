@@ -12,6 +12,7 @@ atualize aqui.
 | Código | https://github.com/IagoLeal1/BlueFinance (repositório público, branch `main`) |
 | Design kit (fonte) | `design/project/` — tokens em `tokens.json`, telas em `components/Tela*/` (geradas por `design/scripts/gerar-telas.py`) |
 | Design System publicado | https://claude.ai/artifact/H45MoajMVUH6by18cdb4Dc |
+| Redesenho Liquid Glass (prévia aprovada) | `design-preview/` — `prototipo.html`, `design-system.html` e as fontes em `src/` |
 | Arquitetura | `docs/arquitetura.html`, publicada em https://claude.ai/artifact/APQibxK778Eo6kid9Jht6A |
 | Análise e stack (fase 1) | `docs/01-analise-e-stack.md` |
 | Plano de testes | `docs/03-plano-de-testes.md` |
@@ -25,7 +26,9 @@ atualize aqui.
 
 - **Em português (pt-BR)**, no app e nas conversas.
 - **Design primeiro, depois aprovação, depois código.** Toda mudança visível ganha uma tela no design kit
-  (publicada no Design System) e só é implementada depois de "Aprovado, implementar".
+  (publicada no Design System) e só é implementada depois de "Aprovado, implementar". Exceção combinada em
+  19/11/2026: o redesenho Liquid Glass foi aprovado pela prévia em `design-preview/` e as telas não foram levadas
+  para o design kit (só os tokens mudaram em `design/project/tokens.json`).
 - **TDD com Playwright, em fatias verticais:** um teste que falha (vermelho), o mínimo de código para passar
   (verde), e assim por diante. Três frentes: `unit` (regras de `src/domain`), `api` (Atalho, tokens,
   avisos, isolamento entre pessoas) e `e2e-iphone` (WebKit no tamanho do iPhone 16).
@@ -51,14 +54,50 @@ atualize aqui.
 - **Direção A, "BlueFin"** (entre três propostas: BlueFin, Caderneta e Cobalto): a barbatana do atum-azul
   cortando a linha d'água. Ícone com degradê **Abismo → Atum** (`#0b1f4d` → `#1846c8`), barbatana branca e
   linha d'água em **Água** (`#3ccfc6`). Nome curto "BlueFin", logotipo "bluefin" com "fin" na cor da marca.
-- **Fonte Manrope.** O dono usa o **tema escuro**; os dois temas existem e são validados.
-- **O topo do Início** é o degradê da marca com a onda da linha d'água recortando o fundo.
+- **Fonte do sistema** (desde o redesenho de 19/11/2026; antes era a Manrope): texto em SF Pro pela pilha do
+  sistema (`-apple-system, …`, utilitário `font-sans`) e valores em dinheiro em SF Pro Rounded (`ui-rounded`,
+  utilitário `font-valor`). Nada de fonte baixada. O dono usa o **tema escuro**; os dois temas existem e são validados.
+- **O topo do Início é um nível de água** (redesenho de 19/11/2026; antes era a onda recortada): sobre o degradê da
+  marca, a água sobe até a parte do que entrou que ainda está na conta (sobrou ÷ entrou, entre 0 e 100%), com a
+  barbatana na linha d'água e a etiqueta "N% do que entrou". Entrou, Saiu e Investiu ficam dentro do topo, sobre a
+  água (não mais em três cartões). O saldo conta de zero até o valor ao abrir.
+
+## Redesenho Liquid Glass (aprovado em 19/11/2026)
+
+Referência visual e de movimento: `design-preview/prototipo.html` e `design-preview/design-system.html`.
+
+- **Vidro em quatro níveis**, como utilitários do Tailwind em `src/app/globals.css`: `vidro-claro` (sobre o
+  degradê), `vidro` (regular: barra de abas, botões do topo), `vidro-tinta` (a ação principal e o botão +) e
+  `vidro-forte` (folhas, menu, diálogos, avisos); e `cartao`, o cartão em vidro. Tudo com desfoque, saturação, brilho
+  no topo e aresta com luz, sobre um fundo fixo com brilho ambiente (`--ambient`).
+- **Movimento com três molas** (ágil 380/32, viva 260/18, calma 170/24), calculadas em `design/scripts/build-tokens.mjs`
+  e entregues como `linear()` (`ease-agil`, `ease-viva`, `ease-calma`; durações `--t-*`). A lente da barra de abas
+  não passa da borda nas abas das pontas: bate e amassa.
+- **Barra de abas:** quatro abas de largura igual, rótulo de 9 pt (abaixo do padrão do iOS: conferir no aparelho) e
+  a lente que desliza. **O botão + saiu do centro** e é um botão redondo de vidro tingido à direita da barra.
+- **Topo:** olhinho e mês flutuam no canto (vidro claro sobre o degradê, regular sobre o conteúdo); o mês é uma
+  pílula ("nov") que abre um menu.
+- **Folhas** de vidro forte, soltas das bordas, com o valor grande e um teclado numérico próprio (1 a 9, 00, 0,
+  apagar); o teclado do iPhone não sobe por cima. As categorias ficam numa fileira que rola para o lado.
+- **Lançamentos:** os extratos têm um polegar que desliza; o vazio é "Mar calmo por aqui".
+- **Investir:** o gráfico do total pelo CDI no fim de cada mês (últimos 6) e o selo do rendimento do mês, calculados
+  com a mesma conta do rendimento (`evolucaoCdi`); investimentos sem CDI não entram no gráfico.
+- **Ajustes** é uma lista agrupada (Cartões, Vale-refeição; Lançar sozinho: Banco, Apple Pay, Atalho; Neste iPhone:
+  aviso da fatura) e cada linha abre uma subtela (`/ajustes/cartoes`, `/vale-refeicao`, `/banco`, `/apple-pay`,
+  `/atalho`).
+- **Layout de Mac** (novo): a partir de 1024 px a barra de abas vira barra lateral de vidro, o Início fica em duas
+  colunas, as outras telas numa coluna de 760 px e as folhas viram diálogo central.
+- **Acessibilidade:** contraste AA conferido pelo script de tokens, alvos de 44 pt ou mais, foco visível de 3 px, cor
+  nunca como único sinal. `prefers-reduced-motion` troca as animações por opacidade de 150 ms e para a onda;
+  `prefers-reduced-transparency` troca o vidro por superfície opaca.
 
 ## Cores das categorias
 
 - **Cada categoria de gasto tem a sua cor**, a mesma nas linhas e na barra "Gastos por categoria": Moradia
   azul, Mercado laranja, Transporte verde-água, Alimentação âmbar, Lazer rosa, Saúde verde. Outros é cinza.
-  Receita continua verde e aporte, âmbar.
+  Receita continua verde. **Investimento é Água** (`#0b7a74` no claro, `#4fd8cf` no escuro) desde o redesenho de
+  19/11/2026; antes era âmbar. **O âmbar ficou só para alerta** (token `alert`: fatura vencendo, sem internet, Para
+  conferir).
 - **A cor nunca é o único sinal:** toda linha tem ícone e nome. O valor continua vermelho (saiu) ou verde
   (entrou); a cor da categoria diz "o quê".
 - **Fatura é uma categoria própria, na cor Céu:** azul-céu pastel no escuro (`#8fd3ff`, fundo do ícone
