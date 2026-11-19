@@ -103,7 +103,7 @@ export function ConfigurarVr({ vr }: { vr: VrEditavel | null }) {
   );
 
   return (
-    <section aria-label="Vale-refeição" className="rounded-lg bg-card px-4 pt-3 pb-1 shadow-card">
+    <section aria-label="Vale-refeição" className="cartao px-4 pt-3 pb-1">
       <h2 className="text-lg font-bold">Vale-refeição</h2>
       {vr ? (
         <ul>

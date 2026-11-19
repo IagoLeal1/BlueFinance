@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "playwright-report/**",
     "test-results/**",
+    // Prévia de design (HTML solto, só referência).
+    "design-preview/**",
   ]),
 ]);
 

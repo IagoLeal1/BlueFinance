@@ -125,12 +125,12 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
               <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">{i.cdi ? percentualDoCdi(i.cdi.percentual) : i.tipo}</span>
             </span>
             <span className="text-right">
-              <span className="block font-bold tabular-nums">
+              <span className="block font-bold font-valor tabular-nums">
                 <Privado>{formatBRL(i.valorAtual)}</Privado>
               </span>
               <span
                 className={cn(
-                  'block text-[13px] leading-[18px] font-bold tabular-nums',
+                  'block text-[13px] leading-[18px] font-bold font-valor tabular-nums',
                   rendimento.startsWith('▲') ? 'text-positive' : rendimento.startsWith('▼') ? 'text-negative' : 'text-muted-foreground',
                 )}
               >
@@ -149,23 +149,23 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
               <p aria-hidden className="text-[13px] font-semibold text-muted-foreground">
                 Valor bruto hoje
               </p>
-              <p className="text-[40px] leading-[44px] font-extrabold tracking-[-0.02em] tabular-nums">{formatBRL(i.cdi.rendimento.bruto)}</p>
+              <p className="text-[40px] leading-[44px] font-extrabold tracking-[-0.02em] font-valor tabular-nums">{formatBRL(i.cdi.rendimento.bruto)}</p>
             </div>
             <div role="group" aria-label="Se resgatar hoje" className="grid gap-0.5 rounded-md bg-muted p-3">
               <p className="flex justify-between gap-3 font-bold">
                 <span aria-hidden>Se resgatar hoje</span>
-                <span className="tabular-nums">{formatBRL(i.cdi.rendimento.liquido)}</span>
+                <span className="font-valor tabular-nums">{formatBRL(i.cdi.rendimento.liquido)}</span>
               </p>
               <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">{explicaLiquido(i.cdi.rendimento)}</p>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div role="group" aria-label="Aportado" className="rounded-md bg-muted p-3">
                 <p aria-hidden className="text-xs font-semibold text-muted-foreground">Aportado</p>
-                <p className="mt-0.5 font-extrabold tabular-nums">{formatBRL(i.cdi.rendimento.aportado)}</p>
+                <p className="mt-0.5 font-extrabold font-valor tabular-nums">{formatBRL(i.cdi.rendimento.aportado)}</p>
               </div>
               <div role="group" aria-label="Rendeu" className="rounded-md bg-muted p-3">
                 <p aria-hidden className="text-xs font-semibold text-muted-foreground">Rendeu</p>
-                <p className={cn('mt-0.5 font-extrabold tabular-nums', i.cdi.rendimento.rendeu > 0 && 'text-positive', i.cdi.rendimento.rendeu < 0 && 'text-negative')}>
+                <p className={cn('mt-0.5 font-extrabold font-valor tabular-nums', i.cdi.rendimento.rendeu > 0 && 'text-positive', i.cdi.rendimento.rendeu < 0 && 'text-negative')}>
                   {i.cdi.rendimento.rendeu > 0 ? '+ ' : ''}
                   {formatBRL(i.cdi.rendimento.rendeu)}
                 </p>
@@ -182,7 +182,7 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
                       <span className="block font-semibold">{doDia(l.data)}</span>
                       <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">{metaDoAporte(l, i.cdi!.isentoIr)}</span>
                     </span>
-                    <span className="font-bold whitespace-nowrap tabular-nums">{formatBRL(l.valor)}</span>
+                    <span className="font-bold whitespace-nowrap font-valor tabular-nums">{formatBRL(l.valor)}</span>
                   </li>
                 ))}
               </ul>

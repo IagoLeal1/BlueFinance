@@ -24,7 +24,7 @@ export function Stepper({
       <button type="button" aria-label="Menos" className={botao} disabled={valor <= min} onClick={() => onChange(Math.max(min, valor - 1))}>
         −
       </button>
-      <span role="status" className="text-center text-lg font-extrabold tabular-nums">
+      <span role="status" className="text-center text-lg font-extrabold font-valor tabular-nums">
         {rotulo(valor)}
       </span>
       <button type="button" aria-label="Mais" className={botao} disabled={valor >= max} onClick={() => onChange(Math.min(max, valor + 1))}>

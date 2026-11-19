@@ -30,7 +30,7 @@ function Linha({ rotulo, valor }: { rotulo: string; valor: string }) {
   return (
     <li className="flex min-h-11 items-center justify-between gap-3 not-first:border-t not-first:border-border">
       <span className="font-semibold">{rotulo}</span>
-      <span className="font-bold tabular-nums">{valor}</span>
+      <span className="font-bold font-valor tabular-nums">{valor}</span>
     </li>
   );
 }
@@ -57,7 +57,7 @@ function FormularioDeConexao({ deNovo }: { deNovo: boolean }) {
 export function BancoAjustes({ banco }: { banco: BancoConectado | null }) {
   const ultima = banco?.atualizadoEm ?? banco?.buscadoEm ?? null;
   return (
-    <section aria-label="Banco (Open Finance)" className="grid gap-3 rounded-lg bg-card p-4 shadow-card">
+    <section aria-label="Banco (Open Finance)" className="grid gap-3 cartao p-4">
       <h2 className="text-lg font-bold">Banco (Open Finance)</h2>
       {!banco ? (
         <>

@@ -78,7 +78,7 @@ export function AvisoDaFatura() {
 
   const ligado = !!inscricao;
   return (
-    <section aria-label="Aviso da fatura" className="grid gap-3 rounded-lg bg-card p-4 shadow-card">
+    <section aria-label="Aviso da fatura" className="grid gap-3 cartao p-4">
       <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-bold">Aviso da fatura</h2>

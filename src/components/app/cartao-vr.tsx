@@ -8,7 +8,7 @@ import { Privado } from './privado';
 /** Início: o VR num card menor, abaixo do saldo da conta; tocar abre o extrato do VR (design kit: TelaVr). */
 export function CartaoVr({ vr }: { vr: Pick<Vr, 'saldo' | 'proximo' | 'valorMensal'> }) {
   return (
-    <section aria-label="VR" className="rounded-lg bg-card shadow-card">
+    <section aria-label="VR" className="cartao">
       <Link href="/lancamentos?ver=vr" className="flex items-center gap-3 px-4 py-3">
         <span className="grid size-10 shrink-0 place-items-center rounded-[12px] bg-muted text-muted-foreground">
           <WalletCards className="size-5" aria-hidden />
@@ -21,7 +21,7 @@ export function CartaoVr({ vr }: { vr: Pick<Vr, 'saldo' | 'proximo' | 'valorMens
         </span>
         <span className="text-right">
           <span className="block text-xs font-semibold text-muted-foreground">Saldo</span>
-          <span className="block text-xl font-extrabold tabular-nums">
+          <span className="block text-xl font-extrabold font-valor tabular-nums">
             <Privado>{formatBRL(vr.saldo)}</Privado>
           </span>
         </span>

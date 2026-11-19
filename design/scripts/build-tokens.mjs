@@ -10,6 +10,20 @@ const themes = t.color.themes.map((x) => x.id);
 const first = themes[0];
 const val = (tok, theme) => (typeof tok.value === 'string' ? tok.value : tok.value[theme] ?? tok.value[first]);
 
+// Molas de verdade (rigidez/amortecimento): resolve a equação e entrega como linear() para o CSS,
+// com a duração até assentar. Mesma conta do protótipo (design-preview/src/bluefin.js).
+function mola(rigidez, amortecimento) {
+  const w0 = Math.sqrt(rigidez), z = Math.min(amortecimento / (2 * w0), 0.999), wd = w0 * Math.sqrt(1 - z * z);
+  const dur = 6.9 / (z * w0), pts = [];
+  for (let i = 0; i <= 48; i++) {
+    const tt = (i / 48) * dur;
+    pts.push(Number((1 - Math.exp(-z * w0 * tt) * (Math.cos(wd * tt) + ((z * w0) / wd) * Math.sin(wd * tt))).toFixed(4)));
+  }
+  pts[48] = 1;
+  return { curva: `linear(${pts.join(', ')})`, ms: Math.round(dur * 1000) };
+}
+const molas = (t.motion?.springs ?? []).map((m) => ({ ...m, ...mola(m.stiffness, m.damping) }));
+
 // ---------- tokens.css ----------
 const lines = [`/* ${t.name} — generated from tokens.json */`];
 for (const theme of themes) {
@@ -17,11 +31,13 @@ for (const theme of themes) {
   lines.push(`${sel} {`);
   for (const tok of t.color.tokens) lines.push(`  --${tok.name}: ${val(tok, theme)};`);
   for (const tok of t.shadow?.tokens ?? []) lines.push(`  --${tok.name}: ${val(tok, theme)};`);
+  for (const tok of t.ambient?.tokens ?? []) lines.push(`  --${tok.name}: ${val(tok, theme)};`);
   lines.push('}');
 }
 lines.push(':root {');
 for (const fam of ['spacing', 'radius', 'size']) for (const tok of t[fam]?.tokens ?? []) lines.push(`  --${tok.name}: ${tok.value};`);
 for (const [k, v] of Object.entries(t.type.families)) lines.push(`  --font-${k}: ${v};`);
+for (const m of molas) lines.push(`  --ease-${m.name}: ${m.curva};`, `  --t-${m.name}: ${m.ms}ms;`);
 lines.push('}');
 for (const g of t.type.groups) {
   for (const s of g.styles) {
@@ -36,10 +52,21 @@ writeFileSync(join(root, 'tokens.css'), lines.join('\n') + '\n');
 // raios entram no @theme do Tailwind; cada cor vira utilitário (bg-surface, text-positive...).
 const app = [`/* ${t.name} — generated from design/project/tokens.json by design/scripts/build-tokens.mjs */`, '', '@theme {'];
 for (const tok of t.radius.tokens) app.push(`  --${tok.name}: ${tok.value};`);
+// Fontes do sistema: SF Pro no texto, SF Pro Rounded nos valores (font-sans, font-valor).
+for (const [k, v] of Object.entries(t.type.families)) app.push(`  --font-${k}: ${v};`);
+// Molas: ease-agil, ease-viva, ease-calma (linear() logo abaixo; a curva aqui é a reserva sem linear()).
+for (const m of molas) app.push(`  --ease-${m.name}: ${m.fallback};`);
 app.push('}', '');
+app.push(':root {');
+for (const m of molas) app.push(`  --t-${m.name}: ${m.ms}ms;`);
+app.push('}', '');
+app.push('@supports (transition-timing-function: linear(0, 1)) {', '  :root {');
+for (const m of molas) app.push(`    --ease-${m.name}: ${m.curva};`);
+app.push('  }', '}', '');
 const vars = (theme, indent) => [
   ...t.color.tokens.map((tok) => `${indent}--${tok.name}: ${val(tok, theme)};`),
   ...(t.shadow?.tokens ?? []).map((tok) => `${indent}--bf-${tok.name}: ${val(tok, theme)};`),
+  ...(t.ambient?.tokens ?? []).map((tok) => `${indent}--${tok.name}: ${val(tok, theme)};`),
 ];
 app.push(':root {', `  color-scheme: ${themes[0]};`, ...vars(themes[0], '  '), '}', '');
 for (const theme of themes.slice(1)) {
@@ -69,6 +96,7 @@ const pairs = [
   ['positive', ['bg', 'surface', 'positive-soft'], 4.5],
   ['negative', ['bg', 'surface', 'surface-raised', 'negative-soft'], 4.5],
   ['invest', ['bg', 'surface', 'invest-soft'], 4.5],
+  ['alert', ['bg', 'surface', 'alert-soft'], 4.5],
   ['line-strong', ['surface', 'surface-raised', 'surface-sunken'], 3],
   ['focus', ['bg', 'surface', 'surface-raised', 'surface-sunken'], 3],
   ['chart-1', ['surface'], 3], ['chart-2', ['surface'], 3], ['chart-6', ['surface'], 3],

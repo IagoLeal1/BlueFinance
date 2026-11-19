@@ -124,7 +124,7 @@ export function LinhaCompra({
                     <span>
                       {i + 1}/{parcelas} · fatura de {nomeDoMes(meses[i]!)}
                     </span>
-                    <span className="tabular-nums">{formatBRL(valor)}</span>
+                    <span className="font-valor tabular-nums">{formatBRL(valor)}</span>
                   </li>
                 ))}
               </ul>

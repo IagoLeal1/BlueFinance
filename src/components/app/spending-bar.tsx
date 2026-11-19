@@ -28,7 +28,7 @@ export function SpendingBar({
   if (gastos.length === 0) return null;
   const descricao = gastos.map((g) => `${g.categoria} ${g.percentual}%`).join(', ');
   return (
-    <section aria-label="Gastos por categoria" className="rounded-lg bg-card p-4 shadow-card">
+    <section aria-label="Gastos por categoria" className="cartao p-4">
       <h2 className="mb-3 text-lg font-bold">Gastos por categoria</h2>
       <div role="img" aria-label={descricao} className="mb-3 flex h-3.5 gap-0.5 overflow-hidden rounded-[4px]">
         {gastos.map((g) => (
@@ -45,8 +45,8 @@ export function SpendingBar({
             <Legenda href={hrefDe?.(g.categoria)}>
               <span className="size-2.5 rounded-[3px]" style={{ background: corDaCategoria(g.categoria, ordemPorNome) }} />
               <span>{g.categoria}</span>
-              <span className="tabular-nums">{formatBRL(g.total)}</span>
-              <span className="text-right text-muted-foreground tabular-nums">{g.percentual}%</span>
+              <span className="font-valor tabular-nums">{formatBRL(g.total)}</span>
+              <span className="text-right text-muted-foreground font-valor tabular-nums">{g.percentual}%</span>
             </Legenda>
           </li>
         ))}

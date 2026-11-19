@@ -72,7 +72,7 @@ export function ApplePayAjustes({
     ...(temVr ? [{ valor: 'vr', rotulo: 'VR' }] : []),
   ];
   return (
-    <section aria-label="Apple Pay" className="grid gap-3 rounded-lg bg-card p-4 shadow-card">
+    <section aria-label="Apple Pay" className="grid gap-3 cartao p-4">
       <h2 className="text-lg font-bold">Apple Pay</h2>
       <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
         {cartoes.length === 0

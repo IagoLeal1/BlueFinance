@@ -26,7 +26,7 @@
   --border: var(--line);
   --input: var(--line-strong);
   --ring: var(--focus);
-  --radius: 14px;
+  --radius: 16px;
 }
 
 @theme inline {
@@ -48,7 +48,6 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --font-sans: var(--font-manrope), system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-heading: var(--font-sans);
 }
 
@@ -61,6 +60,121 @@
   }
   html {
     @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Fundo fixo com profundidade: o brilho ambiente fica parado atrás do vidro enquanto a tela rola. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--ambient), var(--bg);
+  }
+}
+
+/*
+ * Liquid Glass (design-preview/src/bluefin.css): desfoque, saturação, brilho no topo, aresta com luz e luz
+ * rebatida embaixo. Quatro níveis: vidro-claro (sobre o degradê do topo), vidro (regular), vidro-tinta (o
+ * botão +, a ação principal) e vidro-forte (folhas, menu, diálogos); e cartao, o cartão em vidro.
+ * A aresta é um ::before posicionado: quem usa vidro precisa de posição (relative, fixed, absolute...).
+ * Com "reduzir transparência" o vidro vira superfície opaca.
+ */
+@utility aresta {
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgb(255 255 255 / 0.75), rgb(255 255 255 / 0.06) 38%, rgb(255 255 255 / 0.04) 62%, rgb(255 255 255 / 0.42));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+}
+@utility vidro {
+  @apply aresta;
+  background-color: var(--glass-regular);
+  -webkit-backdrop-filter: blur(26px) saturate(200%) brightness(1.06);
+  backdrop-filter: blur(26px) saturate(200%) brightness(1.06);
+  box-shadow: inset 0 1px 0 var(--glass-shine), inset 0 0 0 0.5px var(--glass-edge), inset 0 -8px 14px -10px var(--glass-shine), var(--bf-shadow-glass);
+  @media (prefers-reduced-transparency: reduce) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: var(--surface);
+  }
+}
+@utility vidro-forte {
+  @apply aresta;
+  background-color: var(--glass-strong);
+  -webkit-backdrop-filter: blur(34px) saturate(190%);
+  backdrop-filter: blur(34px) saturate(190%);
+  box-shadow: inset 0 1px 0 var(--glass-shine), inset 0 0 0 0.5px var(--glass-edge), inset 0 -8px 14px -10px var(--glass-shine), var(--bf-shadow-glass);
+  @media (prefers-reduced-transparency: reduce) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: var(--surface-raised);
+  }
+}
+@utility vidro-claro {
+  @apply aresta;
+  color: #fff;
+  background-color: var(--glass-clear);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
+  backdrop-filter: blur(10px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.45), inset 0 0 0 0.5px rgb(255 255 255 / 0.28), 0 4px 14px rgb(0 0 0 / 0.18);
+  @media (prefers-reduced-transparency: reduce) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: #24418f;
+  }
+}
+@utility vidro-tinta {
+  @apply aresta;
+  color: var(--on-brand);
+  background-color: color-mix(in srgb, var(--brand) 82%, transparent);
+  -webkit-backdrop-filter: blur(26px) saturate(200%);
+  backdrop-filter: blur(26px) saturate(200%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5), inset 0 0 0 0.5px rgb(255 255 255 / 0.3), inset 0 -8px 14px -10px rgb(255 255 255 / 0.4), var(--bf-shadow-glass);
+  @media (prefers-reduced-transparency: reduce) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: var(--brand);
+  }
+}
+/* Cartão em vidro: a superfície de tudo o que fica na rolagem (resumos, listas, ajustes). */
+@utility cartao {
+  @apply aresta;
+  position: relative;
+  border-radius: var(--radius-lg);
+  background-color: var(--glass-card);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(180%);
+  box-shadow: inset 0 1px 0 var(--glass-shine), inset 0 0 0 0.5px var(--glass-edge), var(--bf-shadow-glass-card);
+  &::before {
+    opacity: 0.4;
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: var(--surface);
+  }
+}
+
+/* Toque: afunda um pouco e volta com a mola ágil. Com "reduzir movimento", só esmaece. */
+@utility pressiona {
+  transition: transform var(--t-agil) var(--ease-agil), opacity 150ms linear;
+  &:active {
+    transform: scale(0.94);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity 150ms linear;
+    &:active {
+      transform: none;
+      opacity: 0.7;
+    }
   }
 }
 

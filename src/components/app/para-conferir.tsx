@@ -46,7 +46,7 @@ export function ParaConferir({
         ? 'Do Apple Pay, em lugar novo: já conta no mês. Confirme a categoria e o nome; toque para trocar.'
         : 'O que é do Apple Pay já conta no mês: confirme a categoria e o nome. O que é do banco espera você lançar.';
   return (
-    <section aria-label="Para conferir" className="rounded-lg bg-card px-4 pt-3 pb-1 shadow-card">
+    <section aria-label="Para conferir" className="cartao px-4 pt-3 pb-1">
       <div className="flex items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-[15px] font-extrabold">
           <Landmark className="size-[18px] text-muted-foreground" aria-hidden />
@@ -99,7 +99,7 @@ function LinhaDoApplePay({ l, categorias }: { l: ApplePayAConfirmar; categorias:
               <span className="block truncate font-semibold">{l.descricao}</span>
               <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">{meta}</span>
             </span>
-            <span className="font-bold whitespace-nowrap tabular-nums text-negative">
+            <span className="font-bold whitespace-nowrap font-valor tabular-nums text-negative">
               <Privado>{formatSigned(l.valor, 'despesa')}</Privado>
             </span>
           </button>
@@ -108,7 +108,7 @@ function LinhaDoApplePay({ l, categorias }: { l: ApplePayAConfirmar; categorias:
         <form action={confirmar} className="grid gap-4">
           <input type="hidden" name="id" value={l.id} />
           <div className="grid gap-1 text-center">
-            <p className="text-[34px] leading-10 font-extrabold tabular-nums">
+            <p className="text-[34px] leading-10 font-extrabold font-valor tabular-nums">
               <Privado>{formatBRL(l.valor)}</Privado>
             </p>
             <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
@@ -192,7 +192,7 @@ function LinhaDoBanco({ t, categorias }: { t: ItemDoBanco; categorias: Categoria
   const erro = estadoLancar.erro ?? estadoIgnorar.erro;
   const escolhida = opcoes.find((c) => c.id === categoria[0]);
   const valor = (
-    <span className={cn('font-bold whitespace-nowrap tabular-nums', t.tipo === 'receita' ? 'text-positive' : 'text-negative')}>
+    <span className={cn('font-bold whitespace-nowrap font-valor tabular-nums', t.tipo === 'receita' ? 'text-positive' : 'text-negative')}>
       <Privado>{formatSigned(t.valor, t.tipo)}</Privado>
     </span>
   );
@@ -222,7 +222,7 @@ function LinhaDoBanco({ t, categorias }: { t: ItemDoBanco; categorias: Categoria
         <form action={lancar} className="grid gap-4">
           <input type="hidden" name="id" value={t.id} />
           <div className="grid gap-1 text-center">
-            <p className="text-[34px] leading-10 font-extrabold tabular-nums">
+            <p className="text-[34px] leading-10 font-extrabold font-valor tabular-nums">
               <Privado>{formatBRL(t.valor)}</Privado>
             </p>
             <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">

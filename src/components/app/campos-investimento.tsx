@@ -121,7 +121,7 @@ export function CamposInvestimento({ id, inicial, investimentoId }: { id: string
                   name="percentual_cdi"
                   inputMode="decimal"
                   placeholder="101,5"
-                  className="pr-8 tabular-nums"
+                  className="pr-8 font-valor tabular-nums"
                   value={v.percentual}
                   onChange={(e) => mudar({ percentual: e.target.value })}
                 />
@@ -164,7 +164,7 @@ export function CamposInvestimento({ id, inicial, investimentoId }: { id: string
             <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
               <Calculator className="mt-px size-4 shrink-0" aria-hidden />
               <span>
-                Pelo CDI, hoje vale <b className="text-foreground tabular-nums">{formatBRL(valorPrevia)}</b>. Confira com o app do banco.
+                Pelo CDI, hoje vale <b className="text-foreground font-valor tabular-nums">{formatBRL(valorPrevia)}</b>. Confira com o app do banco.
               </span>
             </p>
           )}

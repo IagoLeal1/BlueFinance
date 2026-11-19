@@ -71,9 +71,9 @@ export function ResumoDaCategoria({
         ? `${n} ${n === 1 ? 'compra' : 'compras'}`
         : `${n} ${n === 1 ? 'gasto' : 'gastos'}`;
   return (
-    <section aria-label={titulo} className="rounded-lg bg-card p-4 shadow-card">
+    <section aria-label={titulo} className="cartao p-4">
       <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">{titulo}</p>
-      <p className="mt-0.5 text-[30px] leading-9 font-extrabold tracking-[-0.02em] tabular-nums">{formatBRL(total)}</p>
+      <p className="mt-0.5 text-[30px] leading-9 font-extrabold tracking-[-0.02em] font-valor tabular-nums">{formatBRL(total)}</p>
       <p className="mt-0.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
         {quantos} · {categoria} no mês, somando tudo: {formatBRL(noMes.total)} ({noMes.percentual}%)
       </p>

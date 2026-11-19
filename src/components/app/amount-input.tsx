@@ -37,7 +37,7 @@ export function AmountInput({
           const digitos = e.target.value.replace(/\D/g, '').replace(/^0+/, '').slice(0, MAX_DIGITOS);
           onChange(Number(digitos || '0'));
         }}
-        className="w-full bg-transparent text-center text-[40px] leading-[44px] font-extrabold tracking-[-0.02em] tabular-nums outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-md data-[vazio=true]:text-muted-foreground"
+        className="w-full bg-transparent text-center text-[40px] leading-[44px] font-extrabold tracking-[-0.02em] font-valor tabular-nums outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-md data-[vazio=true]:text-muted-foreground"
         data-vazio={centavos === 0}
       />
       <input type="hidden" name={nome} value={centavos} />

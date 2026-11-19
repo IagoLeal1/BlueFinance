@@ -14,7 +14,7 @@ function LinhaFatura({ mes, meta, total, mesAtual }: { mes: string; meta: string
           <span className="block font-bold">Fatura de {nomeDoMes(mes)}</span>
           <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">{meta}</span>
         </span>
-        <span className="font-extrabold tabular-nums">
+        <span className="font-extrabold font-valor tabular-nums">
           <Privado>{formatBRL(total)}</Privado>
         </span>
         <ChevronRight className="size-5 text-muted-foreground" aria-hidden />
@@ -56,7 +56,7 @@ export function CartaoCredito({
       : []),
   ];
   return (
-    <section aria-label="Cartão de crédito" className="grid gap-1 rounded-lg bg-card px-4 pt-3 pb-2 shadow-card">
+    <section aria-label="Cartão de crédito" className="grid gap-1 cartao px-4 pt-3 pb-2">
       {resumos.map(({ cartao, aberta, fechada }) => (
         <div key={cartao.id}>
           <h2 className="flex items-center gap-2 text-lg font-bold">

@@ -3,7 +3,7 @@ const Bloco = ({ className }: { className: string }) => <div aria-hidden classNa
 
 function Linhas({ n }: { n: number }) {
   return (
-    <div className="grid gap-4 rounded-lg bg-card p-4 shadow-card">
+    <div className="grid gap-4 cartao p-4">
       {Array.from({ length: n }, (_, i) => (
         <div key={i} className="flex items-center gap-3">
           <Bloco className="size-10 rounded-[12px]" />
@@ -20,7 +20,7 @@ function Linhas({ n }: { n: number }) {
 
 function Resumo() {
   return (
-    <div className="grid gap-3 rounded-lg bg-card p-5 shadow-card">
+    <div className="grid gap-3 cartao p-5">
       <Bloco className="h-3.5 w-2/5" />
       <Bloco className="h-10 w-3/4" />
       <div className="grid grid-cols-3 gap-2">

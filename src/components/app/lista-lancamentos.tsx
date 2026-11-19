@@ -81,7 +81,7 @@ function LinhaPagamentoFatura({ f, aPagar }: { f: PagamentoFatura; aPagar: boole
             {aPagar ? `Crédito · vence ${diaCurto(`${f.vence}T12:00:00-03:00`)}` : `Crédito · fatura de ${nomeDoMes(f.mesFatura)}`}
           </span>
         </span>
-        <span className="font-bold whitespace-nowrap tabular-nums text-negative">{formatSigned(f.total, 'despesa')}</span>
+        <span className="font-bold whitespace-nowrap font-valor tabular-nums text-negative">{formatSigned(f.total, 'despesa')}</span>
       </Link>
     </li>
   );
@@ -189,28 +189,28 @@ export function ListaLancamentos({
         />
       )}
       {!categoria && noVr && vr && (
-        <section aria-label="Saldo do VR" className="flex items-center justify-between gap-3 rounded-lg bg-card p-4 shadow-card">
+        <section aria-label="Saldo do VR" className="flex items-center justify-between gap-3 cartao p-4">
           <div>
             <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">Saldo do VR</p>
-            <p className="text-[22px] leading-7 font-extrabold tabular-nums">
+            <p className="text-[22px] leading-7 font-extrabold font-valor tabular-nums">
               <Privado>{formatBRL(vr.saldo)}</Privado>
             </p>
           </div>
           <p className="text-right text-[13px] leading-[18px] font-semibold text-muted-foreground">
             Próximo depósito
             <br />
-            <span className="tabular-nums">{formatBRL(vr.valorMensal)}</span> · {diaCurto(`${vr.proximo}T12:00:00-03:00`)}
+            <span className="font-valor tabular-nums">{formatBRL(vr.valorMensal)}</span> · {diaCurto(`${vr.proximo}T12:00:00-03:00`)}
           </p>
         </section>
       )}
       {!categoria && <ParaConferir itens={doBanco} applePay={applePay} categorias={categorias} />}
       {vazio && (
-        <p className="rounded-lg bg-card p-5 text-center font-bold shadow-card">
+        <p className="cartao p-5 text-center font-bold">
           {noDebito ? 'Nenhum lançamento neste mês.' : noVr ? 'Nada no VR neste mês.' : 'Nenhuma compra no crédito neste mês.'}
         </p>
       )}
       {(noDebito || noVr) && pendentes.length > 0 && (
-        <section aria-label="Salvando" className="rounded-lg bg-card px-4 pb-1 shadow-card">
+        <section aria-label="Salvando" className="cartao px-4 pb-1">
           <ul>
             {pendentes.map((l) => (
               <TransactionRow key={l.id} l={l} meta={metaDe(l)} pendente />
@@ -219,7 +219,7 @@ export function ListaLancamentos({
         </section>
       )}
       {noDebito && aPagarVisivel.length > 0 && (
-        <section aria-label="A pagar" className="rounded-lg bg-card px-4 pb-1 shadow-card">
+        <section aria-label="A pagar" className="cartao px-4 pb-1">
           <h2 className="pt-4 pb-1 text-xs font-bold tracking-[0.02em] text-muted-foreground">A pagar</h2>
           <ul>
             {aPagarVisivel.map((f) => (
@@ -229,13 +229,13 @@ export function ListaLancamentos({
         </section>
       )}
       {extrato === 'credito' && faturasVisiveis.map((f) => (
-        <section key={f.id} aria-label={`Fatura ${f.nome}`} className="rounded-lg bg-card px-4 pt-3 pb-1 shadow-card">
+        <section key={f.id} aria-label={`Fatura ${f.nome}`} className="cartao px-4 pt-3 pb-1">
           <div className="flex items-center justify-between gap-3">
             <h2 className="flex items-center gap-2 text-[15px] font-extrabold">
               <CreditCard className="size-[18px] text-muted-foreground" aria-hidden />
               Fatura {f.nome}
             </h2>
-            <span className="text-sm font-bold tabular-nums text-muted-foreground">{formatBRL(f.total)}</span>
+            <span className="text-sm font-bold font-valor tabular-nums text-muted-foreground">{formatBRL(f.total)}</span>
           </div>
           {f.fecha && <p className="text-xs font-semibold text-muted-foreground">{f.fecha}</p>}
           {f.semCompras && (
@@ -258,7 +258,7 @@ export function ListaLancamentos({
         </section>
       ))}
       {noDebito && diasVisiveis.length > 0 && (
-        <div className="rounded-lg bg-card px-4 pb-1 shadow-card">
+        <div className="cartao px-4 pb-1">
           {diasVisiveis.map((d) => (
             <section key={d.rotulo} aria-label={d.rotulo}>
               <h2 className="pt-4 pb-1 text-xs font-bold tracking-[0.02em] text-muted-foreground">{d.rotulo}</h2>
@@ -275,7 +275,7 @@ export function ListaLancamentos({
         </div>
       )}
       {noVr && diasVrVisiveis.length > 0 && (
-        <div className="rounded-lg bg-card px-4 pb-1 shadow-card">
+        <div className="cartao px-4 pb-1">
           {diasVrVisiveis.map((d) => (
             <section key={d.rotulo} aria-label={d.rotulo}>
               <h2 className="pt-4 pb-1 text-xs font-bold tracking-[0.02em] text-muted-foreground">{d.rotulo}</h2>

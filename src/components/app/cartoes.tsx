@@ -96,7 +96,7 @@ function SheetCartao({ cartao, gatilho }: { cartao?: Cartao; gatilho: React.Reac
 /** Seção de Ajustes com os cartões de crédito (design kit: TelaCartoes). */
 export function Cartoes({ cartoes }: { cartoes: Cartao[] }) {
   return (
-    <section aria-label="Cartões de crédito" className="rounded-lg bg-card px-4 pt-3 pb-1 shadow-card">
+    <section aria-label="Cartões de crédito" className="cartao px-4 pt-3 pb-1">
       <h2 className="text-lg font-bold">Cartões de crédito</h2>
       {cartoes.length === 0 && (
         <p className="py-2 text-[13px] leading-[18px] font-semibold text-muted-foreground">

@@ -30,7 +30,7 @@ export function BalanceCard({
       <div className="relative -mx-4 -mt-[max(env(safe-area-inset-top),16px)] bg-linear-to-br from-hero to-hero-end px-4 pt-[calc(max(env(safe-area-inset-top),16px)+8px)] pb-11 text-on-hero">
         {topo}
         <p className="mt-5 text-[13px] leading-[18px] font-semibold text-on-hero/80">Sobrou em {nomeMes}</p>
-        <p className="mt-1 text-[40px] leading-[44px] font-extrabold tracking-[-0.02em] tabular-nums"><Privado>{formatBRL(resumo.sobrou)}</Privado></p>
+        <p className="mt-1 text-[40px] leading-[44px] font-extrabold tracking-[-0.02em] font-valor tabular-nums"><Privado>{formatBRL(resumo.sobrou)}</Privado></p>
         {depois && (
           <p className="mt-1.5 text-[13px] leading-[18px] font-semibold text-on-hero/80">
             {depois.texto}: <Privado>{formatBRL(depois.valor)}</Privado>
@@ -40,12 +40,12 @@ export function BalanceCard({
       </div>
       <div className="grid grid-cols-3 gap-2">
         {stats.map(({ rotulo, valor, Icone, cor }) => (
-          <div key={rotulo} role="group" aria-label={rotulo} className="rounded-md bg-card p-3 shadow-card">
+          <div key={rotulo} role="group" aria-label={rotulo} className="rounded-md cartao p-3">
             <p aria-hidden className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
               <Icone className={`size-3.5 ${cor}`} aria-hidden />
               {rotulo}
             </p>
-            <p className="mt-0.5 text-base font-extrabold tabular-nums">
+            <p className="mt-0.5 text-base font-extrabold font-valor tabular-nums">
               <Privado mascara="••••">{formatReais(valor)}</Privado>
             </p>
           </div>

@@ -56,7 +56,7 @@ export function TransactionRow({
           {pendente && ' · salvando…'}
         </p>
       </div>
-      <span className={cn('font-bold whitespace-nowrap tabular-nums', cor.valor)}>{formatSigned(l.valor, l.tipo)}</span>
+      <span className={cn('font-bold whitespace-nowrap font-valor tabular-nums', cor.valor)}>{formatSigned(l.valor, l.tipo)}</span>
     </Tag>
   );
 }

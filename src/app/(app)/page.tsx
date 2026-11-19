@@ -81,7 +81,7 @@ async function ResumoDoMes({ searchParams }: { searchParams: PageProps<'/'>['sea
         hrefDe={(c) => `/lancamentos?categoria=${encodeURIComponent(c)}${noMesAtual ? '' : `&mes=${mes}`}`}
       />
       {lancamentos.length > 0 && (
-        <section aria-label="Últimos" className="rounded-lg bg-card px-4 pt-3 pb-1 shadow-card">
+        <section aria-label="Últimos" className="cartao px-4 pt-3 pb-1">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold">Últimos</h2>
             <Link href={listaDoMes} className="text-sm font-bold text-primary">
@@ -96,7 +96,7 @@ async function ResumoDoMes({ searchParams }: { searchParams: PageProps<'/'>['sea
         </section>
       )}
       {lancamentos.length === 0 && (
-        <section className="rounded-lg bg-card p-5 text-center shadow-card">
+        <section className="cartao p-5 text-center">
           <p className="font-bold">Nenhum lançamento ainda.</p>
           <p className="mt-1 text-[13px] leading-[18px] font-semibold text-muted-foreground">
             Toque em + ou aperte o Botão de Ação do iPhone para lançar sem abrir o app.
