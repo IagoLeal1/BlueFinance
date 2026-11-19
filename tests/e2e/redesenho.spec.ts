@@ -147,3 +147,20 @@ test.describe('redesenho: folhas', () => {
     await expect(page.getByRole('region', { name: 'Últimos' })).toContainText('Feira');
   });
 });
+
+test.describe('redesenho: Lançamentos', () => {
+  test('o polegar dos extratos desliza até a aba marcada e o vazio é um mar calmo', async ({ page, usuario }) => {
+    await entrar(page, usuario);
+    await page.getByRole('navigation', { name: 'Principal' }).getByRole('link', { name: 'Lançamentos' }).click();
+    await expect(page.getByRole('region', { name: 'Mar calmo por aqui' })).toContainText('Nenhum lançamento neste mês.');
+
+    const extrato = page.getByRole('radiogroup', { name: 'Extrato' });
+    const polegar = extrato.locator('span[aria-hidden]').first();
+    await extrato.getByText('Crédito', { exact: true }).click();
+    await expect(async () => {
+      const [p, c] = [await polegar.boundingBox(), await extrato.getByText('Crédito', { exact: true }).boundingBox()];
+      expect(Math.abs(p!.x + p!.width / 2 - (c!.x + c!.width / 2))).toBeLessThan(2);
+    }).toPass();
+    await expect(page.getByRole('region', { name: 'Mar calmo por aqui' })).toContainText('Nenhuma compra no crédito neste mês.');
+  });
+});

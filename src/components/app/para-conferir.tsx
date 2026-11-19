@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import { Check, Info, Landmark, Sparkles } from 'lucide-react';
+import { Check, Info, Landmark, Sparkles, TriangleAlert } from 'lucide-react';
 import { confirmarApplePay, ignorarDoBanco, lancarDoBanco, type EstadoDoBanco } from '@/app/(app)/lancamentos/actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -48,11 +48,14 @@ export function ParaConferir({
   return (
     <section aria-label="Para conferir" className="cartao px-4 pt-3 pb-1">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="flex items-center gap-2 text-[15px] font-bold">
+        <h2 className="flex items-center gap-2 text-[17px] leading-[22px] font-semibold">
           <Landmark className="size-[18px] text-muted-foreground" aria-hidden />
           Para conferir
         </h2>
-        <span className="text-[13px] font-semibold text-muted-foreground">{applePay.length === 0 ? `${total} do banco` : total}</span>
+        <span className="inline-flex items-center gap-[5px] rounded-full bg-alert-soft py-[3px] pr-[9px] pl-[7px] text-[13px] leading-[18px] font-semibold text-alert">
+          <TriangleAlert className="size-3.5" aria-hidden />
+          {applePay.length === 0 ? `${total} do banco` : total}
+        </span>
       </div>
       <p className="text-[13px] leading-[18px] text-muted-foreground">{legenda}</p>
       <ul>
@@ -96,7 +99,7 @@ function LinhaDoApplePay({ l, categorias }: { l: ApplePayAConfirmar; categorias:
         gatilho={
           <button type="button" className="flex w-full items-center gap-3 rounded-md text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
             <span className="min-w-0 flex-1">
-              <span className="block truncate font-semibold">{l.descricao}</span>
+              <span className="block truncate text-base leading-[21px] font-medium">{l.descricao}</span>
               <span className="block text-[13px] leading-[18px] text-muted-foreground">{meta}</span>
             </span>
             <span className="font-bold whitespace-nowrap font-valor tabular-nums text-negative">
@@ -121,7 +124,7 @@ function LinhaDoApplePay({ l, categorias }: { l: ApplePayAConfirmar; categorias:
             <Input id={`descricao-applepay-${l.id}`} name="descricao" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
           </div>
           {escolhida && (
-            <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
+            <p className="flex gap-2 rounded-md bg-foreground/7 px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
               <Sparkles className="mt-px size-4 shrink-0" aria-hidden />
               <span>
                 Da próxima vez, <b className="text-foreground">{l.descricao}</b> entra sozinho em {escolhida.nome}.
@@ -141,7 +144,7 @@ function LinhaDoApplePay({ l, categorias }: { l: ApplePayAConfirmar; categorias:
       </BottomSheet>
 
       <div className="flex items-center gap-2">
-        <button type="button" onClick={() => setAberto(true)} className={cn(CHIP, 'inline-flex h-8 min-w-0 items-center px-2.5 text-[13px]')}>
+        <button type="button" onClick={() => setAberto(true)} className={cn(CHIP, 'inline-flex min-w-0 items-center px-3 text-[13px]')}>
           {l.categoria ? (
             <>
               <IconeCategoria nome={l.categoria.icone} className="size-4" />
@@ -235,7 +238,7 @@ function LinhaDoBanco({ t, categorias }: { t: ItemDoBanco; categorias: Categoria
             <Input id={`descricao-banco-${t.id}`} name="descricao" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
           </div>
           {escolhida && t.aprende && (
-            <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
+            <p className="flex gap-2 rounded-md bg-foreground/7 px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
               <Sparkles className="mt-px size-4 shrink-0" aria-hidden />
               <span>
                 Da próxima vez, <b className="text-foreground">{t.descricao}</b> entra sozinho em {escolhida.nome}.
@@ -243,7 +246,7 @@ function LinhaDoBanco({ t, categorias }: { t: ItemDoBanco; categorias: Categoria
             </p>
           )}
           {!t.aprende && (
-            <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
+            <p className="flex gap-2 rounded-md bg-foreground/7 px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
               <Info className="mt-px size-4 shrink-0" aria-hidden />
               <span>O banco não diz o lugar desta compra, então ela não entra sozinha da próxima vez. Pelo Apple Pay ou pelo Atalho, o banco só confere.</span>
             </p>
@@ -267,7 +270,7 @@ function LinhaDoBanco({ t, categorias }: { t: ItemDoBanco; categorias: Categoria
       </BottomSheet>
 
       <div className="flex items-center gap-2">
-        <button type="button" onClick={() => setAberto(true)} className={cn(CHIP, 'inline-flex h-8 min-w-0 items-center px-2.5 text-[13px]')}>
+        <button type="button" onClick={() => setAberto(true)} className={cn(CHIP, 'inline-flex min-w-0 items-center px-3 text-[13px]')}>
           {t.sugestao ? (
             <>
               <IconeCategoria nome={t.sugestao.icone} className="size-4" />
