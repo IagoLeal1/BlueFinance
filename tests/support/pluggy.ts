@@ -30,7 +30,13 @@ export async function montarPluggy(
       item: { status: 'UPDATED', lastUpdatedAt: new Date().toISOString(), consentExpiresAt: null, connector: { name: 'MeuPluggy' }, ...item },
       contas: contas.map((c) => ({
         conta: { id: randomUUID(), type: c.type, subtype: c.type === 'BANK' ? 'CHECKING_ACCOUNT' : 'CREDIT_CARD', name: c.name, marketingName: null },
-        transacoes: c.transacoes.map((t) => ({ type: t.amount < 0 ? 'DEBIT' : 'CREDIT', status: 'POSTED', category: null, ...t })),
+        // Como a Pluggy normaliza: na conta, saída é DEBIT; no cartão, compra (positiva) é DEBIT e pagamento é CREDIT.
+        transacoes: c.transacoes.map((t) => ({
+          type: (c.type === 'CREDIT' ? t.amount > 0 : t.amount < 0) ? 'DEBIT' : 'CREDIT',
+          status: 'POSTED',
+          category: null,
+          ...t,
+        })),
       })),
     }),
   });

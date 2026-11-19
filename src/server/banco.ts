@@ -58,11 +58,14 @@ async function chaveDaPluggy(): Promise<string> {
   return ((await res.json()) as { apiKey: string }).apiKey;
 }
 
-/** GET na API da Pluggy; null quando não existe (404). */
+/** GET na API da Pluggy; null quando não existe (404). Qualquer outro erro aparece (não vira "nada novo"). */
 async function pedir<T>(chave: string, caminho: string): Promise<T | null> {
   const res = await fetch(`${urlDaPluggy()}${caminho}`, { headers: { 'X-API-KEY': chave }, cache: 'no-store' });
-  if (res.status === 404 || res.status === 400) return null;
-  if (!res.ok) throw new Error(`Pluggy ${caminho.split('?')[0]}: ${res.status}`);
+  if (res.status === 404) return null;
+  if (!res.ok) {
+    const corpo = (await res.text().catch(() => '')).slice(0, 200);
+    throw new Error(`Pluggy ${caminho.split('?')[0]}: ${res.status} ${corpo}`);
+  }
   return (await res.json()) as T;
 }
 
@@ -172,11 +175,23 @@ async function sincronizarUm(chave: string, banco: { user_id: string; item_id: s
   const conexao = await lerConexao(chave, banco.item_id, agora);
   const lidas: Lida[] = [];
   for (const conta of conexao.listaDeContas) {
-    for (const t of await transacoesDa(chave, conta.id, banco.desde)) {
+    const recebidas = await transacoesDa(chave, conta.id, banco.desde);
+    let aproveitadas = 0;
+    for (const t of recebidas) {
       const lida = lerTransacao(conta.type, t);
       // Daqui para frente: o que é de antes da conexão fica como estava no app.
-      if (lida && diaDe(lida.data) >= banco.desde) lidas.push({ ...lida, nomeDaConta: conta.marketingName || conta.name });
+      if (lida && diaDe(lida.data) >= banco.desde) {
+        lidas.push({ ...lida, nomeDaConta: conta.marketingName || conta.name });
+        aproveitadas++;
+      }
     }
+    // Para conferir pelos logs da Vercel (sem descrições nem valores): quanto veio e quanto entrou.
+    const tipos: Record<string, number> = {};
+    for (const t of recebidas) {
+      const chaveDoTipo = `${t.type}/${t.status ?? '?'}/${t.amount < 0 ? '-' : '+'}`;
+      tipos[chaveDoTipo] = (tipos[chaveDoTipo] ?? 0) + 1;
+    }
+    console.log(`Busca no banco: conta ${conta.type}, ${recebidas.length} recebidas desde ${banco.desde}, ${aproveitadas} aproveitadas`, JSON.stringify(tipos));
   }
 
   // Lançamentos de alguns dias antes da conexão em diante (e as assinaturas, que repetem a data da 1ª).

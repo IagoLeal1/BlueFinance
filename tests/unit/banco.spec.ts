@@ -65,6 +65,10 @@ test.describe('Open Finance: ler a transação do banco', () => {
     expect(lerTransacao('CREDIT', { ...compra, creditCardMetadata: { installmentNumber: 2, totalInstallments: 3 } })).toBeNull();
     // Pagamento da fatura e estorno (negativos no cartão) ficam de fora.
     expect(lerTransacao('CREDIT', t({ description: 'PAGAMENTO RECEBIDO', amount: -500, type: 'CREDIT' }))).toBeNull();
+    // A Pluggy normaliza o cartão: compra é sempre DEBIT, seja qual for o sinal do valor.
+    expect(lerTransacao('CREDIT', t({ description: 'LOJA X', amount: -59.9, type: 'DEBIT' }))).toMatchObject({ forma: 'credito', valor: 5990 });
+    expect(lerTransacao('CREDIT', t({ description: 'ESTORNO LOJA X', amount: 59.9, type: 'CREDIT' }))).toBeNull();
+    expect(lerTransacao('CREDIT', t({ description: 'CASHBACK', amount: -3, type: 'DEBIT', operationType: 'CASHBACK' }))).toBeNull();
   });
 
   test('fica de fora o que já está no app de outro jeito: fatura, transferência para si mesmo e investimento', () => {

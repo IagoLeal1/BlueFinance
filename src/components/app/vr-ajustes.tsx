@@ -62,6 +62,8 @@ export function ConfigurarVr({ vr }: { vr: VrEditavel | null }) {
       gatilho={gatilho}
     >
       <form action={salvar} className="grid gap-4">
+        {/* O saldo que o app mostrava ao abrir: se você não mexeu nele, salvar não cria acerto. */}
+        <input type="hidden" name="saldo_mostrado" value={vr?.saldo ?? 0} />
         <div className="grid gap-0">
           <p aria-hidden className="text-center text-[13px] leading-[18px] font-bold text-muted-foreground">
             Quanto cai por mês

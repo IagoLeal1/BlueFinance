@@ -64,12 +64,14 @@ export async function salvarCartao(_anterior: EstadoCartao, form: FormData): Pro
 
 /**
  * Configura o VR: quanto cai por mês, o dia e o saldo de hoje (design kit: TelaVr). Na primeira vez o saldo
- * entra como "Saldo inicial do VR"; depois, a diferença para o saldo que o app calculou vira um acerto.
+ * entra como "Saldo inicial do VR"; depois, se você mudou o saldo, a diferença para o saldo que o app calculou vira
+ * um acerto. Sem mexer no saldo, não há acerto: um depósito que passa a valer com o dia novo continua lá.
  */
 export async function salvarVr(_anterior: EstadoCartao, form: FormData): Promise<EstadoCartao> {
   const valorMensal = Number(form.get('valor_mensal'));
   const dia = Number(form.get('dia'));
   const saldo = Number(form.get('saldo'));
+  const saldoMostrado = Number(form.get('saldo_mostrado'));
   if (!Number.isSafeInteger(valorMensal) || valorMensal <= 0) return { erro: 'Digite quanto cai por mês.' };
   if (!Number.isInteger(dia) || dia < 1 || dia > 31) return { erro: 'Escolha o dia que cai (1 a 31).' };
   if (!Number.isSafeInteger(saldo) || saldo < 0) return { erro: 'Digite o saldo de hoje.' };
@@ -103,7 +105,8 @@ export async function salvarVr(_anterior: EstadoCartao, form: FormData): Promise
     if (error) return { erro: 'Não foi possível salvar. Tente de novo.' };
     // Com o dia novo já valendo, completa os depósitos e compara com o saldo que você viu no app do VR.
     const atual = await vrDoUsuario();
-    const diferenca = saldo - (atual?.saldo ?? 0);
+    const mexeuNoSaldo = !Number.isSafeInteger(saldoMostrado) || saldo !== saldoMostrado;
+    const diferenca = mexeuNoSaldo ? saldo - (atual?.saldo ?? 0) : 0;
     if (diferenca !== 0) {
       const { error: erroAcerto } = await acerto(diferenca, 'Acerto do saldo do VR');
       if (erroAcerto) return { erro: 'Não foi possível salvar o saldo. Tente de novo.' };

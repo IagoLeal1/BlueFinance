@@ -99,15 +99,17 @@ export function lerTransacao(tipoDaConta: TipoDaConta, t: TransacaoPluggy): DoBa
   const meioDia = (iso: string) => `${iso.slice(0, 10)}T12:00:00-03:00`;
 
   if (tipoDaConta === 'CREDIT') {
-    // No cartão, positivo é compra; pagamento da fatura e estorno vêm negativos.
-    if (t.amount <= 0) return null;
+    // A Pluggy normaliza o cartão: compra é sempre DEBIT; pagamento da fatura e estorno, CREDIT. Sem o tipo, vale o
+    // sinal (positivo é compra).
+    const compra = t.type ? t.type === 'DEBIT' : t.amount > 0;
+    if (!compra || t.operationType === 'ESTORNO' || t.operationType === 'CASHBACK') return null;
     const cc = t.creditCardMetadata;
     if ((cc?.installmentNumber ?? 1) > 1) return null;
     const parcelas = Math.min(24, Math.max(1, cc?.totalInstallments ?? 1));
     return { ...comum, conta: 'cartao', tipo: 'despesa', forma: 'credito', parcelas, data: meioDia(cc?.purchaseDate ?? t.date) };
   }
   const saiu = t.type ? t.type === 'DEBIT' : t.amount < 0;
-  const pix = t.paymentData?.paymentMethod === 'PIX' || /\bPIX\b/i.test(descricao);
+  const pix = t.paymentData?.paymentMethod === 'PIX' || t.operationType === 'PIX' || /\bPIX\b/i.test(descricao);
   return { ...comum, conta: 'conta', tipo: saiu ? 'despesa' : 'receita', forma: pix ? 'pix' : 'debito', parcelas: 1, data: meioDia(t.date) };
 }
 

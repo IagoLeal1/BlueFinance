@@ -1,5 +1,5 @@
 import { test, expect, entrar, semearLancamentos, semearVr, type Page } from './fixtures';
-import { diaCurto, mesAtual, nomeDoMes, somarMeses } from '../../src/domain/datas';
+import { diaCurto, diaDe, mesAtual, nomeDoMes, somarMeses } from '../../src/domain/datas';
 import { proximoDeposito } from '../../src/domain/vr';
 
 const proximo = (dia: number) => diaCurto(`${proximoDeposito(dia)}T12:00:00-03:00`);
@@ -113,5 +113,31 @@ test.describe('VR (vale-refeição)', () => {
 
     await page.goto('/lancamentos?ver=vr');
     await expect(linha(page, 'Acerto do saldo do VR')).toContainText('− R$ 12,30');
+  });
+
+  test('mudar o dia para hoje lança o depósito de hoje, sem acerto se o saldo não foi mexido (bug de 18/11)', async ({ page, usuario }) => {
+    const ontem = diaDe(new Date(Date.now() - 86_400_000));
+    const diaOntem = Number(ontem.slice(8));
+    const diaHoje = Number(diaDe(new Date()).slice(8));
+    // Configurado ontem, com o dia de ontem: nenhum depósito ainda.
+    await semearVr(usuario, { valorMensal: 80080, dia: diaOntem, desde: `${ontem}T12:00:00-03:00`, saldo: 76 });
+    await entrar(page, usuario);
+    await page.goto('/ajustes');
+    const secao = page.getByRole('region', { name: 'Vale-refeição' });
+
+    await secao.getByRole('button', { name: /VR/ }).click();
+    const sheet = page.getByRole('dialog', { name: 'VR' });
+    await expect(sheet.getByLabel('Saldo de hoje')).toHaveValue('R$ 0,76');
+    const dia = sheet.getByRole('group', { name: 'Dia que cai' });
+    const passos = diaHoje - diaOntem;
+    for (let i = 0; i < Math.abs(passos); i++) await dia.getByRole('button', { name: passos > 0 ? 'Mais' : 'Menos' }).click();
+    await expect(dia.getByRole('status')).toHaveText(`dia ${diaHoje}`);
+    await sheet.getByRole('button', { name: 'Salvar VR' }).click();
+    await expect(sheet).toBeHidden();
+    await expect(secao.getByRole('listitem')).toContainText('saldo R$ 801,56');
+
+    await page.goto('/lancamentos?ver=vr');
+    await expect(linha(page, 'Depósito do VR')).toContainText('+ R$ 800,80');
+    await expect(linha(page, 'Acerto do saldo do VR')).toHaveCount(0);
   });
 });
