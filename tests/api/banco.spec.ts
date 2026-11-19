@@ -85,6 +85,13 @@ test.describe('Open Finance: a busca diária no banco', () => {
     expect(new Date(banco!.atualizado_em!).toISOString()).toBe('2026-11-17T10:12:00.000Z');
     expect(new Date(banco!.autorizacao_ate!).toISOString()).toBe('2027-11-17T10:00:00.000Z');
     expect(banco!.buscado_em).not.toBeNull();
+
+    // Diagnóstico da busca: quanto a Pluggy mandou por conta (de `desde` em diante e na semana anterior) e quanto entrou.
+    const { data: diagnostico } = await clienteDe(usuario).from('bancos').select('ultima_busca').single();
+    expect(diagnostico!.ultima_busca).toEqual([
+      { tipo: 'BANK', recebidas: 4, aproveitadas: 3, antes: 1, maisRecente: hoje },
+      { tipo: 'CREDIT', recebidas: 4, aproveitadas: 2, antes: 0, maisRecente: hoje },
+    ]);
   });
 
   test('estabelecimento conhecido entra sozinho, na categoria e com o "com o quê" aprendidos', async ({ request, usuario }) => {

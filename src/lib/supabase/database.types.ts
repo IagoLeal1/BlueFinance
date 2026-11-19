@@ -45,14 +45,14 @@ isOneToOne: false
                   ]
                 },"bancos": {
                   Row: {
-                    "atualizado_em": string | null,"autorizacao_ate": string | null,"buscado_em": string | null,"contas": string,"criado_em": string,"desde": string,"erro": string | null,"instituicao": string,"item_id": string,"user_id": string
+                    "atualizado_em": string | null,"autorizacao_ate": string | null,"buscado_em": string | null,"contas": string,"criado_em": string,"desde": string,"erro": string | null,"instituicao": string,"item_id": string,"ultima_busca": Json | null,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "atualizado_em"?: string | null,"autorizacao_ate"?: string | null,"buscado_em"?: string | null,"contas"?: string,"criado_em"?: string,"desde": string,"erro"?: string | null,"instituicao"?: string,"item_id": string,"user_id": string
+                    "atualizado_em"?: string | null,"autorizacao_ate"?: string | null,"buscado_em"?: string | null,"contas"?: string,"criado_em"?: string,"desde": string,"erro"?: string | null,"instituicao"?: string,"item_id": string,"ultima_busca"?: Json | null,"user_id": string
                   }
                   Update: {
-                    "atualizado_em"?: string | null,"autorizacao_ate"?: string | null,"buscado_em"?: string | null,"contas"?: string,"criado_em"?: string,"desde"?: string,"erro"?: string | null,"instituicao"?: string,"item_id"?: string,"user_id"?: string
+                    "atualizado_em"?: string | null,"autorizacao_ate"?: string | null,"buscado_em"?: string | null,"contas"?: string,"criado_em"?: string,"desde"?: string,"erro"?: string | null,"instituicao"?: string,"item_id"?: string,"ultima_busca"?: Json | null,"user_id"?: string
                   }
                   Relationships: [
                     

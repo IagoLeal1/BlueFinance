@@ -174,24 +174,28 @@ async function sincronizarUm(chave: string, banco: { user_id: string; item_id: s
   const u = banco.user_id;
   const conexao = await lerConexao(chave, banco.item_id, agora);
   const lidas: Lida[] = [];
+  // Diagnóstico (bancos.ultima_busca): quanto a Pluggy mandou por conta, sem descrições nem valores. A busca pega
+  // também a semana anterior à conexão, só para saber se o banco tem transações e até que dia elas vão.
+  const semanaAntes = diaDe(new Date(Date.parse(`${banco.desde}T12:00:00-03:00`) - 7 * 86_400_000));
+  const diagnostico: { tipo: string; recebidas: number; aproveitadas: number; antes: number; maisRecente: string | null }[] = [];
   for (const conta of conexao.listaDeContas) {
-    const recebidas = await transacoesDa(chave, conta.id, banco.desde);
-    let aproveitadas = 0;
-    for (const t of recebidas) {
-      const lida = lerTransacao(conta.type, t);
+    const d = { tipo: conta.type, recebidas: 0, aproveitadas: 0, antes: 0, maisRecente: null as string | null };
+    for (const t of await transacoesDa(chave, conta.id, semanaAntes)) {
+      const dia = (t.date ?? '').slice(0, 10);
+      if (dia && (!d.maisRecente || dia > d.maisRecente)) d.maisRecente = dia;
       // Daqui para frente: o que é de antes da conexão fica como estava no app.
+      if (dia < banco.desde) {
+        d.antes++;
+        continue;
+      }
+      d.recebidas++;
+      const lida = lerTransacao(conta.type, t);
       if (lida && diaDe(lida.data) >= banco.desde) {
         lidas.push({ ...lida, nomeDaConta: conta.marketingName || conta.name });
-        aproveitadas++;
+        d.aproveitadas++;
       }
     }
-    // Para conferir pelos logs da Vercel (sem descrições nem valores): quanto veio e quanto entrou.
-    const tipos: Record<string, number> = {};
-    for (const t of recebidas) {
-      const chaveDoTipo = `${t.type}/${t.status ?? '?'}/${t.amount < 0 ? '-' : '+'}`;
-      tipos[chaveDoTipo] = (tipos[chaveDoTipo] ?? 0) + 1;
-    }
-    console.log(`Busca no banco: conta ${conta.type}, ${recebidas.length} recebidas desde ${banco.desde}, ${aproveitadas} aproveitadas`, JSON.stringify(tipos));
+    diagnostico.push(d);
   }
 
   // Lançamentos de alguns dias antes da conexão em diante (e as assinaturas, que repetem a data da 1ª).
@@ -339,6 +343,7 @@ async function sincronizarUm(chave: string, banco: { user_id: string; item_id: s
       autorizacao_ate: conexao.autorizacaoAte,
       buscado_em: agora.toISOString(),
       erro: conexao.erro,
+      ultima_busca: diagnostico,
     })
     .eq('user_id', u);
   if (error) throw error;

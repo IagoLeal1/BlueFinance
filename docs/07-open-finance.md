@@ -29,3 +29,10 @@ curl -H "Authorization: Bearer $CRON_SECRET" https://bluefinance-chi.vercel.app/
 
 - Problemas (autorização vencida, chave errada, conexão que sumiu) aparecem em Ajustes › Banco, com o campo para
   conectar de novo.
+
+## Diagnóstico
+
+`bancos.ultima_busca` guarda, por conta, o que a Pluggy mandou na última busca: `recebidas` (de `desde` em diante),
+`aproveitadas` (as que entram no app), `antes` (na semana anterior à conexão, só para saber se o banco tem
+transações) e `maisRecente` (o dia da transação mais nova). Só contagens e datas. Se `recebidas` é 0 e `maisRecente`
+é de antes de `desde`, o banco ainda não mandou as transações novas (o Open Finance pode levar mais de um dia).
