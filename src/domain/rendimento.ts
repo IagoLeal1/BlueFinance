@@ -163,3 +163,57 @@ export function lerPercentual(texto: string): number | null {
   const n = Number(limpo);
   return n > 0 && n <= 1000 ? n : null;
 }
+
+/** Um investimento pelo CDI, para somar na carteira: os lotes (aplicação, aportes e ajustes) e o % do CDI. */
+export interface InvestimentoCdi {
+  lotes: Lote[];
+  percentual: number;
+}
+
+const mesSeguinte = (mes: string) => {
+  const [a, m] = mes.split('-').map(Number) as [number, number];
+  return m === 12 ? `${a + 1}-01` : `${a}-${String(m + 1).padStart(2, '0')}`;
+};
+const mesAnterior = (mes: string, k: number) => {
+  let [a, m] = mes.split('-').map(Number) as [number, number];
+  for (let i = 0; i < k; i++) [a, m] = m === 1 ? [a - 1, 12] : [a, m - 1];
+  return `${a}-${String(m).padStart(2, '0')}`;
+};
+
+/**
+ * Como a carteira pelo CDI evoluiu (o gráfico do Investir): o total bruto no fim de cada um dos últimos `meses`
+ * meses (o último ponto é hoje), pela mesma conta de `rendimentoCdi`; e quanto rendeu no mês de hoje, sem contar
+ * o dinheiro que entrou por aporte (ajuste conta como rendimento).
+ */
+export function evolucaoCdi({
+  carteira,
+  taxas,
+  hoje,
+  meses = 6,
+}: {
+  carteira: InvestimentoCdi[];
+  taxas: TaxaCdi[];
+  hoje: string;
+  meses?: number;
+}): { pontos: { mes: string; total: Centavos }[]; rendeuNoMes: Centavos } {
+  // O total num dia: o que já tinha entrado antes dele, rendendo até a véspera (ou tudo, se for hoje).
+  const totalEm = (dia: string) =>
+    carteira.reduce(
+      (s, c) =>
+        s +
+        rendimentoCdi({ lotes: c.lotes.filter((l) => (dia === hoje ? l.data <= hoje : l.data < dia)), taxas, percentual: c.percentual, hoje: dia, isentoIr: true })
+          .bruto,
+      0,
+    );
+  const mesDeHoje = hoje.slice(0, 7);
+  const pontos = Array.from({ length: meses }, (_, i) => {
+    const mes = mesAnterior(mesDeHoje, meses - 1 - i);
+    return { mes, total: totalEm(mes === mesDeHoje ? hoje : `${mesSeguinte(mes)}-01`) };
+  });
+  const inicioDoMes = `${mesDeHoje}-01`;
+  const entrouNoMes = carteira
+    .flatMap((c) => c.lotes)
+    .filter((l) => !l.ajuste && l.data >= inicioDoMes && l.data <= hoje)
+    .reduce((s, l) => s + l.valor, 0);
+  return { pontos, rendeuNoMes: pontos.at(-1)!.total - totalEm(inicioDoMes) - entrouNoMes };
+}

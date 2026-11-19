@@ -1,6 +1,6 @@
 import 'server-only';
 import { diaDe } from '@/domain/datas';
-import { rendimentoCdi, type Lote, type RendimentoCdi, type TaxaCdi } from '@/domain/rendimento';
+import { evolucaoCdi, rendimentoCdi, type InvestimentoCdi, type Lote, type RendimentoCdi, type TaxaCdi } from '@/domain/rendimento';
 import { supabaseServidor } from '@/lib/supabase/server';
 import { sincronizarCdi, taxasCdiDesde } from './cdi';
 
@@ -37,6 +37,8 @@ export interface Carteira {
   ultimoDia: { dia: string; ganho: number } | null;
   /** O último CDI publicado (para a nota da aba). */
   cdiDoDia: TaxaCdi | null;
+  /** O total pelo CDI no fim de cada um dos últimos 6 meses e quanto rendeu no mês (o gráfico); null sem investimento pelo CDI. */
+  evolucao: { pontos: { mes: string; total: number }[]; rendeuNoMes: number } | null;
 }
 
 /** Investimentos do usuário agrupados por instituição, do maior total para o menor; os do CDI já com o rendimento de hoje. */
@@ -52,12 +54,14 @@ export async function investimentosPorInstituicao(agora: Date = new Date()): Pro
   const lotes = doCdi.length > 0 ? await lotesDepois(doCdi.map((i) => i.id)) : new Map<string, Lote[]>();
   const taxas = doCdi.length > 0 ? await taxasPara(hoje, [...doCdi.map((i) => i.aplicado_em!), ...[...lotes.values()].flat().map((l) => l.data)]) : [];
 
+  const carteiraCdi: InvestimentoCdi[] = [];
   const investimentos: Investimento[] = data.map((i) => {
     const base = { id: i.id, nome: i.nome, tipo: i.tipo, instituicao: i.instituicao, valorAtual: i.valor_atual, aportado: i.aportado, cdi: null };
     if (i.percentual_cdi === null || i.aplicado_em === null) return base;
     const depois = lotes.get(i.id) ?? [];
     // O aportado soma o que foi aplicado no início e os aportes de depois.
     const aplicado = Math.max(0, i.aportado - depois.filter((l) => !l.ajuste).reduce((s, l) => s + l.valor, 0));
+    carteiraCdi.push({ lotes: [{ data: i.aplicado_em, valor: aplicado }, ...depois], percentual: Number(i.percentual_cdi) });
     const rendimento = rendimentoCdi({
       lotes: [{ data: i.aplicado_em, valor: aplicado }, ...depois],
       taxas,
@@ -90,6 +94,7 @@ export async function investimentosPorInstituicao(agora: Date = new Date()): Pro
     grupos: lista,
     ultimoDia: ultimo ? { dia: ultimo, ganho: dias.filter((d) => d.dia === ultimo).reduce((s, d) => s + d.ganho, 0) } : null,
     cdiDoDia: taxas.filter((t) => t.dia < hoje).at(-1) ?? null,
+    evolucao: carteiraCdi.length > 0 ? evolucaoCdi({ carteira: carteiraCdi, taxas, hoje }) : null,
   };
 }
 

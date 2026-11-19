@@ -46,13 +46,13 @@ export function FeedbackProvider({ children }: { children: React.ReactNode }) {
   return (
     <Contexto.Provider value={{ pendentes, adicionarPendente, removerPendente, avisar }}>
       {children}
-      <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-[96px] z-50 mx-auto max-w-[480px] px-4">
+      <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-[calc(max(calc(env(safe-area-inset-bottom)-8px),12px)+74px)] z-50 mx-auto flex max-w-[480px] justify-center px-4">
         {aviso && (
           <div
             role="status"
-            className="pointer-events-auto flex items-center gap-3 rounded-md bg-foreground px-4 py-1 text-sm font-semibold text-background shadow-sheet"
+            className="vidro-forte pointer-events-auto relative flex min-h-12 animate-chega items-center gap-3 rounded-[24px] py-1 pr-2 pl-4 text-[15px] font-medium motion-reduce:animate-aparece"
           >
-            <CircleCheck className="size-5 shrink-0" aria-hidden />
+            <CircleCheck className="size-5 shrink-0 text-positive" aria-hidden />
             <span className="py-2">{aviso.texto}</span>
             {aviso.acao && (
               <button
@@ -62,7 +62,7 @@ export function FeedbackProvider({ children }: { children: React.ReactNode }) {
                   setAviso(null);
                   fazer();
                 }}
-                className="ml-auto min-h-11 font-bold underline underline-offset-[3px]"
+                className="pressiona ml-auto min-h-11 rounded-[18px] px-3.5 font-semibold text-primary focus-visible:outline-3 focus-visible:outline-ring"
               >
                 {aviso.acao.rotulo}
               </button>

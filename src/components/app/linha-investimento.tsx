@@ -116,16 +116,16 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
           }
         }}
         gatilho={
-          <button type="button" className="flex min-h-16 w-full items-center gap-3 rounded-md py-3 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+          <button type="button" className="pressiona flex min-h-[66px] w-full items-center gap-3 rounded-md py-3 text-left focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring">
             <span className="grid size-10 shrink-0 place-items-center rounded-[12px] bg-invest-soft text-invest">
               <Icone className="size-5" aria-hidden />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block truncate font-bold">{i.nome}</span>
+              <span className="block truncate text-base leading-[21px] font-medium">{i.nome}</span>
               <span className="block text-[13px] leading-[18px] text-muted-foreground">{i.cdi ? percentualDoCdi(i.cdi.percentual) : i.tipo}</span>
             </span>
             <span className="text-right">
-              <span className="block font-bold font-valor tabular-nums">
+              <span className="block font-valor text-base leading-[21px] font-semibold tabular-nums">
                 <Privado>{formatBRL(i.valorAtual)}</Privado>
               </span>
               <span
@@ -151,7 +151,7 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
               </p>
               <p className="text-[40px] leading-[44px] font-bold tracking-[-0.02em] font-valor tabular-nums">{formatBRL(i.cdi.rendimento.bruto)}</p>
             </div>
-            <div role="group" aria-label="Se resgatar hoje" className="grid gap-0.5 rounded-md bg-muted p-3">
+            <div role="group" aria-label="Se resgatar hoje" className="grid gap-0.5 rounded-md bg-foreground/7 p-3">
               <p className="flex justify-between gap-3 font-bold">
                 <span aria-hidden>Se resgatar hoje</span>
                 <span className="font-valor tabular-nums">{formatBRL(i.cdi.rendimento.liquido)}</span>
@@ -159,11 +159,11 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
               <p className="text-[13px] leading-[18px] text-muted-foreground">{explicaLiquido(i.cdi.rendimento)}</p>
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <div role="group" aria-label="Aportado" className="rounded-md bg-muted p-3">
+              <div role="group" aria-label="Aportado" className="rounded-md bg-foreground/7 p-3">
                 <p aria-hidden className="text-xs font-semibold text-muted-foreground">Aportado</p>
                 <p className="mt-0.5 font-bold font-valor tabular-nums">{formatBRL(i.cdi.rendimento.aportado)}</p>
               </div>
-              <div role="group" aria-label="Rendeu" className="rounded-md bg-muted p-3">
+              <div role="group" aria-label="Rendeu" className="rounded-md bg-foreground/7 p-3">
                 <p aria-hidden className="text-xs font-semibold text-muted-foreground">Rendeu</p>
                 <p className={cn('mt-0.5 font-bold font-valor tabular-nums', i.cdi.rendimento.rendeu > 0 && 'text-positive', i.cdi.rendimento.rendeu < 0 && 'text-negative')}>
                   {i.cdi.rendimento.rendeu > 0 ? '+ ' : ''}

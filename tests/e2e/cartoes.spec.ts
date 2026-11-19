@@ -4,6 +4,7 @@ test.describe('cartões de crédito', () => {
   test('cadastra, edita e exclui um cartão em Ajustes', async ({ page, usuario }) => {
     await entrar(page, usuario);
     await page.getByRole('link', { name: 'Ajustes' }).click();
+    await page.getByRole('link', { name: /^Cartões/ }).click();
     const cartoes = page.getByRole('region', { name: 'Cartões de crédito' });
 
     await cartoes.getByRole('button', { name: 'Adicionar cartão' }).click();

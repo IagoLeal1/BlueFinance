@@ -164,3 +164,46 @@ test.describe('redesenho: Lançamentos', () => {
     await expect(page.getByRole('region', { name: 'Mar calmo por aqui' })).toContainText('Nenhuma compra no crédito neste mês.');
   });
 });
+
+test.describe('redesenho: Ajustes', () => {
+  test('a lista agrupada mostra o estado de cada ajuste e cada linha abre a sua subtela, com Voltar', async ({ page, usuario }) => {
+    await entrar(page, usuario);
+    await page.getByRole('navigation', { name: 'Principal' }).getByRole('link', { name: 'Ajustes' }).click();
+    await expect(page.getByRole('link', { name: /^Cartões/ })).toContainText('Nenhum cartão');
+    await expect(page.getByRole('link', { name: /^Vale-refeição/ })).toContainText('Não configurado');
+    const lancarSozinho = page.getByRole('region', { name: 'Lançar sozinho' });
+    await expect(lancarSozinho.getByRole('link')).toHaveText([/^Banco/, /^Apple Pay/, /^Atalho do iPhone/]);
+    await expect(page.getByRole('link', { name: /^Atalho do iPhone/ })).toContainText('Sem token');
+
+    await page.getByRole('link', { name: /^Banco/ }).click();
+    await expect(page).toHaveURL('/ajustes/banco');
+    await expect(page.getByRole('heading', { level: 1, name: 'Banco' })).toBeVisible();
+    await page.getByRole('link', { name: 'Voltar' }).click();
+    await expect(page).toHaveURL('/ajustes');
+  });
+});
+
+test.describe('redesenho: Entrar e avisos', () => {
+  test('Entrar é o degradê com a água no pé e campos de vidro claro', async ({ page }) => {
+    await page.goto('/entrar');
+    await expect(page.getByText("Seu dinheiro, na linha d'água.")).toBeVisible();
+    expect(await css(page.getByLabel('E-mail'), '-webkit-backdrop-filter')).toContain('blur');
+    expect(await css(page.getByRole('main'), 'background-image')).toContain('linear-gradient');
+    const botao = (await page.getByRole('button', { name: 'Entrar' }).boundingBox())!;
+    expect(botao.height).toBeGreaterThanOrEqual(44);
+  });
+
+  test('o aviso de salvo é uma pílula de vidro com Desfazer de 44 pt', async ({ page, usuario }) => {
+    await entrar(page, usuario);
+    await page.getByRole('button', { name: 'Novo lançamento' }).click();
+    const folha = page.getByRole('dialog', { name: 'Novo lançamento' });
+    await folha.getByRole('button', { name: 'Mercado' }).click();
+    await folha.getByLabel('Valor').pressSequentially('500');
+    await folha.getByRole('button', { name: /^Salvar/ }).click();
+    const aviso = page.getByRole('status').filter({ hasText: 'Gasto salvo' });
+    await expect(aviso).toBeVisible();
+    expect(await css(aviso, '-webkit-backdrop-filter')).toContain('blur');
+    // Depois de chegar (a pílula entra com a mola viva).
+    await expect.poll(async () => (await aviso.getByRole('button', { name: 'Desfazer' }).boundingBox())!.height).toBeGreaterThanOrEqual(44);
+  });
+});

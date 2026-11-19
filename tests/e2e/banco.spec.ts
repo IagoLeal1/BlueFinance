@@ -47,6 +47,7 @@ test.describe('Open Finance (Meu Pluggy)', () => {
     );
     await entrar(page, usuario);
     await page.getByRole('link', { name: 'Ajustes' }).click();
+    await page.getByRole('link', { name: /^Banco/ }).click();
     const secao = page.getByRole('region', { name: 'Banco (Open Finance)' });
 
     await secao.getByLabel('Código da conexão').fill('codigo-errado');

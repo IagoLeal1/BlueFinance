@@ -1,13 +1,12 @@
-import { CabecaTela } from '@/components/app/cabeca-tela';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { ApplePayAjustes } from '@/components/app/apple-pay-ajustes';
+import { CreditCard, Landmark, Nfc, UtensilsCrossed, Zap } from 'lucide-react';
 import { AvisoDaFatura } from '@/components/app/aviso-fatura';
-import { BancoAjustes } from '@/components/app/banco-ajustes';
 import { BotaoSair } from '@/components/app/botao-sair';
-import { Cartoes } from '@/components/app/cartoes';
-import { TokenAtalho } from '@/components/app/token-atalho';
-import { ConfigurarVr } from '@/components/app/vr-ajustes';
+import { CabecaTela } from '@/components/app/cabeca-tela';
+import { GrupoAjustes, LinhaAjuste } from '@/components/app/linha-ajuste';
+import { BARBATANA } from '@/components/app/marca';
+import { formatReais } from '@/domain/money';
 import { supabaseServidor } from '@/lib/supabase/server';
 import { cartoesDaCarteira } from '@/server/apple-pay';
 import { bancoDoUsuario } from '@/server/banco';
@@ -18,52 +17,45 @@ import { sair } from './actions';
 
 export const metadata: Metadata = { title: 'Ajustes · BlueFinance' };
 
-const dataHora = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', dateStyle: 'short', timeStyle: 'short' });
+const hora = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
 
+/** Ajustes (design-preview: tela de Ajustes): a lista agrupada; cada linha abre a sua subtela. */
 export default function Ajustes() {
   return (
     <>
       <CabecaTela titulo="Ajustes" />
-      <Suspense fallback={null}>
-        <CartoesDoUsuario />
-      </Suspense>
-      <Suspense fallback={null}>
-        <VrDoUsuario />
-      </Suspense>
-      <Suspense fallback={null}>
-        <BancoDoUsuario />
-      </Suspense>
-      <Suspense fallback={null}>
-        <ApplePayDoUsuario />
-      </Suspense>
+      <GrupoAjustes>
+        <LinhaAjuste href="/ajustes/cartoes" Icone={CreditCard} titulo="Cartões">
+          <Estado>
+            <EstadoCartoes />
+          </Estado>
+        </LinhaAjuste>
+        <LinhaAjuste href="/ajustes/vale-refeicao" Icone={UtensilsCrossed} titulo="Vale-refeição">
+          <Estado>
+            <EstadoVr />
+          </Estado>
+        </LinhaAjuste>
+      </GrupoAjustes>
+      <GrupoAjustes rotulo="Lançar sozinho">
+        <LinhaAjuste href="/ajustes/banco" Icone={Landmark} titulo="Banco">
+          <Estado>
+            <EstadoBanco />
+          </Estado>
+        </LinhaAjuste>
+        <LinhaAjuste href="/ajustes/apple-pay" Icone={Nfc} titulo="Apple Pay">
+          <Estado>
+            <EstadoApplePay />
+          </Estado>
+        </LinhaAjuste>
+        <LinhaAjuste href="/ajustes/atalho" Icone={Zap} titulo="Atalho do iPhone">
+          <Estado>
+            <EstadoAtalho />
+          </Estado>
+        </LinhaAjuste>
+      </GrupoAjustes>
+      <h2 className="mx-4 -mb-2 text-[13px] leading-[18px] font-semibold text-muted-foreground">Neste iPhone</h2>
       <AvisoDaFatura />
-      <section aria-label="Lançar sem abrir o app" className="grid gap-3 cartao p-4">
-        <h2 className="text-[17px] leading-[22px] font-semibold">Lançar sem abrir o app</h2>
-        <ol className="grid gap-3">
-          {[
-            'Monte o Atalho "Gasto rápido" com o token abaixo (passo a passo no guia do projeto).',
-            'Ajustes do iPhone › Botão de Ação › Atalho › Gasto rápido.',
-            'Aperte o botão, escolha a categoria, digite o valor e, se quiser, com o quê.',
-          ].map((passo, n) => (
-            <li key={n} className="grid grid-cols-[28px_1fr] items-start gap-3 text-sm font-semibold">
-              <span aria-hidden className="grid size-7 place-items-center rounded-full bg-secondary font-bold text-secondary-foreground">
-                {n + 1}
-              </span>
-              {passo}
-            </li>
-          ))}
-        </ol>
-      </section>
-      <section aria-label="Atalho do iPhone" className="grid gap-3 cartao p-4">
-        <h2 className="text-[17px] leading-[22px] font-semibold">Token do Atalho</h2>
-        <p className="text-[13px] leading-[18px] text-muted-foreground">
-          O Atalho usa um token para lançar sem abrir o app. Gerar um novo desliga o anterior — use se perder o iPhone.
-        </p>
-        <Suspense fallback={null}>
-          <EstadoDoToken />
-        </Suspense>
-      </section>
-      <section aria-label="Conta" className="grid gap-1 cartao p-4">
+      <section aria-label="Conta" className="cartao grid gap-1 p-4">
         <p className="text-[13px] leading-[18px] text-muted-foreground">Conta</p>
         <Suspense fallback={null}>
           <EmailDaConta />
@@ -72,47 +64,54 @@ export default function Ajustes() {
           <BotaoSair />
         </form>
       </section>
+      <p className="grid justify-items-center gap-0.5 pt-3 pb-1 text-[13px] text-muted-foreground">
+        <svg viewBox="26 30 126 88" className="h-5 w-[22px] fill-primary" aria-hidden>
+          <path d={BARBATANA} />
+        </svg>
+        BlueFin
+      </p>
     </>
   );
 }
 
-async function CartoesDoUsuario() {
-  return <Cartoes cartoes={await listarCartoes()} />;
+function Estado({ children }: { children: React.ReactNode }) {
+  return <Suspense fallback={<span className="invisible">…</span>}>{children}</Suspense>;
 }
 
-async function VrDoUsuario() {
+async function EstadoCartoes() {
+  const cartoes = await listarCartoes();
+  const [primeiro] = cartoes;
+  if (!primeiro) return 'Nenhum cartão';
+  const resto = cartoes.length > 1 ? ` e mais ${cartoes.length - 1}` : '';
+  return `${primeiro.nome}, fecha dia ${primeiro.diaFechamento} e vence dia ${primeiro.diaVencimento}${resto}`;
+}
+
+async function EstadoVr() {
   const vr = await vrDoUsuario();
-  return <ConfigurarVr vr={vr && { valorMensal: vr.valorMensal, dia: vr.dia, saldo: vr.saldo }} />;
+  return vr ? `${formatReais(vr.valorMensal)} todo dia ${vr.dia}` : 'Não configurado';
 }
 
-async function BancoDoUsuario() {
-  return <BancoAjustes banco={await bancoDoUsuario()} />;
+async function EstadoBanco() {
+  const banco = await bancoDoUsuario();
+  if (!banco) return 'Não conectado';
+  if (banco.erro) return 'Precisa de atenção';
+  return banco.buscadoEm ? `Conectado, buscou ${hora.format(new Date(banco.buscadoEm))}` : 'Conectado';
 }
 
-async function ApplePayDoUsuario() {
-  const [cartoes, doApp, vr] = await Promise.all([cartoesDaCarteira(), listarCartoes(), vrDoUsuario()]);
-  return <ApplePayAjustes cartoes={cartoes} doApp={doApp.map((c) => ({ id: c.id, nome: c.nome }))} temVr={!!vr} />;
+async function EstadoApplePay() {
+  const n = (await cartoesDaCarteira()).length;
+  return n === 0 ? 'Nenhum cartão ainda' : n === 1 ? '1 cartão da Carteira' : `${n} cartões da Carteira`;
+}
+
+async function EstadoAtalho() {
+  const supabase = await supabaseServidor();
+  const { data } = await supabase.auth.getClaims();
+  const ativo = data?.claims.sub ? await tokenAtivo(data.claims.sub) : null;
+  return ativo ? 'Token ativo' : 'Sem token';
 }
 
 async function EmailDaConta() {
   const supabase = await supabaseServidor();
   const { data } = await supabase.auth.getClaims();
-  return <p className="font-bold">{data?.claims.email ?? ''}</p>;
-}
-
-async function EstadoDoToken() {
-  const supabase = await supabaseServidor();
-  const { data } = await supabase.auth.getClaims();
-  const ativo = data?.claims.sub ? await tokenAtivo(data.claims.sub) : null;
-  return (
-    <>
-      {ativo && (
-        <p className="text-[13px] leading-[18px] font-semibold">
-          Token criado em {dataHora.format(new Date(ativo.criadoEm))}
-          {ativo.usadoEm ? ` · usado pela última vez em ${dataHora.format(new Date(ativo.usadoEm))}` : ' · ainda não usado'}
-        </p>
-      )}
-      <TokenAtalho jaExiste={!!ativo} />
-    </>
-  );
+  return <p className="font-semibold">{data?.claims.email ?? ''}</p>;
 }

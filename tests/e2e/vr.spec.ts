@@ -11,6 +11,7 @@ test.describe('VR (vale-refeição)', () => {
   test('configura o VR em Ajustes e o Início mostra o saldo e o próximo depósito', async ({ page, usuario }) => {
     await entrar(page, usuario);
     await page.getByRole('link', { name: 'Ajustes' }).click();
+    await page.getByRole('link', { name: /^Vale-refeição/ }).click();
     const secao = page.getByRole('region', { name: 'Vale-refeição' });
 
     await secao.getByRole('button', { name: 'Adicionar VR' }).click();
@@ -100,7 +101,7 @@ test.describe('VR (vale-refeição)', () => {
   test('corrigir o saldo de hoje em Ajustes lança a diferença como acerto', async ({ page, usuario }) => {
     await semearVr(usuario, { valorMensal: 90000, dia: 5, saldo: 41230 });
     await entrar(page, usuario);
-    await page.goto('/ajustes');
+    await page.goto('/ajustes/vale-refeicao');
     const secao = page.getByRole('region', { name: 'Vale-refeição' });
 
     await secao.getByRole('button', { name: /VR/ }).click();
@@ -122,7 +123,7 @@ test.describe('VR (vale-refeição)', () => {
     // Configurado ontem, com o dia de ontem: nenhum depósito ainda.
     await semearVr(usuario, { valorMensal: 80080, dia: diaOntem, desde: `${ontem}T12:00:00-03:00`, saldo: 76 });
     await entrar(page, usuario);
-    await page.goto('/ajustes');
+    await page.goto('/ajustes/vale-refeicao');
     const secao = page.getByRole('region', { name: 'Vale-refeição' });
 
     await secao.getByRole('button', { name: /VR/ }).click();
@@ -164,7 +165,7 @@ test.describe('VR (vale-refeição)', () => {
     await expect(linha(page, 'Depósito do VR')).toContainText('+ R$ 812,40');
 
     // O previsto dos próximos meses continua o de Ajustes.
-    await page.goto('/ajustes');
+    await page.goto('/ajustes/vale-refeicao');
     await expect(page.getByRole('region', { name: 'Vale-refeição' }).getByRole('listitem')).toContainText('R$ 800,80 todo dia');
   });
 });

@@ -25,6 +25,10 @@ test.describe('investimento pelo CDI', () => {
     await expect(patrimonio).toContainText('+ R$ 0,51 no último dia útil (2 jun 2020)');
     await expect(patrimonio.getByRole('group', { name: 'Aportado' })).toContainText('R$ 1.000');
     await expect(patrimonio.getByRole('group', { name: 'Rendeu' })).toContainText('+ R$ 1');
+    // O gráfico do total pelo CDI, em Água, que se desenha ao abrir.
+    const grafico = patrimonio.getByRole('img', { name: /^O total pelo CDI foi de R\$ 1\.001 em / });
+    await expect(grafico).toBeVisible();
+    await expect(grafico.locator('path').last()).toHaveCSS('animation-name', 'traco');
 
     const linha = page.getByRole('region', { name: 'C6bank' }).getByRole('listitem');
     await expect(linha).toContainText('101,5% do CDI');

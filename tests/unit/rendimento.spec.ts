@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { aliquotaIr, comecaARender, rendimentoCdi, ultimoCdiEsperado } from '../../src/domain/rendimento';
+import { aliquotaIr, comecaARender, evolucaoCdi, rendimentoCdi, ultimoCdiEsperado } from '../../src/domain/rendimento';
 
 // CDI que o Banco Central publicou para 5/11/2026: 0,050788% ao dia (≈ 13,65% ao ano).
 const CDI_5_NOV = { dia: '2026-11-05', taxa: 0.050788 };
@@ -94,5 +94,30 @@ test.describe('rendimento pelo CDI', () => {
     expect(ultimoCdiEsperado('2026-11-08')).toBe('2026-11-05'); // domingo: o de quinta
     expect(ultimoCdiEsperado('2026-11-10')).toBe('2026-11-06'); // terça: o de sexta
     expect(ultimoCdiEsperado('2026-11-12')).toBe('2026-11-10');
+  });
+});
+
+test.describe('evolução da carteira pelo CDI (gráfico do Investir)', () => {
+  // 1% ao dia em três dias úteis, para a conta ficar à vista.
+  const taxas = [
+    { dia: '2026-09-15', taxa: 1 },
+    { dia: '2026-10-15', taxa: 1 },
+    { dia: '2026-11-05', taxa: 1 },
+  ];
+  const carteira = [{ percentual: 100, lotes: [{ data: '2026-09-10', valor: 100000 }, { data: '2026-11-10', valor: 50000 }] }];
+
+  test('o total no fim de cada mês, o último é hoje; e quanto rendeu no mês, sem contar os aportes', () => {
+    const r = evolucaoCdi({ carteira, taxas, hoje: '2026-11-19', meses: 3 });
+    expect(r.pontos).toEqual([
+      { mes: '2026-09', total: 101000 },
+      { mes: '2026-10', total: 102010 },
+      { mes: '2026-11', total: 153030 },
+    ]);
+    expect(r.rendeuNoMes).toBe(1020);
+  });
+
+  test('antes da primeira aplicação o total é zero', () => {
+    const r = evolucaoCdi({ carteira, taxas, hoje: '2026-11-19', meses: 4 });
+    expect(r.pontos[0]).toEqual({ mes: '2026-08', total: 0 });
   });
 });

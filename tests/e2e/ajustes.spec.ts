@@ -4,6 +4,7 @@ test.describe('ajustes', () => {
   test('gera o token do Atalho, mostra uma única vez e ele funciona na API', async ({ page, usuario }) => {
     await entrar(page, usuario);
     await page.getByRole('link', { name: 'Ajustes' }).click();
+    await page.getByRole('link', { name: /^Atalho do iPhone/ }).click();
 
     await page.getByRole('button', { name: 'Gerar token do Atalho' }).click();
     const campo = page.getByLabel('Token do Atalho');
@@ -22,11 +23,12 @@ test.describe('ajustes', () => {
   test('ensina a lançar sem abrir o app pelo Botão de Ação', async ({ page, usuario }) => {
     await entrar(page, usuario);
     await page.getByRole('link', { name: 'Ajustes' }).click();
+    await expect(page.getByRole('region', { name: 'Conta' })).toContainText(usuario.email);
 
+    await page.getByRole('link', { name: /^Atalho do iPhone/ }).click();
     const secao = page.getByRole('region', { name: 'Lançar sem abrir o app' });
     await expect(secao.getByRole('listitem')).toHaveCount(3);
     await expect(secao).toContainText('Botão de Ação');
-    await expect(page.getByRole('region', { name: 'Conta' })).toContainText(usuario.email);
   });
 
   test('Aviso da fatura: aberto pelo Safari, explica que precisa estar na Tela de Início', async ({ page, usuario }) => {

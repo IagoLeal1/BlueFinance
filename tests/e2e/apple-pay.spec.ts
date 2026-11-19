@@ -64,6 +64,7 @@ test.describe('Apple Pay', () => {
     await semearCartao(usuario, 'C6bank', 4, 11);
     await entrar(page, usuario);
     await page.getByRole('link', { name: 'Ajustes' }).click();
+    await page.getByRole('link', { name: /^Apple Pay/ }).click();
     const secao = page.getByRole('region', { name: 'Apple Pay' });
     await expect(secao).toContainText('Nenhum cartão ainda');
 

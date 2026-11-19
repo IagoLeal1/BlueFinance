@@ -7,14 +7,14 @@ import { criarLancamento } from '@/app/(app)/actions';
 import { formDaFila, lerFila, tirarDaFila } from './fila-offline';
 import { useFeedback } from './feedback';
 
-/** Faixa "Sem internet" no topo (design kit: TelaAvisosOffline). */
+/** Faixa "Sem internet" no topo, de vidro forte (design-preview: .faixa-offline). */
 export function AvisoSemInternet() {
   const semInternet = useOffline();
   if (!semInternet) return null;
   return (
     <div className="pointer-events-none fixed inset-x-0 top-[max(env(safe-area-inset-top),8px)] z-50 mx-auto max-w-[480px] px-4">
-      <div role="status" className="flex items-center gap-2 rounded-md bg-foreground px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-background shadow-sheet">
-        <WifiOff className="size-4 shrink-0" aria-hidden />
+      <div role="status" className="vidro-forte relative flex min-h-11 items-center gap-2.5 rounded-[16px] px-3.5 py-2 text-sm leading-[19px] font-medium">
+        <WifiOff className="size-5 shrink-0 text-alert" aria-hidden />
         Sem internet. Mostrando o que você viu por último; o que lançar sobe quando ela voltar.
       </div>
     </div>
