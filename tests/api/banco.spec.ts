@@ -167,6 +167,27 @@ test.describe('Open Finance: a busca diária no banco', () => {
     expect(regras).toEqual([{ estabelecimento: 'RESTAURANTE BOM PRATO', descricao: 'Almoço', categorias: { nome: 'Alimentação' } }]);
   });
 
+  test('descrição genérica ("Débito de Cartão") não ensina nada nem entra sozinha', async ({ request, usuario, outroUsuario }) => {
+    const hoje = diaAtras(0);
+    const debitoDeCartao = (id: string, amount: number) => ({ id, description: 'Débito de Cartão', amount, date: naPluggy(hoje) });
+
+    // Bate com um gasto seu: confere, mas "Débito de Cartão" não vira um lugar com a sua categoria.
+    await semearLancamentos(usuario, [{ valor: 700, categoria: 'Alimentação', descricao: 'Coca cola', data: `${hoje}T12:30:00-03:00` }]);
+    await semearBanco(usuario, await montarPluggy([{ type: 'BANK', name: 'C6 Bank', transacoes: [debitoDeCartao('t-coca', -7)] }]), hoje);
+
+    // Uma regra aprendida por engano antes não faz a compra entrar sozinha: vai para conferir.
+    const db = clienteDe(outroUsuario);
+    const { data: alimentacao } = await db.from('categorias').select('id').eq('nome', 'Alimentação').single();
+    await db.from('regras_banco').insert({ user_id: outroUsuario.id, tipo: 'despesa', estabelecimento: 'DEBITO DE CARTAO', categoria_id: alimentacao!.id, descricao: 'Coca cola' });
+    await semearBanco(outroUsuario, await montarPluggy([{ type: 'BANK', name: 'C6 Bank', transacoes: [debitoDeCartao('t-outra', -9.9)] }]), hoje);
+
+    await buscar(request);
+    expect(await doBanco(usuario)).toEqual([{ id: 't-coca', situacao: 'conferido', lancado: true, sugestao: null }]);
+    expect((await clienteDe(usuario).from('regras_banco').select('estabelecimento')).data).toEqual([]);
+    expect(await doBanco(outroUsuario)).toEqual([{ id: 't-outra', situacao: 'conferir', lancado: false, sugestao: 'Outros' }]);
+    expect((await db.from('lancamentos').select('id')).data).toEqual([]);
+  });
+
   test('conexão que não existe mais na Pluggy: guarda o problema para mostrar em Ajustes', async ({ request, usuario }) => {
     await semearBanco(usuario, 'item-que-nao-existe', diaAtras(0));
     expect((await buscar(request)).status()).toBe(200);

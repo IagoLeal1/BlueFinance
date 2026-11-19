@@ -4,6 +4,7 @@ import { refresh } from 'next/cache';
 import { randomUUID } from 'node:crypto';
 import type { TipoLancamento } from '@/domain/money';
 import { diaDe, nomeDoMes, somarMeses } from '@/domain/datas';
+import { ehLugar } from '@/domain/banco';
 import { mesDe } from '@/domain/summary';
 import { MESES_DE_ASSINATURA, diaDoFechamento, dividirParcelas, mesDaFatura, mesesDasParcelas } from '@/domain/parcelas';
 import { supabaseServidor } from '@/lib/supabase/server';
@@ -216,7 +217,7 @@ export async function editarLancamento(_anterior: EstadoLancamento, form: FormDa
   }
   // Gasto do Apple Pay (ou que o Apple Pay conferiu): editar também confirma e ensina o lugar.
   const categoriaFinal = p_categoria ?? atual.categoria_id;
-  if (atual.estabelecimento && atual.tipo === 'despesa' && categoriaFinal) {
+  if (atual.estabelecimento && ehLugar(atual.estabelecimento) && atual.tipo === 'despesa' && categoriaFinal) {
     await supabase.from('lancamentos').update({ a_confirmar: false }).eq('id', id);
     await supabase.from('regras_banco').upsert(
       {

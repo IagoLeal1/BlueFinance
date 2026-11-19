@@ -72,6 +72,21 @@ export function estabelecimentoDe(descricao: string): string {
     .trim();
 }
 
+/**
+ * Palavras que o banco usa quando não diz o lugar ("Débito de Cartão", "Pix enviado", "Compra no débito"). O C6
+ * descreve toda compra no débito só como "Débito de Cartão".
+ */
+const SO_GENERICAS =
+  /^((DEBITO|CREDITO|COMPRA|COMPRAS|CARTAO|PIX|TRANSFERENCIA|TRANSF|TED|DOC|PAGAMENTO|PGTO|PAGTO|SAQUE|TARIFA|APPLE|PAY|ENVIAD[OA]|RECEBID[OA]|EFETUAD[OA]|ELETRONIC[OA]|DE|DO|DA|NO|NA|COM|VIA|EM)\s*)*$/;
+
+/**
+ * A chave é mesmo um lugar? Descrição genérica do banco não é: não aprende categoria nem faz a compra entrar
+ * sozinha (senão toda compra no débito viraria a primeira que você conferiu).
+ */
+export function ehLugar(estabelecimento: string): boolean {
+  return !SO_GENERICAS.test(estabelecimento.trim());
+}
+
 /** Sugestão para o "com o quê": o nome do estabelecimento, se a Pluggy souber; senão a descrição sem prefixos. */
 export function nomeDe(t: Pick<TransacaoPluggy, 'description' | 'merchant'>): string {
   if (t.merchant?.name) return titulo(t.merchant.name);
@@ -110,12 +125,14 @@ export function motivoDeFora(tipoDaConta: TipoDaConta, t: TransacaoPluggy): stri
 export function lerTransacao(tipoDaConta: TipoDaConta, t: TransacaoPluggy): DoBanco | null {
   if (motivoDeFora(tipoDaConta, t)) return null;
   const descricao = descricaoDe(t);
+  const estabelecimento = estabelecimentoDe(descricao);
   const comum = {
     pluggyId: t.id,
     valor: centavosDe(t),
     descricao,
-    estabelecimento: estabelecimentoDe(descricao),
-    nome: nomeDe(t),
+    estabelecimento,
+    // Sem lugar na descrição, o "com o quê" sugerido fica como o banco escreveu.
+    nome: ehLugar(estabelecimento) || t.merchant?.name ? nomeDe(t) : descricao,
     categoriaPluggy: t.category ?? null,
   };
   const meioDia = (iso: string) => `${iso.slice(0, 10)}T12:00:00-03:00`;

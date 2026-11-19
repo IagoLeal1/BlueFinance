@@ -2,7 +2,7 @@
 
 import { refresh } from 'next/cache';
 import { randomUUID } from 'node:crypto';
-import { escolherCartao, linhasDoLancamento } from '@/domain/banco';
+import { ehLugar, escolherCartao, linhasDoLancamento } from '@/domain/banco';
 import { supabaseServidor } from '@/lib/supabase/server';
 
 export interface EstadoDoBanco {
@@ -62,9 +62,12 @@ export async function lancarDoBanco(_anterior: EstadoDoBanco, form: FormData): P
     return { erro: 'Não foi possível lançar. Tente de novo.' };
   }
   await supabase.from('transacoes_banco').update({ lancamento_id: criados[0]!.id }).eq('id', t.id);
-  await supabase
-    .from('regras_banco')
-    .upsert({ user_id: userId, tipo, estabelecimento: t.estabelecimento, categoria_id: categoria.id, descricao }, { onConflict: 'user_id,tipo,estabelecimento' });
+  // Só aprende quando o banco diz o lugar ("Débito de Cartão" não é lugar).
+  if (ehLugar(t.estabelecimento)) {
+    await supabase
+      .from('regras_banco')
+      .upsert({ user_id: userId, tipo, estabelecimento: t.estabelecimento, categoria_id: categoria.id, descricao }, { onConflict: 'user_id,tipo,estabelecimento' });
+  }
   refresh();
   return { ok: true };
 }
@@ -106,7 +109,7 @@ export async function confirmarApplePay(_anterior: EstadoDoBanco, form: FormData
 
   const { error } = await supabase.from('lancamentos').update({ categoria_id: categoria.id, descricao, a_confirmar: false }).eq('id', l.id);
   if (error) return { erro: 'Não foi possível confirmar. Tente de novo.' };
-  if (l.estabelecimento) {
+  if (l.estabelecimento && ehLugar(l.estabelecimento)) {
     await supabase
       .from('regras_banco')
       .upsert(

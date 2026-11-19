@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { acharLancadoAgora, lerValorEmReais, nomeDoLugar } from '@/domain/apple-pay';
-import { estabelecimentoDe } from '@/domain/banco';
+import { ehLugar, estabelecimentoDe } from '@/domain/banco';
 import { nomeDoMes } from '@/domain/datas';
 import { formatBRL, formatSigned } from '@/domain/money';
 import { mesDaFatura } from '@/domain/parcelas';
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
   if (par) {
     const lancado = candidatos.find((l) => l.id === par)!;
     await db.from('lancamentos').update({ estabelecimento: chave }).eq('id', par);
-    if (lancado.categoria_id) {
+    if (lancado.categoria_id && ehLugar(chave)) {
       await db
         .from('regras_banco')
         .upsert(
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
     return Response.json({ mensagem: `Já estava lançado: ${lancado.categorias?.nome ?? 'Outros'} · ${lancado.descricao} · ${formatSigned(valor, 'despesa')}` });
   }
 
-  const [{ data: regra }, { data: despesas }] = await Promise.all([
+  const [{ data: regraDoLugar }, { data: despesas }] = await Promise.all([
     db
       .from('regras_banco')
       .select('categoria_id, descricao, categorias(nome)')
@@ -96,6 +96,8 @@ export async function POST(request: Request) {
     db.from('categorias').select('id, nome').eq('user_id', userId).eq('tipo', 'despesa').order('ordem'),
   ]);
   const sugerida = despesas?.find((c) => c.nome === 'Outros') ?? despesas?.at(-1) ?? null;
+  // Sem o nome do lugar (a Carteira não mandou), não há o que reconhecer.
+  const regra = ehLugar(chave) ? regraDoLugar : null;
   const categoria = regra ? { id: regra.categoria_id, nome: regra.categorias?.nome ?? 'Outros' } : sugerida;
   const descricao = regra?.descricao ?? lugar;
   const linha: Database['public']['Tables']['lancamentos']['Insert'] = {

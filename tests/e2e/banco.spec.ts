@@ -123,4 +123,23 @@ test.describe('Open Finance (Meu Pluggy)', () => {
     await page.getByRole('link', { name: 'Lançamentos' }).click();
     await expect(page.getByRole('button', { name: /Almoço/ })).toContainText('Alimentação · Débito · ✓ banco');
   });
+
+  test('"Débito de Cartão" (descrição genérica do banco): lança, mas não promete entrar sozinho nem aprende', async ({ page, usuario }) => {
+    await semearParaConferir(usuario, [
+      { descricao: 'Débito de Cartão', estabelecimento: 'DEBITO DE CARTAO', nome: 'Débito de Cartão', valor: 990, forma: 'debito', sugestao: 'Outros' },
+    ]);
+    await entrar(page, usuario);
+    await page.getByRole('link', { name: 'Lançamentos' }).click();
+
+    await linhaDoBanco(page, 'Débito de Cartão').getByRole('button', { name: /Débito de Cartão/ }).click();
+    const sheet = page.getByRole('dialog', { name: 'Do banco' });
+    await sheet.getByRole('button', { name: 'Alimentação' }).click();
+    await sheet.getByLabel('Com o quê').fill('Coca cola');
+    await expect(sheet).not.toContainText('Da próxima vez');
+    await expect(sheet).toContainText('O banco não diz o lugar desta compra');
+    await sheet.getByRole('button', { name: 'Lançar' }).click();
+    await expect(sheet).toBeHidden();
+    await expect(page.getByRole('button', { name: /Coca cola/ })).toContainText('Alimentação · Débito · do banco');
+    expect((await clienteDe(usuario).from('regras_banco').select('estabelecimento')).data).toEqual([]);
+  });
 });

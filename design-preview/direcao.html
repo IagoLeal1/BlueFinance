@@ -30,7 +30,10 @@
   --cat-saude: #008300;    --cat-saude-soft: #dbeedb;
   --cat-fatura: #025884;   --cat-fatura-soft: #d1e1e9;
   /* vidro */
-  --vidro-regular: rgba(255, 255, 255, .62);
+  --vidro-regular: rgba(255, 255, 255, .48);
+  --vidro-forte: rgba(255, 255, 255, .74);
+  --vidro-cartao: rgba(255, 255, 255, .66);
+  --ambiente: radial-gradient(120% 55% at 0% 48%, rgba(24,70,200,.13), transparent 62%), radial-gradient(95% 50% at 100% 88%, rgba(60,207,198,.20), transparent 62%);
   --vidro-claro: rgba(255, 255, 255, .16);
   --vidro-brilho: rgba(255, 255, 255, .85);
   --vidro-borda: rgba(255, 255, 255, .55);
@@ -58,7 +61,10 @@
   --cat-lazer: #d55181;    --cat-lazer-soft: #3b2640;
   --cat-saude: #178c14;    --cat-saude-soft: #0c3124;
   --cat-fatura: #8fd3ff;   --cat-fatura-soft: #2e4660;
-  --vidro-regular: rgba(22, 34, 62, .58);
+  --vidro-regular: rgba(26, 40, 72, .40);
+  --vidro-forte: rgba(16, 28, 54, .62);
+  --vidro-cartao: rgba(22, 36, 68, .52);
+  --ambiente: radial-gradient(120% 55% at 0% 48%, rgba(24,70,200,.34), transparent 62%), radial-gradient(95% 50% at 100% 88%, rgba(60,207,198,.16), transparent 62%);
   --vidro-claro: rgba(255, 255, 255, .12);
   --vidro-brilho: rgba(255, 255, 255, .30);
   --vidro-borda: rgba(255, 255, 255, .14);
@@ -152,22 +158,29 @@ td:first-child { font-weight: 600; white-space: nowrap; }
 
 /* ───────── Vidro (material) ───────── */
 .vidro {
+  position: relative;
   background: var(--vidro-regular);
-  -webkit-backdrop-filter: blur(22px) saturate(180%);
-  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(26px) saturate(200%) brightness(1.06);
+  backdrop-filter: blur(26px) saturate(200%) brightness(1.06);
   box-shadow:
     inset 0 1px 0 var(--vidro-brilho),          /* brilho especular no topo */
     inset 0 0 0 .5px var(--vidro-borda),        /* aresta */
     inset 0 -8px 14px -10px var(--vidro-brilho),/* luz rebatida embaixo */
     var(--vidro-sombra);
 }
+.vidro::before, .iphone .cartao::before { /* aresta: a luz pega em cima à esquerda e embaixo à direita */
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: linear-gradient(135deg, rgba(255,255,255,.75), rgba(255,255,255,.06) 38%, rgba(255,255,255,.04) 62%, rgba(255,255,255,.42));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+.iphone .cartao::before { opacity: .4; }
+.vidro--forte { background: var(--vidro-forte); -webkit-backdrop-filter: blur(34px) saturate(190%); backdrop-filter: blur(34px) saturate(190%); }
 .vidro--claro { background: var(--vidro-claro); -webkit-backdrop-filter: blur(10px) saturate(160%); backdrop-filter: blur(10px) saturate(160%);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 0 0 .5px rgba(255,255,255,.28), 0 4px 14px rgba(0,0,0,.18); color: #fff; }
 .vidro--tinta { background: color-mix(in srgb, var(--brand) 82%, transparent); color: var(--on-brand);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 0 0 .5px rgba(255,255,255,.3), inset 0 -8px 14px -10px rgba(255,255,255,.4), var(--vidro-sombra); }
 
 /* ───────── iPhone ───────── */
-.iphone { position: relative; width: 393px; aspect-ratio: 393 / 852; border-radius: 56px; background: var(--bg); overflow: hidden;
+.iphone { position: relative; width: 393px; aspect-ratio: 393 / 852; border-radius: 56px; background: var(--ambiente), var(--bg); overflow: hidden;
   box-shadow: 0 0 0 10px #10141c, 0 0 0 11.5px #3a4252, 0 40px 80px rgba(0, 0, 0, .35); margin: 12px 0; }
 .ilha { position: absolute; z-index: 30; top: 11px; left: 50%; width: 124px; height: 36px; margin-left: -62px; border-radius: 20px; background: #000; }
 .rolagem { position: absolute; inset: 0; overflow-y: auto; scrollbar-width: none; padding-bottom: 130px; }
@@ -182,7 +195,7 @@ td:first-child { font-weight: 600; white-space: nowrap; }
 .pressiona:active { transform: scale(.94); }
 
 /* herói: a linha d'água */
-.heroi { position: relative; height: 404px; padding: 62px 20px 0; color: #fff; overflow: hidden;
+.heroi { position: relative; height: 428px; padding: 62px 20px 0; color: #fff; overflow: hidden;
   background: linear-gradient(160deg, #0b1f4d 10%, #1846c8 100%); border-radius: 0 0 var(--r-xl) var(--r-xl); }
 .heroi h1 { position: relative; z-index: 2; font-size: 34px; line-height: 41px; font-weight: 700; letter-spacing: -.02em; }
 .heroi .rotulo { position: relative; z-index: 2; margin-top: 26px; font-size: 15px; line-height: 20px; font-weight: 500; color: rgba(255,255,255,.82); }
@@ -191,8 +204,8 @@ td:first-child { font-weight: 600; white-space: nowrap; }
 .heroi .depois { position: relative; z-index: 2; margin-top: 6px; font-size: 14px; line-height: 19px; font-weight: 500; color: #fff; }
 .heroi .depois b { font-family: var(--font-valor); font-weight: 600; color: #fff; }
 
-.agua { position: absolute; left: 0; right: 0; bottom: 0; height: calc(40px + var(--pct, 46) * 1.2px); transform: translateY(110%);
-  transition: transform 1100ms var(--mola-viva); z-index: 1; }
+.agua { position: absolute; left: 0; right: 0; bottom: 0; height: calc(76px + var(--pct, 46) * 1.1px); transform: translateY(110%);
+  transition: transform 1100ms var(--mola-viva), height var(--t-viva) var(--mola-viva); z-index: 1; }
 .ligado .agua { transform: translateY(0); }
 .agua::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(60,207,198,.20), rgba(60,207,198,.03)); }
 .onda { position: absolute; left: 0; bottom: 100%; width: 200%; height: 16px; margin-bottom: -1px; }
@@ -204,18 +217,26 @@ td:first-child { font-weight: 600; white-space: nowrap; }
 .marca-nivel { position: absolute; right: 20px; bottom: calc(100% + 14px); display: flex; align-items: end; gap: 8px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,.9);
   opacity: 0; transition: opacity 400ms 500ms; }
 .ligado .marca-nivel { opacity: 1; }
+.etiqueta { padding: 4px 11px; border-radius: 999px; }
 .barbatana { width: 22px; height: 20px; margin-bottom: -14px; fill: #fff; }
 
 /* conteúdo */
-.conteudo { position: relative; z-index: 3; margin-top: -34px; padding: 0 16px; display: grid; gap: 12px; }
+.conteudo { position: relative; z-index: 3; margin-top: 12px; padding: 0 16px; display: grid; gap: 12px; }
 .cartao { border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--sombra-cartao); }
-.fluxo { display: grid; grid-template-columns: repeat(3, 1fr); padding: 14px 4px; }
+.iphone .cartao { position: relative; background: var(--vidro-cartao);
+  -webkit-backdrop-filter: blur(30px) saturate(180%); backdrop-filter: blur(30px) saturate(180%);
+  box-shadow: inset 0 1px 0 var(--vidro-brilho), inset 0 0 0 .5px var(--vidro-borda), 0 8px 24px rgba(4, 12, 32, .14); }
+.fluxo { display: grid; grid-template-columns: repeat(3, 1fr); padding: 14px 4px; border-radius: var(--r-lg); }
 .fluxo > div { padding: 0 12px; }
 .fluxo > div + div { border-left: 1px solid var(--line); }
-.fluxo p { display: flex; align-items: center; gap: 5px; font-size: 13px; line-height: 18px; font-weight: 500; color: var(--ink-2); }
+.fluxo p { display: flex; align-items: center; gap: 5px; font-size: 13px; line-height: 18px; font-weight: 500; color: var(--ink); }
 .fluxo p svg { font-size: 15px; }
 .fluxo strong { display: block; margin-top: 2px; font-family: var(--font-valor); font-size: 18px; line-height: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
 
+.heroi .fluxo { position: absolute; z-index: 2; left: 8px; right: 8px; bottom: 12px; padding: 0; color: #fff; }
+.heroi .fluxo > div + div { border-left-color: rgba(255,255,255,.22); }
+.heroi .fluxo p { color: #fff; }
+.heroi .fluxo svg { color: #fff !important; }
 .cartao h2 { font-size: 17px; line-height: 22px; font-weight: 600; letter-spacing: -.01em; }
 .bloco { padding: 16px; }
 .linha-titulo { display: flex; align-items: center; justify-content: space-between; min-height: 24px; }
@@ -255,22 +276,132 @@ td:first-child { font-weight: 600; white-space: nowrap; }
 .saiu { color: var(--despesa); } .entrou { color: var(--receita); }
 
 /* barra de abas flutuante */
-.abas { position: absolute; z-index: 25; left: 16px; right: 16px; bottom: 26px; display: flex; gap: 10px; align-items: center; }
-.abas nav { position: relative; flex: 1; height: 62px; border-radius: 31px; display: grid; grid-template-columns: repeat(4, 1fr); padding: 4px; }
+.abas { position: absolute; z-index: 25; left: 16px; right: 16px; bottom: 26px; display: flex; gap: 8px; align-items: center; }
+.abas nav { position: relative; flex: 1; height: 62px; border-radius: 31px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 4px; }
 .abas .lente { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / 4); border-radius: 27px;
-  background: color-mix(in srgb, var(--brand) 16%, transparent); box-shadow: inset 0 1px 0 var(--vidro-brilho), inset 0 0 0 .5px var(--vidro-borda);
-  transform: translateX(calc(var(--aba, 0) * 100%)); transition: transform var(--t-viva) var(--mola-viva); }
-.abas nav button { position: relative; display: grid; align-content: center; justify-items: center; gap: 2px; min-height: 44px; font-size: 10px; line-height: 12px; font-weight: 600; color: var(--ink-2); transition: color .2s; }
+  background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 30%, transparent), color-mix(in srgb, var(--brand) 10%, transparent));
+  box-shadow: inset 0 1px 0 var(--vidro-brilho), inset 0 -1px 0 rgba(255,255,255,.14), inset 0 0 0 .5px var(--vidro-borda), 0 3px 12px rgba(0,0,0,.2);
+  transform: translateX(calc(var(--aba, 0) * 100%)); transition: transform var(--t-viva) var(--mola-viva), scale 240ms ease-out; }
+.abas nav.movendo .lente { scale: 1.16 .88; }
+.abas nav button { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; height: 54px; padding: 0; white-space: nowrap; font-size: 9px; line-height: 11px; letter-spacing: -.01em; font-weight: 600; color: var(--ink-2); transition: color .2s; }
 .abas nav button svg { font-size: 23px; }
 .abas nav button[aria-current="page"] { color: var(--brand); }
-.abas .mais { width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center; font-size: 28px; flex: none; }
+.abas .mais { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; font-size: 27px; flex: none; }
 .home-ind { position: absolute; z-index: 26; bottom: 8px; left: 50%; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: var(--ink); opacity: .85; }
+
+.veu { position: absolute; inset: 0; z-index: 35; background: rgba(3, 8, 20, .42); opacity: 0; pointer-events: none; transition: opacity .25s; }
+.folha { position: absolute; z-index: 40; left: 8px; right: 8px; bottom: 8px; border-radius: 44px; padding: 8px 16px 18px; display: grid; gap: 12px;
+  transform: translateY(112%); transition: transform var(--t-calma) var(--mola-calma); }
+.com-folha .veu { opacity: 1; pointer-events: auto; }
+.com-folha .folha { transform: none; }
+.pega { width: 36px; height: 5px; border-radius: 3px; margin: 0 auto; background: var(--ink-2); opacity: .5; }
+.folha-topo { display: flex; align-items: center; justify-content: space-between; }
+.folha-topo h2 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; }
+.folha-topo .redondo { background: color-mix(in srgb, var(--ink) 9%, transparent); }
+.folha-valor { font-family: var(--font-valor); font-size: 46px; line-height: 52px; font-weight: 700; letter-spacing: -.02em; text-align: center; font-variant-numeric: tabular-nums; }
+.folha-valor.vazio { color: var(--ink-2); }
+.chips { display: flex; gap: 8px; overflow-x: auto; margin: 0 -16px; padding: 2px 16px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; min-height: 44px; padding: 0 14px; border-radius: 22px; display: inline-flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 600;
+  background: color-mix(in srgb, var(--ink) 9%, transparent); transition: background .2s, color .2s, transform var(--t-agil) var(--mola-agil); }
+.chip .ponto { width: 10px; height: 10px; border-radius: 3px; }
+.chip[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); }
+.seg--cheio { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: color-mix(in srgb, var(--ink) 9%, transparent); }
+.seg--cheio button { padding: 0; }
+.teclado { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.teclado button { height: 50px; border-radius: 16px; display: grid; place-items: center; font-family: var(--font-valor); font-size: 24px; font-weight: 600; background: color-mix(in srgb, var(--ink) 8%, transparent); }
+.lancar { height: 54px; border-radius: 27px; font-size: 17px; font-weight: 600; transition: opacity .2s, transform var(--t-agil) var(--mola-agil); }
+.lancar:disabled { opacity: .45; cursor: default; }
+.mov.nova { animation: chega var(--t-viva) var(--mola-viva) both; }
+@keyframes chega { from { opacity: 0; transform: translateY(-14px) scale(.95); } }
+
+[hidden] { display: none !important; }
+/* telas */
+.tela.entra { animation: telaEntra var(--t-agil) var(--mola-agil) both; }
+@keyframes telaEntra { from { opacity: 0; transform: translateX(calc(var(--dir, 1) * 28px)); } }
+.cabeca-tela { padding: 62px 20px 4px; }
+.cabeca-tela h1 { font-size: 34px; line-height: 41px; font-weight: 700; letter-spacing: -.02em; }
+.cabeca-tela p { font-size: 15px; line-height: 20px; color: var(--ink-2); }
+.conteudo.solto { margin-top: 12px; }
+.abas nav.borda .lente { transition: transform var(--t-calma) var(--mola-calma); }
+/* menu do mês */
+.menu { position: absolute; z-index: 30; top: 110px; right: 16px; width: 200px; padding: 6px; border-radius: 24px; transform-origin: top right;
+  scale: .55; opacity: 0; pointer-events: none; transition: scale var(--t-viva) var(--mola-viva), opacity .16s; }
+.menu.aberto { scale: 1; opacity: 1; pointer-events: auto; }
+.menu button { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 44px; padding: 0 14px; border-radius: 18px; font-size: 16px; font-weight: 500; text-align: left; }
+.menu button svg { font-size: 18px; color: var(--brand); visibility: hidden; }
+.menu button[aria-checked="true"] { font-weight: 600; background: color-mix(in srgb, var(--ink) 8%, transparent); }
+.menu button[aria-checked="true"] svg { visibility: visible; }
+/* lançamentos */
+.seg--abas { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: color-mix(in srgb, var(--ink) 9%, transparent); }
+.seg--abas .polegar { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc((100% - 6px) / 3); border-radius: 999px; background: var(--surface);
+  box-shadow: inset 0 1px 0 var(--vidro-brilho), 0 2px 8px rgba(4, 12, 32, .18); transform: translateX(calc(var(--i, 0) * 100%)); transition: transform var(--t-agil) var(--mola-agil); }
+.seg--abas button { position: relative; padding: 0; }
+.seg--abas button[aria-pressed="true"] { background: none; box-shadow: none; }
+.resumo-aba { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.resumo-aba p { font-size: 14px; line-height: 19px; color: var(--ink-2); }
+.resumo-aba strong { font-family: var(--font-valor); font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dupla { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.botao-1, .botao-2 { min-height: 44px; border-radius: 22px; font-size: 15px; font-weight: 600; }
+.botao-1 { background: var(--brand); color: var(--on-brand); }
+.botao-2 { background: color-mix(in srgb, var(--ink) 9%, transparent); }
+.vazio { display: grid; justify-items: center; gap: 4px; padding: 36px 24px; text-align: center; }
+.vazio svg { width: 132px; height: 56px; margin-bottom: 8px; }
+.vazio b { font-size: 17px; font-weight: 600; }
+.vazio span { font-size: 14px; line-height: 19px; color: var(--ink-2); max-width: 26ch; }
+/* investir */
+.apoio { font-size: 14px; line-height: 19px; color: var(--ink-2); }
+.valor-grande { margin-top: 2px; font-family: var(--font-valor); font-size: 38px; line-height: 44px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.selo-bom { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; padding: 3px 10px 3px 7px; border-radius: 999px; font-size: 13px; line-height: 18px; font-weight: 600; background: var(--receita-soft); color: var(--receita); }
+.grafico { display: block; width: 100%; height: 92px; margin-top: 14px; overflow: visible; }
+.grafico .traco { fill: none; stroke: var(--investe); stroke-width: 2.5; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.grafico .area { opacity: 0; }
+.grafico.desenha .traco { stroke-dashoffset: 0; transition: stroke-dashoffset 1000ms cubic-bezier(.2, .7, .2, 1); }
+.grafico.desenha .area { opacity: 1; transition: opacity 500ms 450ms; }
+.eixo { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px; color: var(--ink-2); }
+.inv { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 66px; text-align: left; }
+.detalhe + .inv { border-top: 1px solid var(--line); }
+.inv .txt { flex: 1; min-width: 0; }
+.inv .txt b { display: block; font-size: 16px; line-height: 21px; font-weight: 500; }
+.inv .txt span { font-size: 13px; line-height: 18px; color: var(--ink-2); }
+.inv .dir { text-align: right; }
+.inv .dir strong { display: block; font-family: var(--font-valor); font-size: 16px; line-height: 21px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.inv .dir span { font-size: 13px; line-height: 18px; color: var(--receita); }
+.detalhe { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--t-calma) var(--mola-calma); }
+.detalhe > div { overflow: hidden; }
+.inv[aria-expanded="true"] + .detalhe { grid-template-rows: 1fr; }
+.detalhe dl { padding: 2px 0 12px 52px; }
+.detalhe dl div { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0; font-size: 14px; line-height: 19px; }
+.detalhe dt { color: var(--ink-2); }
+.detalhe dd { margin: 0; font-family: var(--font-valor); font-weight: 600; font-variant-numeric: tabular-nums; }
+/* ajustes */
+.lista-aj { padding: 0 16px; }
+.aj { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 62px; text-align: left; }
+.aj + .aj { border-top: 1px solid var(--line); }
+.aj .txt { flex: 1; min-width: 0; }
+.aj .txt b { display: block; font-size: 16px; line-height: 21px; font-weight: 500; }
+.aj .txt span { font-size: 13px; line-height: 18px; color: var(--ink-2); }
+.aj > svg { font-size: 18px; color: var(--ink-2); }
+.aj .selo-cat { background: var(--neutro-soft); color: var(--brand); }
+.aj.sair { justify-content: center; min-height: 52px; font-size: 16px; font-weight: 600; color: var(--despesa); }
+.grupo-rotulo { margin: 8px 16px -4px; font-size: 13px; line-height: 18px; font-weight: 600; color: var(--ink-2); }
+.interruptor { position: relative; flex: none; width: 51px; height: 31px; border-radius: 16px; background: color-mix(in srgb, var(--ink) 22%, transparent); transition: background .2s; }
+.interruptor::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,.25); transition: transform var(--t-viva) var(--mola-viva); }
+.aj[aria-checked="true"] .interruptor { background: var(--receita); }
+.aj[aria-checked="true"] .interruptor::after { transform: translateX(20px); }
+.rodape { display: grid; justify-items: center; gap: 2px; padding: 12px 0 4px; font-size: 13px; color: var(--ink-2); }
 
 [data-dinheiro] { transition: filter .2s, opacity .2s; }
 
 @media (prefers-reduced-motion: reduce) {
   .onda { animation: none !important; }
-  .agua, .barra i, .abas .lente, .pressiona { transition: opacity .15s linear !important; }
+  .agua, .barra i, .abas .lente, .pressiona, .folha, .chip { transition: opacity .15s linear !important; }
+  .abas nav.movendo .lente { scale: none; }
+  .folha { transform: none; opacity: 0; pointer-events: none; } .com-folha .folha { opacity: 1; pointer-events: auto; }
+  .mov.nova, .tela.entra { animation: none; }
+  .menu, .seg--abas .polegar, .detalhe, .interruptor::after { transition: opacity .15s linear !important; }
+  .menu { scale: 1; }
+  .grafico.desenha .traco, .grafico.desenha .area { transition: none; }
   .pressiona:active { transform: none; opacity: .7; }
   .agua { transform: none; opacity: 0; } .ligado .agua { opacity: 1; }
   .barra i { transform: none; opacity: 0; } .ligado .barra i { opacity: 1; }
@@ -283,7 +414,7 @@ td:first-child { font-weight: 600; white-space: nowrap; }
   <header class="cabeca">
     <div>
       <h1>BlueFin, direção visual</h1>
-      <p>A paleta e a tela de Início no desenho novo. A tela funciona: role, troque de aba, toque no olhinho. Com a sua aprovação, o resto do app segue esta linha.</p>
+      <p>A paleta e as quatro abas no desenho novo. O protótipo funciona: troque de aba e de mês, filtre os lançamentos, toque no olhinho e lance um gasto pelo +. Com a sua aprovação, o resto do app segue esta linha.</p>
     </div>
     <div class="controles">
       <div class="seg" role="group" aria-label="Tema">
@@ -302,16 +433,22 @@ td:first-child { font-weight: 600; white-space: nowrap; }
         <div class="rolagem">
           <div class="topo-fixo"><div>
             <button class="redondo vidro vidro--claro pressiona" id="olho" aria-label="Esconder valores" aria-pressed="false"><svg class="i" data-i="olho"></svg></button>
-            <button class="pilula vidro vidro--claro pressiona" aria-label="Trocar o mês">nov <svg class="i" data-i="baixo"></svg></button>
+            <button class="pilula vidro vidro--claro pressiona" id="mes" aria-label="Trocar o mês" aria-haspopup="menu" aria-expanded="false"><span id="mes-rotulo">nov</span> <svg class="i" data-i="baixo"></svg></button>
           </div></div>
 
-          <section class="heroi" aria-label="Resumo de novembro">
-            <h1>Novembro</h1>
+          <div class="tela" id="tela-inicio">
+          <section class="heroi" id="heroi" aria-label="Resumo de novembro">
+            <h1 id="titulo">Novembro</h1>
             <p class="rotulo">Sobrou na conta</p>
-            <p class="valor" data-dinheiro><small>R$</small><span id="sobrou">3.482,15</span></p>
-            <p class="depois">Depois da fatura do C6bank, dia 11: <b data-dinheiro>R$ 2.140,35</b></p>
-            <div class="agua" style="--pct: 46">
-              <div class="marca-nivel"><span>46% do que entrou</span>
+            <p class="valor"><small>R$</small><span id="sobrou" data-dinheiro>3.482,15</span></p>
+            <p class="depois" id="depois-linha">Depois da fatura do C6bank, dia 11: <b data-dinheiro id="depois">R$ 2.140,35</b></p>
+            <div class="fluxo">
+              <div><p><svg class="i entrou" data-i="entra"></svg>Entrou</p><strong data-dinheiro id="entrou">7.500</strong></div>
+              <div><p><svg class="i saiu" data-i="sai"></svg>Saiu</p><strong data-dinheiro id="saiu">3.218</strong></div>
+              <div><p><svg class="i" data-i="cresce" style="color:var(--investe)"></svg>Investiu</p><strong data-dinheiro id="investiu">800</strong></div>
+            </div>
+            <div class="agua" id="agua" style="--pct: 46">
+              <div class="marca-nivel"><span class="vidro vidro--claro etiqueta" id="pct">46% do que entrou</span>
                 <svg class="barbatana" viewBox="0 0 22 20" aria-hidden="true"><path d="M1 20C6 14 10 6 12 0c5 6 8 13 9 20z"/></svg>
               </div>
               <svg class="onda onda--fundo" viewBox="0 0 800 20" preserveAspectRatio="none" aria-hidden="true">
@@ -323,24 +460,19 @@ td:first-child { font-weight: 600; white-space: nowrap; }
           </section>
 
           <div class="conteudo">
-            <div class="cartao fluxo">
-              <div><p><svg class="i entrou" data-i="entra"></svg>Entrou</p><strong data-dinheiro>7.500</strong></div>
-              <div><p><svg class="i saiu" data-i="sai"></svg>Saiu</p><strong data-dinheiro>3.218</strong></div>
-              <div><p><svg class="i" data-i="cresce" style="color:var(--investe)"></svg>Investiu</p><strong data-dinheiro>800</strong></div>
-            </div>
 
-            <div class="cartao vr">
+            <div class="cartao vr" id="cartao-vr">
               <span class="selo-cat" style="background:var(--cat-alimentacao-soft);color:var(--cat-alimentacao)"><svg class="i" data-i="garfo"></svg></span>
               <span class="txt"><b>Vale-refeição</b><span>Cai R$ 880 no dia 30</span></span>
-              <strong data-dinheiro>R$ 412,60</strong>
+              <strong data-dinheiro id="vrsaldo">R$ 412,60</strong>
             </div>
 
-            <div class="cartao bloco">
-              <div class="linha-titulo"><h2>C6bank</h2><a href="#" class="link">Ver fatura</a></div>
+            <div class="cartao bloco" id="cartao-c6">
+              <div class="linha-titulo"><h2>C6bank</h2><a href="#" class="link" id="ver-fatura">Ver fatura</a></div>
               <div class="fatura">
                 <div><p>Fechada</p><strong data-dinheiro>R$ 1.341,80</strong>
                   <span class="aviso"><svg class="i" data-i="alerta"></svg>Vence em 3 dias</span></div>
-                <div><p>Aberta</p><strong data-dinheiro>R$ 286,50</strong>
+                <div><p>Aberta</p><strong data-dinheiro id="aberta">R$ 286,50</strong>
                   <p style="margin-top:6px">Fecha dia 4</p></div>
               </div>
             </div>
@@ -352,8 +484,8 @@ td:first-child { font-weight: 600; white-space: nowrap; }
             </div>
 
             <div class="cartao bloco" style="padding-bottom:4px">
-              <div class="linha-titulo"><h2>Últimos</h2><a href="#" class="link">Ver todos</a></div>
-              <div style="margin-top:6px">
+              <div class="linha-titulo"><h2>Últimos</h2><a href="#" class="link" id="ver-todos">Ver todos</a></div>
+              <div style="margin-top:6px" id="ultimos">
                 <div class="mov"><span class="selo-cat" style="background:var(--cat-mercado-soft);color:var(--cat-mercado)"><svg class="i" data-i="carrinho"></svg></span>
                   <span class="txt"><b>Mercado do bairro</b><span>Mercado, conferido no banco</span></span>
                   <span class="dir"><strong class="saiu">−32,90</strong><span>Hoje</span></span></div>
@@ -366,6 +498,82 @@ td:first-child { font-weight: 600; white-space: nowrap; }
               </div>
             </div>
           </div>
+          </div>
+
+          <div class="tela" id="tela-lancamentos" hidden>
+            <header class="cabeca-tela"><h1>Lançamentos</h1><p id="lanc-mes">Novembro</p></header>
+            <div class="conteudo solto">
+              <div class="cartao bloco" id="conferir">
+                <div class="linha-titulo"><h2>Para conferir</h2><span class="aviso" style="margin:0"><svg class="i" data-i="alerta"></svg>1 veio do banco</span></div>
+                <div class="mov"><span class="selo-cat" style="background:var(--cat-alimentacao-soft);color:var(--cat-alimentacao)"><svg class="i" data-i="garfo"></svg></span>
+                  <span class="txt"><b>Padaria Real</b><span>Sugestão: Alimentação</span></span>
+                  <span class="dir"><strong class="saiu">−18,40</strong><span>Ontem</span></span></div>
+                <div class="dupla"><button class="botao-2 pressiona" id="ignorar">Ignorar</button><button class="botao-1 pressiona" id="confirmar">Lançar</button></div>
+              </div>
+              <div class="seg seg--abas" id="extratos" role="group" aria-label="Extrato"><span class="polegar" aria-hidden="true"></span><button>Débito</button><button>Crédito</button><button>VR</button></div>
+              <div class="chips" id="filtro" role="group" aria-label="Filtrar por categoria"></div>
+              <div class="cartao bloco resumo-aba"><p id="aba-rotulo"></p><strong id="aba-valor" data-dinheiro></strong></div>
+              <div id="lista"></div>
+            </div>
+          </div>
+
+          <div class="tela" id="tela-investir" hidden>
+            <header class="cabeca-tela"><h1>Investir</h1></header>
+            <div class="conteudo solto">
+              <div class="cartao bloco">
+                <p class="apoio">Investido hoje, valor bruto</p>
+                <p class="valor-grande" data-dinheiro>R$ 12.846,32</p>
+                <span class="selo-bom"><svg class="i" data-i="sai"></svg><span data-dinheiro>+R$ 96,18</span> de rendimento em novembro</span>
+                <svg class="grafico" id="grafico" viewBox="0 0 320 92" preserveAspectRatio="none" role="img" aria-label="O total investido cresceu de 9,1 mil em junho para 12,8 mil em novembro">
+                  <defs><linearGradient id="g-inv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--investe);stop-opacity:.32"/><stop offset="1" style="stop-color:var(--investe);stop-opacity:0"/></linearGradient></defs>
+                  <path class="area" fill="url(#g-inv)" d="M0 74C30 70 40 64 64 62S110 52 128 49S170 44 192 42S236 32 256 29S300 16 320 12V92H0z"/>
+                  <path class="traco" pathLength="1" d="M0 74C30 70 40 64 64 62S110 52 128 49S170 44 192 42S236 32 256 29S300 16 320 12"/>
+                </svg>
+                <div class="eixo" aria-hidden="true"><span>jun</span><span>jul</span><span>ago</span><span>set</span><span>out</span><span>nov</span></div>
+              </div>
+              <div class="cartao" style="padding:2px 16px">
+                <button class="inv" aria-expanded="false"><span class="selo-cat" style="background:var(--investe-soft);color:var(--investe)"><svg class="i" data-i="cresce"></svg></span>
+                  <span class="txt"><b>CDB C6</b><span>102% do CDI</span></span>
+                  <span class="dir"><strong data-dinheiro>R$ 8.412,10</strong><span>+R$ 61,40 no mês</span></span></button>
+                <div class="detalhe"><div><dl>
+                  <div><dt>Você aportou</dt><dd data-dinheiro>R$ 8.000,00</dd></div>
+                  <div><dt>Rendimento bruto</dt><dd data-dinheiro>R$ 412,10</dd></div>
+                  <div><dt>Líquido se resgatar hoje</dt><dd data-dinheiro>R$ 8.329,68</dd></div>
+                </dl></div></div>
+                <button class="inv" aria-expanded="false"><span class="selo-cat" style="background:var(--investe-soft);color:var(--investe)"><svg class="i" data-i="cresce"></svg></span>
+                  <span class="txt"><b>LCI C6</b><span>95% do CDI, sem IR</span></span>
+                  <span class="dir"><strong data-dinheiro>R$ 4.434,22</strong><span>+R$ 34,78 no mês</span></span></button>
+                <div class="detalhe"><div><dl>
+                  <div><dt>Você aportou</dt><dd data-dinheiro>R$ 4.300,00</dd></div>
+                  <div><dt>Rendimento bruto</dt><dd data-dinheiro>R$ 134,22</dd></div>
+                  <div><dt>Líquido se resgatar hoje</dt><dd data-dinheiro>R$ 4.434,22</dd></div>
+                </dl></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tela" id="tela-ajustes" hidden>
+            <header class="cabeca-tela"><h1>Ajustes</h1></header>
+            <div class="conteudo solto">
+              <div class="cartao lista-aj">
+                <button class="aj"><span class="selo-cat"><svg class="i" data-i="cartao"></svg></span><span class="txt"><b>Cartões</b><span>C6bank, fecha dia 4 e vence dia 11</span></span><svg class="i" data-i="direita"></svg></button>
+                <button class="aj"><span class="selo-cat"><svg class="i" data-i="garfo"></svg></span><span class="txt"><b>Vale-refeição</b><span>R$ 880 todo dia 30</span></span><svg class="i" data-i="direita"></svg></button>
+              </div>
+              <p class="grupo-rotulo">Lançar sozinho</p>
+              <div class="cartao lista-aj">
+                <button class="aj"><span class="selo-cat"><svg class="i" data-i="banco"></svg></span><span class="txt"><b>Banco</b><span>Conectado, buscou hoje às 7h</span></span><svg class="i" data-i="direita"></svg></button>
+                <button class="aj"><span class="selo-cat"><svg class="i" data-i="toque"></svg></span><span class="txt"><b>Apple Pay</b><span>3 cartões da Carteira</span></span><svg class="i" data-i="direita"></svg></button>
+                <button class="aj"><span class="selo-cat"><svg class="i" data-i="raio"></svg></span><span class="txt"><b>Atalho do iPhone</b><span>Token ativo</span></span><svg class="i" data-i="direita"></svg></button>
+              </div>
+              <p class="grupo-rotulo">Neste iPhone</p>
+              <div class="cartao lista-aj">
+                <button class="aj" role="switch" aria-checked="true" id="sw-aviso"><span class="selo-cat"><svg class="i" data-i="sino"></svg></span><span class="txt"><b>Aviso da fatura</b><span>Na véspera e no dia, às 9h</span></span><span class="interruptor"></span></button>
+                <button class="aj" role="switch" aria-checked="true" id="sw-tema"><span class="selo-cat"><svg class="i" data-i="lua"></svg></span><span class="txt"><b>Tema escuro</b><span>O claro também é validado</span></span><span class="interruptor"></span></button>
+              </div>
+              <div class="cartao lista-aj"><button class="aj sair">Sair da conta</button></div>
+              <div class="rodape"><svg class="barbatana" viewBox="0 0 22 20" aria-hidden="true" style="fill:var(--brand);margin:0"><path d="M1 20C6 14 10 6 12 0c5 6 8 13 9 20z"/></svg>BlueFin</div>
+            </div>
+          </div>
         </div>
 
         <div class="abas">
@@ -376,8 +584,22 @@ td:first-child { font-weight: 600; white-space: nowrap; }
             <button><svg class="i" data-i="cresce"></svg>Investir</button>
             <button><svg class="i" data-i="ajustes"></svg>Ajustes</button>
           </nav>
-          <button class="mais vidro vidro--tinta pressiona" aria-label="Lançar gasto"><svg class="i" data-i="mais" style="stroke-width:2.4"></svg></button>
+          <button class="mais vidro vidro--tinta pressiona" id="mais" aria-label="Lançar gasto"><svg class="i" data-i="mais" style="stroke-width:2.4"></svg></button>
         </div>
+        <div class="menu vidro vidro--forte" id="menu" role="menu" aria-label="Mês" inert>
+          <button role="menuitemradio" data-mes="out" aria-checked="false">Outubro <svg class="i" data-i="certo"></svg></button>
+          <button role="menuitemradio" data-mes="nov" aria-checked="true">Novembro <svg class="i" data-i="certo"></svg></button>
+        </div>
+        <div class="veu" id="veu"></div>
+        <section class="folha vidro vidro--forte" id="folha" role="dialog" aria-modal="true" aria-label="Novo gasto" inert>
+          <div class="pega" aria-hidden="true"></div>
+          <div class="folha-topo"><h2>Novo gasto</h2><button class="redondo pressiona" id="fechar" aria-label="Fechar"><svg class="i" data-i="fecha"></svg></button></div>
+          <p class="folha-valor vazio" id="fvalor" aria-live="polite">R$ 0,00</p>
+          <div class="chips" id="chips" role="group" aria-label="Categoria"></div>
+          <div class="seg seg--cheio" id="formas" role="group" aria-label="Como pagou"></div>
+          <div class="teclado" id="teclado"></div>
+          <button class="lancar vidro vidro--tinta pressiona" id="lancar" disabled>Lançar gasto</button>
+        </section>
         <div class="home-ind" aria-hidden="true"></div>
       </div>
     </div>
@@ -421,8 +643,8 @@ td:first-child { font-weight: 600; white-space: nowrap; }
       </section>
 
       <section>
-        <h2>Vidro só onde se navega</h2>
-        <p>Três níveis, todos na camada de controles. O conteúdo (cartões, listas, valores) fica em superfície opaca, para o dinheiro ser sempre legível.</p>
+        <h2>Vidro em tudo que flutua</h2>
+        <p>Quatro níveis. É vidro o que fica por cima de outra coisa: a barra de abas e sua lente, os botões do topo, a etiqueta do nível, a folha de novo gasto e agora todos os cartões, que são o mesmo vidro fosco sobre um fundo com profundidade. Entrou, Saiu e Investiu saíram do cartão e ficam dentro do saldo, debaixo d'água.</p>
         <div class="vidros">
           <figure><div class="vidro-demo"><div class="vidro vidro--claro">Vidro claro</div></div>
             <figcaption><b>Claro</b>Botões sobre o saldo. Quase transparente, deixa a água aparecer.</figcaption></figure>
@@ -430,18 +652,28 @@ td:first-child { font-weight: 600; white-space: nowrap; }
             <figcaption><b>Regular</b>Barra de abas, folhas e menus. Desfoca o que rola por baixo.</figcaption></figure>
           <figure><div class="vidro-demo"><div class="vidro vidro--tinta">Vidro tingido</div></div>
             <figcaption><b>Tingido</b>Uma ação principal por tela: o botão de lançar.</figcaption></figure>
+          <figure><div class="vidro-demo"><div class="vidro vidro--forte" style="color:var(--ink)">Vidro forte</div></div>
+            <figcaption><b>Forte</b>Folhas e cartões. Mais fosco, porque leva texto e números.</figcaption></figure>
         </div>
       </section>
 
       <section>
-        <h2>Movimento nesta tela</h2>
+        <h2>Movimento</h2>
         <p>Um momento ensaiado ao abrir (a água sobe, o saldo conta, a barra se desenha). O resto só responde ao seu toque. Com "Reduzir movimento" ligado, tudo vira uma troca de opacidade de 150 ms e a onda fica parada.</p>
         <div class="tabela"><table>
           <tr><th>Animação</th><th>Duração</th><th>Curva</th><th>Gatilho</th></tr>
           <tr><td>Água sobe</td><td>1100 ms</td><td>Mola viva (rigidez 260, amortecimento 18)</td><td>Abrir o Início ou trocar o mês</td></tr>
           <tr><td>Saldo contando</td><td>900 ms</td><td>Desaceleração cúbica</td><td>Junto com a água</td></tr>
           <tr><td>Barra de categorias</td><td>430 ms, 55 ms entre fatias</td><td>Mola ágil (380, 32)</td><td>250 ms depois de abrir</td></tr>
-          <tr><td>Lente da aba</td><td>770 ms</td><td>Mola viva</td><td>Tocar numa aba</td></tr>
+          <tr><td>Lente da aba</td><td>770 ms no meio; 620 ms nas pontas</td><td>Mola viva no meio. Nas pontas, mola calma sem passar da borda: a lente bate e amassa 16% por 520 ms</td><td>Tocar numa aba</td></tr>
+          <tr><td>Troca de tela</td><td>430 ms</td><td>Mola ágil, desliza 28 pt no sentido da aba</td><td>Tocar numa aba</td></tr>
+          <tr><td>Menu do mês</td><td>770 ms; opacidade 160 ms</td><td>Mola viva, cresce a partir do botão</td><td>Tocar em "nov"</td></tr>
+          <tr><td>Extrato (Débito, Crédito, VR)</td><td>430 ms</td><td>Mola ágil no polegar</td><td>Tocar numa aba do extrato</td></tr>
+          <tr><td>Gráfico de investimentos</td><td>1000 ms; área 500 ms depois</td><td>Desaceleração</td><td>Abrir Investir</td></tr>
+          <tr><td>Detalhe do investimento</td><td>620 ms</td><td>Mola calma</td><td>Tocar no investimento</td></tr>
+          <tr><td>Interruptor</td><td>770 ms</td><td>Mola viva</td><td>Tocar na linha</td></tr>
+          <tr><td>Folha de novo gasto</td><td>620 ms; véu 250 ms</td><td>Mola calma (170, 24)</td><td>Tocar no +, fechar ou lançar</td></tr>
+          <tr><td>Gasto lançado</td><td>770 ms</td><td>Mola viva: a linha chega, o saldo conta para baixo, a água desce</td><td>Tocar em Lançar gasto</td></tr>
           <tr><td>Botão afunda</td><td>430 ms</td><td>Mola ágil, escala 0,94</td><td>Encostar o dedo</td></tr>
           <tr><td>Olhinho</td><td>200 ms</td><td>Linear, desfoque e opacidade</td><td>Tocar no olhinho</td></tr>
           <tr><td>Maré</td><td>10 s e 16 s, contínua</td><td>Linear</td><td>Sempre, exceto com movimento reduzido</td></tr>
@@ -454,7 +686,7 @@ td:first-child { font-weight: 600; white-space: nowrap; }
           <li><b>Manrope sai, SF Pro entra.</b> É a fonte do sistema no iPhone e no Mac, então não baixa nada e respeita o tamanho de texto do aparelho.</li>
           <li><b>A onda recortada no topo vira o nível de água.</b> A identidade BlueFin (barbatana, Abismo, Atum, Água) fica; a linha d'água passa a mostrar um dado.</li>
           <li><b>Investimento passa de âmbar para Água,</b> e o âmbar fica só para alerta (fatura vencendo). Hoje os dois dividiriam a mesma cor.</li>
-          <li><b>O + sai do meio da barra</b> e vira um botão de vidro tingido ao lado dela, no padrão do iOS 26.</li>
+          <li><b>O + sai do meio da barra</b> e vira um botão de vidro tingido ao lado dela, no padrão do iOS 26. Para as quatro abas caberem iguais, o rótulo desce para 9 pt.</li>
           <li><b>As cores das categorias não mudam.</b> São as mesmas já validadas por script.</li>
         </ul>
       </section>
@@ -471,18 +703,27 @@ const ICONES = {
   ajustes: 'M4 6h10M18 6h2M14 6a2 2 0 1 0 4 0a2 2 0 1 0-4 0M4 12h2M10 12h10M6 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0M4 18h8M16 18h4M12 18a2 2 0 1 0 4 0a2 2 0 1 0-4 0',
   olho: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6',
   olhoFechado: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6M4 4l16 16',
-  baixo: 'M6 9l6 6 6-6',
-  mais: 'M12 5v14M5 12h14',
-  entra: 'M17 7 7 17M7 8v9h9',
-  sai: 'M7 17 17 7M8 7h9v9',
+  baixo: 'M6 9l6 6 6-6', direita: 'M9 6l6 6-6 6', certo: 'M5 12l5 5 9-10',
+  mais: 'M12 5v14M5 12h14', fecha: 'M6 6l12 12M18 6 6 18',
+  apaga: 'M9 5h11v14H9l-6-7zM12.5 9.5l5 5M17.5 9.5l-5 5',
+  entra: 'M17 7 7 17M7 8v9h9', sai: 'M7 17 17 7M8 7h9v9',
   alerta: 'M12 4 2.5 20h19zM12 10v4M12 17.2v.01',
   carrinho: 'M3 4h2l2.4 11h10.2L20 7H6M9 20a.5.5 0 1 0 0-.01M17 20a.5.5 0 1 0 0-.01',
   carro: 'M5 16v-5l2-5h10l2 5v5M3 16h18M7 16v2M17 16v2M7.5 12.5h.01M16.5 12.5h.01',
   garfo: 'M7 3v18M5 3v5a2 2 0 0 0 4 0V3M17 3c-2 2-3 4-3 7h3zM17 10v11',
   nota: 'M3 7h18v10H3zM12 10a2 2 0 1 0 0 4a2 2 0 1 0 0-4',
+  ingresso: 'M4 8a2 2 0 0 0 0 8v2h16v-2a2 2 0 0 1 0-8V6H4zM14 6v12',
+  coracao: 'M12 20s-7-4.5-9-9a4.5 4.5 0 0 1 9-2 4.5 4.5 0 0 1 9 2c-2 4.5-9 9-9 9z',
+  cartao: 'M3 6h18v12H3zM3 10h18',
+  banco: 'M3 10 12 4l9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18',
+  toque: 'M7 8a7 7 0 0 1 0 8M11 5.5a11 11 0 0 1 0 13M15 3a15 15 0 0 1 0 18',
+  raio: 'M13 3 5 13h6l-1 8 8-10h-6z',
+  sino: 'M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0',
+  lua: 'M20 14A8 8 0 1 1 10 4a6.5 6.5 0 0 0 10 10z',
 };
+const $ = (id) => document.getElementById(id);
 const desenha = (el, nome) => { el.setAttribute('viewBox', '0 0 24 24'); el.setAttribute('aria-hidden', 'true'); el.innerHTML = `<path d="${ICONES[nome]}"/>`; };
-document.querySelectorAll('svg[data-i]').forEach((el) => desenha(el, el.dataset.i));
+const desenhaTudo = (raiz) => raiz.querySelectorAll('svg[data-i]').forEach((el) => desenha(el, el.dataset.i));
 
 /* molas de verdade: resolve a equação e entrega como linear() para o CSS */
 function mola(rigidez, amortecimento) {
@@ -503,62 +744,278 @@ if (CSS.supports('transition-timing-function', 'linear(0, 1)')) {
   }
 }
 
-/* gastos por categoria */
-const CATS = [['Moradia', 'moradia', 165000], ['Mercado', 'mercado', 74230], ['Alimentação', 'alimentacao', 41890], ['Transporte', 'transporte', 23640], ['Lazer', 'lazer', 18900], ['Saúde', 'saude', 9625]];
-const total = CATS.reduce((s, c) => s + c[2], 0);
-const brl = (centavos) => (centavos / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-document.getElementById('barra').innerHTML = CATS.map(([, k, v], n) => `<i style="flex:${v};background:var(--cat-${k});--n:${n}"></i>`).join('');
-document.getElementById('cats').innerHTML = CATS.map(([nome, k, v]) =>
-  `<button class="cat pressiona" aria-label="${nome}, R$ ${brl(v)}. Ver lançamentos"><span class="ponto" style="background:var(--cat-${k})"></span><span class="nome">${nome}</span><span class="pct">${Math.round((v / total) * 100)}%</span><span class="v" data-dinheiro>${brl(v)}</span></button>`).join('');
+/* dados de exemplo, em centavos. Linha: [dia, nome, categoria, valor, detalhe] */
+const META = {
+  moradia: { nome: 'Moradia', i: 'casa' }, mercado: { nome: 'Mercado', i: 'carrinho' }, alimentacao: { nome: 'Alimentação', i: 'garfo' },
+  transporte: { nome: 'Transporte', i: 'carro' }, lazer: { nome: 'Lazer', i: 'ingresso' }, saude: { nome: 'Saúde', i: 'coracao' },
+  fatura: { nome: 'Fatura', i: 'cartao' }, receita: { nome: 'Receita', i: 'nota', cor: 'receita' },
+  investe: { nome: 'Aporte', i: 'cresce', cor: 'investe' }, vr: { nome: 'Vale-refeição', i: 'garfo', cor: 'receita' },
+};
+const CATS = ['moradia', 'mercado', 'alimentacao', 'transporte', 'lazer', 'saude'];
+const FORMAS = ['Débito', 'Pix', 'Crédito', 'VR'];
+const cores = (k) => (META[k].cor ? [`var(--${META[k].cor})`, `var(--${META[k].cor}-soft)`] : [`var(--cat-${k})`, `var(--cat-${k}-soft)`]);
+const MESES = {
+  out: { nome: 'Outubro', curto: 'out', entrou: 750000, saiu: 401240, investiu: 50000, sobrou: 298760,
+    cats: { moradia: 165000, mercado: 91230, alimentacao: 52310, transporte: 31800, lazer: 44900, saude: 16000 },
+    ultimos: [['31 out', 'Farmácia', 'saude', -8900], ['30 out', 'Restaurante', 'alimentacao', -7450], ['28 out', 'Posto', 'transporte', -21000]],
+    lanc: {
+      debito: [['31 out', 'Farmácia', 'saude', -8900], ['30 out', 'Restaurante', 'alimentacao', -7450], ['28 out', 'Posto', 'transporte', -21000], ['20 out', 'Mercado Extra', 'mercado', -69830], ['11 out', 'Fatura do C6bank', 'fatura', -129060, 'paga'], ['10 out', 'Aluguel', 'moradia', -165000], ['8 out', 'Aporte LCI C6', 'investe', -50000], ['5 out', 'Salário', 'receita', 750000]],
+      credito: [['22 out', 'Show', 'lazer', -32000], ['14 out', 'Spotify', 'lazer', -2190, 'todo mês']],
+      vr: [['12 out', 'Mercado do bairro', 'mercado', -21400]],
+    } },
+  nov: { nome: 'Novembro', curto: 'nov', entrou: 750000, saiu: 321785, investiu: 80000, sobrou: 348215,
+    cats: { moradia: 165000, mercado: 74230, alimentacao: 41890, transporte: 23640, lazer: 18900, saude: 9625 },
+    ultimos: [['Hoje', 'Mercado do bairro', 'mercado', -3290, 'conferido no banco'], ['Hoje', 'Uber', 'transporte', -1840], ['5 nov', 'Salário', 'receita', 750000]],
+    lanc: {
+      debito: [['Hoje', 'Mercado do bairro', 'mercado', -3290, 'conferido no banco'], ['Hoje', 'Uber', 'transporte', -1840], ['Ontem', 'Farmácia', 'saude', -4625], ['Dia 11', 'Fatura do C6bank', 'fatura', -134180, 'a pagar'], ['10 nov', 'Aluguel', 'moradia', -165000], ['8 nov', 'Aporte CDB C6', 'investe', -80000], ['7 nov', 'Condomínio', 'moradia', -48000], ['6 nov', 'Mercado Extra', 'mercado', -52180], ['5 nov', 'Salário', 'receita', 750000], ['4 nov', 'Plano de saúde', 'saude', -34000], ['3 nov', 'Internet', 'moradia', -12850]],
+      credito: [['Hoje', 'Cinema', 'lazer', -6400], ['Ontem', 'iFood', 'alimentacao', -5890], ['14 nov', 'Spotify', 'lazer', -2190, 'todo mês'], ['12 nov', 'Tênis', 'lazer', -14170, 'parcela 1 de 3']],
+      vr: [['Hoje', 'Restaurante do Zé', 'alimentacao', -3840], ['Ontem', 'Mercado do bairro', 'mercado', -12900], ['30 out', 'Depósito do VR', 'vr', 88000]],
+    } },
+};
+const X = { fatura: 134180, vr: 41260 };
+let mes = 'nov', M = MESES.nov, tela = 0, extrato = 0, filtro = null;
+const brl = (c) => (c / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const reais = (c) => Math.round(c / 100).toLocaleString('pt-BR');
+const gasto = (r) => (r[3] < 0 && r[2] !== 'fatura' && r[2] !== 'investe' ? -r[3] : 0);
 
-/* abertura: água sobe, saldo conta, barra se desenha */
-const iphone = document.getElementById('iphone'), sobrou = document.getElementById('sobrou');
+/* olhinho: cada valor guarda o texto real e mostra a máscara quando escondido */
+let escondido = false;
+const mascara = (t) => (/^[+−-]?R\$/.test(t) ? 'R$ ••••' : '••••');
+const registra = (raiz) => raiz.querySelectorAll('[data-dinheiro]').forEach((el) => {
+  if (!('real' in el.dataset)) el.dataset.real = el.textContent;
+  el.textContent = escondido ? mascara(el.dataset.real) : el.dataset.real;
+});
+const poe = (el, t) => { el.dataset.real = t; el.textContent = escondido ? mascara(t) : t; };
+
+const linha = ([dia, nome, k, c, extra], nova) => {
+  const [f, s] = cores(k), cls = c > 0 ? 'entrou' : k === 'fatura' ? '' : 'saiu';
+  return `<div class="mov${nova ? ' nova' : ''}"><span class="selo-cat" style="background:${s};color:${f}"><svg class="i" data-i="${META[k].i}"></svg></span>
+    <span class="txt"><b>${nome}</b><span>${META[k].nome}${extra ? ', ' + extra : ''}</span></span><span class="dir"><strong class="${cls}">${c > 0 ? '+' : '−'}${brl(Math.abs(c))}</strong><span>${dia}</span></span></div>`;
+};
+
+function pintaCats() {
+  const total = CATS.reduce((s, k) => s + M.cats[k], 0), ordem = [...CATS].sort((a, b) => M.cats[b] - M.cats[a]);
+  const pct = (k) => Math.round((M.cats[k] / total) * 100);
+  $('barra').innerHTML = ordem.map((k, n) => `<i style="flex:${M.cats[k]};background:var(--cat-${k});--n:${n}"></i>`).join('');
+  $('barra').setAttribute('aria-label', ordem.map((k) => `${META[k].nome} ${pct(k)}%`).join(', '));
+  $('cats').innerHTML = ordem.map((k) =>
+    `<button class="cat pressiona" data-k="${k}" aria-label="${META[k].nome}, R$ ${brl(M.cats[k])}. Ver lançamentos"><span class="ponto" style="background:var(--cat-${k})"></span><span class="nome">${META[k].nome}</span><span class="pct">${pct(k)}%</span><span class="v" data-dinheiro>${brl(M.cats[k])}</span></button>`).join('');
+  $('cats').querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { filtro = b.dataset.k; extrato = 0; vaiPara(1); }));
+  registra($('cats'));
+}
+function pintaUltimos(nova) {
+  $('ultimos').innerHTML = M.ultimos.slice(0, 3).map((r, n) => linha(r, nova && n === 0)).join('');
+  desenhaTudo($('ultimos'));
+}
+function pintaLista() {
+  const aba = ['debito', 'credito', 'vr'][extrato], m = M.nome.toLowerCase(), atual = mes === 'nov';
+  const linhas = M.lanc[aba].filter((r) => !filtro || r[2] === filtro), soma = linhas.reduce((s, r) => s + gasto(r), 0);
+  const onde = ['no débito', 'no crédito', 'no VR'][extrato];
+  $('aba-rotulo').textContent = filtro ? `${META[filtro].nome} ${onde} em ${m}`
+    : [`Saiu da conta em ${m}`, atual ? 'Fatura aberta do C6bank, fecha dia 4' : `Compras no crédito em ${m}`, atual ? 'Saldo do vale-refeição' : `Gasto no VR em ${m}`][extrato];
+  poe($('aba-valor'), 'R$ ' + brl(!filtro && atual && extrato === 2 ? X.vr : soma));
+  $('lista').innerHTML = linhas.length ? `<div class="cartao" style="padding:4px 16px">${linhas.map((r) => linha(r)).join('')}</div>`
+    : `<div class="vazio"><svg viewBox="0 0 132 56" aria-hidden="true"><path d="M0 40Q16.5 32 33 40T66 40T99 40T132 40" fill="none" stroke="var(--agua)" stroke-width="2.5" stroke-linecap="round"/><path d="M56 40c5-6 9-14 11-22 5 7 8 14 9 22z" fill="var(--brand)"/><path d="M8 50h116" stroke="var(--line)" stroke-width="2" stroke-linecap="round"/></svg>
+      <b>Mar calmo por aqui</b><span>Nenhum gasto de ${META[filtro].nome} ${onde} em ${m}.</span></div>`;
+  desenhaTudo($('lista'));
+  $('lanc-mes').textContent = M.nome;
+  $('conferir') && ($('conferir').hidden = !atual);
+  $('extratos').style.setProperty('--i', extrato);
+  $('extratos').querySelectorAll('button').forEach((b, n) => b.setAttribute('aria-pressed', n === extrato));
+  $('filtro').querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', (b.dataset.k || null) === filtro));
+}
+$('filtro').innerHTML = `<button class="chip pressiona">Todas</button>` + CATS.map((k) => `<button class="chip pressiona" data-k="${k}"><span class="ponto" style="background:var(--cat-${k})"></span>${META[k].nome}</button>`).join('');
+$('filtro').querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { filtro = b.dataset.k || null; pintaLista(); }));
+$('extratos').querySelectorAll('button').forEach((b, n) => b.addEventListener('click', () => { extrato = n; pintaLista(); }));
+
+const iphone = $('iphone'), sobrou = $('sobrou'), rolagem = document.querySelector('.rolagem');
 const calmo = matchMedia('(prefers-reduced-motion: reduce)');
 let quadro;
-function abrir() {
+function contar(el, de, para) {
   cancelAnimationFrame(quadro);
-  iphone.classList.remove('ligado');
-  void iphone.offsetWidth;
-  iphone.classList.add('ligado');
-  const alvo = 348215;
-  if (calmo.matches || escondido) { sobrou.textContent = escondido ? '••••' : brl(alvo); return; }
+  if (calmo.matches || escondido) return poe(el, brl(para));
   const t0 = performance.now();
   (function passo(t) {
     const p = Math.min((t - t0) / 900, 1);
-    sobrou.textContent = brl(Math.round(alvo * (1 - Math.pow(1 - p, 3))));
-    if (p < 1) quadro = requestAnimationFrame(passo);
+    el.textContent = brl(Math.round(de + (para - de) * (1 - Math.pow(1 - p, 3))));
+    if (p < 1) quadro = requestAnimationFrame(passo); else poe(el, brl(para));
   })(t0);
 }
+function pintaNivel() {
+  const pct = Math.max(0, Math.min(100, Math.round((M.sobrou / M.entrou) * 100)));
+  $('agua').style.setProperty('--pct', pct);
+  $('pct').textContent = pct + '% do que entrou';
+}
+/* tudo que depende do mês */
+function pintaMes() {
+  const atual = mes === 'nov';
+  $('titulo').textContent = M.nome;
+  $('heroi').setAttribute('aria-label', 'Resumo de ' + M.nome.toLowerCase());
+  $('mes-rotulo').textContent = M.curto;
+  poe($('entrou'), reais(M.entrou)); poe($('saiu'), reais(M.saiu)); poe($('investiu'), reais(M.investiu));
+  poe($('depois'), 'R$ ' + brl(M.sobrou - X.fatura));
+  $('depois-linha').hidden = $('cartao-vr').hidden = $('cartao-c6').hidden = !atual;
+  pintaNivel(); pintaCats(); pintaUltimos(); pintaLista();
+  document.querySelectorAll('#menu button').forEach((b) => b.setAttribute('aria-checked', b.dataset.mes === mes));
+}
+/* abertura: água sobe, saldo conta, barra se desenha */
+function abrir() {
+  iphone.classList.remove('ligado');
+  void iphone.offsetWidth;
+  iphone.classList.add('ligado');
+  contar(sobrou, 0, M.sobrou);
+}
 
-/* olhinho */
-let escondido = false;
-const olho = document.getElementById('olho');
+const olho = $('olho');
 olho.addEventListener('click', () => {
   escondido = !escondido;
+  cancelAnimationFrame(quadro);
+  sobrou.dataset.real = brl(M.sobrou);
   olho.setAttribute('aria-pressed', escondido);
   olho.setAttribute('aria-label', escondido ? 'Mostrar valores' : 'Esconder valores');
   desenha(olho.querySelector('svg'), escondido ? 'olhoFechado' : 'olho');
-  cancelAnimationFrame(quadro);
-  document.querySelectorAll('[data-dinheiro]').forEach((el) => {
-    const alvo = el.querySelector('#sobrou') || el;
-    if (escondido) { alvo.dataset.real = alvo === sobrou ? brl(348215) : alvo.textContent; alvo.textContent = alvo.textContent.startsWith('R$') ? 'R$ ••••' : '••••'; }
-    else alvo.textContent = alvo.dataset.real;
-  });
+  registra(iphone);
 });
 
-/* os botões do topo são vidro claro sobre o saldo e vidro regular sobre o conteúdo */
-const rolagem = document.querySelector('.rolagem'), doTopo = document.querySelectorAll('.topo-fixo button');
-rolagem.addEventListener('scroll', () => doTopo.forEach((el) => el.classList.toggle('vidro--claro', rolagem.scrollTop < 300)), { passive: true });
+/* botões do topo: vidro claro sobre o saldo, regular sobre o conteúdo; cada tela mostra os seus */
+const botaoMes = $('mes'), menu = $('menu');
+function topo() {
+  const claro = tela === 0 && rolagem.scrollTop < 380;
+  [olho, botaoMes].forEach((el) => el.classList.toggle('vidro--claro', claro));
+  olho.hidden = !(tela === 0 || tela === 2);
+  botaoMes.hidden = tela > 1;
+}
+rolagem.addEventListener('scroll', topo, { passive: true });
 
-/* abas */
-const nav = document.querySelector('.abas nav');
-nav.querySelectorAll('button').forEach((b, n) => b.addEventListener('click', () => {
-  nav.querySelector('[aria-current]').removeAttribute('aria-current');
-  b.setAttribute('aria-current', 'page');
+/* menu do mês */
+function abreMenu(sim) { menu.classList.toggle('aberto', sim); menu.inert = !sim; botaoMes.setAttribute('aria-expanded', sim); }
+botaoMes.addEventListener('click', (e) => { e.stopPropagation(); abreMenu(!menu.classList.contains('aberto')); });
+iphone.addEventListener('click', (e) => { if (!menu.contains(e.target)) abreMenu(false); });
+menu.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => trocaMes(b.dataset.mes)));
+function trocaMes(k) {
+  abreMenu(false);
+  if (k === mes) return;
+  mes = k; M = MESES[k];
+  pintaMes();
+  if (tela === 0) abrir(); else poe(sobrou, brl(M.sobrou));
+}
+
+/* abas: nas pontas a lente bate na borda e amassa, em vez de passar dela */
+const nav = document.querySelector('.abas nav'), lente = nav.querySelector('.lente'), botoesAba = [...nav.querySelectorAll('button')];
+const TELAS = ['inicio', 'lancamentos', 'investir', 'ajustes'].map((t) => $('tela-' + t));
+function moveLente(n) {
+  const ponta = n === 0 || n === botoesAba.length - 1;
+  nav.classList.toggle('borda', ponta);
   nav.style.setProperty('--aba', n);
-}));
+  if (calmo.matches) return;
+  lente.getAnimations().forEach((a) => a.effect instanceof KeyframeEffect && a.effect.getKeyframes().some((q) => 'scale' in q) && a.cancel());
+  lente.style.transformOrigin = n === 0 ? 'left center' : ponta ? 'right center' : 'center';
+  lente.animate(ponta
+    ? [{ scale: '1 1' }, { scale: '1.1 .92', offset: 0.22 }, { scale: '.84 1.07', offset: 0.55 }, { scale: '1.03 .99', offset: 0.8 }, { scale: '1 1' }]
+    : [{ scale: '1 1' }, { scale: '1.14 .9', offset: 0.35 }, { scale: '1 1' }], { duration: ponta ? 520 : 420, easing: 'ease-out' });
+}
+function vaiPara(n) {
+  abreMenu(false);
+  if (n === tela) { if (n === 1) pintaLista(); return rolagem.scrollTo({ top: 0, behavior: calmo.matches ? 'auto' : 'smooth' }); }
+  const t = TELAS[n];
+  TELAS[tela].hidden = true;
+  t.style.setProperty('--dir', n > tela ? 1 : -1);
+  tela = n;
+  t.hidden = false;
+  t.classList.remove('entra'); void t.offsetWidth; t.classList.add('entra');
+  rolagem.scrollTop = 0;
+  botoesAba.forEach((b, i) => (i === n ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current')));
+  moveLente(n); topo();
+  if (n === 1) pintaLista();
+  if (n === 2) { const g = $('grafico'); g.classList.remove('desenha'); void g.getBoundingClientRect(); g.classList.add('desenha'); }
+}
+botoesAba.forEach((b, n) => b.addEventListener('click', () => vaiPara(n)));
+$('ver-todos').addEventListener('click', (e) => { e.preventDefault(); filtro = null; extrato = 0; vaiPara(1); });
+$('ver-fatura').addEventListener('click', (e) => { e.preventDefault(); filtro = null; extrato = 1; vaiPara(1); });
 
-/* o iPhone inteiro cabe na janela: encolhe em telas baixas */
+/* um gasto novo entra em tudo: saldo, categoria, extrato e últimos */
+function registraGasto(nome, k, v, forma, dia, extra) {
+  const N = MESES.nov, r = [dia, nome, k, -v, extra];
+  N.cats[k] += v;
+  N.ultimos.unshift(r);
+  N.lanc[forma === 'Crédito' ? 'credito' : forma === 'VR' ? 'vr' : 'debito'].unshift(r);
+  const de = N.sobrou;
+  if (forma === 'VR') X.vr -= v;
+  else if (forma !== 'Crédito') { N.sobrou -= v; N.saiu += v; }
+  if (mes !== 'nov') { mes = 'nov'; M = N; pintaMes(); }
+  poe($('saiu'), reais(N.saiu));
+  poe($('depois'), 'R$ ' + brl(N.sobrou - X.fatura));
+  poe($('vrsaldo'), 'R$ ' + brl(X.vr));
+  poe($('aberta'), 'R$ ' + brl(N.lanc.credito.reduce((s, x) => s + gasto(x), 0)));
+  contar(sobrou, de, N.sobrou);
+  pintaNivel(); pintaCats(); pintaUltimos(true); pintaLista();
+}
+
+/* para conferir */
+function saiConferir() {
+  const c = $('conferir');
+  const fim = () => c.remove();
+  if (calmo.matches) return fim();
+  c.style.overflow = 'hidden';
+  c.animate([{ height: c.offsetHeight + 'px', opacity: 1 }, { height: '0px', opacity: 0, paddingBlock: '0px', marginBottom: '-12px' }], { duration: 360, easing: 'cubic-bezier(.3,.7,.2,1)' }).onfinish = fim;
+}
+$('ignorar').addEventListener('click', saiConferir);
+$('confirmar').addEventListener('click', () => { saiConferir(); registraGasto('Padaria Real', 'alimentacao', 1840, 'Débito', 'Ontem', 'conferido no banco'); });
+
+/* investir e ajustes */
+document.querySelectorAll('.inv').forEach((b) => b.addEventListener('click', () => b.setAttribute('aria-expanded', b.getAttribute('aria-expanded') !== 'true')));
+function tema(t) {
+  document.documentElement.dataset.theme = t;
+  document.querySelectorAll('[data-tema]').forEach((o) => o.setAttribute('aria-pressed', o.dataset.tema === t));
+  $('sw-tema').setAttribute('aria-checked', t === 'dark');
+}
+document.querySelectorAll('[data-tema]').forEach((b) => b.addEventListener('click', () => tema(b.dataset.tema)));
+$('sw-tema').addEventListener('click', () => tema(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
+$('sw-aviso').addEventListener('click', (e) => e.currentTarget.setAttribute('aria-checked', e.currentTarget.getAttribute('aria-checked') !== 'true'));
+
+/* folha de novo gasto */
+const folha = $('folha'), fvalor = $('fvalor');
+let valor = 0, catSel = 1, formaSel = 0;
+function pintaFolha() {
+  fvalor.textContent = 'R$ ' + brl(valor);
+  fvalor.classList.toggle('vazio', valor === 0);
+  $('lancar').disabled = valor === 0;
+  $('chips').querySelectorAll('button').forEach((b, n) => b.setAttribute('aria-pressed', n === catSel));
+  $('formas').querySelectorAll('button').forEach((b, n) => b.setAttribute('aria-pressed', n === formaSel));
+}
+$('chips').innerHTML = CATS.map((k) => `<button class="chip pressiona"><span class="ponto" style="background:var(--cat-${k})"></span>${META[k].nome}</button>`).join('');
+$('formas').innerHTML = FORMAS.map((f) => `<button>${f}</button>`).join('');
+$('teclado').innerHTML = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '00', '0', 'apaga'].map((t) =>
+  t === 'apaga' ? `<button class="pressiona" data-t="apaga" aria-label="Apagar"><svg class="i" data-i="apaga"></svg></button>` : `<button class="pressiona" data-t="${t}">${t}</button>`).join('');
+$('chips').querySelectorAll('button').forEach((b, n) => b.addEventListener('click', () => { catSel = n; pintaFolha(); }));
+$('formas').querySelectorAll('button').forEach((b, n) => b.addEventListener('click', () => { formaSel = n; pintaFolha(); }));
+const tecla = (t) => {
+  const v = t === 'apaga' ? Math.floor(valor / 10) : t === '00' ? valor * 100 : valor * 10 + Number(t);
+  if (v <= 9999999) valor = v;
+  pintaFolha();
+};
+$('teclado').querySelectorAll('button').forEach((b) => b.addEventListener('click', () => tecla(b.dataset.t)));
+function abreFolha() { valor = 0; pintaFolha(); folha.inert = false; iphone.classList.add('com-folha'); $('teclado').querySelector('button').focus({ preventScroll: true }); }
+function fechaFolha() { iphone.classList.remove('com-folha'); folha.inert = true; $('mais').focus({ preventScroll: true }); }
+$('mais').addEventListener('click', abreFolha);
+$('fechar').addEventListener('click', fechaFolha);
+$('veu').addEventListener('click', fechaFolha);
+addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') abreMenu(false);
+  if (!iphone.classList.contains('com-folha')) return;
+  if (e.key === 'Escape') fechaFolha();
+  else if (/^\d$/.test(e.key)) tecla(e.key);
+  else if (e.key === 'Backspace') tecla('apaga');
+});
+$('lancar').addEventListener('click', () => {
+  const k = CATS[catSel], forma = FORMAS[formaSel];
+  fechaFolha();
+  registraGasto(META[k].nome, k, valor, forma, 'Agora', forma);
+  if (tela === 0) rolagem.scrollTo({ top: forma === 'Débito' || forma === 'Pix' ? 0 : 200, behavior: calmo.matches ? 'auto' : 'smooth' });
+  else if (tela === 1) { extrato = forma === 'Crédito' ? 1 : forma === 'VR' ? 2 : 0; filtro = null; pintaLista(); rolagem.scrollTo({ top: 0, behavior: calmo.matches ? 'auto' : 'smooth' }); }
+});
+
+/* o iPhone inteiro cabe na janela: encolhe em telas estreitas ou baixas */
 const palco = document.querySelector('.palco');
 function cabe() {
   const lado = matchMedia('(min-width: 901px)').matches;
@@ -568,12 +1025,12 @@ function cabe() {
 }
 addEventListener('resize', cabe); cabe();
 
-/* tema */
-document.querySelectorAll('[data-tema]').forEach((b) => b.addEventListener('click', () => {
-  document.documentElement.dataset.theme = b.dataset.tema;
-  document.querySelectorAll('[data-tema]').forEach((o) => o.setAttribute('aria-pressed', o === b));
-}));
-document.getElementById('repetir').addEventListener('click', abrir);
+$('repetir').addEventListener('click', () => { vaiPara(0); abrir(); });
+
+desenhaTudo(document);
+registra(iphone);
+pintaMes();
+topo();
 requestAnimationFrame(abrir);
 </script>
 </body>

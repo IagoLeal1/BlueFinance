@@ -184,6 +184,10 @@ Pedido do dono em 17/11/2026 (tela 31). Guia e passos do dono em `docs/07-open-f
 - **Categoria aprendida por estabelecimento** (a descrição do banco em maiúsculas, sem acento e sem números): ao
   lançar algo de "Para conferir", a categoria e o "com o quê" ficam guardados (`regras_banco`); da próxima vez o
   mesmo estabelecimento vira lançamento sozinho (origem `banco`, "do banco" na lista).
+- **Descrição genérica não é lugar** (visto em 19/11/2026): o C6 descreve toda compra no débito só como "Débito de
+  Cartão". Descrições assim ("Pix enviado", "Compra no débito"...) não aprendem categoria nem fazem a compra entrar
+  sozinha; sem lançamento seu para bater, vão para Para conferir. Quem diz o lugar da compra no débito é o Apple Pay
+  (ou o Atalho); o banco só confere.
 - **Aprender com tudo** (pedido do dono em 17/11/2026): quando o banco confere um gasto que você lançou (pelo
   Atalho, pelo app ou pelo Apple Pay confirmado), aquele estabelecimento aprende a categoria e o nome desse gasto,
   se ainda não tinha. O que está "a confirmar" e o que o próprio banco lançou não ensinam.

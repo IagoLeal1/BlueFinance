@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import {
   acharPar,
   categoriaSugerida,
+  ehLugar,
   escolherCartao,
   estabelecimentoDe,
   lerTransacao,
@@ -98,6 +99,18 @@ test.describe('Open Finance: ler a transação do banco', () => {
     expect(motivoDeFora('CREDIT', t({ description: 'LOJA', amount: 10, type: 'DEBIT', creditCardMetadata: { installmentNumber: 2, totalInstallments: 3 } }))).toBe(
       'cartão: parcela seguinte',
     );
+  });
+
+  test('descrição genérica do banco não é um lugar: não aprende categoria nem entra sozinha', () => {
+    // O C6 descreve toda compra no débito só como "Débito de Cartão" (visto em 19/11/2026).
+    for (const generica of ['DEBITO DE CARTAO', 'COMPRA NO DEBITO', 'COMPRA CARTAO', 'PIX ENVIADO', 'PIX RECEBIDO', 'TRANSFERENCIA ENVIADA', 'PAGAMENTO', 'APPLE PAY', '']) {
+      expect(ehLugar(generica), generica).toBe(false);
+    }
+    for (const lugar of ['UBER *TRIP', 'PIX ENVIADO JOAO S SILVA', 'PAG*ATACADAO', 'COMPRA NO DEBITO PADARIA REAL', 'LERCULTIVAR']) {
+      expect(ehLugar(lugar), lugar).toBe(true);
+    }
+    // O "com o quê" sugerido fica como o banco escreveu, sem virar um nome de lugar.
+    expect(lerTransacao('BANK', t({ description: 'Débito de Cartão', amount: -7 }))).toMatchObject({ estabelecimento: 'DEBITO DE CARTAO', nome: 'Débito de Cartão' });
   });
 
   test('estabelecimento: a descrição em maiúsculas, sem acento e sem números (a chave da categoria aprendida)', () => {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import { Check, Landmark, Sparkles } from 'lucide-react';
+import { Check, Info, Landmark, Sparkles } from 'lucide-react';
 import { confirmarApplePay, ignorarDoBanco, lancarDoBanco, type EstadoDoBanco } from '@/app/(app)/lancamentos/actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -234,12 +234,18 @@ function LinhaDoBanco({ t, categorias }: { t: ItemDoBanco; categorias: Categoria
             <Label htmlFor={`descricao-banco-${t.id}`}>Com o quê</Label>
             <Input id={`descricao-banco-${t.id}`} name="descricao" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
           </div>
-          {escolhida && (
+          {escolhida && t.aprende && (
             <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
               <Sparkles className="mt-px size-4 shrink-0" aria-hidden />
               <span>
                 Da próxima vez, <b className="text-foreground">{t.descricao}</b> entra sozinho em {escolhida.nome}.
               </span>
+            </p>
+          )}
+          {!t.aprende && (
+            <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+              <Info className="mt-px size-4 shrink-0" aria-hidden />
+              <span>O banco não diz o lugar desta compra, então ela não entra sozinha da próxima vez. Pelo Apple Pay ou pelo Atalho, o banco só confere.</span>
             </p>
           )}
           {erro && (

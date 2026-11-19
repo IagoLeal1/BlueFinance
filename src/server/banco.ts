@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import {
   acharPar,
   categoriaSugerida,
+  ehLugar,
   escolherCartao,
   lerTransacao,
   motivoDeFora,
@@ -244,7 +245,7 @@ async function sincronizarUm(chave: string, banco: { user_id: string; item_id: s
   const aprendidas: { user_id: string; tipo: string; estabelecimento: string; categoria_id: string; descricao: string }[] = [];
   const aprender = (tipo: string, estabelecimento: string, lancamentoId: string) => {
     const l = porId.get(lancamentoId);
-    if (!l?.categoria_id || l.a_confirmar || l.origem === 'banco' || !estabelecimento) return;
+    if (!l?.categoria_id || l.a_confirmar || l.origem === 'banco' || !ehLugar(estabelecimento)) return;
     if (regras.data!.some((r) => r.tipo === tipo && r.estabelecimento === estabelecimento)) return;
     const regra = { user_id: u, tipo, estabelecimento, categoria_id: l.categoria_id, descricao: l.descricao };
     regras.data!.push(regra);
@@ -288,7 +289,8 @@ async function sincronizarUm(chave: string, banco: { user_id: string; item_id: s
       aprender(t.tipo, t.estabelecimento, par);
       return { ...base, situacao: 'conferido', lancamento_id: par };
     }
-    const regra = regras.data!.find((r) => r.tipo === t.tipo && r.estabelecimento === t.estabelecimento);
+    // Descrição genérica ("Débito de Cartão") não é lugar: nunca entra sozinha.
+    const regra = ehLugar(t.estabelecimento) ? regras.data!.find((r) => r.tipo === t.tipo && r.estabelecimento === t.estabelecimento) : undefined;
     const cartao = t.forma === 'credito' ? escolherCartao(cartoesDoApp, t.nomeDaConta) : null;
     if (regra && (t.forma !== 'credito' || cartao)) {
       sozinhas.set(t.pluggyId, { regra, cartao, t });
@@ -382,6 +384,8 @@ export interface ParaConferir {
   descricao: string;
   /** Sugestão para o "com o quê". */
   nome: string;
+  /** O banco diz o lugar: lançar ensina a categoria e o nome. "Débito de Cartão" e parecidos não ensinam. */
+  aprende: boolean;
   sugestao: { id: string; nome: string; icone: string } | null;
 }
 
@@ -390,7 +394,7 @@ export async function paraConferir(): Promise<ParaConferir[]> {
   const supabase = await supabaseServidor();
   const { data, error } = await supabase
     .from('transacoes_banco')
-    .select('id, tipo, forma, valor, parcelas, data, descricao, nome, categorias(id, nome, icone)')
+    .select('id, tipo, forma, valor, parcelas, data, descricao, nome, estabelecimento, categorias(id, nome, icone)')
     .eq('situacao', 'conferir')
     .order('data', { ascending: false })
     .order('criado_em', { ascending: false });
@@ -404,6 +408,7 @@ export async function paraConferir(): Promise<ParaConferir[]> {
     data: t.data,
     descricao: t.descricao,
     nome: t.nome,
+    aprende: ehLugar(t.estabelecimento),
     sugestao: t.categorias,
   }));
 }
