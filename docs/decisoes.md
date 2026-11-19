@@ -190,7 +190,9 @@ Pedido do dono em 17/11/2026 (tela 31). Guia e passos do dono em `docs/07-open-f
 - **Para conferir** (topo do Débito e do Crédito em Lançamentos): o que não bateu nem é conhecido, com a categoria
   sugerida (a da Pluggy traduzida; gasto sem par vai em Outros; receita só sugere Salário). Lançar em um toque,
   Ignorar, ou tocar para trocar categoria e "com o quê". Some quando há categoria no filtro.
-- **Fica de fora:** pagamento de fatura (a fatura já aparece no vencimento), pagamento e estorno no cartão,
+- **Fica de fora:** pagamento de fatura (a fatura já aparece no vencimento; só quando o banco diz que é, pelo tipo
+  da operação ou pela descrição — a categoria "Credit card payment" da Pluggy errou em 19/11/2026 e não vale
+  sozinha), pagamento e estorno no cartão,
   parcelas seguintes de compra parcelada (a 1ª já lança todas), transferência para si mesmo e investimentos (os
   aportes são lançados no app).
 - **Crédito:** a compra vai para o cartão do app de nome parecido com o do banco; senão o primeiro cartão.

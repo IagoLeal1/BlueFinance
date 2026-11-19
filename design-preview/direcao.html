@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BlueFin, direção visual</title>
+<style>
+/* ───────── Tokens ───────── */
+:root, [data-theme="light"] {
+  --bg: #eef3f9;            /* Espuma */
+  --surface: #ffffff;
+  --surface-2: #f3f6fb;
+  --ink: #0b1324;
+  --ink-2: #4d5a70;
+  --line: rgba(11, 19, 36, .09);
+  --brand: #1846c8;         /* Atum */
+  --on-brand: #ffffff;
+  --abismo: #0b1f4d;
+  --agua: #3ccfc6;
+  --receita: #06784c;  --receita-soft: #dcf4e8;
+  --despesa: #b93e0b;  --despesa-soft: #fce8dd;
+  --alerta: #855700;   --alerta-soft: #faefd6;
+  --investe: #0b7a74;  --investe-soft: #dcf3f1;
+  --neutro: #4d5a70;   --neutro-soft: #e8edf4;
+  --cat-moradia: #2a78d6;  --cat-moradia-soft: #e1ecf9;
+  --cat-mercado: #dd5b25;  --cat-mercado-soft: #fceae3;
+  --cat-transporte: #009965; --cat-transporte-soft: #dff4ec;
+  --cat-alimentacao: #be7500; --cat-alimentacao-soft: #fcf2db;
+  --cat-lazer: #cc628c;    --cat-lazer-soft: #fcedf2;
+  --cat-saude: #008300;    --cat-saude-soft: #dbeedb;
+  --cat-fatura: #025884;   --cat-fatura-soft: #d1e1e9;
+  /* vidro */
+  --vidro-regular: rgba(255, 255, 255, .62);
+  --vidro-claro: rgba(255, 255, 255, .16);
+  --vidro-brilho: rgba(255, 255, 255, .85);
+  --vidro-borda: rgba(255, 255, 255, .55);
+  --vidro-sombra: 0 10px 30px rgba(11, 31, 77, .18), 0 1px 3px rgba(11, 31, 77, .10);
+  --sombra-cartao: 0 1px 2px rgba(11, 19, 36, .05), 0 6px 20px rgba(11, 31, 77, .06);
+}
+[data-theme="dark"] {
+  --bg: #050b18;            /* Abissal */
+  --surface: #0e1a30;
+  --surface-2: #14233f;
+  --ink: #eef2f8;
+  --ink-2: #9ba7bb;
+  --line: rgba(255, 255, 255, .08);
+  --brand: #7aa5ff;
+  --on-brand: #06112b;
+  --receita: #45d394;  --receita-soft: #0f2c21;
+  --despesa: #ff9466;  --despesa-soft: #35190d;
+  --alerta: #f0b54a;   --alerta-soft: #30240c;
+  --investe: #4fd8cf;  --investe-soft: #0c2f30;
+  --neutro: #9ba7bb;   --neutro-soft: #1a2740;
+  --cat-moradia: #3987e5;  --cat-moradia-soft: #183256;
+  --cat-mercado: #d95926;  --cat-mercado-soft: #3b282c;
+  --cat-transporte: #199e70; --cat-transporte-soft: #11373d;
+  --cat-alimentacao: #c98500; --cat-alimentacao-soft: #383224;
+  --cat-lazer: #d55181;    --cat-lazer-soft: #3b2640;
+  --cat-saude: #178c14;    --cat-saude-soft: #0c3124;
+  --cat-fatura: #8fd3ff;   --cat-fatura-soft: #2e4660;
+  --vidro-regular: rgba(22, 34, 62, .58);
+  --vidro-claro: rgba(255, 255, 255, .12);
+  --vidro-brilho: rgba(255, 255, 255, .30);
+  --vidro-borda: rgba(255, 255, 255, .14);
+  --vidro-sombra: 0 12px 34px rgba(0, 0, 0, .5), 0 1px 3px rgba(0, 0, 0, .35);
+  --sombra-cartao: none;
+}
+:root {
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, "Helvetica Neue", sans-serif;
+  --font-valor: ui-rounded, "SF Pro Rounded", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --r-sm: 10px; --r-md: 16px; --r-lg: 24px; --r-xl: 32px;
+  /* molas: preenchidas pelo script com linear() */
+  --mola-agil: cubic-bezier(.2, .9, .3, 1);   --t-agil: 430ms;
+  --mola-viva: cubic-bezier(.2, 1.3, .4, 1);  --t-viva: 770ms;
+  --mola-calma: cubic-bezier(.2, .8, .2, 1);  --t-calma: 620ms;
+}
+
+* { box-sizing: border-box; margin: 0; }
+html { color-scheme: dark light; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  transition: background .3s, color .3s;
+}
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+svg.i { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* ───────── Página ───────── */
+.pagina { max-width: 1180px; margin: 0 auto; padding: 40px 24px 96px; }
+.cabeca { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px 32px; margin-bottom: 40px; }
+.cabeca h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.05; font-weight: 700; letter-spacing: -.025em; }
+.cabeca p { margin-top: 10px; max-width: 56ch; font-size: 17px; line-height: 1.45; color: var(--ink-2); }
+.controles { display: flex; gap: 10px; align-items: center; }
+.seg { display: inline-flex; padding: 3px; border-radius: 999px; background: var(--neutro-soft); }
+.seg button { min-height: 44px; padding: 0 18px; border-radius: 999px; font-size: 15px; font-weight: 600; color: var(--ink-2); }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--sombra-cartao); }
+.botao-texto { min-height: 44px; padding: 0 18px; border-radius: 999px; font-size: 15px; font-weight: 600; color: var(--brand); background: var(--neutro-soft); }
+
+.duas { display: grid; grid-template-columns: minmax(0, 393px) minmax(0, 1fr); gap: 56px; align-items: start; }
+@media (max-width: 900px) { .duas { grid-template-columns: minmax(0, 1fr); } .palco { margin: 0 auto; } }
+.palco { position: sticky; top: 24px; width: 100%; max-width: 393px; }
+@media (max-width: 900px) { .palco { position: static; } }
+
+.notas > section + section { margin-top: 48px; }
+.notas h2 { font-size: 22px; line-height: 1.2; font-weight: 700; letter-spacing: -.015em; }
+.notas h2 + p { margin-top: 8px; max-width: 62ch; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+
+/* paleta */
+.amostras { margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.amostra { border-radius: var(--r-md); background: var(--surface); box-shadow: var(--sombra-cartao); overflow: hidden; }
+.amostra i { display: block; height: 64px; }
+.amostra div { padding: 10px 12px 12px; }
+.amostra b { display: block; font-size: 15px; font-weight: 600; }
+.amostra span { display: block; margin-top: 2px; font-size: 13px; line-height: 1.35; color: var(--ink-2); }
+.sem { margin-top: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+.sem-item { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: var(--r-md); background: var(--surface); box-shadow: var(--sombra-cartao); }
+.sem-item .selo { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 20px; }
+.sem-item b { display: block; font-size: 15px; font-weight: 600; }
+.sem-item span { font-size: 13px; color: var(--ink-2); }
+
+/* tipografia */
+.tipos { margin-top: 20px; padding: 8px 20px; border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--sombra-cartao); }
+.tipo { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: baseline; padding: 14px 0; }
+.tipo + .tipo { border-top: 1px solid var(--line); }
+.tipo small { font-size: 13px; color: var(--ink-2); text-align: right; white-space: nowrap; }
+
+/* vidro */
+.vidros { margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.vidro-demo { position: relative; height: 150px; border-radius: var(--r-lg); overflow: hidden; display: grid; place-items: center;
+  background:
+    radial-gradient(60px 60px at 22% 30%, #3ccfc6 0 60%, transparent 62%),
+    radial-gradient(70px 70px at 78% 72%, #ff9466 0 60%, transparent 62%),
+    linear-gradient(135deg, #0b1f4d, #1846c8); }
+.vidro-demo > div { padding: 0 20px; min-height: 48px; border-radius: 999px; display: grid; place-items: center; font-size: 15px; font-weight: 600; }
+.vidros figcaption { margin-top: 8px; font-size: 13px; line-height: 1.4; color: var(--ink-2); }
+.vidros figcaption b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); }
+
+/* movimento */
+.tabela { margin-top: 20px; border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--sombra-cartao); overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.4; }
+th, td { text-align: left; padding: 12px 16px; vertical-align: top; }
+th { font-size: 13px; font-weight: 600; color: var(--ink-2); }
+tr + tr td { border-top: 1px solid var(--line); }
+td:first-child { font-weight: 600; white-space: nowrap; }
+
+.decisoes { margin-top: 16px; padding-left: 20px; max-width: 66ch; font-size: 15px; line-height: 1.55; }
+.decisoes li + li { margin-top: 8px; }
+.decisoes li::marker { color: var(--agua); }
+
+/* ───────── Vidro (material) ───────── */
+.vidro {
+  background: var(--vidro-regular);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 var(--vidro-brilho),          /* brilho especular no topo */
+    inset 0 0 0 .5px var(--vidro-borda),        /* aresta */
+    inset 0 -8px 14px -10px var(--vidro-brilho),/* luz rebatida embaixo */
+    var(--vidro-sombra);
+}
+.vidro--claro { background: var(--vidro-claro); -webkit-backdrop-filter: blur(10px) saturate(160%); backdrop-filter: blur(10px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 0 0 .5px rgba(255,255,255,.28), 0 4px 14px rgba(0,0,0,.18); color: #fff; }
+.vidro--tinta { background: color-mix(in srgb, var(--brand) 82%, transparent); color: var(--on-brand);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 0 0 .5px rgba(255,255,255,.3), inset 0 -8px 14px -10px rgba(255,255,255,.4), var(--vidro-sombra); }
+
+/* ───────── iPhone ───────── */
+.iphone { position: relative; width: 393px; aspect-ratio: 393 / 852; border-radius: 56px; background: var(--bg); overflow: hidden;
+  box-shadow: 0 0 0 10px #10141c, 0 0 0 11.5px #3a4252, 0 40px 80px rgba(0, 0, 0, .35); margin: 12px 0; }
+.ilha { position: absolute; z-index: 30; top: 11px; left: 50%; width: 124px; height: 36px; margin-left: -62px; border-radius: 20px; background: #000; }
+.rolagem { position: absolute; inset: 0; overflow-y: auto; scrollbar-width: none; padding-bottom: 130px; }
+.rolagem::-webkit-scrollbar { display: none; }
+
+.topo-fixo { position: sticky; top: 0; z-index: 20; height: 0; }
+.topo-fixo div { position: absolute; top: 58px; right: 16px; display: flex; gap: 8px; }
+.redondo { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-size: 20px; }
+.topo-fixo button { color: var(--ink); transition: background .25s, color .25s; }
+.pilula { height: 44px; padding: 0 14px 0 16px; border-radius: 22px; display: inline-flex; align-items: center; gap: 4px; font-size: 15px; font-weight: 600; }
+.pressiona { transition: transform var(--t-agil) var(--mola-agil); }
+.pressiona:active { transform: scale(.94); }
+
+/* herói: a linha d'água */
+.heroi { position: relative; height: 404px; padding: 62px 20px 0; color: #fff; overflow: hidden;
+  background: linear-gradient(160deg, #0b1f4d 10%, #1846c8 100%); border-radius: 0 0 var(--r-xl) var(--r-xl); }
+.heroi h1 { position: relative; z-index: 2; font-size: 34px; line-height: 41px; font-weight: 700; letter-spacing: -.02em; }
+.heroi .rotulo { position: relative; z-index: 2; margin-top: 26px; font-size: 15px; line-height: 20px; font-weight: 500; color: rgba(255,255,255,.82); }
+.heroi .valor { position: relative; z-index: 2; margin-top: 2px; font-family: var(--font-valor); font-size: 50px; line-height: 56px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.heroi .valor small { font-size: 26px; font-weight: 600; margin-right: 4px; opacity: .85; }
+.heroi .depois { position: relative; z-index: 2; margin-top: 6px; font-size: 14px; line-height: 19px; font-weight: 500; color: #fff; }
+.heroi .depois b { font-family: var(--font-valor); font-weight: 600; color: #fff; }
+
+.agua { position: absolute; left: 0; right: 0; bottom: 0; height: calc(40px + var(--pct, 46) * 1.2px); transform: translateY(110%);
+  transition: transform 1100ms var(--mola-viva); z-index: 1; }
+.ligado .agua { transform: translateY(0); }
+.agua::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(60,207,198,.20), rgba(60,207,198,.03)); }
+.onda { position: absolute; left: 0; bottom: 100%; width: 200%; height: 16px; margin-bottom: -1px; }
+.onda path.corpo { fill: rgba(60,207,198,.20); }
+.onda path.crista { fill: none; stroke: #3ccfc6; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.onda--fundo { opacity: .45; height: 22px; animation: mare 16s linear infinite reverse; }
+.onda--frente { animation: mare 10s linear infinite; }
+@keyframes mare { to { transform: translateX(-25%); } }
+.marca-nivel { position: absolute; right: 20px; bottom: calc(100% + 14px); display: flex; align-items: end; gap: 8px; font-size: 13px; font-weight: 600; color: rgba(255,255,255,.9);
+  opacity: 0; transition: opacity 400ms 500ms; }
+.ligado .marca-nivel { opacity: 1; }
+.barbatana { width: 22px; height: 20px; margin-bottom: -14px; fill: #fff; }
+
+/* conteúdo */
+.conteudo { position: relative; z-index: 3; margin-top: -34px; padding: 0 16px; display: grid; gap: 12px; }
+.cartao { border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--sombra-cartao); }
+.fluxo { display: grid; grid-template-columns: repeat(3, 1fr); padding: 14px 4px; }
+.fluxo > div { padding: 0 12px; }
+.fluxo > div + div { border-left: 1px solid var(--line); }
+.fluxo p { display: flex; align-items: center; gap: 5px; font-size: 13px; line-height: 18px; font-weight: 500; color: var(--ink-2); }
+.fluxo p svg { font-size: 15px; }
+.fluxo strong { display: block; margin-top: 2px; font-family: var(--font-valor); font-size: 18px; line-height: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.cartao h2 { font-size: 17px; line-height: 22px; font-weight: 600; letter-spacing: -.01em; }
+.bloco { padding: 16px; }
+.linha-titulo { display: flex; align-items: center; justify-content: space-between; min-height: 24px; }
+.linha-titulo a, .link { font-size: 15px; font-weight: 500; color: var(--brand); text-decoration: none; }
+
+.fatura { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.fatura p { font-size: 13px; line-height: 18px; font-weight: 500; color: var(--ink-2); }
+.fatura strong { display: block; font-family: var(--font-valor); font-size: 22px; line-height: 28px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.aviso { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; padding: 3px 9px 3px 7px; border-radius: 999px; font-size: 13px; line-height: 18px; font-weight: 600; background: var(--alerta-soft); color: var(--alerta); }
+.vr { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
+.vr .txt { flex: 1; min-width: 0; }
+.vr .txt b { display: block; font-size: 15px; line-height: 20px; font-weight: 600; }
+.vr .txt span { font-size: 13px; line-height: 18px; color: var(--ink-2); }
+.vr strong { font-family: var(--font-valor); font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.selo-cat { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 20px; flex: none; }
+.barra { display: flex; gap: 3px; height: 14px; margin-top: 14px; }
+.barra i { display: block; border-radius: 4px; transform: scaleX(0); transform-origin: left; transition: transform var(--t-agil) var(--mola-agil); transition-delay: calc(var(--n) * 55ms + 250ms); }
+.barra i:first-child { border-radius: 7px 4px 4px 7px; } .barra i:last-child { border-radius: 4px 7px 7px 4px; }
+.ligado .barra i { transform: scaleX(1); }
+.cats { margin-top: 8px; }
+.cat { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; text-align: left; border-radius: 12px; }
+.cat + .cat { border-top: 1px solid var(--line); border-radius: 0; }
+.cat .ponto { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.cat .nome { flex: 1; font-size: 15px; font-weight: 500; }
+.cat .pct { font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.cat .v { min-width: 84px; text-align: right; font-family: var(--font-valor); font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.mov { display: flex; align-items: center; gap: 12px; min-height: 60px; }
+.mov + .mov { border-top: 1px solid var(--line); }
+.mov .txt { flex: 1; min-width: 0; }
+.mov .txt b { display: block; font-size: 16px; line-height: 21px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mov .txt span { font-size: 13px; line-height: 18px; color: var(--ink-2); }
+.mov .dir { text-align: right; }
+.mov .dir strong { display: block; font-family: var(--font-valor); font-size: 16px; line-height: 21px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.mov .dir span { font-size: 13px; line-height: 18px; color: var(--ink-2); }
+.saiu { color: var(--despesa); } .entrou { color: var(--receita); }
+
+/* barra de abas flutuante */
+.abas { position: absolute; z-index: 25; left: 16px; right: 16px; bottom: 26px; display: flex; gap: 10px; align-items: center; }
+.abas nav { position: relative; flex: 1; height: 62px; border-radius: 31px; display: grid; grid-template-columns: repeat(4, 1fr); padding: 4px; }
+.abas .lente { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / 4); border-radius: 27px;
+  background: color-mix(in srgb, var(--brand) 16%, transparent); box-shadow: inset 0 1px 0 var(--vidro-brilho), inset 0 0 0 .5px var(--vidro-borda);
+  transform: translateX(calc(var(--aba, 0) * 100%)); transition: transform var(--t-viva) var(--mola-viva); }
+.abas nav button { position: relative; display: grid; align-content: center; justify-items: center; gap: 2px; min-height: 44px; font-size: 10px; line-height: 12px; font-weight: 600; color: var(--ink-2); transition: color .2s; }
+.abas nav button svg { font-size: 23px; }
+.abas nav button[aria-current="page"] { color: var(--brand); }
+.abas .mais { width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center; font-size: 28px; flex: none; }
+.home-ind { position: absolute; z-index: 26; bottom: 8px; left: 50%; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: var(--ink); opacity: .85; }
+
+[data-dinheiro] { transition: filter .2s, opacity .2s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .onda { animation: none !important; }
+  .agua, .barra i, .abas .lente, .pressiona { transition: opacity .15s linear !important; }
+  .pressiona:active { transform: none; opacity: .7; }
+  .agua { transform: none; opacity: 0; } .ligado .agua { opacity: 1; }
+  .barra i { transform: none; opacity: 0; } .ligado .barra i { opacity: 1; }
+  .marca-nivel { transition-delay: 0s; }
+}
+</style>
+</head>
+<body>
+<div class="pagina">
+  <header class="cabeca">
+    <div>
+      <h1>BlueFin, direção visual</h1>
+      <p>A paleta e a tela de Início no desenho novo. A tela funciona: role, troque de aba, toque no olhinho. Com a sua aprovação, o resto do app segue esta linha.</p>
+    </div>
+    <div class="controles">
+      <div class="seg" role="group" aria-label="Tema">
+        <button data-tema="dark" aria-pressed="true">Escuro</button>
+        <button data-tema="light" aria-pressed="false">Claro</button>
+      </div>
+      <button class="botao-texto" id="repetir">Repetir animação</button>
+    </div>
+  </header>
+
+  <div class="duas">
+    <!-- ══════ Tela-chave ══════ -->
+    <div class="palco">
+      <div class="iphone" id="iphone">
+        <div class="ilha" aria-hidden="true"></div>
+        <div class="rolagem">
+          <div class="topo-fixo"><div>
+            <button class="redondo vidro vidro--claro pressiona" id="olho" aria-label="Esconder valores" aria-pressed="false"><svg class="i" data-i="olho"></svg></button>
+            <button class="pilula vidro vidro--claro pressiona" aria-label="Trocar o mês">nov <svg class="i" data-i="baixo"></svg></button>
+          </div></div>
+
+          <section class="heroi" aria-label="Resumo de novembro">
+            <h1>Novembro</h1>
+            <p class="rotulo">Sobrou na conta</p>
+            <p class="valor" data-dinheiro><small>R$</small><span id="sobrou">3.482,15</span></p>
+            <p class="depois">Depois da fatura do C6bank, dia 11: <b data-dinheiro>R$ 2.140,35</b></p>
+            <div class="agua" style="--pct: 46">
+              <div class="marca-nivel"><span>46% do que entrou</span>
+                <svg class="barbatana" viewBox="0 0 22 20" aria-hidden="true"><path d="M1 20C6 14 10 6 12 0c5 6 8 13 9 20z"/></svg>
+              </div>
+              <svg class="onda onda--fundo" viewBox="0 0 800 20" preserveAspectRatio="none" aria-hidden="true">
+                <path class="corpo" d="M0 10Q50 0 100 10T200 10T300 10T400 10T500 10T600 10T700 10T800 10V20H0z"/></svg>
+              <svg class="onda onda--frente" viewBox="0 0 800 20" preserveAspectRatio="none" aria-hidden="true">
+                <path class="corpo" d="M0 10Q50 2 100 10T200 10T300 10T400 10T500 10T600 10T700 10T800 10V20H0z"/>
+                <path class="crista" d="M0 10Q50 2 100 10T200 10T300 10T400 10T500 10T600 10T700 10T800 10"/></svg>
+            </div>
+          </section>
+
+          <div class="conteudo">
+            <div class="cartao fluxo">
+              <div><p><svg class="i entrou" data-i="entra"></svg>Entrou</p><strong data-dinheiro>7.500</strong></div>
+              <div><p><svg class="i saiu" data-i="sai"></svg>Saiu</p><strong data-dinheiro>3.218</strong></div>
+              <div><p><svg class="i" data-i="cresce" style="color:var(--investe)"></svg>Investiu</p><strong data-dinheiro>800</strong></div>
+            </div>
+
+            <div class="cartao vr">
+              <span class="selo-cat" style="background:var(--cat-alimentacao-soft);color:var(--cat-alimentacao)"><svg class="i" data-i="garfo"></svg></span>
+              <span class="txt"><b>Vale-refeição</b><span>Cai R$ 880 no dia 30</span></span>
+              <strong data-dinheiro>R$ 412,60</strong>
+            </div>
+
+            <div class="cartao bloco">
+              <div class="linha-titulo"><h2>C6bank</h2><a href="#" class="link">Ver fatura</a></div>
+              <div class="fatura">
+                <div><p>Fechada</p><strong data-dinheiro>R$ 1.341,80</strong>
+                  <span class="aviso"><svg class="i" data-i="alerta"></svg>Vence em 3 dias</span></div>
+                <div><p>Aberta</p><strong data-dinheiro>R$ 286,50</strong>
+                  <p style="margin-top:6px">Fecha dia 4</p></div>
+              </div>
+            </div>
+
+            <div class="cartao bloco">
+              <div class="linha-titulo"><h2>Gastos por categoria</h2></div>
+              <div class="barra" id="barra" role="img" aria-label="Moradia 50%, Mercado 22%, Alimentação 13%, Transporte 7%, Lazer 6%, Saúde 3%"></div>
+              <div class="cats" id="cats"></div>
+            </div>
+
+            <div class="cartao bloco" style="padding-bottom:4px">
+              <div class="linha-titulo"><h2>Últimos</h2><a href="#" class="link">Ver todos</a></div>
+              <div style="margin-top:6px">
+                <div class="mov"><span class="selo-cat" style="background:var(--cat-mercado-soft);color:var(--cat-mercado)"><svg class="i" data-i="carrinho"></svg></span>
+                  <span class="txt"><b>Mercado do bairro</b><span>Mercado, conferido no banco</span></span>
+                  <span class="dir"><strong class="saiu">−32,90</strong><span>Hoje</span></span></div>
+                <div class="mov"><span class="selo-cat" style="background:var(--cat-transporte-soft);color:var(--cat-transporte)"><svg class="i" data-i="carro"></svg></span>
+                  <span class="txt"><b>Uber</b><span>Transporte</span></span>
+                  <span class="dir"><strong class="saiu">−18,40</strong><span>Hoje</span></span></div>
+                <div class="mov"><span class="selo-cat" style="background:var(--receita-soft);color:var(--receita)"><svg class="i" data-i="nota"></svg></span>
+                  <span class="txt"><b>Salário</b><span>Receita</span></span>
+                  <span class="dir"><strong class="entrou">+7.500,00</strong><span>5 nov</span></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="abas">
+          <nav class="vidro" aria-label="Principal">
+            <span class="lente" aria-hidden="true"></span>
+            <button aria-current="page"><svg class="i" data-i="casa"></svg>Início</button>
+            <button><svg class="i" data-i="lista"></svg>Lançamentos</button>
+            <button><svg class="i" data-i="cresce"></svg>Investir</button>
+            <button><svg class="i" data-i="ajustes"></svg>Ajustes</button>
+          </nav>
+          <button class="mais vidro vidro--tinta pressiona" aria-label="Lançar gasto"><svg class="i" data-i="mais" style="stroke-width:2.4"></svg></button>
+        </div>
+        <div class="home-ind" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <!-- ══════ Notas ══════ -->
+    <div class="notas">
+      <section>
+        <h2>A ideia: o saldo é um nível de água</h2>
+        <p>O logotipo do BlueFin é uma barbatana cortando a linha d'água. No Início novo essa linha existe de verdade: a água sobe até a parte do que entrou que ainda está na conta. Gastou, o nível desce. O vidro fica por cima, nos controles, como se você olhasse o mar por uma escotilha.</p>
+      </section>
+
+      <section>
+        <h2>Paleta</h2>
+        <p>As cores da marca continuam. Muda o papel de cada uma: o azul fundo vira profundidade, a Água vira a linha viva do saldo.</p>
+        <div class="amostras">
+          <div class="amostra"><i style="background:#0b1f4d"></i><div><b>Abismo</b><span>#0b1f4d. Fundo do saldo, o ponto mais fundo.</span></div></div>
+          <div class="amostra"><i style="background:#1846c8"></i><div><b>Atum</b><span>#1846c8 no claro, #7aa5ff no escuro. Ação e seleção.</span></div></div>
+          <div class="amostra"><i style="background:#3ccfc6"></i><div><b>Água</b><span>#3ccfc6. A linha d'água e o que cresce.</span></div></div>
+          <div class="amostra"><i style="background:#eef3f9"></i><div><b>Espuma</b><span>#eef3f9. Fundo do tema claro.</span></div></div>
+          <div class="amostra"><i style="background:#050b18"></i><div><b>Abissal</b><span>#050b18. Fundo do tema escuro.</span></div></div>
+        </div>
+        <div class="sem">
+          <div class="sem-item"><span class="selo" style="background:var(--receita-soft);color:var(--receita)"><svg class="i" data-i="entra"></svg></span><div><b>Receita</b><span>Alga</span></div></div>
+          <div class="sem-item"><span class="selo" style="background:var(--despesa-soft);color:var(--despesa)"><svg class="i" data-i="sai"></svg></span><div><b>Despesa</b><span>Coral</span></div></div>
+          <div class="sem-item"><span class="selo" style="background:var(--alerta-soft);color:var(--alerta)"><svg class="i" data-i="alerta"></svg></span><div><b>Alerta</b><span>Âmbar</span></div></div>
+          <div class="sem-item"><span class="selo" style="background:var(--investe-soft);color:var(--investe)"><svg class="i" data-i="cresce"></svg></span><div><b>Investimento</b><span>Água</span></div></div>
+          <div class="sem-item"><span class="selo" style="background:var(--neutro-soft);color:var(--neutro)"><svg class="i" data-i="lista"></svg></span><div><b>Neutro</b><span>Ardósia</span></div></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Tipografia</h2>
+        <p>SF Pro para ler, SF Pro Rounded para dinheiro. Os números arredondados são o toque de humor, como na Carteira e no Fitness da Apple, e separam valor de texto sem precisar de cor.</p>
+        <div class="tipos">
+          <div class="tipo"><span style="font-family:var(--font-valor);font-size:50px;line-height:56px;font-weight:700;letter-spacing:-.02em">3.482,15</span><small>Saldo, Rounded 50/56 bold</small></div>
+          <div class="tipo"><span style="font-size:34px;line-height:41px;font-weight:700;letter-spacing:-.02em">Novembro</span><small>Título grande, 34/41 bold</small></div>
+          <div class="tipo"><span style="font-size:17px;line-height:22px;font-weight:600">Gastos por categoria</span><small>Título de seção, 17/22 semibold</small></div>
+          <div class="tipo"><span style="font-size:16px;line-height:21px;font-weight:500">Mercado do bairro</span><small>Corpo, 16/21 medium</small></div>
+          <div class="tipo"><span style="font-size:13px;line-height:18px;color:var(--ink-2)">Cai R$ 880 no dia 30</span><small>Apoio, 13/18 regular</small></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Vidro só onde se navega</h2>
+        <p>Três níveis, todos na camada de controles. O conteúdo (cartões, listas, valores) fica em superfície opaca, para o dinheiro ser sempre legível.</p>
+        <div class="vidros">
+          <figure><div class="vidro-demo"><div class="vidro vidro--claro">Vidro claro</div></div>
+            <figcaption><b>Claro</b>Botões sobre o saldo. Quase transparente, deixa a água aparecer.</figcaption></figure>
+          <figure><div class="vidro-demo"><div class="vidro" style="color:var(--ink)">Vidro regular</div></div>
+            <figcaption><b>Regular</b>Barra de abas, folhas e menus. Desfoca o que rola por baixo.</figcaption></figure>
+          <figure><div class="vidro-demo"><div class="vidro vidro--tinta">Vidro tingido</div></div>
+            <figcaption><b>Tingido</b>Uma ação principal por tela: o botão de lançar.</figcaption></figure>
+        </div>
+      </section>
+
+      <section>
+        <h2>Movimento nesta tela</h2>
+        <p>Um momento ensaiado ao abrir (a água sobe, o saldo conta, a barra se desenha). O resto só responde ao seu toque. Com "Reduzir movimento" ligado, tudo vira uma troca de opacidade de 150 ms e a onda fica parada.</p>
+        <div class="tabela"><table>
+          <tr><th>Animação</th><th>Duração</th><th>Curva</th><th>Gatilho</th></tr>
+          <tr><td>Água sobe</td><td>1100 ms</td><td>Mola viva (rigidez 260, amortecimento 18)</td><td>Abrir o Início ou trocar o mês</td></tr>
+          <tr><td>Saldo contando</td><td>900 ms</td><td>Desaceleração cúbica</td><td>Junto com a água</td></tr>
+          <tr><td>Barra de categorias</td><td>430 ms, 55 ms entre fatias</td><td>Mola ágil (380, 32)</td><td>250 ms depois de abrir</td></tr>
+          <tr><td>Lente da aba</td><td>770 ms</td><td>Mola viva</td><td>Tocar numa aba</td></tr>
+          <tr><td>Botão afunda</td><td>430 ms</td><td>Mola ágil, escala 0,94</td><td>Encostar o dedo</td></tr>
+          <tr><td>Olhinho</td><td>200 ms</td><td>Linear, desfoque e opacidade</td><td>Tocar no olhinho</td></tr>
+          <tr><td>Maré</td><td>10 s e 16 s, contínua</td><td>Linear</td><td>Sempre, exceto com movimento reduzido</td></tr>
+        </table></div>
+      </section>
+
+      <section>
+        <h2>Decisões que peço para você confirmar</h2>
+        <ul class="decisoes">
+          <li><b>Manrope sai, SF Pro entra.</b> É a fonte do sistema no iPhone e no Mac, então não baixa nada e respeita o tamanho de texto do aparelho.</li>
+          <li><b>A onda recortada no topo vira o nível de água.</b> A identidade BlueFin (barbatana, Abismo, Atum, Água) fica; a linha d'água passa a mostrar um dado.</li>
+          <li><b>Investimento passa de âmbar para Água,</b> e o âmbar fica só para alerta (fatura vencendo). Hoje os dois dividiriam a mesma cor.</li>
+          <li><b>O + sai do meio da barra</b> e vira um botão de vidro tingido ao lado dela, no padrão do iOS 26.</li>
+          <li><b>As cores das categorias não mudam.</b> São as mesmas já validadas por script.</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ícones: traço no estilo do Lucide, que o app já usa */
+const ICONES = {
+  casa: 'M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
+  lista: 'M4 6h16M4 12h16M4 18h10',
+  cresce: 'M3 17l6-6 4 4 8-8M15 7h6v6',
+  ajustes: 'M4 6h10M18 6h2M14 6a2 2 0 1 0 4 0a2 2 0 1 0-4 0M4 12h2M10 12h10M6 12a2 2 0 1 0 4 0a2 2 0 1 0-4 0M4 18h8M16 18h4M12 18a2 2 0 1 0 4 0a2 2 0 1 0-4 0',
+  olho: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6',
+  olhoFechado: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6M4 4l16 16',
+  baixo: 'M6 9l6 6 6-6',
+  mais: 'M12 5v14M5 12h14',
+  entra: 'M17 7 7 17M7 8v9h9',
+  sai: 'M7 17 17 7M8 7h9v9',
+  alerta: 'M12 4 2.5 20h19zM12 10v4M12 17.2v.01',
+  carrinho: 'M3 4h2l2.4 11h10.2L20 7H6M9 20a.5.5 0 1 0 0-.01M17 20a.5.5 0 1 0 0-.01',
+  carro: 'M5 16v-5l2-5h10l2 5v5M3 16h18M7 16v2M17 16v2M7.5 12.5h.01M16.5 12.5h.01',
+  garfo: 'M7 3v18M5 3v5a2 2 0 0 0 4 0V3M17 3c-2 2-3 4-3 7h3zM17 10v11',
+  nota: 'M3 7h18v10H3zM12 10a2 2 0 1 0 0 4a2 2 0 1 0 0-4',
+};
+const desenha = (el, nome) => { el.setAttribute('viewBox', '0 0 24 24'); el.setAttribute('aria-hidden', 'true'); el.innerHTML = `<path d="${ICONES[nome]}"/>`; };
+document.querySelectorAll('svg[data-i]').forEach((el) => desenha(el, el.dataset.i));
+
+/* molas de verdade: resolve a equação e entrega como linear() para o CSS */
+function mola(rigidez, amortecimento) {
+  const w0 = Math.sqrt(rigidez), z = Math.min(amortecimento / (2 * w0), 0.999), wd = w0 * Math.sqrt(1 - z * z);
+  const dur = 6.9 / (z * w0), pts = [];
+  for (let i = 0; i <= 48; i++) {
+    const t = (i / 48) * dur;
+    pts.push((1 - Math.exp(-z * w0 * t) * (Math.cos(wd * t) + ((z * w0) / wd) * Math.sin(wd * t))).toFixed(4));
+  }
+  pts[48] = '1';
+  return { curva: `linear(${pts.join(',')})`, ms: Math.round(dur * 1000) };
+}
+if (CSS.supports('transition-timing-function', 'linear(0, 1)')) {
+  for (const [nome, k, c] of [['agil', 380, 32], ['viva', 260, 18], ['calma', 170, 24]]) {
+    const m = mola(k, c);
+    document.documentElement.style.setProperty(`--mola-${nome}`, m.curva);
+    document.documentElement.style.setProperty(`--t-${nome}`, m.ms + 'ms');
+  }
+}
+
+/* gastos por categoria */
+const CATS = [['Moradia', 'moradia', 165000], ['Mercado', 'mercado', 74230], ['Alimentação', 'alimentacao', 41890], ['Transporte', 'transporte', 23640], ['Lazer', 'lazer', 18900], ['Saúde', 'saude', 9625]];
+const total = CATS.reduce((s, c) => s + c[2], 0);
+const brl = (centavos) => (centavos / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+document.getElementById('barra').innerHTML = CATS.map(([, k, v], n) => `<i style="flex:${v};background:var(--cat-${k});--n:${n}"></i>`).join('');
+document.getElementById('cats').innerHTML = CATS.map(([nome, k, v]) =>
+  `<button class="cat pressiona" aria-label="${nome}, R$ ${brl(v)}. Ver lançamentos"><span class="ponto" style="background:var(--cat-${k})"></span><span class="nome">${nome}</span><span class="pct">${Math.round((v / total) * 100)}%</span><span class="v" data-dinheiro>${brl(v)}</span></button>`).join('');
+
+/* abertura: água sobe, saldo conta, barra se desenha */
+const iphone = document.getElementById('iphone'), sobrou = document.getElementById('sobrou');
+const calmo = matchMedia('(prefers-reduced-motion: reduce)');
+let quadro;
+function abrir() {
+  cancelAnimationFrame(quadro);
+  iphone.classList.remove('ligado');
+  void iphone.offsetWidth;
+  iphone.classList.add('ligado');
+  const alvo = 348215;
+  if (calmo.matches || escondido) { sobrou.textContent = escondido ? '••••' : brl(alvo); return; }
+  const t0 = performance.now();
+  (function passo(t) {
+    const p = Math.min((t - t0) / 900, 1);
+    sobrou.textContent = brl(Math.round(alvo * (1 - Math.pow(1 - p, 3))));
+    if (p < 1) quadro = requestAnimationFrame(passo);
+  })(t0);
+}
+
+/* olhinho */
+let escondido = false;
+const olho = document.getElementById('olho');
+olho.addEventListener('click', () => {
+  escondido = !escondido;
+  olho.setAttribute('aria-pressed', escondido);
+  olho.setAttribute('aria-label', escondido ? 'Mostrar valores' : 'Esconder valores');
+  desenha(olho.querySelector('svg'), escondido ? 'olhoFechado' : 'olho');
+  cancelAnimationFrame(quadro);
+  document.querySelectorAll('[data-dinheiro]').forEach((el) => {
+    const alvo = el.querySelector('#sobrou') || el;
+    if (escondido) { alvo.dataset.real = alvo === sobrou ? brl(348215) : alvo.textContent; alvo.textContent = alvo.textContent.startsWith('R$') ? 'R$ ••••' : '••••'; }
+    else alvo.textContent = alvo.dataset.real;
+  });
+});
+
+/* os botões do topo são vidro claro sobre o saldo e vidro regular sobre o conteúdo */
+const rolagem = document.querySelector('.rolagem'), doTopo = document.querySelectorAll('.topo-fixo button');
+rolagem.addEventListener('scroll', () => doTopo.forEach((el) => el.classList.toggle('vidro--claro', rolagem.scrollTop < 300)), { passive: true });
+
+/* abas */
+const nav = document.querySelector('.abas nav');
+nav.querySelectorAll('button').forEach((b, n) => b.addEventListener('click', () => {
+  nav.querySelector('[aria-current]').removeAttribute('aria-current');
+  b.setAttribute('aria-current', 'page');
+  nav.style.setProperty('--aba', n);
+}));
+
+/* o iPhone inteiro cabe na janela: encolhe em telas baixas */
+const palco = document.querySelector('.palco');
+function cabe() {
+  const lado = matchMedia('(min-width: 901px)').matches;
+  const z = Math.min(1, (document.querySelector('.pagina').clientWidth - 72) / 393, lado ? (innerHeight - 72) / 852 : 1);
+  iphone.style.zoom = z; palco.style.maxWidth = 393 * z + 'px';
+  document.querySelector('.duas').style.gridTemplateColumns = lado ? `${393 * z}px minmax(0, 1fr)` : '';
+}
+addEventListener('resize', cabe); cabe();
+
+/* tema */
+document.querySelectorAll('[data-tema]').forEach((b) => b.addEventListener('click', () => {
+  document.documentElement.dataset.theme = b.dataset.tema;
+  document.querySelectorAll('[data-tema]').forEach((o) => o.setAttribute('aria-pressed', o === b));
+}));
+document.getElementById('repetir').addEventListener('click', abrir);
+requestAnimationFrame(abrir);
+</script>
+</body>
+</html>

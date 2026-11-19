@@ -48,8 +48,9 @@ export interface DoBanco {
 }
 
 /** O que o app já registra de outro jeito: pagamento de fatura, transferência para si mesmo e investimento. */
-const FICA_DE_FORA = /credit card payment|same person transfer|investment|fixed income|variable income|pension|savings/i;
-const FATURA = /\b(PAGAMENTO|PGTO|PAG)\.?\s+(DE\s+|DA\s+)?FATURA/i;
+// Pagamento de fatura não entra aqui: a categoria "Credit card payment" da Pluggy errou em compras de verdade.
+const FICA_DE_FORA = /same person transfer|investment|fixed income|variable income|pension|savings/i;
+const FATURA = /\b(PAGAMENTO|PGTO|PAGTO|PAG)\.?\s+(DE\s+|DA\s+)?FAT(URA)?\b/i;
 
 const semAcento = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 const titulo = (s: string) =>

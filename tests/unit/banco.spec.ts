@@ -75,7 +75,13 @@ test.describe('Open Finance: ler a transação do banco', () => {
   test('fica de fora o que já está no app de outro jeito: fatura, transferência para si mesmo e investimento', () => {
     expect(lerTransacao('BANK', t({ description: 'PAGAMENTO FATURA C6', amount: -1234.56, operationType: 'PAGAMENTO_FATURA' }))).toBeNull();
     expect(lerTransacao('BANK', t({ description: 'PGTO FATURA CARTAO', amount: -100 }))).toBeNull();
-    expect(lerTransacao('BANK', t({ description: 'X', amount: -100, category: 'Credit card payment' }))).toBeNull();
+    expect(lerTransacao('BANK', t({ description: 'PGTO FAT CARTAO C6', amount: -100 }))).toBeNull();
+    // A categoria "Credit card payment" da Pluggy sozinha não tira nada: ela errou em compras de verdade (19/11/2026).
+    expect(lerTransacao('BANK', t({ description: 'PADARIA REAL', amount: -8.5, category: 'Credit card payment' }))).toMatchObject({
+      tipo: 'despesa',
+      forma: 'debito',
+      valor: 850,
+    });
     expect(lerTransacao('BANK', t({ description: 'PIX ENVIADO IAGO', amount: -100, category: 'Same person transfer - PIX' }))).toBeNull();
     expect(lerTransacao('BANK', t({ description: 'CDB C6', amount: -100, category: 'Fixed Income Investment' }))).toBeNull();
     expect(lerTransacao('BANK', t({ description: 'X', amount: 0 }))).toBeNull();
