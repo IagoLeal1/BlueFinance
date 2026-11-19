@@ -56,7 +56,7 @@ export function EsqueletoInicio() {
 export function EsqueletoLista({ titulo }: { titulo: string }) {
   return (
     <div role="status" aria-label="Carregando" className="grid gap-3">
-      <h1 className="mt-2 text-[28px] leading-[34px] font-extrabold tracking-tight">{titulo}</h1>
+      <h1 className="mt-2 text-[28px] leading-[34px] font-bold tracking-tight">{titulo}</h1>
       <Bloco className="h-[46px] rounded-md" />
       <Linhas n={5} />
     </div>

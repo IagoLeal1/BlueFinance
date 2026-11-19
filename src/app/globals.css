@@ -6,6 +6,58 @@
 /* O tema escuro segue o ajuste do iPhone (prefers-color-scheme), como no design kit. */
 @custom-variant dark (@media (prefers-color-scheme: dark));
 
+/* Movimento (design-preview: tabela de movimento do Design System). As molas vêm de tokens.css. */
+@theme {
+  --animate-agua-sobe: agua-sobe 1100ms var(--ease-viva) both;
+  --animate-mare: mare 10s linear infinite;
+  --animate-mare-lenta: mare 16s linear infinite reverse;
+  --animate-aparece: aparece 150ms linear both;
+  --animate-aparece-depois: aparece 400ms 500ms both;
+  --animate-desenha: desenha var(--t-agil) var(--ease-agil) both;
+  --animate-chega: chega var(--t-viva) var(--ease-viva) both;
+  --animate-tela-entra: tela-entra var(--t-agil) var(--ease-agil) both;
+  --animate-tela-empurra: tela-empurra var(--t-calma) var(--ease-calma) both;
+
+  @keyframes agua-sobe {
+    from {
+      transform: translateY(110%);
+    }
+  }
+  @keyframes mare {
+    to {
+      transform: translateX(-25%);
+    }
+  }
+  @keyframes aparece {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes desenha {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  @keyframes chega {
+    from {
+      opacity: 0;
+      transform: translateY(-14px) scale(0.95);
+    }
+  }
+  @keyframes tela-entra {
+    from {
+      opacity: 0;
+      transform: translateX(28px);
+    }
+  }
+  @keyframes tela-empurra {
+    from {
+      opacity: 0;
+      transform: translateX(72px);
+    }
+  }
+}
+
 /* Variáveis do shadcn/ui apontando para os tokens do design kit (design/project/tokens.json). */
 :root {
   --background: var(--bg);

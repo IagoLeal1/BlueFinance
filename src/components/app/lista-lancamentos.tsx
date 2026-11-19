@@ -77,7 +77,7 @@ function LinhaPagamentoFatura({ f, aPagar }: { f: PagamentoFatura; aPagar: boole
         </span>
         <span className="min-w-0 flex-1">
           <span className="block truncate font-semibold">Fatura {f.cartao}</span>
-          <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">
+          <span className="block text-[13px] leading-[18px] text-muted-foreground">
             {aPagar ? `Crédito · vence ${diaCurto(`${f.vence}T12:00:00-03:00`)}` : `Crédito · fatura de ${nomeDoMes(f.mesFatura)}`}
           </span>
         </span>
@@ -191,12 +191,12 @@ export function ListaLancamentos({
       {!categoria && noVr && vr && (
         <section aria-label="Saldo do VR" className="flex items-center justify-between gap-3 cartao p-4">
           <div>
-            <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">Saldo do VR</p>
-            <p className="text-[22px] leading-7 font-extrabold font-valor tabular-nums">
+            <p className="text-[13px] leading-[18px] text-muted-foreground">Saldo do VR</p>
+            <p className="text-[22px] leading-7 font-bold font-valor tabular-nums">
               <Privado>{formatBRL(vr.saldo)}</Privado>
             </p>
           </div>
-          <p className="text-right text-[13px] leading-[18px] font-semibold text-muted-foreground">
+          <p className="text-right text-[13px] leading-[18px] text-muted-foreground">
             Próximo depósito
             <br />
             <span className="font-valor tabular-nums">{formatBRL(vr.valorMensal)}</span> · {diaCurto(`${vr.proximo}T12:00:00-03:00`)}
@@ -231,7 +231,7 @@ export function ListaLancamentos({
       {extrato === 'credito' && faturasVisiveis.map((f) => (
         <section key={f.id} aria-label={`Fatura ${f.nome}`} className="cartao px-4 pt-3 pb-1">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="flex items-center gap-2 text-[15px] font-extrabold">
+            <h2 className="flex items-center gap-2 text-[15px] font-bold">
               <CreditCard className="size-[18px] text-muted-foreground" aria-hidden />
               Fatura {f.nome}
             </h2>

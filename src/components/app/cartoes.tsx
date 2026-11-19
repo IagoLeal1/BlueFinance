@@ -50,7 +50,7 @@ function SheetCartao({ cartao, gatilho }: { cartao?: Cartao; gatilho: React.Reac
           <Label>Dia que a fatura fecha</Label>
           <Stepper valor={dia} min={1} max={31} onChange={setDia} rotulo={(d) => `dia ${d}`} grupo="Dia que a fatura fecha" />
           <input type="hidden" name="dia_fechamento" value={dia} />
-          <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
+          <p className="text-[13px] leading-[18px] text-muted-foreground">
             Está no app do banco. Compras a partir desse dia vão para a fatura seguinte.
           </p>
         </div>
@@ -97,9 +97,9 @@ function SheetCartao({ cartao, gatilho }: { cartao?: Cartao; gatilho: React.Reac
 export function Cartoes({ cartoes }: { cartoes: Cartao[] }) {
   return (
     <section aria-label="Cartões de crédito" className="cartao px-4 pt-3 pb-1">
-      <h2 className="text-lg font-bold">Cartões de crédito</h2>
+      <h2 className="text-[17px] leading-[22px] font-semibold">Cartões de crédito</h2>
       {cartoes.length === 0 && (
-        <p className="py-2 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+        <p className="py-2 text-[13px] leading-[18px] text-muted-foreground">
           Cadastre seu cartão para lançar compras no crédito e parceladas.
         </p>
       )}
@@ -115,7 +115,7 @@ export function Cartoes({ cartoes }: { cartoes: Cartao[] }) {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-bold">{c.nome}</span>
-                    <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">
+                    <span className="block text-[13px] leading-[18px] text-muted-foreground">
                       Fecha dia {c.diaFechamento} · vence dia {c.diaVencimento}
                     </span>
                   </span>

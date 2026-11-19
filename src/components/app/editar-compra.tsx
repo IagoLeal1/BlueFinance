@@ -132,7 +132,7 @@ export function LinhaCompra({
           ) : (
             <>
               <input type="hidden" name="parcelas" value={1} />
-              <p className="rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+              <p className="rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
                 Vira um gasto só de {formatBRL(centavos)} em {diaCurto(dataDoDia(dia))}.
               </p>
             </>

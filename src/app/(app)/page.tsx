@@ -80,8 +80,8 @@ async function ResumoDoMes({ searchParams }: { searchParams: PageProps<'/'>['sea
       {lancamentos.length > 0 && (
         <section aria-label="Últimos" className="cartao px-4 pt-3 pb-1">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold">Últimos</h2>
-            <Link href={listaDoMes} className="text-sm font-bold text-primary">
+            <h2 className="text-[17px] leading-[22px] font-semibold">Últimos</h2>
+            <Link href={listaDoMes} className="text-[15px] font-medium text-primary">
               Ver todos
             </Link>
           </div>
@@ -94,11 +94,11 @@ async function ResumoDoMes({ searchParams }: { searchParams: PageProps<'/'>['sea
       )}
       {lancamentos.length === 0 && (
         <section className="cartao p-5 text-center">
-          <p className="font-bold">Nenhum lançamento ainda.</p>
-          <p className="mt-1 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+          <p className="text-[17px] font-semibold">Nenhum lançamento ainda.</p>
+          <p className="mt-1 text-[13px] leading-[18px] text-muted-foreground">
             Toque em + ou aperte o Botão de Ação do iPhone para lançar sem abrir o app.
           </p>
-          <Link href="/ajustes" className="mt-2 inline-block text-sm font-bold text-primary">
+          <Link href="/ajustes" className="mt-2 inline-block text-[15px] font-medium text-primary">
             Como configurar o Botão de Ação
           </Link>
         </section>

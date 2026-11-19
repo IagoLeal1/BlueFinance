@@ -29,7 +29,7 @@ export function BottomSheet({
         >
           <div className="mx-auto h-[5px] w-9 rounded-full bg-border" />
           <div className="flex items-center justify-between">
-            <DrawerTitle className="text-lg font-bold">{titulo}</DrawerTitle>
+            <DrawerTitle className="text-[17px] leading-[22px] font-semibold">{titulo}</DrawerTitle>
             <DrawerClose render={<Button type="button" size="icon" variant="ghost" aria-label="Fechar" />}>
               <X aria-hidden />
             </DrawerClose>

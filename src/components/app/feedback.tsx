@@ -62,7 +62,7 @@ export function FeedbackProvider({ children }: { children: React.ReactNode }) {
                   setAviso(null);
                   fazer();
                 }}
-                className="ml-auto min-h-11 font-extrabold underline underline-offset-[3px]"
+                className="ml-auto min-h-11 font-bold underline underline-offset-[3px]"
               >
                 {aviso.acao.rotulo}
               </button>

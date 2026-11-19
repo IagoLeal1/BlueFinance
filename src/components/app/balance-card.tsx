@@ -1,12 +1,20 @@
-import { ArrowDownLeft, ArrowUpRight, PiggyBank } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, TrendingUp } from 'lucide-react';
 import { formatBRL, formatReais } from '@/domain/money';
 import type { ResumoDoMes } from '@/domain/summary';
-import { LinhaDagua } from './marca';
+import { ContagemValor } from './contagem-valor';
+import { NivelAgua } from './nivel-agua';
 import { Privado } from './privado';
 
+/** A parte do que entrou que ainda está na conta (sobrou ÷ entrou), entre 0 e 100%. */
+export function nivelDoMes({ sobrou, entrou }: Pick<ResumoDoMes, 'sobrou' | 'entrou'>): number {
+  if (entrou <= 0) return 0;
+  return Math.max(0, Math.min(100, Math.round((sobrou / entrou) * 100)));
+}
+
 /**
- * Topo do Início (design kit: Identidade A · BlueFin): título e saldo sobre o degradê Abismo → Atum,
- * de ponta a ponta da tela, com a linha d'água no pé; Entrou, Saiu e Investiu logo abaixo.
+ * Topo do Início (design-preview: .heroi): o degradê Abismo → Atum de ponta a ponta, com o título, o saldo
+ * que conta ao abrir e o nível de água, que sobe até a parte do que entrou que ainda está na conta, com a
+ * barbatana na linha d'água. Entrou, Saiu e Investiu ficam dentro do topo, sobre a água.
  */
 export function BalanceCard({
   resumo,
@@ -20,32 +28,43 @@ export function BalanceCard({
   /** "Depois da fatura do C6bank (dia 11): R$ …" — quando há fatura do mês ainda a pagar. */
   depois?: { texto: string; valor: number };
 }) {
+  const pct = nivelDoMes(resumo);
   const stats = [
-    { rotulo: 'Entrou', valor: resumo.entrou, Icone: ArrowDownLeft, cor: 'text-positive' },
-    { rotulo: 'Saiu', valor: resumo.saiu, Icone: ArrowUpRight, cor: 'text-negative' },
-    { rotulo: 'Investiu', valor: resumo.investiu, Icone: PiggyBank, cor: 'text-invest' },
+    { rotulo: 'Entrou', valor: resumo.entrou, Icone: ArrowDownLeft },
+    { rotulo: 'Saiu', valor: resumo.saiu, Icone: ArrowUpRight },
+    { rotulo: 'Investiu', valor: resumo.investiu, Icone: TrendingUp },
   ];
   return (
-    <section aria-label={`Resumo de ${nomeMes}`} className="grid gap-3">
-      <div className="relative -mx-4 -mt-[max(env(safe-area-inset-top),16px)] bg-linear-to-br from-hero to-hero-end px-4 pt-[calc(max(env(safe-area-inset-top),16px)+8px)] pb-11 text-on-hero">
+    <section
+      aria-label={`Resumo de ${nomeMes}`}
+      className="relative -mx-4 -mt-[max(env(safe-area-inset-top),16px)] min-h-[calc(max(env(safe-area-inset-top),16px)+372px)] overflow-hidden rounded-b-xl bg-[linear-gradient(160deg,var(--hero)_10%,var(--hero-end))] px-5 pt-[calc(max(env(safe-area-inset-top),16px)+6px)] pb-[88px] text-on-hero"
+    >
+      <div className="relative z-[2]">
         {topo}
-        <p className="mt-5 text-[13px] leading-[18px] font-semibold text-on-hero/80">Sobrou em {nomeMes}</p>
-        <p className="mt-1 text-[40px] leading-[44px] font-extrabold tracking-[-0.02em] font-valor tabular-nums"><Privado>{formatBRL(resumo.sobrou)}</Privado></p>
+        <p className="mt-[26px] text-[15px] leading-5 font-medium text-white/82">Sobrou na conta</p>
+        <p className="mt-0.5 font-valor text-[50px] leading-[56px] font-bold tracking-[-0.02em] tabular-nums">
+          <Privado>
+            <ContagemValor centavos={resumo.sobrou} />
+          </Privado>
+        </p>
         {depois && (
-          <p className="mt-1.5 text-[13px] leading-[18px] font-semibold text-on-hero/80">
-            {depois.texto}: <Privado>{formatBRL(depois.valor)}</Privado>
+          <p className="mt-1.5 text-sm leading-[19px] font-medium">
+            {depois.texto}:{' '}
+            <b className="font-valor font-semibold tabular-nums">
+              <Privado>{formatBRL(depois.valor)}</Privado>
+            </b>
           </p>
         )}
-        <LinhaDagua className="absolute inset-x-0 -bottom-px h-6 w-full text-background" />
       </div>
-      <div className="grid grid-cols-3 gap-2">
-        {stats.map(({ rotulo, valor, Icone, cor }) => (
-          <div key={rotulo} role="group" aria-label={rotulo} className="rounded-md cartao p-3">
-            <p aria-hidden className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
-              <Icone className={`size-3.5 ${cor}`} aria-hidden />
+      <NivelAgua pct={pct} rotulo={resumo.entrou > 0 ? `${pct}% do que entrou` : undefined} />
+      <div className="absolute inset-x-2 bottom-3 z-[2] grid grid-cols-3">
+        {stats.map(({ rotulo, valor, Icone }) => (
+          <div key={rotulo} role="group" aria-label={rotulo} className="px-3 not-first:border-l not-first:border-white/22">
+            <p aria-hidden className="flex items-center gap-[5px] text-[13px] leading-[18px] font-medium">
+              <Icone className="size-[15px]" aria-hidden />
               {rotulo}
             </p>
-            <p className="mt-0.5 text-base font-extrabold font-valor tabular-nums">
+            <p className="mt-0.5 font-valor text-lg leading-6 font-bold tabular-nums">
               <Privado mascara="••••">{formatReais(valor)}</Privado>
             </p>
           </div>

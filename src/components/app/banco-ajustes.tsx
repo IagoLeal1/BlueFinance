@@ -58,10 +58,10 @@ export function BancoAjustes({ banco }: { banco: BancoConectado | null }) {
   const ultima = banco?.atualizadoEm ?? banco?.buscadoEm ?? null;
   return (
     <section aria-label="Banco (Open Finance)" className="grid gap-3 cartao p-4">
-      <h2 className="text-lg font-bold">Banco (Open Finance)</h2>
+      <h2 className="text-[17px] leading-[22px] font-semibold">Banco (Open Finance)</h2>
       {!banco ? (
         <>
-          <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
+          <p className="text-[13px] leading-[18px] text-muted-foreground">
             Conecte o banco pelo Meu Pluggy: uma vez por dia ele confere o que você lançou e traz o que faltou, de hoje em diante.
           </p>
           <FormularioDeConexao deNovo={false} />
@@ -74,7 +74,7 @@ export function BancoAjustes({ banco }: { banco: BancoConectado | null }) {
             </span>
             <div className="min-w-0 flex-1">
               <p className="truncate font-bold">{banco.instituicao || 'Banco'}</p>
-              <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
+              <p className="text-[13px] leading-[18px] text-muted-foreground">
                 {banco.contas ? `${banco.contas} · pelo Meu Pluggy` : 'pelo Meu Pluggy'}
               </p>
             </div>
@@ -93,7 +93,7 @@ export function BancoAjustes({ banco }: { banco: BancoConectado | null }) {
               <FormularioDeConexao deNovo />
             </>
           )}
-          <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+          <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
             <Info className="mt-px size-4 shrink-0" aria-hidden />
             <span>
               O banco atualiza uma vez por dia, sozinho. O que você lança pelo Atalho continua entrando na hora; quando o banco chega, ele confere.

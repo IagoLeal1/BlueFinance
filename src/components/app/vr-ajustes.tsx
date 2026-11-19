@@ -35,7 +35,7 @@ export function ConfigurarVr({ vr }: { vr: VrEditavel | null }) {
       </span>
       <span className="min-w-0 flex-1">
         <span className="block truncate font-bold">VR</span>
-        <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">
+        <span className="block text-[13px] leading-[18px] text-muted-foreground">
           {formatBRL(vr.valorMensal)} todo dia {vr.dia} · saldo {formatBRL(vr.saldo)}
         </span>
       </span>
@@ -74,7 +74,7 @@ export function ConfigurarVr({ vr }: { vr: VrEditavel | null }) {
           <Label>Dia que cai</Label>
           <Stepper valor={dia} min={1} max={31} onChange={setDia} rotulo={(d) => `dia ${d}`} grupo="Dia que cai" />
           <input type="hidden" name="dia" value={dia} />
-          <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">Em mês mais curto, cai no último dia.</p>
+          <p className="text-[13px] leading-[18px] text-muted-foreground">Em mês mais curto, cai no último dia.</p>
         </div>
         <div className="grid gap-0">
           <p aria-hidden className="text-center text-[13px] leading-[18px] font-bold text-muted-foreground">
@@ -82,7 +82,7 @@ export function ConfigurarVr({ vr }: { vr: VrEditavel | null }) {
           </p>
           <AmountInput nome="saldo" rotulo="Saldo de hoje" centavos={saldo} onChange={setSaldo} />
         </div>
-        <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+        <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
           <Repeat className="mt-px size-4 shrink-0" aria-hidden />
           <span>
             Todo dia {dia} entram <b className="text-foreground">{formatBRL(valor)}</b> no VR. O que sobra passa para o mês seguinte. Se o
@@ -104,14 +104,14 @@ export function ConfigurarVr({ vr }: { vr: VrEditavel | null }) {
 
   return (
     <section aria-label="Vale-refeição" className="cartao px-4 pt-3 pb-1">
-      <h2 className="text-lg font-bold">Vale-refeição</h2>
+      <h2 className="text-[17px] leading-[22px] font-semibold">Vale-refeição</h2>
       {vr ? (
         <ul>
           <li>{sheet}</li>
         </ul>
       ) : (
         <>
-          <p className="py-2 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+          <p className="py-2 text-[13px] leading-[18px] text-muted-foreground">
             Um segundo saldo, separado da conta: o depósito cai sozinho todo mês, e o gasto pago com VR sai só dele.
           </p>
           {sheet}

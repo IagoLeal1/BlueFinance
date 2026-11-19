@@ -40,7 +40,7 @@ function NotaFatura({ cartao, parcelas, dataCompra, edicao }: { cartao: Cartao; 
   const dia = Number(diaDe(dataCompra).slice(8));
   const porque = `(o ${cartao.nome} fecha dia ${cartao.diaFechamento}; ${edicao ? `comprado dia ${dia}` : `hoje é ${dia}`})`;
   return (
-    <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+    <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
       <CalendarDays className="mt-px size-4 shrink-0" aria-hidden />
       {parcelas > 1 ? (
         <span>
@@ -123,7 +123,7 @@ export function CamposCredito({
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="font-bold">Todo mês</p>
-            <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">Assinatura: repete na fatura até você parar.</p>
+            <p className="text-[13px] leading-[18px] text-muted-foreground">Assinatura: repete na fatura até você parar.</p>
           </div>
           <button
             type="button"
@@ -143,7 +143,7 @@ export function CamposCredito({
       )}
       {todoMes ? (
         cartao && (
-          <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+          <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
             <Repeat className="mt-px size-4 shrink-0" aria-hidden />
             <span>
               Cai todo mês a partir da fatura de <b className="text-foreground">{nomeDoMes(mesDaFatura(dataCompra, cartao.diaFechamento))}</b>.

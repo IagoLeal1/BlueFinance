@@ -44,7 +44,7 @@ export function LinhaDepositoVr({ l, previsto }: { l: LancamentoListado; previst
       >
         <form action={salvar} className="grid gap-4">
           <input type="hidden" name="id" value={l.id} />
-          <p className="text-center text-[13px] leading-[18px] font-semibold text-muted-foreground">
+          <p className="text-center text-[13px] leading-[18px] text-muted-foreground">
             {mes.charAt(0).toUpperCase() + mes.slice(1)} · caiu dia {Number(dia.slice(8))}
           </p>
           <div className="grid gap-0">
@@ -53,7 +53,7 @@ export function LinhaDepositoVr({ l, previsto }: { l: LancamentoListado; previst
             </p>
             <AmountInput nome="valor_centavos" rotulo="Quanto caiu" centavos={centavos} onChange={setCentavos} />
           </div>
-          <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+          <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
             <Info className="mt-px size-4 shrink-0" aria-hidden />
             <span>
               {previsto !== null && (

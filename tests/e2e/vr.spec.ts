@@ -55,7 +55,7 @@ test.describe('VR (vale-refeição)', () => {
 
     await expect(page.getByRole('region', { name: 'VR', exact: true })).toContainText('R$ 379,40');
     await expect(page.getByRole('region', { name: `Resumo de ${nomeDoMes(mesAtual())}` })).toContainText('R$ 0,00');
-    await expect(page.getByRole('region', { name: 'Gastos por categoria' })).toContainText('AlimentaçãoR$ 32,90100%');
+    await expect(page.getByRole('region', { name: 'Gastos por categoria' })).toContainText('Alimentação100%R$ 32,90');
 
     await page.goto('/lancamentos');
     await expect(page.getByText('Almoço')).toBeHidden();

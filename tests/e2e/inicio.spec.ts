@@ -20,7 +20,7 @@ test.describe('tela Início', () => {
     await expect(resumo.getByRole('group', { name: 'Entrou' })).toContainText('R$ 0');
 
     const gastos = page.getByRole('region', { name: 'Gastos por categoria' });
-    await expect(gastos.getByRole('listitem').filter({ hasText: 'Mercado' })).toContainText(['R$ 32,90', '100%'].join(''));
+    await expect(gastos.getByRole('listitem').filter({ hasText: 'Mercado' })).toContainText('Mercado100%R$ 32,90');
     await expect(page.getByText('Nenhum lançamento ainda.')).toBeHidden();
   });
 

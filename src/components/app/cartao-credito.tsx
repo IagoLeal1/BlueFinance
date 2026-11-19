@@ -12,9 +12,9 @@ function LinhaFatura({ mes, meta, total, mesAtual }: { mes: string; meta: string
       <Link href={mes === mesAtual ? '/lancamentos?ver=credito' : `/lancamentos?mes=${mes}&ver=credito`} className="flex min-h-14 items-center gap-3 py-2">
         <span className="min-w-0 flex-1">
           <span className="block font-bold">Fatura de {nomeDoMes(mes)}</span>
-          <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">{meta}</span>
+          <span className="block text-[13px] leading-[18px] text-muted-foreground">{meta}</span>
         </span>
-        <span className="font-extrabold font-valor tabular-nums">
+        <span className="font-bold font-valor tabular-nums">
           <Privado>{formatBRL(total)}</Privado>
         </span>
         <ChevronRight className="size-5 text-muted-foreground" aria-hidden />
@@ -59,7 +59,7 @@ export function CartaoCredito({
     <section aria-label="Cartão de crédito" className="grid gap-1 cartao px-4 pt-3 pb-2">
       {resumos.map(({ cartao, aberta, fechada }) => (
         <div key={cartao.id}>
-          <h2 className="flex items-center gap-2 text-lg font-bold">
+          <h2 className="flex items-center gap-2 text-[17px] leading-[22px] font-semibold">
             <CreditCard className="size-5 text-muted-foreground" aria-hidden />
             {cartao.nome}
           </h2>

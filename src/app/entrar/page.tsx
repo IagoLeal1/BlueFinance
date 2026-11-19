@@ -14,7 +14,7 @@ export default function Entrar() {
             <NomeBlueFin />
             <span className="sr-only"> (BlueFinance)</span>
           </h1>
-          <p className="mt-1 text-[13px] leading-[18px] font-semibold text-muted-foreground">Rápido como o atum-azul: lança em três toques.</p>
+          <p className="mt-1 text-[13px] leading-[18px] text-muted-foreground">Rápido como o atum-azul: lança em três toques.</p>
         </div>
       </div>
       <FormEntrar />

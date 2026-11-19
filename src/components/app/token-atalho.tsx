@@ -18,7 +18,7 @@ export function TokenAtalho({ jaExiste }: { jaExiste: boolean }) {
         <div className="grid gap-2">
           <Label htmlFor="token">Token do Atalho</Label>
           <Input id="token" readOnly value={estado.token} className="font-mono text-sm" onFocus={(e) => e.currentTarget.select()} />
-          <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
+          <p className="text-[13px] leading-[18px] text-muted-foreground">
             Copie agora: por segurança ele não aparece de novo. Cole no Atalho do iPhone.
           </p>
           <Button

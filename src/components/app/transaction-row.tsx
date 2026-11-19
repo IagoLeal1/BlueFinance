@@ -45,18 +45,18 @@ export function TransactionRow({
   const Tag = como;
   const cor = COR[l.tipo];
   return (
-    <Tag className={cn('flex min-h-16 items-center gap-3 py-3', como === 'li' && 'not-first:border-t not-first:border-border', pendente && 'opacity-60')}>
+    <Tag className={cn('flex min-h-[60px] items-center gap-3 py-2.5', como === 'li' && 'not-first:border-t not-first:border-border', pendente && 'opacity-60')}>
       <span className={cn('grid size-10 shrink-0 place-items-center rounded-[12px]', fundoDoIcone(l))}>
         <IconeCategoria nome={l.icone} className="size-5" />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="truncate font-semibold">{l.descricao}</p>
-        <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
+        <p className="truncate text-base leading-[21px] font-medium">{l.descricao}</p>
+        <p className="text-[13px] leading-[18px] text-muted-foreground">
           {meta}
           {pendente && ' · salvando…'}
         </p>
       </div>
-      <span className={cn('font-bold whitespace-nowrap font-valor tabular-nums', cor.valor)}>{formatSigned(l.valor, l.tipo)}</span>
+      <span className={cn('font-valor text-base leading-[21px] font-semibold whitespace-nowrap tabular-nums', cor.valor)}>{formatSigned(l.valor, l.tipo)}</span>
     </Tag>
   );
 }

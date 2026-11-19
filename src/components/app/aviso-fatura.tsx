@@ -81,8 +81,8 @@ export function AvisoDaFatura() {
     <section aria-label="Aviso da fatura" className="grid gap-3 cartao p-4">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold">Aviso da fatura</h2>
-          <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">Um dia antes e no dia do vencimento, às 9h.</p>
+          <h2 className="text-[17px] leading-[22px] font-semibold">Aviso da fatura</h2>
+          <p className="text-[13px] leading-[18px] text-muted-foreground">Um dia antes e no dia do vencimento, às 9h.</p>
         </div>
         <button
           type="button"
@@ -100,16 +100,16 @@ export function AvisoDaFatura() {
         </button>
       </div>
       {situacao === 'instalar' && (
-        <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
+        <p className="text-[13px] leading-[18px] text-muted-foreground">
           Abra o BlueFin pelo ícone da Tela de Início (Safari › Compartilhar › Adicionar à Tela de Início). É só lá que o iPhone deixa um
           site mandar avisos.
         </p>
       )}
       {situacao === 'sem-chave' && (
-        <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">O aviso ainda não foi configurado no servidor.</p>
+        <p className="text-[13px] leading-[18px] text-muted-foreground">O aviso ainda não foi configurado no servidor.</p>
       )}
       {situacao === 'sem-suporte' && (
-        <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">Este navegador não recebe avisos.</p>
+        <p className="text-[13px] leading-[18px] text-muted-foreground">Este navegador não recebe avisos.</p>
       )}
       {ligado && (
         <>

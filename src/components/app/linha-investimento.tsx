@@ -122,7 +122,7 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
             </span>
             <span className="min-w-0 flex-1">
               <span className="block truncate font-bold">{i.nome}</span>
-              <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">{i.cdi ? percentualDoCdi(i.cdi.percentual) : i.tipo}</span>
+              <span className="block text-[13px] leading-[18px] text-muted-foreground">{i.cdi ? percentualDoCdi(i.cdi.percentual) : i.tipo}</span>
             </span>
             <span className="text-right">
               <span className="block font-bold font-valor tabular-nums">
@@ -142,30 +142,30 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
       >
         {visao === 'principal' && i.cdi ? (
           <div className="grid gap-4">
-            <p className="-mt-2 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+            <p className="-mt-2 text-[13px] leading-[18px] text-muted-foreground">
               {i.instituicao} · {percentualDoCdi(i.cdi.percentual)} · {i.cdi.isentoIr ? 'isento de IR' : 'tem IR'}
             </p>
             <div role="group" aria-label="Valor bruto hoje" className="grid justify-items-center gap-1">
               <p aria-hidden className="text-[13px] font-semibold text-muted-foreground">
                 Valor bruto hoje
               </p>
-              <p className="text-[40px] leading-[44px] font-extrabold tracking-[-0.02em] font-valor tabular-nums">{formatBRL(i.cdi.rendimento.bruto)}</p>
+              <p className="text-[40px] leading-[44px] font-bold tracking-[-0.02em] font-valor tabular-nums">{formatBRL(i.cdi.rendimento.bruto)}</p>
             </div>
             <div role="group" aria-label="Se resgatar hoje" className="grid gap-0.5 rounded-md bg-muted p-3">
               <p className="flex justify-between gap-3 font-bold">
                 <span aria-hidden>Se resgatar hoje</span>
                 <span className="font-valor tabular-nums">{formatBRL(i.cdi.rendimento.liquido)}</span>
               </p>
-              <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">{explicaLiquido(i.cdi.rendimento)}</p>
+              <p className="text-[13px] leading-[18px] text-muted-foreground">{explicaLiquido(i.cdi.rendimento)}</p>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div role="group" aria-label="Aportado" className="rounded-md bg-muted p-3">
                 <p aria-hidden className="text-xs font-semibold text-muted-foreground">Aportado</p>
-                <p className="mt-0.5 font-extrabold font-valor tabular-nums">{formatBRL(i.cdi.rendimento.aportado)}</p>
+                <p className="mt-0.5 font-bold font-valor tabular-nums">{formatBRL(i.cdi.rendimento.aportado)}</p>
               </div>
               <div role="group" aria-label="Rendeu" className="rounded-md bg-muted p-3">
                 <p aria-hidden className="text-xs font-semibold text-muted-foreground">Rendeu</p>
-                <p className={cn('mt-0.5 font-extrabold font-valor tabular-nums', i.cdi.rendimento.rendeu > 0 && 'text-positive', i.cdi.rendimento.rendeu < 0 && 'text-negative')}>
+                <p className={cn('mt-0.5 font-bold font-valor tabular-nums', i.cdi.rendimento.rendeu > 0 && 'text-positive', i.cdi.rendimento.rendeu < 0 && 'text-negative')}>
                   {i.cdi.rendimento.rendeu > 0 ? '+ ' : ''}
                   {formatBRL(i.cdi.rendimento.rendeu)}
                 </p>
@@ -180,7 +180,7 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
                   <li key={l.data + l.valor} className="flex items-center gap-3 py-2 not-first:border-t not-first:border-border">
                     <span className="min-w-0 flex-1">
                       <span className="block font-semibold">{doDia(l.data)}</span>
-                      <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">{metaDoAporte(l, i.cdi!.isentoIr)}</span>
+                      <span className="block text-[13px] leading-[18px] text-muted-foreground">{metaDoAporte(l, i.cdi!.isentoIr)}</span>
                     </span>
                     <span className="font-bold whitespace-nowrap font-valor tabular-nums">{formatBRL(l.valor)}</span>
                   </li>
@@ -218,7 +218,7 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
         ) : visao === 'ajustar' && i.cdi ? (
           <form action={salvarAjuste} className="grid gap-4">
             <input type="hidden" name="id" value={i.id} />
-            <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
+            <p className="text-[13px] leading-[18px] text-muted-foreground">
               Digite o valor que o app do banco mostra. A diferença ({formatBRL(Math.abs(centavos - i.valorAtual))}) vira rendimento e rende junto dali em diante.
             </p>
             <AmountInput nome="valor_banco" rotulo="Valor no app do banco" centavos={centavos} onChange={setCentavos} />
@@ -241,7 +241,7 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
         ) : (
           <form action={salvar} className="grid gap-4">
             <input type="hidden" name="id" value={i.id} />
-            <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
+            <p className="text-[13px] leading-[18px] text-muted-foreground">
               {i.nome} · {i.instituicao} · aportado {formatBRL(i.aportado)}
             </p>
             <AmountInput nome="valor_atual" rotulo="Valor atual" centavos={centavos} onChange={setCentavos} />

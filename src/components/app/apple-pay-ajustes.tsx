@@ -21,7 +21,7 @@ function CartaoDaCarteiraLinha({ c, opcoes }: { c: CartaoDaCarteira; opcoes: { v
         </span>
         <div className="min-w-0 flex-1">
           <p className="truncate font-bold">{c.nome}</p>
-          <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">na Carteira do iPhone</p>
+          <p className="text-[13px] leading-[18px] text-muted-foreground">na Carteira do iPhone</p>
         </div>
       </div>
       <Segmented
@@ -73,8 +73,8 @@ export function ApplePayAjustes({
   ];
   return (
     <section aria-label="Apple Pay" className="grid gap-3 cartao p-4">
-      <h2 className="text-lg font-bold">Apple Pay</h2>
-      <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
+      <h2 className="text-[17px] leading-[22px] font-semibold">Apple Pay</h2>
+      <p className="text-[13px] leading-[18px] text-muted-foreground">
         {cartoes.length === 0
           ? 'Nenhum cartão ainda: cada cartão da Carteira aparece aqui depois do primeiro pagamento.'
           : 'Cada cartão aparece aqui depois do primeiro pagamento. Escolha como ele entra.'}
@@ -98,7 +98,7 @@ export function ApplePayAjustes({
           Depois: o token do Atalho e o envio para o BlueFin (guia do projeto)
         </li>
       </ol>
-      <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+      <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
         <Info className="mt-px size-4 shrink-0" aria-hidden />
         <span>Só pega o Apple Pay (encostando o iPhone ou o Watch). Cartão físico, Pix e compra online chegam pelo banco, no dia seguinte.</span>
       </p>

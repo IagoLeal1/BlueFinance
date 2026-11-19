@@ -48,13 +48,13 @@ export function ParaConferir({
   return (
     <section aria-label="Para conferir" className="cartao px-4 pt-3 pb-1">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="flex items-center gap-2 text-[15px] font-extrabold">
+        <h2 className="flex items-center gap-2 text-[15px] font-bold">
           <Landmark className="size-[18px] text-muted-foreground" aria-hidden />
           Para conferir
         </h2>
         <span className="text-[13px] font-semibold text-muted-foreground">{applePay.length === 0 ? `${total} do banco` : total}</span>
       </div>
-      <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">{legenda}</p>
+      <p className="text-[13px] leading-[18px] text-muted-foreground">{legenda}</p>
       <ul>
         {applePay.map((l) => (
           <LinhaDoApplePay key={l.id} l={l} categorias={categorias} />
@@ -97,7 +97,7 @@ function LinhaDoApplePay({ l, categorias }: { l: ApplePayAConfirmar; categorias:
           <button type="button" className="flex w-full items-center gap-3 rounded-md text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
             <span className="min-w-0 flex-1">
               <span className="block truncate font-semibold">{l.descricao}</span>
-              <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">{meta}</span>
+              <span className="block text-[13px] leading-[18px] text-muted-foreground">{meta}</span>
             </span>
             <span className="font-bold whitespace-nowrap font-valor tabular-nums text-negative">
               <Privado>{formatSigned(l.valor, 'despesa')}</Privado>
@@ -108,10 +108,10 @@ function LinhaDoApplePay({ l, categorias }: { l: ApplePayAConfirmar; categorias:
         <form action={confirmar} className="grid gap-4">
           <input type="hidden" name="id" value={l.id} />
           <div className="grid gap-1 text-center">
-            <p className="text-[34px] leading-10 font-extrabold font-valor tabular-nums">
+            <p className="text-[34px] leading-10 font-bold font-valor tabular-nums">
               <Privado>{formatBRL(l.valor)}</Privado>
             </p>
-            <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
+            <p className="text-[13px] leading-[18px] text-muted-foreground">
               {[rotuloDoDia(l.data).split(' · ')[0], FORMA[l.forma], l.cartao, 'Apple Pay'].filter(Boolean).join(' · ')}
             </p>
           </div>
@@ -121,7 +121,7 @@ function LinhaDoApplePay({ l, categorias }: { l: ApplePayAConfirmar; categorias:
             <Input id={`descricao-applepay-${l.id}`} name="descricao" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
           </div>
           {escolhida && (
-            <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+            <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
               <Sparkles className="mt-px size-4 shrink-0" aria-hidden />
               <span>
                 Da próxima vez, <b className="text-foreground">{l.descricao}</b> entra sozinho em {escolhida.nome}.
@@ -213,7 +213,7 @@ function LinhaDoBanco({ t, categorias }: { t: ItemDoBanco; categorias: Categoria
           <button type="button" className="flex w-full items-center gap-3 rounded-md text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
             <span className="min-w-0 flex-1">
               <span className="block truncate font-semibold">{t.descricao}</span>
-              <span className="block text-[13px] leading-[18px] font-semibold text-muted-foreground">{metaDoBanco(t)}</span>
+              <span className="block text-[13px] leading-[18px] text-muted-foreground">{metaDoBanco(t)}</span>
             </span>
             {valor}
           </button>
@@ -222,10 +222,10 @@ function LinhaDoBanco({ t, categorias }: { t: ItemDoBanco; categorias: Categoria
         <form action={lancar} className="grid gap-4">
           <input type="hidden" name="id" value={t.id} />
           <div className="grid gap-1 text-center">
-            <p className="text-[34px] leading-10 font-extrabold font-valor tabular-nums">
+            <p className="text-[34px] leading-10 font-bold font-valor tabular-nums">
               <Privado>{formatBRL(t.valor)}</Privado>
             </p>
-            <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
+            <p className="text-[13px] leading-[18px] text-muted-foreground">
               {t.descricao} · {metaDoBanco(t)}
             </p>
           </div>
@@ -235,7 +235,7 @@ function LinhaDoBanco({ t, categorias }: { t: ItemDoBanco; categorias: Categoria
             <Input id={`descricao-banco-${t.id}`} name="descricao" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
           </div>
           {escolhida && t.aprende && (
-            <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+            <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
               <Sparkles className="mt-px size-4 shrink-0" aria-hidden />
               <span>
                 Da próxima vez, <b className="text-foreground">{t.descricao}</b> entra sozinho em {escolhida.nome}.
@@ -243,7 +243,7 @@ function LinhaDoBanco({ t, categorias }: { t: ItemDoBanco; categorias: Categoria
             </p>
           )}
           {!t.aprende && (
-            <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+            <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
               <Info className="mt-px size-4 shrink-0" aria-hidden />
               <span>O banco não diz o lugar desta compra, então ela não entra sozinha da próxima vez. Pelo Apple Pay ou pelo Atalho, o banco só confere.</span>
             </p>

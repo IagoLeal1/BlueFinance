@@ -87,3 +87,33 @@ test.describe('redesenho: barra de abas e topo', () => {
     await expect(menu.locator('[role="menuitem"][aria-current="page"]')).toHaveCount(1);
   });
 });
+
+test.describe('redesenho: Início', () => {
+  test('o topo mostra o nível de água (sobrou ÷ entrou) e Entrou, Saiu e Investiu sobre a água', async ({ page, usuario }) => {
+    await semearLancamentos(usuario, [
+      { tipo: 'receita', valor: 100000, categoria: 'Salário', descricao: 'Salário' },
+      { valor: 60000, categoria: 'Mercado', descricao: 'Feira' },
+    ]);
+    await entrar(page, usuario);
+    const resumo = page.getByRole('region', { name: /^Resumo de / });
+    await expect(resumo.getByText('R$ 400,00')).toBeVisible(); // o saldo conta até o valor certo
+    const etiqueta = page.getByText('40% do que entrou');
+    await expect(etiqueta).toBeVisible();
+    // Água: 76 px de base + 1,1 px por ponto percentual.
+    const altura = await etiqueta.evaluate((el) => el.closest<HTMLElement>('[style*="--pct"]')!.getBoundingClientRect().height);
+    expect(altura).toBeCloseTo(76 + 40 * 1.1, 0);
+    const topo = (await resumo.boundingBox())!;
+    for (const nome of ['Entrou', 'Saiu', 'Investiu']) {
+      const g = (await resumo.getByRole('group', { name: nome }).boundingBox())!;
+      expect(g.y + g.height).toBeLessThanOrEqual(topo.y + topo.height);
+    }
+  });
+
+  test('sem nada entrar, a água fica no pé e não há etiqueta; a barra de categorias se desenha', async ({ page, usuario }) => {
+    await semearLancamentos(usuario, [{ valor: 3290, categoria: 'Mercado', descricao: 'Feira' }]);
+    await entrar(page, usuario);
+    await expect(page.getByText(/do que entrou/)).toHaveCount(0);
+    const segmento = page.getByRole('region', { name: 'Gastos por categoria' }).getByRole('img').locator('span').first();
+    expect(await css(segmento, 'animation-name')).toBe('desenha');
+  });
+});

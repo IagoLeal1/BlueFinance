@@ -38,7 +38,7 @@ export default function Ajustes() {
       </Suspense>
       <AvisoDaFatura />
       <section aria-label="Lançar sem abrir o app" className="grid gap-3 cartao p-4">
-        <h2 className="text-lg font-bold">Lançar sem abrir o app</h2>
+        <h2 className="text-[17px] leading-[22px] font-semibold">Lançar sem abrir o app</h2>
         <ol className="grid gap-3">
           {[
             'Monte o Atalho "Gasto rápido" com o token abaixo (passo a passo no guia do projeto).',
@@ -46,7 +46,7 @@ export default function Ajustes() {
             'Aperte o botão, escolha a categoria, digite o valor e, se quiser, com o quê.',
           ].map((passo, n) => (
             <li key={n} className="grid grid-cols-[28px_1fr] items-start gap-3 text-sm font-semibold">
-              <span aria-hidden className="grid size-7 place-items-center rounded-full bg-secondary font-extrabold text-secondary-foreground">
+              <span aria-hidden className="grid size-7 place-items-center rounded-full bg-secondary font-bold text-secondary-foreground">
                 {n + 1}
               </span>
               {passo}
@@ -55,8 +55,8 @@ export default function Ajustes() {
         </ol>
       </section>
       <section aria-label="Atalho do iPhone" className="grid gap-3 cartao p-4">
-        <h2 className="text-lg font-bold">Token do Atalho</h2>
-        <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">
+        <h2 className="text-[17px] leading-[22px] font-semibold">Token do Atalho</h2>
+        <p className="text-[13px] leading-[18px] text-muted-foreground">
           O Atalho usa um token para lançar sem abrir o app. Gerar um novo desliga o anterior — use se perder o iPhone.
         </p>
         <Suspense fallback={null}>
@@ -64,7 +64,7 @@ export default function Ajustes() {
         </Suspense>
       </section>
       <section aria-label="Conta" className="grid gap-1 cartao p-4">
-        <p className="text-[13px] leading-[18px] font-semibold text-muted-foreground">Conta</p>
+        <p className="text-[13px] leading-[18px] text-muted-foreground">Conta</p>
         <Suspense fallback={null}>
           <EmailDaConta />
         </Suspense>

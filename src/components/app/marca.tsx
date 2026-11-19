@@ -25,7 +25,7 @@ export function SimboloBlueFin({ className }: { className?: string }) {
 /** "bluefin" em minúsculas, com "fin" na cor da marca. */
 export function NomeBlueFin({ className }: { className?: string }) {
   return (
-    <span className={`font-extrabold tracking-[-0.03em] ${className ?? ''}`}>
+    <span className={`font-bold tracking-[-0.03em] ${className ?? ''}`}>
       blue<span className="text-primary">fin</span>
     </span>
   );

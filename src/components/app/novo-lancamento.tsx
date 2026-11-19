@@ -247,7 +247,7 @@ export function NovoLancamento({
           )}
 
           {tipo === 'despesa' && forma === 'vr' && vr && (
-            <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+            <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
               <WalletCards className="mt-px size-4 shrink-0" aria-hidden />
               <span>
                 Sai do <b className="text-foreground">VR</b>: sobram {formatBRL(vr.saldo - centavos)}. Não mexe no Sobrou da conta.

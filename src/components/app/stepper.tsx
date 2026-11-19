@@ -18,13 +18,13 @@ export function Stepper({
   grupo?: string;
 }) {
   const botao =
-    'grid size-11 place-items-center rounded-[11px] bg-popover text-xl font-extrabold text-foreground disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring';
+    'grid size-11 place-items-center rounded-[11px] bg-popover text-xl font-bold text-foreground disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring';
   return (
     <div role={grupo ? 'group' : undefined} aria-label={grupo} className="grid grid-cols-[44px_1fr_44px] items-center gap-2 rounded-md bg-muted p-1">
       <button type="button" aria-label="Menos" className={botao} disabled={valor <= min} onClick={() => onChange(Math.max(min, valor - 1))}>
         −
       </button>
-      <span role="status" className="text-center text-lg font-extrabold font-valor tabular-nums">
+      <span role="status" className="text-center text-[17px] leading-[22px] font-semibold font-valor tabular-nums">
         {rotulo(valor)}
       </span>
       <button type="button" aria-label="Mais" className={botao} disabled={valor >= max} onClick={() => onChange(Math.min(max, valor + 1))}>

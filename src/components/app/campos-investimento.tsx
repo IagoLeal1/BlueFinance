@@ -161,7 +161,7 @@ export function CamposInvestimento({ id, inicial, investimentoId }: { id: string
             />
           </div>
           {valorPrevia !== null && (
-            <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] font-semibold text-muted-foreground">
+            <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
               <Calculator className="mt-px size-4 shrink-0" aria-hidden />
               <span>
                 Pelo CDI, hoje vale <b className="text-foreground font-valor tabular-nums">{formatBRL(valorPrevia)}</b>. Confira com o app do banco.
