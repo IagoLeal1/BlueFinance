@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BlueFin, direção visual</title>
+<title>BlueFin, protótipo</title>
 <style>
+/* BlueFin, prévia de design: tokens, materiais e componentes */
 /* ───────── Tokens ───────── */
 :root, [data-theme="light"] {
   --bg: #eef3f9;            /* Espuma */
@@ -407,28 +408,189 @@ td:first-child { font-weight: 600; white-space: nowrap; }
   .barra i { transform: none; opacity: 0; } .ligado .barra i { opacity: 1; }
   .marca-nivel { transition-delay: 0s; }
 }
+
+/* ───────── Componentes de formulário ───────── */
+.linha-campo { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; }
+.linha-campo + .linha-campo { border-top: 1px solid var(--line); }
+.linha-campo > span b { display: block; font-size: 16px; line-height: 21px; font-weight: 500; }
+.linha-campo > span span { display: block; font-size: 13px; line-height: 17px; color: var(--ink-2); }
+.valor-linha { font-family: var(--font-valor); font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.passo { display: inline-flex; align-items: center; flex: none; border-radius: 22px; background: color-mix(in srgb, var(--ink) 9%, transparent); }
+.passo button { width: 44px; height: 44px; border-radius: 50%; font-family: var(--font-valor); font-size: 22px; font-weight: 500; transition: transform var(--t-agil) var(--mola-agil); }
+.passo button:active { transform: scale(.86); }
+.passo output { min-width: 42px; text-align: center; font-family: var(--font-valor); font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.campo { width: 100%; height: 48px; padding: 0 14px; border-radius: 14px; border: 1px solid var(--line); background: color-mix(in srgb, var(--ink) 6%, transparent); font: inherit; font-size: 16px; color: var(--ink); }
+.campo::placeholder { color: var(--ink-2); opacity: 1; }
+.campo:focus { outline: 3px solid var(--brand); outline-offset: 1px; }
+.campo.erro { border-color: var(--despesa); }
+.erro-texto { display: flex; align-items: center; gap: 5px; margin-top: 6px; font-size: 13px; font-weight: 600; color: var(--despesa); }
+.folha-acoes { display: flex; align-items: center; gap: 8px; }
+.botao-apagar { min-height: 44px; padding: 0 16px; border-radius: 22px; font-size: 15px; font-weight: 600; color: var(--despesa); background: var(--despesa-soft); }
+.seg--cheio.tres { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.folha .linha-campo { min-height: 48px; }
+.folha .teclado button { height: 46px; }
+.pilha { display: grid; gap: 8px; padding: 14px 0; }
+.pilha + .pilha { border-top: 1px solid var(--line); }
+.pilha b { font-size: 16px; font-weight: 500; }
+.nota { padding: 0 6px; font-size: 13px; line-height: 18px; color: var(--ink-2); }
+.token { display: grid; gap: 4px; margin-top: 12px; padding: 12px 14px; border-radius: 14px; background: color-mix(in srgb, var(--ink) 7%, transparent); }
+.token code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+.token span { font-size: 13px; color: var(--ink-2); }
+.faixa-alerta { display: flex; gap: 10px; align-items: flex-start; color: var(--alerta); }
+.faixa-alerta svg { font-size: 20px; margin-top: 1px; }
+.faixa-alerta p { font-size: 14px; line-height: 19px; font-weight: 500; color: var(--ink); }
+.mov.toca { cursor: pointer; border-radius: 10px; }
+.chega { animation: chega var(--t-viva) var(--mola-viva) both; }
+
+/* subtelas: empurram da direita */
+.cabeca-sub { display: flex; align-items: center; gap: 12px; padding: 58px 16px 4px; }
+.cabeca-sub h1 { font-size: 28px; line-height: 34px; font-weight: 700; letter-spacing: -.02em; }
+.cabeca-sub .redondo { color: var(--ink); }
+.tela.empurra { animation: telaEmpurra var(--t-calma) var(--mola-calma) both; }
+@keyframes telaEmpurra { from { opacity: 0; transform: translateX(72px); } }
+
+/* entrar */
+.entrar { position: absolute; inset: 0; z-index: 60; display: grid; align-content: center; padding: 0 28px 60px; overflow: hidden; color: #fff;
+  background: linear-gradient(160deg, #0b1f4d 10%, #1846c8 100%); animation: some .3s both reverse; }
+@keyframes some { to { opacity: 0; } }
+.entrar .agua { transform: none; }
+.entrar form { position: relative; z-index: 2; display: grid; gap: 14px; width: 100%; max-width: 360px; margin: 0 auto; }
+.logotipo { font-size: 22px; line-height: 1; font-weight: 700; letter-spacing: -.03em; }
+.logotipo span { color: var(--agua); }
+.logotipo.grande { font-size: 44px; margin-top: -4px; }
+.entrar-frase { margin-bottom: 14px; font-size: 17px; line-height: 22px; color: rgba(255,255,255,.88); }
+.entrar label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+.campo-vidro { height: 52px; padding: 0 16px; border-radius: 16px; border: 0; font: inherit; font-size: 17px; font-weight: 400; color: #fff; background: rgba(255,255,255,.16);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 rgba(255,255,255,.4), inset 0 0 0 .5px rgba(255,255,255,.3); }
+.campo-vidro::placeholder { color: rgba(255,255,255,.72); }
+.campo-vidro:focus { outline: 3px solid #fff; outline-offset: 2px; }
+.entrar-botao { height: 54px; margin-top: 6px; border-radius: 27px; font-size: 17px; font-weight: 600; background: #fff; color: #0b1f4d; }
+
+/* estados do sistema */
+.faixa-offline { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 14px; border-radius: 16px; font-size: 14px; line-height: 19px; font-weight: 500; }
+.faixa-offline svg { font-size: 20px; color: var(--alerta); }
+.toast { display: inline-flex; align-items: center; gap: 14px; min-height: 48px; padding: 0 8px 0 18px; border-radius: 24px; font-size: 15px; font-weight: 500; }
+.toast button { min-height: 36px; padding: 0 14px; border-radius: 18px; font-size: 15px; font-weight: 600; color: var(--brand); }
+.esqueleto { border-radius: 10px; background: linear-gradient(100deg, color-mix(in srgb, var(--ink) 8%, transparent) 40%, color-mix(in srgb, var(--ink) 16%, transparent) 50%, color-mix(in srgb, var(--ink) 8%, transparent) 60%) 0 0 / 300% 100%; animation: brilho 1.6s linear infinite; }
+@keyframes brilho { from { background-position: 100% 0; } to { background-position: 0 0; } }
+
+.so-mac, .lado-topo, .mais span { display: none; }
+
+/* ───────── Mac: a mesma tela, em janela, com barra lateral de vidro ───────── */
+.iphone[data-forma="mac"] { width: 1180px; height: 760px; aspect-ratio: auto; border-radius: 18px; margin: 4px 0;
+  box-shadow: 0 0 0 1px rgba(128, 140, 160, .35), 0 30px 80px rgba(0, 0, 0, .38); }
+[data-forma="mac"] .ilha, [data-forma="mac"] .home-ind { display: none; }
+[data-forma="mac"] .so-mac, [data-forma="mac"] .lado-topo { display: block; }
+[data-forma="mac"] .mais span { display: inline; font-size: 15px; font-weight: 600; }
+[data-forma="mac"] .rolagem { left: 244px; padding: 0 20px 32px 4px; }
+[data-forma="mac"] .abas { left: 12px; top: 12px; bottom: 12px; right: auto; width: 220px; flex-direction: column; align-items: stretch; gap: 0; padding: 16px 10px 10px; border-radius: 24px;
+  background: var(--vidro-regular); -webkit-backdrop-filter: blur(26px) saturate(200%); backdrop-filter: blur(26px) saturate(200%);
+  box-shadow: inset 0 1px 0 var(--vidro-brilho), inset 0 0 0 .5px var(--vidro-borda), var(--vidro-sombra); }
+.semaforo { display: flex; gap: 8px; padding-left: 6px; }
+.semaforo i { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; }
+.semaforo i:nth-child(2) { background: #febc2e; } .semaforo i:nth-child(3) { background: #28c840; }
+[data-forma="mac"] .lado-topo .logotipo { margin: 26px 0 0 12px; }
+[data-forma="mac"] .abas nav { flex: none; height: auto; display: flex; flex-direction: column; gap: 4px; padding: 0; margin-top: 18px; border-radius: 0;
+  background: none; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
+[data-forma="mac"] .abas nav::before { display: none; }
+[data-forma="mac"] .abas nav button { flex-direction: row; justify-content: flex-start; gap: 10px; height: 44px; padding: 0 12px; font-size: 15px; line-height: 20px; letter-spacing: 0; }
+[data-forma="mac"] .abas nav button svg { font-size: 20px; }
+[data-forma="mac"] .abas .lente { top: 0; bottom: auto; left: 0; width: 100%; height: 44px; border-radius: 14px; transform: translateY(calc(var(--aba, 0) * 48px)); }
+[data-forma="mac"] .abas .mais { width: auto; height: 46px; margin-top: auto; border-radius: 23px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 20px; }
+[data-forma="mac"] .topo-fixo div { top: 18px; right: 4px; }
+[data-forma="mac"] .cabeca-tela, [data-forma="mac"] .cabeca-sub { padding: 22px 12px 4px; }
+[data-forma="mac"] .conteudo { padding: 0 12px; }
+[data-forma="mac"] .conteudo.solto { max-width: 760px; }
+.titulo-mac { font-size: 34px; line-height: 41px; font-weight: 700; letter-spacing: -.02em; }
+[data-forma="mac"] #tela-inicio { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 14px; padding: 22px 12px 0; }
+[data-forma="mac"] #tela-inicio .titulo-mac { grid-column: 1 / -1; margin-bottom: 4px; }
+[data-forma="mac"] #tela-inicio .conteudo { display: contents; }
+[data-forma="mac"] .heroi { grid-column: 1; grid-row: 2 / span 3; height: auto; min-height: 420px; padding: 26px 24px 0; border-radius: 28px; }
+[data-forma="mac"] .heroi h1 { font-size: 22px; line-height: 28px; }
+[data-forma="mac"] #cartao-vr { grid-column: 2; grid-row: 2; }
+[data-forma="mac"] #cartao-c6 { grid-column: 2; grid-row: 3; }
+[data-forma="mac"] #cartao-ultimos { grid-column: 2; grid-row: 4; }
+[data-forma="mac"] #cartao-cats { grid-column: 1 / -1; grid-row: 5; }
+[data-forma="mac"] #cats { display: grid; grid-template-columns: 1fr 1fr; column-gap: 36px; }
+[data-forma="mac"] #cats .cat { border-top: 1px solid var(--line); border-radius: 0; }
+[data-forma="mac"] .menu { top: 70px; right: 24px; }
+[data-forma="mac"] .folha { left: 50%; right: auto; top: 50%; bottom: auto; width: 400px; margin: -330px 0 0 -200px; border-radius: 32px; padding-top: 16px;
+  transform: scale(.92); opacity: 0; pointer-events: none; transition: transform var(--t-viva) var(--mola-viva), opacity .18s; }
+[data-forma="mac"].com-folha .folha { transform: none; opacity: 1; pointer-events: auto; }
+[data-forma="mac"] .pega { display: none; }
+
+@media (prefers-reduced-transparency: reduce) {
+  .vidro, .iphone .cartao, [data-forma="mac"] .abas { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--surface); }
+  .vidro--tinta { background: var(--brand); }
+  .vidro--claro { background: #24418f; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tela.empurra, .chega, .entrar, .esqueleto { animation: none; }
+  .passo button { transition: none; }
+}
+
+/* página do protótipo */
+.cena { display: grid; justify-items: center; }
+.seg a { display: inline-grid; place-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px; font-size: 15px; font-weight: 600; color: var(--brand); text-decoration: none; }
+
+/* ───────── Página do Design System ───────── */
+.notas code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .92em; }
+.temas { margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.tema-caixa { padding: 18px 18px 20px; border-radius: var(--r-lg); background: var(--bg); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+.tema-caixa h3 { font-size: 17px; font-weight: 600; }
+.grupo-cor { margin: 14px 0 8px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.cores { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.cor { display: flex; align-items: center; gap: 10px; }
+.cor i { flex: none; width: 40px; height: 40px; border-radius: 12px; box-shadow: inset 0 0 0 1px var(--line); }
+.cor b { display: block; font-size: 14px; line-height: 18px; font-weight: 600; }
+.cor span span { font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.regua { margin-top: 20px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 18px; }
+.medida { display: grid; justify-items: center; gap: 6px; font-size: 13px; color: var(--ink-2); }
+.medida i { display: block; background: color-mix(in srgb, var(--brand) 35%, transparent); border-radius: 3px; }
+.icones { margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 8px; }
+.icone { display: grid; justify-items: center; gap: 6px; padding: 14px 4px 10px; border-radius: var(--r-md); background: var(--surface); box-shadow: var(--sombra-cartao); font-size: 12px; color: var(--ink-2); }
+.icone svg { font-size: 24px; color: var(--ink); }
+.pecas { margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px 16px; }
+.peca { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; min-height: 92px; padding: 18px; border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--sombra-cartao); }
+.pecas figcaption { margin-top: 8px; font-size: 13px; line-height: 18px; color: var(--ink-2); }
+.pecas figcaption b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); }
+.molas { margin-top: 20px; display: grid; gap: 10px; }
+.mola-demo { display: grid; grid-template-columns: 180px 1fr; gap: 18px; align-items: center; padding: 14px 18px; border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--sombra-cartao); text-align: left; }
+.mola-demo b { display: block; font-size: 15px; font-weight: 600; }
+.mola-demo > span:last-child > span { font-size: 13px; line-height: 18px; color: var(--ink-2); }
+.trilho { position: relative; height: 32px; border-radius: 16px; background: color-mix(in srgb, var(--ink) 8%, transparent); }
+.trilho i { position: absolute; top: 3px; left: 3px; width: 26px; height: 26px; border-radius: 50%; background: var(--brand); }
+.mola-demo.ida .trilho i { transform: translateX(110px); }
+@media (max-width: 560px) { .mola-demo { grid-template-columns: 1fr; } .trilho { width: 180px; } }
+.indice { display: grid; gap: 12px; }
+.indice a { display: block; text-decoration: none; color: var(--ink); }
+.indice b { display: block; font-size: 19px; font-weight: 600; letter-spacing: -.01em; }
+.indice span { font-size: 15px; line-height: 21px; color: var(--ink-2); }
+.peca.vidro-demo { background: radial-gradient(60px 60px at 22% 30%, #3ccfc6 0 60%, transparent 62%), radial-gradient(70px 70px at 78% 72%, #ff9466 0 60%, transparent 62%), linear-gradient(135deg, #0b1f4d, #1846c8); }
+
 </style>
 </head>
 <body>
 <div class="pagina">
   <header class="cabeca">
     <div>
-      <h1>BlueFin, direção visual</h1>
-      <p>A paleta e as quatro abas no desenho novo. O protótipo funciona: troque de aba e de mês, filtre os lançamentos, toque no olhinho e lance um gasto pelo +. Com a sua aprovação, o resto do app segue esta linha.</p>
+      <h1>BlueFin, protótipo</h1>
+      <p>Todas as telas no desenho novo, no iPhone e no Mac. Tudo aqui responde: abas, mês, filtros, olhinho, lançar e editar gastos, investimentos e ajustes. Os dados são de exemplo.</p>
     </div>
-    <div class="controles">
+    <div class="controles" style="flex-wrap:wrap">
+      <div class="seg" role="group" aria-label="Aparelho">
+        <button data-forma-botao="iphone" aria-pressed="true">iPhone</button>
+        <button data-forma-botao="mac" aria-pressed="false">Mac</button>
+      </div>
       <div class="seg" role="group" aria-label="Tema">
         <button data-tema="dark" aria-pressed="true">Escuro</button>
         <button data-tema="light" aria-pressed="false">Claro</button>
       </div>
-      <button class="botao-texto" id="repetir">Repetir animação</button>
+      <button class="botao-texto" id="repetir">Repetir abertura</button>
     </div>
   </header>
-
-  <div class="duas">
-    <!-- ══════ Tela-chave ══════ -->
-    <div class="palco">
-      <div class="iphone" id="iphone">
+  <div class="cena">
+<div class="iphone" id="iphone" data-forma="iphone">
         <div class="ilha" aria-hidden="true"></div>
         <div class="rolagem">
           <div class="topo-fixo"><div>
@@ -437,6 +599,7 @@ td:first-child { font-weight: 600; white-space: nowrap; }
           </div></div>
 
           <div class="tela" id="tela-inicio">
+          <h1 class="so-mac titulo-mac">Início</h1>
           <section class="heroi" id="heroi" aria-label="Resumo de novembro">
             <h1 id="titulo">Novembro</h1>
             <p class="rotulo">Sobrou na conta</p>
@@ -477,13 +640,13 @@ td:first-child { font-weight: 600; white-space: nowrap; }
               </div>
             </div>
 
-            <div class="cartao bloco">
+            <div class="cartao bloco" id="cartao-cats">
               <div class="linha-titulo"><h2>Gastos por categoria</h2></div>
               <div class="barra" id="barra" role="img" aria-label="Moradia 50%, Mercado 22%, Alimentação 13%, Transporte 7%, Lazer 6%, Saúde 3%"></div>
               <div class="cats" id="cats"></div>
             </div>
 
-            <div class="cartao bloco" style="padding-bottom:4px">
+            <div class="cartao bloco" style="padding-bottom:4px" id="cartao-ultimos">
               <div class="linha-titulo"><h2>Últimos</h2><a href="#" class="link" id="ver-todos">Ver todos</a></div>
               <div style="margin-top:6px" id="ultimos">
                 <div class="mov"><span class="selo-cat" style="background:var(--cat-mercado-soft);color:var(--cat-mercado)"><svg class="i" data-i="carrinho"></svg></span>
@@ -522,7 +685,7 @@ td:first-child { font-weight: 600; white-space: nowrap; }
             <div class="conteudo solto">
               <div class="cartao bloco">
                 <p class="apoio">Investido hoje, valor bruto</p>
-                <p class="valor-grande" data-dinheiro>R$ 12.846,32</p>
+                <p class="valor-grande" data-dinheiro id="inv-total">R$ 12.846,32</p>
                 <span class="selo-bom"><svg class="i" data-i="sai"></svg><span data-dinheiro>+R$ 96,18</span> de rendimento em novembro</span>
                 <svg class="grafico" id="grafico" viewBox="0 0 320 92" preserveAspectRatio="none" role="img" aria-label="O total investido cresceu de 9,1 mil em junho para 12,8 mil em novembro">
                   <defs><linearGradient id="g-inv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--investe);stop-opacity:.32"/><stop offset="1" style="stop-color:var(--investe);stop-opacity:0"/></linearGradient></defs>
@@ -531,24 +694,8 @@ td:first-child { font-weight: 600; white-space: nowrap; }
                 </svg>
                 <div class="eixo" aria-hidden="true"><span>jun</span><span>jul</span><span>ago</span><span>set</span><span>out</span><span>nov</span></div>
               </div>
-              <div class="cartao" style="padding:2px 16px">
-                <button class="inv" aria-expanded="false"><span class="selo-cat" style="background:var(--investe-soft);color:var(--investe)"><svg class="i" data-i="cresce"></svg></span>
-                  <span class="txt"><b>CDB C6</b><span>102% do CDI</span></span>
-                  <span class="dir"><strong data-dinheiro>R$ 8.412,10</strong><span>+R$ 61,40 no mês</span></span></button>
-                <div class="detalhe"><div><dl>
-                  <div><dt>Você aportou</dt><dd data-dinheiro>R$ 8.000,00</dd></div>
-                  <div><dt>Rendimento bruto</dt><dd data-dinheiro>R$ 412,10</dd></div>
-                  <div><dt>Líquido se resgatar hoje</dt><dd data-dinheiro>R$ 8.329,68</dd></div>
-                </dl></div></div>
-                <button class="inv" aria-expanded="false"><span class="selo-cat" style="background:var(--investe-soft);color:var(--investe)"><svg class="i" data-i="cresce"></svg></span>
-                  <span class="txt"><b>LCI C6</b><span>95% do CDI, sem IR</span></span>
-                  <span class="dir"><strong data-dinheiro>R$ 4.434,22</strong><span>+R$ 34,78 no mês</span></span></button>
-                <div class="detalhe"><div><dl>
-                  <div><dt>Você aportou</dt><dd data-dinheiro>R$ 4.300,00</dd></div>
-                  <div><dt>Rendimento bruto</dt><dd data-dinheiro>R$ 134,22</dd></div>
-                  <div><dt>Líquido se resgatar hoje</dt><dd data-dinheiro>R$ 4.434,22</dd></div>
-                </dl></div></div>
-              </div>
+              <div id="inv-lista"></div>
+              <button class="botao-2 pressiona" id="novo-inv" style="width:100%">Novo investimento</button>
             </div>
           </div>
 
@@ -556,27 +703,32 @@ td:first-child { font-weight: 600; white-space: nowrap; }
             <header class="cabeca-tela"><h1>Ajustes</h1></header>
             <div class="conteudo solto">
               <div class="cartao lista-aj">
-                <button class="aj"><span class="selo-cat"><svg class="i" data-i="cartao"></svg></span><span class="txt"><b>Cartões</b><span>C6bank, fecha dia 4 e vence dia 11</span></span><svg class="i" data-i="direita"></svg></button>
-                <button class="aj"><span class="selo-cat"><svg class="i" data-i="garfo"></svg></span><span class="txt"><b>Vale-refeição</b><span>R$ 880 todo dia 30</span></span><svg class="i" data-i="direita"></svg></button>
+                <button class="aj" data-sub="cartoes"><span class="selo-cat"><svg class="i" data-i="cartao"></svg></span><span class="txt"><b>Cartões</b><span>C6bank, fecha dia 4 e vence dia 11</span></span><svg class="i" data-i="direita"></svg></button>
+                <button class="aj" data-sub="vr"><span class="selo-cat"><svg class="i" data-i="garfo"></svg></span><span class="txt"><b>Vale-refeição</b><span>R$ 880 todo dia 30</span></span><svg class="i" data-i="direita"></svg></button>
               </div>
               <p class="grupo-rotulo">Lançar sozinho</p>
               <div class="cartao lista-aj">
-                <button class="aj"><span class="selo-cat"><svg class="i" data-i="banco"></svg></span><span class="txt"><b>Banco</b><span>Conectado, buscou hoje às 7h</span></span><svg class="i" data-i="direita"></svg></button>
-                <button class="aj"><span class="selo-cat"><svg class="i" data-i="toque"></svg></span><span class="txt"><b>Apple Pay</b><span>3 cartões da Carteira</span></span><svg class="i" data-i="direita"></svg></button>
-                <button class="aj"><span class="selo-cat"><svg class="i" data-i="raio"></svg></span><span class="txt"><b>Atalho do iPhone</b><span>Token ativo</span></span><svg class="i" data-i="direita"></svg></button>
+                <button class="aj" data-sub="banco"><span class="selo-cat"><svg class="i" data-i="banco"></svg></span><span class="txt"><b>Banco</b><span>Conectado, buscou hoje às 7h</span></span><svg class="i" data-i="direita"></svg></button>
+                <button class="aj" data-sub="applepay"><span class="selo-cat"><svg class="i" data-i="toque"></svg></span><span class="txt"><b>Apple Pay</b><span>3 cartões da Carteira</span></span><svg class="i" data-i="direita"></svg></button>
+                <button class="aj" data-sub="atalho"><span class="selo-cat"><svg class="i" data-i="raio"></svg></span><span class="txt"><b>Atalho do iPhone</b><span>Token ativo</span></span><svg class="i" data-i="direita"></svg></button>
               </div>
               <p class="grupo-rotulo">Neste iPhone</p>
               <div class="cartao lista-aj">
                 <button class="aj" role="switch" aria-checked="true" id="sw-aviso"><span class="selo-cat"><svg class="i" data-i="sino"></svg></span><span class="txt"><b>Aviso da fatura</b><span>Na véspera e no dia, às 9h</span></span><span class="interruptor"></span></button>
                 <button class="aj" role="switch" aria-checked="true" id="sw-tema"><span class="selo-cat"><svg class="i" data-i="lua"></svg></span><span class="txt"><b>Tema escuro</b><span>O claro também é validado</span></span><span class="interruptor"></span></button>
               </div>
-              <div class="cartao lista-aj"><button class="aj sair">Sair da conta</button></div>
+              <div class="cartao lista-aj"><button class="aj sair" id="sair">Sair da conta</button></div>
               <div class="rodape"><svg class="barbatana" viewBox="0 0 22 20" aria-hidden="true" style="fill:var(--brand);margin:0"><path d="M1 20C6 14 10 6 12 0c5 6 8 13 9 20z"/></svg>BlueFin</div>
             </div>
           </div>
         </div>
 
+          <div class="tela" id="tela-sub" hidden>
+            <header class="cabeca-sub"><button class="redondo vidro pressiona" id="voltar" aria-label="Voltar para Ajustes"><svg class="i" data-i="esquerda"></svg></button><h1 id="sub-titulo"></h1></header>
+            <div class="conteudo solto" id="sub-corpo"></div>
+          </div>
         <div class="abas">
+          <div class="lado-topo"><div class="semaforo" aria-hidden="true"><i></i><i></i><i></i></div><p class="logotipo">blue<span>fin</span></p></div>
           <nav class="vidro" aria-label="Principal">
             <span class="lente" aria-hidden="true"></span>
             <button aria-current="page"><svg class="i" data-i="casa"></svg>Início</button>
@@ -584,7 +736,7 @@ td:first-child { font-weight: 600; white-space: nowrap; }
             <button><svg class="i" data-i="cresce"></svg>Investir</button>
             <button><svg class="i" data-i="ajustes"></svg>Ajustes</button>
           </nav>
-          <button class="mais vidro vidro--tinta pressiona" id="mais" aria-label="Lançar gasto"><svg class="i" data-i="mais" style="stroke-width:2.4"></svg></button>
+          <button class="mais vidro vidro--tinta pressiona" id="mais" aria-label="Lançar gasto"><svg class="i" data-i="mais" style="stroke-width:2.4"></svg><span>Novo gasto</span></button>
         </div>
         <div class="menu vidro vidro--forte" id="menu" role="menu" aria-label="Mês" inert>
           <button role="menuitemradio" data-mes="out" aria-checked="false">Outubro <svg class="i" data-i="certo"></svg></button>
@@ -593,108 +745,84 @@ td:first-child { font-weight: 600; white-space: nowrap; }
         <div class="veu" id="veu"></div>
         <section class="folha vidro vidro--forte" id="folha" role="dialog" aria-modal="true" aria-label="Novo gasto" inert>
           <div class="pega" aria-hidden="true"></div>
-          <div class="folha-topo"><h2>Novo gasto</h2><button class="redondo pressiona" id="fechar" aria-label="Fechar"><svg class="i" data-i="fecha"></svg></button></div>
+          <div class="folha-topo"><h2 id="f-titulo">Novo gasto</h2><span class="folha-acoes"><button class="botao-apagar pressiona" id="f-apagar" hidden>Apagar</button><button class="redondo pressiona" id="fechar" aria-label="Fechar"><svg class="i" data-i="fecha"></svg></button></span></div>
           <p class="folha-valor vazio" id="fvalor" aria-live="polite">R$ 0,00</p>
+          <input class="campo" id="f-nome" aria-label="Com o quê" placeholder="Com o quê? (opcional)" autocomplete="off">
           <div class="chips" id="chips" role="group" aria-label="Categoria"></div>
           <div class="seg seg--cheio" id="formas" role="group" aria-label="Como pagou"></div>
+          <div class="linha-campo" id="f-parcelas" hidden><span><b>Em quantas vezes</b><span id="f-parcela-txt">À vista</span></span><div class="passo" id="f-vezes" data-min="1" data-max="24" data-v="1" data-suf="x"><button data-d="-1" aria-label="Menos">−</button><output>1x</output><button data-d="1" aria-label="Mais">+</button></div></div>
+          <div class="seg seg--cheio tres" id="f-quando" data-escolha role="group" aria-label="Quando" hidden><button aria-pressed="true">Hoje</button><button aria-pressed="false">Ontem</button><button aria-pressed="false">Anteontem</button></div>
+          <div class="seg seg--cheio tres" id="f-tipo" data-escolha role="group" aria-label="Tipo" hidden><button aria-pressed="true">CDB</button><button aria-pressed="false">LCI</button><button aria-pressed="false">LCA</button></div>
+          <div class="linha-campo" id="f-cdi" hidden><span><b>Quanto rende</b><span>Em % do CDI</span></span><div class="passo" id="f-cdi-passo" data-min="80" data-max="130" data-v="100" data-suf="%"><button data-d="-1" aria-label="Menos">−</button><output>100%</output><button data-d="1" aria-label="Mais">+</button></div></div>
           <div class="teclado" id="teclado"></div>
           <button class="lancar vidro vidro--tinta pressiona" id="lancar" disabled>Lançar gasto</button>
         </section>
+        <div class="entrar" id="tela-entrar" hidden>
+          <div class="agua" style="height:24%"><svg class="onda onda--fundo" viewBox="0 0 800 20" preserveAspectRatio="none" aria-hidden="true"><path class="corpo" d="M0 10Q50 0 100 10T200 10T300 10T400 10T500 10T600 10T700 10T800 10V20H0z"/></svg>
+            <svg class="onda onda--frente" viewBox="0 0 800 20" preserveAspectRatio="none" aria-hidden="true"><path class="corpo" d="M0 10Q50 2 100 10T200 10T300 10T400 10T500 10T600 10T700 10T800 10V20H0z"/><path class="crista" d="M0 10Q50 2 100 10T200 10T300 10T400 10T500 10T600 10T700 10T800 10"/></svg></div>
+          <form id="form-entrar" novalidate>
+            <svg class="barbatana" viewBox="0 0 22 20" aria-hidden="true" style="width:44px;height:40px;margin:0"><path d="M1 20C6 14 10 6 12 0c5 6 8 13 9 20z"/></svg>
+            <p class="logotipo grande">blue<span>fin</span></p>
+            <p class="entrar-frase">Seu dinheiro, na linha d'água.</p>
+            <label>E-mail<input class="campo-vidro" type="email" autocomplete="off" placeholder="voce@exemplo.com"></label>
+            <label>Senha<input class="campo-vidro" type="password" autocomplete="off"></label>
+            <button class="entrar-botao pressiona">Entrar</button>
+          </form>
+        </div>
+
+        <template id="sub-cartoes">
+          <div class="cartao bloco">
+            <div class="linha-titulo"><h2>C6bank</h2><span class="selo-bom" style="margin:0">Em uso</span></div>
+            <div class="linha-campo"><span><b>Fecha no dia</b><span>Compra a partir daí vai para a fatura seguinte</span></span><div class="passo" data-min="1" data-max="31" data-v="4" data-suf=""><button data-d="-1" aria-label="Menos">−</button><output>4</output><button data-d="1" aria-label="Mais">+</button></div></div>
+            <div class="linha-campo"><span><b>Vence no dia</b><span>É quando o dinheiro sai da conta</span></span><div class="passo" data-min="1" data-max="31" data-v="11" data-suf=""><button data-d="-1" aria-label="Menos">−</button><output>11</output><button data-d="1" aria-label="Mais">+</button></div></div>
+          </div>
+          <button class="botao-2 pressiona" data-acao="cartao" style="width:100%">Adicionar cartão</button>
+        </template>
+        <template id="sub-vr">
+          <div class="cartao bloco">
+            <div class="linha-campo"><span><b>Cai por mês</b><span>O previsto; cada depósito pode ser acertado no extrato</span></span><strong class="valor-linha" data-dinheiro>R$ 880,00</strong></div>
+            <div class="linha-campo"><span><b>No dia</b><span>Em mês curto, cai no último dia</span></span><div class="passo" data-min="1" data-max="31" data-v="30" data-suf=""><button data-d="-1" aria-label="Menos">−</button><output>30</output><button data-d="1" aria-label="Mais">+</button></div></div>
+            <div class="linha-campo"><span><b>Saldo de hoje</b><span>Mudou? A diferença vira um acerto no extrato</span></span><strong class="valor-linha" data-dinheiro id="sub-vr-saldo">R$ 412,60</strong></div>
+          </div>
+          <button class="botao-2 pressiona" data-acao="saldo-vr" style="width:100%">Corrigir o saldo de hoje</button>
+        </template>
+        <template id="sub-banco">
+          <div class="cartao bloco">
+            <div class="linha-titulo"><h2>Meu Pluggy</h2><span class="selo-bom" style="margin:0">Conectado</span></div>
+            <p class="apoio" style="margin-top:6px" data-status>Buscou hoje às 7h e trouxe 2 lançamentos.</p>
+            <button class="botao-1 pressiona" data-acao="buscar" style="width:100%;margin-top:12px">Buscar agora</button>
+          </div>
+          <div class="cartao bloco">
+            <div class="linha-campo"><span><b>Importa desde</b><span>O que já estava no app não é tocado</span></span><strong class="valor-linha">17 nov</strong></div>
+            <div class="linha-campo"><span><b>Autorização</b><span>Só leitura, renovada uma vez por ano</span></span><strong class="valor-linha">até nov 2027</strong></div>
+          </div>
+        </template>
+        <template id="sub-applepay">
+          <div class="cartao bloco">
+            <p class="apoio">Cada cartão da Carteira entra aqui no primeiro pagamento. Diga como ele deve ser lançado.</p>
+            <div class="pilha"><b>C6 Débito</b><div class="seg seg--cheio tres" data-escolha><button aria-pressed="true">Débito</button><button aria-pressed="false">Crédito</button><button aria-pressed="false">VR</button></div></div>
+            <div class="pilha"><b>C6 Crédito</b><div class="seg seg--cheio tres" data-escolha><button aria-pressed="false">Débito</button><button aria-pressed="true">Crédito</button><button aria-pressed="false">VR</button></div></div>
+            <div class="pilha"><b>Alelo Refeição</b><div class="seg seg--cheio tres" data-escolha><button aria-pressed="false">Débito</button><button aria-pressed="false">Crédito</button><button aria-pressed="true">VR</button></div></div>
+          </div>
+          <p class="nota">Lugar novo entra em Outros, marcado "a confirmar". Confirmar ensina o lugar.</p>
+        </template>
+        <template id="sub-atalho">
+          <div class="cartao bloco">
+            <div class="linha-titulo"><h2>Token pessoal</h2><span class="selo-bom" style="margin:0">Ativo</span></div>
+            <p class="apoio" style="margin-top:6px">Fica no primeiro passo do Atalho. Gerar outro desliga o anterior.</p>
+            <div class="token" hidden><code>bf_exemplo_9F2K7QX4</code><span>Aparece só esta vez. Copie agora.</span></div>
+            <button class="botao-2 pressiona" data-acao="token" style="width:100%;margin-top:12px">Gerar outro token</button>
+          </div>
+          <div class="cartao bloco faixa-alerta"><svg class="i" data-i="alerta"></svg><p>Não compartilhe o Atalho como está. Duplique, apague o token da cópia e compartilhe a cópia.</p></div>
+        </template>
         <div class="home-ind" aria-hidden="true"></div>
       </div>
-    </div>
 
-    <!-- ══════ Notas ══════ -->
-    <div class="notas">
-      <section>
-        <h2>A ideia: o saldo é um nível de água</h2>
-        <p>O logotipo do BlueFin é uma barbatana cortando a linha d'água. No Início novo essa linha existe de verdade: a água sobe até a parte do que entrou que ainda está na conta. Gastou, o nível desce. O vidro fica por cima, nos controles, como se você olhasse o mar por uma escotilha.</p>
-      </section>
-
-      <section>
-        <h2>Paleta</h2>
-        <p>As cores da marca continuam. Muda o papel de cada uma: o azul fundo vira profundidade, a Água vira a linha viva do saldo.</p>
-        <div class="amostras">
-          <div class="amostra"><i style="background:#0b1f4d"></i><div><b>Abismo</b><span>#0b1f4d. Fundo do saldo, o ponto mais fundo.</span></div></div>
-          <div class="amostra"><i style="background:#1846c8"></i><div><b>Atum</b><span>#1846c8 no claro, #7aa5ff no escuro. Ação e seleção.</span></div></div>
-          <div class="amostra"><i style="background:#3ccfc6"></i><div><b>Água</b><span>#3ccfc6. A linha d'água e o que cresce.</span></div></div>
-          <div class="amostra"><i style="background:#eef3f9"></i><div><b>Espuma</b><span>#eef3f9. Fundo do tema claro.</span></div></div>
-          <div class="amostra"><i style="background:#050b18"></i><div><b>Abissal</b><span>#050b18. Fundo do tema escuro.</span></div></div>
-        </div>
-        <div class="sem">
-          <div class="sem-item"><span class="selo" style="background:var(--receita-soft);color:var(--receita)"><svg class="i" data-i="entra"></svg></span><div><b>Receita</b><span>Alga</span></div></div>
-          <div class="sem-item"><span class="selo" style="background:var(--despesa-soft);color:var(--despesa)"><svg class="i" data-i="sai"></svg></span><div><b>Despesa</b><span>Coral</span></div></div>
-          <div class="sem-item"><span class="selo" style="background:var(--alerta-soft);color:var(--alerta)"><svg class="i" data-i="alerta"></svg></span><div><b>Alerta</b><span>Âmbar</span></div></div>
-          <div class="sem-item"><span class="selo" style="background:var(--investe-soft);color:var(--investe)"><svg class="i" data-i="cresce"></svg></span><div><b>Investimento</b><span>Água</span></div></div>
-          <div class="sem-item"><span class="selo" style="background:var(--neutro-soft);color:var(--neutro)"><svg class="i" data-i="lista"></svg></span><div><b>Neutro</b><span>Ardósia</span></div></div>
-        </div>
-      </section>
-
-      <section>
-        <h2>Tipografia</h2>
-        <p>SF Pro para ler, SF Pro Rounded para dinheiro. Os números arredondados são o toque de humor, como na Carteira e no Fitness da Apple, e separam valor de texto sem precisar de cor.</p>
-        <div class="tipos">
-          <div class="tipo"><span style="font-family:var(--font-valor);font-size:50px;line-height:56px;font-weight:700;letter-spacing:-.02em">3.482,15</span><small>Saldo, Rounded 50/56 bold</small></div>
-          <div class="tipo"><span style="font-size:34px;line-height:41px;font-weight:700;letter-spacing:-.02em">Novembro</span><small>Título grande, 34/41 bold</small></div>
-          <div class="tipo"><span style="font-size:17px;line-height:22px;font-weight:600">Gastos por categoria</span><small>Título de seção, 17/22 semibold</small></div>
-          <div class="tipo"><span style="font-size:16px;line-height:21px;font-weight:500">Mercado do bairro</span><small>Corpo, 16/21 medium</small></div>
-          <div class="tipo"><span style="font-size:13px;line-height:18px;color:var(--ink-2)">Cai R$ 880 no dia 30</span><small>Apoio, 13/18 regular</small></div>
-        </div>
-      </section>
-
-      <section>
-        <h2>Vidro em tudo que flutua</h2>
-        <p>Quatro níveis. É vidro o que fica por cima de outra coisa: a barra de abas e sua lente, os botões do topo, a etiqueta do nível, a folha de novo gasto e agora todos os cartões, que são o mesmo vidro fosco sobre um fundo com profundidade. Entrou, Saiu e Investiu saíram do cartão e ficam dentro do saldo, debaixo d'água.</p>
-        <div class="vidros">
-          <figure><div class="vidro-demo"><div class="vidro vidro--claro">Vidro claro</div></div>
-            <figcaption><b>Claro</b>Botões sobre o saldo. Quase transparente, deixa a água aparecer.</figcaption></figure>
-          <figure><div class="vidro-demo"><div class="vidro" style="color:var(--ink)">Vidro regular</div></div>
-            <figcaption><b>Regular</b>Barra de abas, folhas e menus. Desfoca o que rola por baixo.</figcaption></figure>
-          <figure><div class="vidro-demo"><div class="vidro vidro--tinta">Vidro tingido</div></div>
-            <figcaption><b>Tingido</b>Uma ação principal por tela: o botão de lançar.</figcaption></figure>
-          <figure><div class="vidro-demo"><div class="vidro vidro--forte" style="color:var(--ink)">Vidro forte</div></div>
-            <figcaption><b>Forte</b>Folhas e cartões. Mais fosco, porque leva texto e números.</figcaption></figure>
-        </div>
-      </section>
-
-      <section>
-        <h2>Movimento</h2>
-        <p>Um momento ensaiado ao abrir (a água sobe, o saldo conta, a barra se desenha). O resto só responde ao seu toque. Com "Reduzir movimento" ligado, tudo vira uma troca de opacidade de 150 ms e a onda fica parada.</p>
-        <div class="tabela"><table>
-          <tr><th>Animação</th><th>Duração</th><th>Curva</th><th>Gatilho</th></tr>
-          <tr><td>Água sobe</td><td>1100 ms</td><td>Mola viva (rigidez 260, amortecimento 18)</td><td>Abrir o Início ou trocar o mês</td></tr>
-          <tr><td>Saldo contando</td><td>900 ms</td><td>Desaceleração cúbica</td><td>Junto com a água</td></tr>
-          <tr><td>Barra de categorias</td><td>430 ms, 55 ms entre fatias</td><td>Mola ágil (380, 32)</td><td>250 ms depois de abrir</td></tr>
-          <tr><td>Lente da aba</td><td>770 ms no meio; 620 ms nas pontas</td><td>Mola viva no meio. Nas pontas, mola calma sem passar da borda: a lente bate e amassa 16% por 520 ms</td><td>Tocar numa aba</td></tr>
-          <tr><td>Troca de tela</td><td>430 ms</td><td>Mola ágil, desliza 28 pt no sentido da aba</td><td>Tocar numa aba</td></tr>
-          <tr><td>Menu do mês</td><td>770 ms; opacidade 160 ms</td><td>Mola viva, cresce a partir do botão</td><td>Tocar em "nov"</td></tr>
-          <tr><td>Extrato (Débito, Crédito, VR)</td><td>430 ms</td><td>Mola ágil no polegar</td><td>Tocar numa aba do extrato</td></tr>
-          <tr><td>Gráfico de investimentos</td><td>1000 ms; área 500 ms depois</td><td>Desaceleração</td><td>Abrir Investir</td></tr>
-          <tr><td>Detalhe do investimento</td><td>620 ms</td><td>Mola calma</td><td>Tocar no investimento</td></tr>
-          <tr><td>Interruptor</td><td>770 ms</td><td>Mola viva</td><td>Tocar na linha</td></tr>
-          <tr><td>Folha de novo gasto</td><td>620 ms; véu 250 ms</td><td>Mola calma (170, 24)</td><td>Tocar no +, fechar ou lançar</td></tr>
-          <tr><td>Gasto lançado</td><td>770 ms</td><td>Mola viva: a linha chega, o saldo conta para baixo, a água desce</td><td>Tocar em Lançar gasto</td></tr>
-          <tr><td>Botão afunda</td><td>430 ms</td><td>Mola ágil, escala 0,94</td><td>Encostar o dedo</td></tr>
-          <tr><td>Olhinho</td><td>200 ms</td><td>Linear, desfoque e opacidade</td><td>Tocar no olhinho</td></tr>
-          <tr><td>Maré</td><td>10 s e 16 s, contínua</td><td>Linear</td><td>Sempre, exceto com movimento reduzido</td></tr>
-        </table></div>
-      </section>
-
-      <section>
-        <h2>Decisões que peço para você confirmar</h2>
-        <ul class="decisoes">
-          <li><b>Manrope sai, SF Pro entra.</b> É a fonte do sistema no iPhone e no Mac, então não baixa nada e respeita o tamanho de texto do aparelho.</li>
-          <li><b>A onda recortada no topo vira o nível de água.</b> A identidade BlueFin (barbatana, Abismo, Atum, Água) fica; a linha d'água passa a mostrar um dado.</li>
-          <li><b>Investimento passa de âmbar para Água,</b> e o âmbar fica só para alerta (fatura vencendo). Hoje os dois dividiriam a mesma cor.</li>
-          <li><b>O + sai do meio da barra</b> e vira um botão de vidro tingido ao lado dela, no padrão do iOS 26. Para as quatro abas caberem iguais, o rótulo desce para 9 pt.</li>
-          <li><b>As cores das categorias não mudam.</b> São as mesmas já validadas por script.</li>
-        </ul>
-      </section>
-    </div>
   </div>
 </div>
 
 <script>
+/* BlueFin, prévia de design: ícones e molas compartilhados entre o protótipo e o Design System */
 /* ícones: traço no estilo do Lucide, que o app já usa */
 const ICONES = {
   casa: 'M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
@@ -720,6 +848,7 @@ const ICONES = {
   raio: 'M13 3 5 13h6l-1 8 8-10h-6z',
   sino: 'M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0',
   lua: 'M20 14A8 8 0 1 1 10 4a6.5 6.5 0 0 0 10 10z',
+  esquerda: 'M15 6l-6 6 6 6', copia: 'M9 9h11v11H9zM5 15V4h11', semSinal: 'M3 9a14 14 0 0 1 18 0M6.5 12.5a9 9 0 0 1 11 0M10 16a4 4 0 0 1 4 0M12 19.5v.01M4 4l16 16',
 };
 const $ = (id) => document.getElementById(id);
 const desenha = (el, nome) => { el.setAttribute('viewBox', '0 0 24 24'); el.setAttribute('aria-hidden', 'true'); el.innerHTML = `<path d="${ICONES[nome]}"/>`; };
@@ -743,6 +872,7 @@ if (CSS.supports('transition-timing-function', 'linear(0, 1)')) {
     document.documentElement.style.setProperty(`--t-${nome}`, m.ms + 'ms');
   }
 }
+
 
 /* dados de exemplo, em centavos. Linha: [dia, nome, categoria, valor, detalhe] */
 const META = {
@@ -778,6 +908,17 @@ const brl = (c) => (c / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2,
 const reais = (c) => Math.round(c / 100).toLocaleString('pt-BR');
 const gasto = (r) => (r[3] < 0 && r[2] !== 'fatura' && r[2] !== 'investe' ? -r[3] : 0);
 
+
+const INV = [
+  { nome: 'CDB C6', taxa: '102% do CDI', valor: 841210, aportado: 800000, mesR: 6140, ir: true },
+  { nome: 'LCI C6', taxa: '95% do CDI, sem IR', valor: 443422, aportado: 430000, mesR: 3478, ir: false },
+];
+const iphone = $('iphone'), sobrou = $('sobrou'), rolagem = document.querySelector('.rolagem');
+const calmo = matchMedia('(prefers-reduced-motion: reduce)');
+const mac = () => iphone.dataset.forma === 'mac';
+const anima = (el, c) => { el.classList.remove('entra', 'empurra', 'chega'); void el.offsetWidth; el.classList.add(c); };
+const rolaTopo = (top = 0) => rolagem.scrollTo({ top, behavior: calmo.matches ? 'auto' : 'smooth' });
+
 /* olhinho: cada valor guarda o texto real e mostra a máscara quando escondido */
 let escondido = false;
 const mascara = (t) => (/^[+−-]?R\$/.test(t) ? 'R$ ••••' : '••••');
@@ -787,9 +928,11 @@ const registra = (raiz) => raiz.querySelectorAll('[data-dinheiro]').forEach((el)
 });
 const poe = (el, t) => { el.dataset.real = t; el.textContent = escondido ? mascara(t) : t; };
 
-const linha = ([dia, nome, k, c, extra], nova) => {
-  const [f, s] = cores(k), cls = c > 0 ? 'entrou' : k === 'fatura' ? '' : 'saiu';
-  return `<div class="mov${nova ? ' nova' : ''}"><span class="selo-cat" style="background:${s};color:${f}"><svg class="i" data-i="${META[k].i}"></svg></span>
+const editavel = (r) => mes === 'nov' && (CATS.includes(r[2]) || r[2] === 'vr');
+const linha = (r, nova, aba, i) => {
+  const [dia, nome, k, c, extra] = r, [f, s] = cores(k), cls = c > 0 ? 'entrou' : k === 'fatura' ? '' : 'saiu';
+  const toque = aba && editavel(r) ? ` role="button" tabindex="0" data-aba="${aba}" data-i="${i}"` : '';
+  return `<div class="mov${nova ? ' nova' : ''}${toque ? ' toca' : ''}"${toque}><span class="selo-cat" style="background:${s};color:${f}"><svg class="i" data-i="${META[k].i}"></svg></span>
     <span class="txt"><b>${nome}</b><span>${META[k].nome}${extra ? ', ' + extra : ''}</span></span><span class="dir"><strong class="${cls}">${c > 0 ? '+' : '−'}${brl(Math.abs(c))}</strong><span>${dia}</span></span></div>`;
 };
 
@@ -809,16 +952,16 @@ function pintaUltimos(nova) {
 }
 function pintaLista() {
   const aba = ['debito', 'credito', 'vr'][extrato], m = M.nome.toLowerCase(), atual = mes === 'nov';
-  const linhas = M.lanc[aba].filter((r) => !filtro || r[2] === filtro), soma = linhas.reduce((s, r) => s + gasto(r), 0);
+  const linhas = M.lanc[aba].map((r, i) => [r, i]).filter(([r]) => !filtro || r[2] === filtro), soma = linhas.reduce((s, [r]) => s + gasto(r), 0);
   const onde = ['no débito', 'no crédito', 'no VR'][extrato];
   $('aba-rotulo').textContent = filtro ? `${META[filtro].nome} ${onde} em ${m}`
     : [`Saiu da conta em ${m}`, atual ? 'Fatura aberta do C6bank, fecha dia 4' : `Compras no crédito em ${m}`, atual ? 'Saldo do vale-refeição' : `Gasto no VR em ${m}`][extrato];
   poe($('aba-valor'), 'R$ ' + brl(!filtro && atual && extrato === 2 ? X.vr : soma));
-  $('lista').innerHTML = linhas.length ? `<div class="cartao" style="padding:4px 16px">${linhas.map((r) => linha(r)).join('')}</div>`
+  $('lista').innerHTML = linhas.length ? `<div class="cartao" style="padding:4px 16px">${linhas.map(([r, i]) => linha(r, false, aba, i)).join('')}</div>`
     : `<div class="vazio"><svg viewBox="0 0 132 56" aria-hidden="true"><path d="M0 40Q16.5 32 33 40T66 40T99 40T132 40" fill="none" stroke="var(--agua)" stroke-width="2.5" stroke-linecap="round"/><path d="M56 40c5-6 9-14 11-22 5 7 8 14 9 22z" fill="var(--brand)"/><path d="M8 50h116" stroke="var(--line)" stroke-width="2" stroke-linecap="round"/></svg>
       <b>Mar calmo por aqui</b><span>Nenhum gasto de ${META[filtro].nome} ${onde} em ${m}.</span></div>`;
   desenhaTudo($('lista'));
-  $('lanc-mes').textContent = M.nome;
+  $('lanc-mes').textContent = M.nome + (atual ? '. Toque num gasto para editar.' : '');
   $('conferir') && ($('conferir').hidden = !atual);
   $('extratos').style.setProperty('--i', extrato);
   $('extratos').querySelectorAll('button').forEach((b, n) => b.setAttribute('aria-pressed', n === extrato));
@@ -827,9 +970,28 @@ function pintaLista() {
 $('filtro').innerHTML = `<button class="chip pressiona">Todas</button>` + CATS.map((k) => `<button class="chip pressiona" data-k="${k}"><span class="ponto" style="background:var(--cat-${k})"></span>${META[k].nome}</button>`).join('');
 $('filtro').querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { filtro = b.dataset.k || null; pintaLista(); }));
 $('extratos').querySelectorAll('button').forEach((b, n) => b.addEventListener('click', () => { extrato = n; pintaLista(); }));
+function abreLinha(el) {
+  const aba = el.dataset.aba, r = M.lanc[aba][el.dataset.i];
+  if (r[2] === 'vr') return abreFolha('valor', { titulo: 'Quanto caiu de VR?', acao: 'Acertar depósito', valor: r[3], ok: (v) => { X.vr += v - r[3]; r[3] = v; repinta(MESES.nov.sobrou); } });
+  abreFolha('editar', { linha: r, aba });
+}
+$('lista').addEventListener('click', (e) => { const el = e.target.closest('.toca'); if (el) abreLinha(el); });
+$('lista').addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.classList.contains('toca')) abreLinha(e.target); });
 
-const iphone = $('iphone'), sobrou = $('sobrou'), rolagem = document.querySelector('.rolagem');
-const calmo = matchMedia('(prefers-reduced-motion: reduce)');
+function pintaInv() {
+  const abertos = [...document.querySelectorAll('#inv-lista .inv')].map((b) => b.getAttribute('aria-expanded') === 'true');
+  poe($('inv-total'), 'R$ ' + brl(INV.reduce((s, v) => s + v.valor, 0)));
+  $('inv-lista').innerHTML = `<div class="cartao" style="padding:2px 16px">` + INV.map((v, n) => {
+    const liquido = v.ir ? v.valor - Math.round((v.valor - v.aportado) * 0.2) : v.valor;
+    return `<button class="inv" aria-expanded="${!!abertos[n]}"><span class="selo-cat" style="background:var(--investe-soft);color:var(--investe)"><svg class="i" data-i="cresce"></svg></span>
+      <span class="txt"><b>${v.nome}</b><span>${v.taxa}</span></span><span class="dir"><strong data-dinheiro>R$ ${brl(v.valor)}</strong><span>${v.mesR ? `+R$ ${brl(v.mesR)} no mês` : 'Começou hoje'}</span></span></button>
+      <div class="detalhe"><div><dl><div><dt>Você aportou</dt><dd data-dinheiro>R$ ${brl(v.aportado)}</dd></div><div><dt>Rendimento bruto</dt><dd data-dinheiro>R$ ${brl(v.valor - v.aportado)}</dd></div><div><dt>Líquido se resgatar hoje</dt><dd data-dinheiro>R$ ${brl(liquido)}</dd></div></dl>
+      <div class="dupla" style="margin:0 0 14px 52px"><button class="botao-2 pressiona" data-acao="aportar" data-n="${n}">Aportar</button><button class="botao-2 pressiona" data-acao="ajustar" data-n="${n}">Ajustar valor</button></div></div></div>`;
+  }).join('') + `</div>`;
+  desenhaTudo($('inv-lista')); registra($('inv-lista'));
+  $('inv-lista').querySelectorAll('.inv').forEach((b) => b.addEventListener('click', () => b.setAttribute('aria-expanded', b.getAttribute('aria-expanded') !== 'true')));
+}
+
 let quadro;
 function contar(el, de, para) {
   cancelAnimationFrame(quadro);
@@ -879,18 +1041,18 @@ olho.addEventListener('click', () => {
 
 /* botões do topo: vidro claro sobre o saldo, regular sobre o conteúdo; cada tela mostra os seus */
 const botaoMes = $('mes'), menu = $('menu');
+let emSub = false;
 function topo() {
-  const claro = tela === 0 && rolagem.scrollTop < 380;
+  const claro = !mac() && tela === 0 && rolagem.scrollTop < 380;
   [olho, botaoMes].forEach((el) => el.classList.toggle('vidro--claro', claro));
-  olho.hidden = !(tela === 0 || tela === 2);
-  botaoMes.hidden = tela > 1;
+  olho.hidden = emSub || !(tela === 0 || tela === 2);
+  botaoMes.hidden = emSub || tela > 1;
 }
 rolagem.addEventListener('scroll', topo, { passive: true });
 
 /* menu do mês */
 function abreMenu(sim) { menu.classList.toggle('aberto', sim); menu.inert = !sim; botaoMes.setAttribute('aria-expanded', sim); }
 botaoMes.addEventListener('click', (e) => { e.stopPropagation(); abreMenu(!menu.classList.contains('aberto')); });
-iphone.addEventListener('click', (e) => { if (!menu.contains(e.target)) abreMenu(false); });
 menu.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => trocaMes(b.dataset.mes)));
 function trocaMes(k) {
   abreMenu(false);
@@ -903,26 +1065,28 @@ function trocaMes(k) {
 /* abas: nas pontas a lente bate na borda e amassa, em vez de passar dela */
 const nav = document.querySelector('.abas nav'), lente = nav.querySelector('.lente'), botoesAba = [...nav.querySelectorAll('button')];
 const TELAS = ['inicio', 'lancamentos', 'investir', 'ajustes'].map((t) => $('tela-' + t));
-function moveLente(n) {
-  const ponta = n === 0 || n === botoesAba.length - 1;
+function moveLente(n, semAnimar) {
+  const ponta = n === 0 || n === botoesAba.length - 1, v = mac();
   nav.classList.toggle('borda', ponta);
   nav.style.setProperty('--aba', n);
-  if (calmo.matches) return;
+  if (calmo.matches || semAnimar) return;
   lente.getAnimations().forEach((a) => a.effect instanceof KeyframeEffect && a.effect.getKeyframes().some((q) => 'scale' in q) && a.cancel());
-  lente.style.transformOrigin = n === 0 ? 'left center' : ponta ? 'right center' : 'center';
+  lente.style.transformOrigin = n === 0 ? (v ? 'center top' : 'left center') : ponta ? (v ? 'center bottom' : 'right center') : 'center';
+  const e = (x, y) => (v ? `${y} ${x}` : `${x} ${y}`);
   lente.animate(ponta
-    ? [{ scale: '1 1' }, { scale: '1.1 .92', offset: 0.22 }, { scale: '.84 1.07', offset: 0.55 }, { scale: '1.03 .99', offset: 0.8 }, { scale: '1 1' }]
-    : [{ scale: '1 1' }, { scale: '1.14 .9', offset: 0.35 }, { scale: '1 1' }], { duration: ponta ? 520 : 420, easing: 'ease-out' });
+    ? [{ scale: '1 1' }, { scale: e(1.1, 0.92), offset: 0.22 }, { scale: e(0.84, 1.07), offset: 0.55 }, { scale: e(1.03, 0.99), offset: 0.8 }, { scale: '1 1' }]
+    : [{ scale: '1 1' }, { scale: e(1.14, 0.9), offset: 0.35 }, { scale: '1 1' }], { duration: ponta ? 520 : 420, easing: 'ease-out' });
 }
 function vaiPara(n) {
   abreMenu(false);
-  if (n === tela) { if (n === 1) pintaLista(); return rolagem.scrollTo({ top: 0, behavior: calmo.matches ? 'auto' : 'smooth' }); }
+  if (emSub) { emSub = false; $('tela-sub').hidden = true; TELAS[3].hidden = false; }
+  if (n === tela) { if (n === 1) pintaLista(); topo(); return rolaTopo(); }
   const t = TELAS[n];
   TELAS[tela].hidden = true;
   t.style.setProperty('--dir', n > tela ? 1 : -1);
   tela = n;
   t.hidden = false;
-  t.classList.remove('entra'); void t.offsetWidth; t.classList.add('entra');
+  anima(t, 'entra');
   rolagem.scrollTop = 0;
   botoesAba.forEach((b, i) => (i === n ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current')));
   moveLente(n); topo();
@@ -933,28 +1097,49 @@ botoesAba.forEach((b, n) => b.addEventListener('click', () => vaiPara(n)));
 $('ver-todos').addEventListener('click', (e) => { e.preventDefault(); filtro = null; extrato = 0; vaiPara(1); });
 $('ver-fatura').addEventListener('click', (e) => { e.preventDefault(); filtro = null; extrato = 1; vaiPara(1); });
 
+/* subtelas de Ajustes: empurram da direita, voltam pelo botão */
+const SUBS = { cartoes: 'Cartões', vr: 'Vale-refeição', banco: 'Banco', applepay: 'Apple Pay', atalho: 'Atalho do iPhone' };
+function abreSub(k) {
+  const t = $('tela-sub');
+  emSub = true; TELAS[3].hidden = true;
+  $('sub-titulo').textContent = SUBS[k];
+  $('sub-corpo').replaceChildren($('sub-' + k).content.cloneNode(true));
+  desenhaTudo(t); registra(t);
+  if (k === 'vr') poe($('sub-vr-saldo'), 'R$ ' + brl(X.vr));
+  t.hidden = false; anima(t, 'empurra'); rolagem.scrollTop = 0; topo();
+}
+$('voltar').addEventListener('click', () => { emSub = false; $('tela-sub').hidden = true; TELAS[3].hidden = false; TELAS[3].style.setProperty('--dir', -1); anima(TELAS[3], 'entra'); topo(); });
+
 /* um gasto novo entra em tudo: saldo, categoria, extrato e últimos */
-function registraGasto(nome, k, v, forma, dia, extra) {
-  const N = MESES.nov, r = [dia, nome, k, -v, extra];
-  N.cats[k] += v;
-  N.ultimos.unshift(r);
-  N.lanc[forma === 'Crédito' ? 'credito' : forma === 'VR' ? 'vr' : 'debito'].unshift(r);
-  const de = N.sobrou;
-  if (forma === 'VR') X.vr -= v;
-  else if (forma !== 'Crédito') { N.sobrou -= v; N.saiu += v; }
+function repinta(de, nova) {
+  const N = MESES.nov;
   if (mes !== 'nov') { mes = 'nov'; M = N; pintaMes(); }
-  poe($('saiu'), reais(N.saiu));
+  poe($('saiu'), reais(N.saiu)); poe($('investiu'), reais(N.investiu));
   poe($('depois'), 'R$ ' + brl(N.sobrou - X.fatura));
   poe($('vrsaldo'), 'R$ ' + brl(X.vr));
   poe($('aberta'), 'R$ ' + brl(N.lanc.credito.reduce((s, x) => s + gasto(x), 0)));
   contar(sobrou, de, N.sobrou);
-  pintaNivel(); pintaCats(); pintaUltimos(true); pintaLista();
+  pintaNivel(); pintaCats(); pintaUltimos(nova); pintaLista();
+}
+function registraGasto(nome, k, v, forma, dia, extra) {
+  const N = MESES.nov, r = [dia, nome, k, -v, extra], aba = forma === 'Crédito' ? 'credito' : forma === 'VR' ? 'vr' : 'debito', de = N.sobrou;
+  if (CATS.includes(k)) N.cats[k] += v;
+  N.ultimos.unshift(r); N.lanc[aba].unshift(r);
+  if (aba === 'vr') X.vr -= v;
+  else if (aba === 'debito') { N.sobrou -= v; if (k === 'investe') N.investiu += v; else N.saiu += v; }
+  repinta(de, true);
+}
+function removeGasto(r, aba) {
+  const N = MESES.nov, v = -r[3], u = N.ultimos.findIndex((x) => x[1] === r[1] && x[3] === r[3]);
+  N.cats[r[2]] -= v;
+  N.lanc[aba].splice(N.lanc[aba].indexOf(r), 1);
+  if (u >= 0) N.ultimos.splice(u, 1);
+  if (aba === 'vr') X.vr += v; else if (aba === 'debito') { N.sobrou += v; N.saiu -= v; }
 }
 
 /* para conferir */
 function saiConferir() {
-  const c = $('conferir');
-  const fim = () => c.remove();
+  const c = $('conferir'), fim = () => c.remove();
   if (calmo.matches) return fim();
   c.style.overflow = 'hidden';
   c.animate([{ height: c.offsetHeight + 'px', opacity: 1 }, { height: '0px', opacity: 0, paddingBlock: '0px', marginBottom: '-12px' }], { duration: 360, easing: 'cubic-bezier(.3,.7,.2,1)' }).onfinish = fim;
@@ -962,31 +1147,45 @@ function saiConferir() {
 $('ignorar').addEventListener('click', saiConferir);
 $('confirmar').addEventListener('click', () => { saiConferir(); registraGasto('Padaria Real', 'alimentacao', 1840, 'Débito', 'Ontem', 'conferido no banco'); });
 
-/* investir e ajustes */
-document.querySelectorAll('.inv').forEach((b) => b.addEventListener('click', () => b.setAttribute('aria-expanded', b.getAttribute('aria-expanded') !== 'true')));
-function tema(t) {
-  document.documentElement.dataset.theme = t;
-  document.querySelectorAll('[data-tema]').forEach((o) => o.setAttribute('aria-pressed', o.dataset.tema === t));
-  $('sw-tema').setAttribute('aria-checked', t === 'dark');
-}
-document.querySelectorAll('[data-tema]').forEach((b) => b.addEventListener('click', () => tema(b.dataset.tema)));
-$('sw-tema').addEventListener('click', () => tema(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
-$('sw-aviso').addEventListener('click', (e) => e.currentTarget.setAttribute('aria-checked', e.currentTarget.getAttribute('aria-checked') !== 'true'));
-
-/* folha de novo gasto */
+/* folha: uma só, com campos que aparecem conforme o que se está fazendo */
 const folha = $('folha'), fvalor = $('fvalor');
-let valor = 0, catSel = 1, formaSel = 0;
+const OPCIONAIS = ['f-nome', 'chips', 'formas', 'f-quando', 'f-tipo', 'f-cdi', 'f-apagar'];
+const MODOS = {
+  novo: { titulo: 'Novo gasto', mostra: ['f-nome', 'chips', 'formas'], acao: 'Lançar gasto' },
+  editar: { titulo: 'Editar gasto', mostra: ['f-nome', 'chips', 'formas', 'f-quando', 'f-apagar'], acao: 'Salvar' },
+  valor: { mostra: [] },
+  investimento: { titulo: 'Novo investimento', mostra: ['f-nome', 'f-tipo', 'f-cdi'], acao: 'Guardar investimento' },
+};
+let F = MODOS.novo, valor = 0, catSel = 1, formaSel = 0;
+const poePasso = (caixa, n) => { caixa.dataset.v = n; caixa.querySelector('output').textContent = n + (caixa.dataset.suf || ''); };
 function pintaFolha() {
   fvalor.textContent = 'R$ ' + brl(valor);
   fvalor.classList.toggle('vazio', valor === 0);
   $('lancar').disabled = valor === 0;
   $('chips').querySelectorAll('button').forEach((b, n) => b.setAttribute('aria-pressed', n === catSel));
   $('formas').querySelectorAll('button').forEach((b, n) => b.setAttribute('aria-pressed', n === formaSel));
+  const n = Number($('f-vezes').dataset.v);
+  $('f-parcelas').hidden = !(F.mostra.includes('formas') && formaSel === 2);
+  $('f-parcela-txt').textContent = n === 1 ? 'À vista, na fatura aberta' : `${n}x de R$ ${brl(Math.ceil(valor / n))}`;
 }
+function abreFolha(modo, op = {}) {
+  F = { ...MODOS[modo], modo, ...op };
+  valor = Math.abs(op.valor || 0);
+  OPCIONAIS.forEach((id) => ($(id).hidden = !F.mostra.includes(id)));
+  $('f-titulo').textContent = F.titulo; $('lancar').textContent = F.acao; folha.setAttribute('aria-label', F.titulo);
+  $('f-nome').value = '';
+  $('f-nome').placeholder = modo === 'investimento' ? 'Nome, como CDB C6' : 'Com o quê? (opcional)';
+  poePasso($('f-vezes'), 1);
+  if (modo === 'editar') { const r = op.linha; $('f-nome').value = r[1]; catSel = CATS.indexOf(r[2]); formaSel = { debito: 0, credito: 2, vr: 3 }[op.aba]; valor = -r[3]; }
+  pintaFolha();
+  folha.inert = false; iphone.classList.add('com-folha');
+  $('teclado').querySelector('button').focus({ preventScroll: true });
+}
+function fechaFolha() { iphone.classList.remove('com-folha'); folha.inert = true; }
 $('chips').innerHTML = CATS.map((k) => `<button class="chip pressiona"><span class="ponto" style="background:var(--cat-${k})"></span>${META[k].nome}</button>`).join('');
 $('formas').innerHTML = FORMAS.map((f) => `<button>${f}</button>`).join('');
 $('teclado').innerHTML = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '00', '0', 'apaga'].map((t) =>
-  t === 'apaga' ? `<button class="pressiona" data-t="apaga" aria-label="Apagar"><svg class="i" data-i="apaga"></svg></button>` : `<button class="pressiona" data-t="${t}">${t}</button>`).join('');
+  t === 'apaga' ? `<button class="pressiona" data-t="apaga" aria-label="Apagar dígito"><svg class="i" data-i="apaga"></svg></button>` : `<button class="pressiona" data-t="${t}">${t}</button>`).join('');
 $('chips').querySelectorAll('button').forEach((b, n) => b.addEventListener('click', () => { catSel = n; pintaFolha(); }));
 $('formas').querySelectorAll('button').forEach((b, n) => b.addEventListener('click', () => { formaSel = n; pintaFolha(); }));
 const tecla = (t) => {
@@ -995,43 +1194,101 @@ const tecla = (t) => {
   pintaFolha();
 };
 $('teclado').querySelectorAll('button').forEach((b) => b.addEventListener('click', () => tecla(b.dataset.t)));
-function abreFolha() { valor = 0; pintaFolha(); folha.inert = false; iphone.classList.add('com-folha'); $('teclado').querySelector('button').focus({ preventScroll: true }); }
-function fechaFolha() { iphone.classList.remove('com-folha'); folha.inert = true; $('mais').focus({ preventScroll: true }); }
-$('mais').addEventListener('click', abreFolha);
+$('mais').addEventListener('click', () => abreFolha('novo'));
+$('novo-inv').addEventListener('click', () => abreFolha('investimento'));
 $('fechar').addEventListener('click', fechaFolha);
 $('veu').addEventListener('click', fechaFolha);
 addEventListener('keydown', (e) => {
   if (e.key === 'Escape') abreMenu(false);
   if (!iphone.classList.contains('com-folha')) return;
-  if (e.key === 'Escape') fechaFolha();
-  else if (/^\d$/.test(e.key)) tecla(e.key);
+  if (e.key === 'Escape') return fechaFolha();
+  if (e.target.tagName === 'INPUT') return;
+  if (/^\d$/.test(e.key)) tecla(e.key);
   else if (e.key === 'Backspace') tecla('apaga');
 });
+$('f-apagar').addEventListener('click', () => { const de = MESES.nov.sobrou; fechaFolha(); removeGasto(F.linha, F.aba); repinta(de); });
 $('lancar').addEventListener('click', () => {
-  const k = CATS[catSel], forma = FORMAS[formaSel];
+  const k = CATS[catSel], forma = FORMAS[formaSel], nome = $('f-nome').value.trim(), n = Number($('f-vezes').dataset.v), v = valor;
   fechaFolha();
-  registraGasto(META[k].nome, k, valor, forma, 'Agora', forma);
-  if (tela === 0) rolagem.scrollTo({ top: forma === 'Débito' || forma === 'Pix' ? 0 : 200, behavior: calmo.matches ? 'auto' : 'smooth' });
-  else if (tela === 1) { extrato = forma === 'Crédito' ? 1 : forma === 'VR' ? 2 : 0; filtro = null; pintaLista(); rolagem.scrollTo({ top: 0, behavior: calmo.matches ? 'auto' : 'smooth' }); }
+  if (F.modo === 'valor') return F.ok(v);
+  if (F.modo === 'investimento') {
+    const tipo = $('f-tipo').querySelector('[aria-pressed="true"]').textContent, cdi = $('f-cdi-passo').dataset.v;
+    INV.push({ nome: nome || tipo, taxa: `${cdi}% do CDI` + (tipo === 'CDB' ? '' : ', sem IR'), valor: v, aportado: v, mesR: 0, ir: tipo === 'CDB' });
+    registraGasto('Aporte ' + (nome || tipo), 'investe', v, 'Débito', 'Agora');
+    return pintaInv();
+  }
+  const parcelado = forma === 'Crédito' && n > 1, vv = parcelado ? Math.ceil(v / n) : v, extra = parcelado ? `parcela 1 de ${n}` : forma;
+  if (F.modo === 'editar') {
+    const quando = $('f-quando').querySelector('[aria-pressed="true"]').textContent;
+    removeGasto(F.linha, F.aba);
+    return registraGasto(nome || META[k].nome, k, vv, forma, quando === 'Hoje' ? F.linha[0] : quando, extra);
+  }
+  registraGasto(nome || META[k].nome, k, vv, forma, 'Agora', extra);
+  if (tela === 0) rolaTopo(forma === 'Débito' || forma === 'Pix' ? 0 : 200);
+  else if (tela === 1) { extrato = forma === 'Crédito' ? 1 : forma === 'VR' ? 2 : 0; filtro = null; pintaLista(); rolaTopo(); }
 });
 
-/* o iPhone inteiro cabe na janela: encolhe em telas estreitas ou baixas */
-const palco = document.querySelector('.palco');
-function cabe() {
-  const lado = matchMedia('(min-width: 901px)').matches;
-  const z = Math.min(1, (document.querySelector('.pagina').clientWidth - 72) / 393, lado ? (innerHeight - 72) / 852 : 1);
-  iphone.style.zoom = z; palco.style.maxWidth = 393 * z + 'px';
-  document.querySelector('.duas').style.gridTemplateColumns = lado ? `${393 * z}px minmax(0, 1fr)` : '';
-}
-addEventListener('resize', cabe); cabe();
+/* controles genéricos, por delegação: passo, escolha, interruptor, ações e subtelas */
+const ACOES = {
+  buscar(a) { a.disabled = true; a.textContent = 'Buscando…'; setTimeout(() => { a.disabled = false; a.textContent = 'Buscar agora'; a.closest('.cartao').querySelector('[data-status]').textContent = 'Buscou agora mesmo. Nada novo.'; }, 1200); },
+  token(a) { const t = a.closest('.cartao').querySelector('.token'); t.hidden = false; anima(t, 'chega'); },
+  cartao(a) { const c = a.previousElementSibling.cloneNode(true); c.querySelector('h2').textContent = 'Cartão novo'; c.querySelector('.selo-bom').remove(); a.before(c); anima(c, 'chega'); },
+  'saldo-vr'() { abreFolha('valor', { titulo: 'Saldo do VR hoje', acao: 'Corrigir saldo', valor: X.vr, ok: (x) => { X.vr = x; poe($('sub-vr-saldo'), 'R$ ' + brl(x)); repinta(MESES.nov.sobrou); } }); },
+  aportar(a) { const v = INV[a.dataset.n]; abreFolha('valor', { titulo: 'Aportar em ' + v.nome, acao: 'Aportar', ok: (x) => { v.valor += x; v.aportado += x; registraGasto('Aporte ' + v.nome, 'investe', x, 'Débito', 'Agora'); pintaInv(); } }); },
+  ajustar(a) { const v = INV[a.dataset.n]; abreFolha('valor', { titulo: 'Quanto o banco mostra?', acao: 'Ajustar valor', valor: v.valor, ok: (x) => { v.valor = x; pintaInv(); } }); },
+};
+iphone.addEventListener('click', (e) => {
+  if (!menu.contains(e.target)) abreMenu(false);
+  const p = e.target.closest('.passo button');
+  if (p) {
+    const caixa = p.parentElement, n = Math.max(Number(caixa.dataset.min), Math.min(Number(caixa.dataset.max), Number(caixa.dataset.v) + Number(p.dataset.d)));
+    poePasso(caixa, n);
+    if (!calmo.matches) caixa.querySelector('output').animate([{ scale: 1.25 }, { scale: 1 }], { duration: 260, easing: 'ease-out' });
+    if (folha.contains(caixa)) pintaFolha();
+    return;
+  }
+  const s = e.target.closest('.seg[data-escolha] button');
+  if (s) return s.parentElement.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b === s));
+  const i = e.target.closest('[role="switch"]');
+  if (i && i.id !== 'sw-tema') return i.setAttribute('aria-checked', i.getAttribute('aria-checked') !== 'true');
+  const a = e.target.closest('[data-acao]');
+  if (a) return ACOES[a.dataset.acao](a);
+  const sub = e.target.closest('[data-sub]');
+  if (sub) abreSub(sub.dataset.sub);
+});
 
+/* entrar e sair */
+$('sair').addEventListener('click', () => { $('tela-entrar').hidden = false; });
+$('form-entrar').addEventListener('submit', (e) => { e.preventDefault(); $('tela-entrar').hidden = true; vaiPara(0); abrir(); });
+
+/* tema e aparelho */
+function tema(t) {
+  document.documentElement.dataset.theme = t;
+  document.querySelectorAll('[data-tema]').forEach((o) => o.setAttribute('aria-pressed', o.dataset.tema === t));
+  $('sw-tema').setAttribute('aria-checked', t === 'dark');
+}
+document.querySelectorAll('[data-tema]').forEach((b) => b.addEventListener('click', () => tema(b.dataset.tema)));
+$('sw-tema').addEventListener('click', () => tema(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
+function cabe() {
+  const largura = document.querySelector('.pagina').clientWidth;
+  iphone.style.zoom = mac() ? Math.min(1, (largura - 56) / 1180) : Math.min(1, (largura - 72) / 393, (innerHeight - 48) / 852);
+}
+function forma(f) {
+  iphone.dataset.forma = f;
+  document.querySelectorAll('[data-forma-botao]').forEach((o) => o.setAttribute('aria-pressed', o.dataset.formaBotao === f));
+  cabe(); moveLente(tela, true); topo();
+}
+document.querySelectorAll('[data-forma-botao]').forEach((b) => b.addEventListener('click', () => forma(b.dataset.formaBotao)));
+addEventListener('resize', cabe);
 $('repetir').addEventListener('click', () => { vaiPara(0); abrir(); });
 
 desenhaTudo(document);
 registra(iphone);
+pintaInv();
 pintaMes();
-topo();
+forma(new URLSearchParams(location.search).get('forma') === 'mac' || location.hash === '#mac' ? 'mac' : 'iphone');
 requestAnimationFrame(abrir);
+
 </script>
 </body>
 </html>

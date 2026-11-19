@@ -1,0 +1,137 @@
+<div class="pagina" style="max-width:960px">
+  <header class="cabeca">
+    <div>
+      <h1>BlueFin, Design System</h1>
+      <p>Cores, tipografia, espaço, vidro, ícones, componentes com seus estados e os tokens de movimento. É a régua do protótipo e do que será implementado.</p>
+    </div>
+    <div class="controles" style="flex-wrap:wrap">
+      <div class="seg" role="group" aria-label="Tema">
+        <button data-tema="dark" aria-pressed="true">Escuro</button>
+        <button data-tema="light" aria-pressed="false">Claro</button>
+      </div>
+      <div class="seg"><a href="prototipo.html">Abrir o protótipo</a></div>
+    </div>
+  </header>
+  <div class="notas">
+    <section>
+        <h2>A ideia: o saldo é um nível de água</h2>
+        <p>O logotipo do BlueFin é uma barbatana cortando a linha d'água. No Início novo essa linha existe de verdade: a água sobe até a parte do que entrou que ainda está na conta. Gastou, o nível desce. O vidro fica por cima, nos controles, como se você olhasse o mar por uma escotilha.</p>
+      </section>
+
+    <section>
+      <h2>Cores</h2>
+      <p>Os dois temas lado a lado, lidos direto dos tokens. As cores da marca e das categorias são as que o app já usa; mudam os papéis e a cor do investimento.</p>
+      <div class="temas" id="cores"></div>
+    </section>
+
+    <section>
+      <h2>Contraste</h2>
+      <p>Calculado nesta página a partir dos tokens. Texto precisa de 4,5:1 (WCAG AA); ícone de categoria sobre o próprio fundo, 3:1. A medida é sobre a superfície opaca; nos cartões de vidro o fundo é um ambiente fixo e escuro ou claro o bastante para manter a mesma faixa.</p>
+      <div class="tabela"><table id="contraste"></table></div>
+    </section>
+
+    <section>
+        <h2>Tipografia</h2>
+        <p>SF Pro para ler, SF Pro Rounded para dinheiro. Os números arredondados são o toque de humor, como na Carteira e no Fitness da Apple, e separam valor de texto sem precisar de cor.</p>
+        <div class="tipos">
+          <div class="tipo"><span style="font-family:var(--font-valor);font-size:50px;line-height:56px;font-weight:700;letter-spacing:-.02em">3.482,15</span><small>Saldo, Rounded 50/56 bold</small></div>
+          <div class="tipo"><span style="font-size:34px;line-height:41px;font-weight:700;letter-spacing:-.02em">Novembro</span><small>Título grande, 34/41 bold</small></div>
+          <div class="tipo"><span style="font-size:17px;line-height:22px;font-weight:600">Gastos por categoria</span><small>Título de seção, 17/22 semibold</small></div>
+          <div class="tipo"><span style="font-size:16px;line-height:21px;font-weight:500">Mercado do bairro</span><small>Corpo, 16/21 medium</small></div>
+          <div class="tipo"><span style="font-size:13px;line-height:18px;color:var(--ink-2)">Cai R$ 880 no dia 30</span><small>Apoio, 13/18 regular</small></div>
+        </div>
+      </section>
+
+    <section>
+      <h2>Espaço, raios e toque</h2>
+      <p>Uma escala de 4 pt. Os raios crescem com o tamanho do objeto, para o canto de dentro acompanhar o de fora. Nenhum alvo de toque tem menos de 44 pt.</p>
+      <div class="regua" id="espacos"></div>
+      <div class="regua" id="raios" style="align-items:center"></div>
+    </section>
+
+    <section>
+        <h2>Vidro em tudo que flutua</h2>
+        <p>Quatro níveis. É vidro o que fica por cima de outra coisa: a barra de abas e sua lente, os botões do topo, a etiqueta do nível, a folha de novo gasto e agora todos os cartões, que são o mesmo vidro fosco sobre um fundo com profundidade. Entrou, Saiu e Investiu saíram do cartão e ficam dentro do saldo, debaixo d'água.</p>
+        <div class="vidros">
+          <figure><div class="vidro-demo"><div class="vidro vidro--claro">Vidro claro</div></div>
+            <figcaption><b>Claro</b>Botões sobre o saldo. Quase transparente, deixa a água aparecer.</figcaption></figure>
+          <figure><div class="vidro-demo"><div class="vidro" style="color:var(--ink)">Vidro regular</div></div>
+            <figcaption><b>Regular</b>Barra de abas, folhas e menus. Desfoca o que rola por baixo.</figcaption></figure>
+          <figure><div class="vidro-demo"><div class="vidro vidro--tinta">Vidro tingido</div></div>
+            <figcaption><b>Tingido</b>Uma ação principal por tela: o botão de lançar.</figcaption></figure>
+          <figure><div class="vidro-demo"><div class="vidro vidro--forte" style="color:var(--ink)">Vidro forte</div></div>
+            <figcaption><b>Forte</b>Folhas e cartões. Mais fosco, porque leva texto e números.</figcaption></figure>
+        </div>
+      </section>
+
+    <section>
+      <h2>Ícones</h2>
+      <p>Traço de 2 pt com pontas redondas, no estilo do Lucide que o app já usa. Os SF Symbols não podem ser usados na web. Ícone sempre acompanha texto: a cor nunca é o único sinal.</p>
+      <div class="icones" id="icones"></div>
+    </section>
+
+    <section>
+      <h2>Componentes e estados</h2>
+      <p>Tudo aqui responde ao toque. Pressionado é sempre escala 0,94 com mola ágil; foco é um anel de 3 pt na cor Atum.</p>
+      <div class="pecas">
+        <figure><div class="peca"><button class="botao-1 pressiona" style="padding:0 22px">Lançar</button><button class="botao-1" style="padding:0 22px;transform:scale(.94)">Pressionado</button><button class="botao-1" style="padding:0 22px;opacity:.45" disabled>Desligado</button></div><figcaption><b>Botão principal</b>Uma ação por contexto.</figcaption></figure>
+        <figure><div class="peca"><button class="botao-2 pressiona" style="padding:0 22px">Ignorar</button><button class="botao-apagar pressiona">Apagar</button></div><figcaption><b>Secundário e destrutivo</b>O destrutivo usa Coral e sempre tem o verbo escrito.</figcaption></figure>
+        <figure><div class="peca vidro-demo" style="height:auto;padding:22px"><button class="lancar vidro vidro--tinta pressiona" style="padding:0 28px">Lançar gasto</button></div><figcaption><b>Vidro tingido</b>A ação que conclui uma folha, e o + da barra.</figcaption></figure>
+        <figure><div class="peca"><button class="chip pressiona" aria-pressed="false"><span class="ponto" style="background:var(--cat-mercado)"></span>Mercado</button><button class="chip pressiona" aria-pressed="true"><span class="ponto" style="background:var(--cat-lazer)"></span>Lazer</button></div><figcaption><b>Chip de categoria</b>Solto e selecionado. O ponto leva a cor; o nome diz qual é.</figcaption></figure>
+        <figure><div class="peca"><div class="seg seg--cheio tres" data-escolha style="width:100%"><button aria-pressed="true">Débito</button><button aria-pressed="false">Crédito</button><button aria-pressed="false">VR</button></div></div><figcaption><b>Segmentado</b>Escolha entre poucas opções que cabem na tela.</figcaption></figure>
+        <figure><div class="peca"><button class="aj" role="switch" aria-checked="true" style="width:auto;gap:14px"><span class="txt"><b>Aviso da fatura</b></span><span class="interruptor"></span></button><div class="passo" data-min="1" data-max="31" data-v="4" data-suf=""><button data-d="-1" aria-label="Menos">−</button><output>4</output><button data-d="1" aria-label="Mais">+</button></div></div><figcaption><b>Interruptor e passo</b>O interruptor liga na hora. O passo serve para dias e parcelas.</figcaption></figure>
+        <figure><div class="peca" style="display:grid;gap:10px"><input class="campo" placeholder="Com o quê? (opcional)" aria-label="Campo vazio"><div><input class="campo erro" value="0,00" aria-label="Campo com erro" aria-describedby="erro-ex"><p class="erro-texto" id="erro-ex"><svg class="i" data-i="alerta"></svg>Digite um valor maior que zero.</p></div></div><figcaption><b>Campo</b>Vazio e com erro. O erro diz o que fazer, com ícone e texto.</figcaption></figure>
+        <figure><div class="peca"><span class="aviso" style="margin:0"><svg class="i" data-i="alerta"></svg>Vence em 3 dias</span><span class="selo-bom" style="margin:0"><svg class="i" data-i="certo"></svg>Conferido no banco</span></div><figcaption><b>Selos</b>Alerta em Âmbar, confirmação em Alga.</figcaption></figure>
+        <figure><div class="peca" style="display:block"><div class="mov"><span class="selo-cat" style="background:var(--cat-mercado-soft);color:var(--cat-mercado)"><svg class="i" data-i="carrinho"></svg></span><span class="txt"><b>Mercado do bairro</b><span>Mercado, conferido no banco</span></span><span class="dir"><strong class="saiu">−32,90</strong><span>Hoje</span></span></div><div class="mov"><span class="selo-cat" style="background:var(--receita-soft);color:var(--receita)"><svg class="i" data-i="nota"></svg></span><span class="txt"><b>Salário</b><span>Receita</span></span><span class="dir"><strong class="entrou">+7.500,00</strong><span>5 nov</span></span></div></div><figcaption><b>Linha de lançamento</b>Ícone e nome dizem o quê; sinal e cor dizem se saiu ou entrou.</figcaption></figure>
+        <figure><div class="peca vidro-demo" style="height:auto;padding:22px"><div class="toast vidro vidro--forte" style="color:var(--ink)">Gasto lançado<button>Desfazer</button></div></div><figcaption><b>Aviso rápido</b>Some sozinho em 4 s. Sempre oferece desfazer.</figcaption></figure>
+        <figure><div class="peca" style="display:block"><div class="faixa-offline cartao"><svg class="i" data-i="semSinal"></svg><span>Sem internet. 2 lançamentos esperam aqui e sobem sozinhos.</span></div></div><figcaption><b>Sem internet</b>Diz o que aconteceu e o que vai acontecer.</figcaption></figure>
+        <figure><div class="peca" style="display:grid;gap:10px"><div class="esqueleto" style="height:44px;width:70%"></div><div class="esqueleto" style="height:16px"></div><div class="esqueleto" style="height:16px;width:55%"></div></div><figcaption><b>Carregando</b>O esqueleto tem a forma do que vai chegar.</figcaption></figure>
+        <figure><div class="peca" style="display:block"><div class="vazio" style="padding:8px"><svg viewBox="0 0 132 56" aria-hidden="true"><path d="M0 40Q16.5 32 33 40T66 40T99 40T132 40" fill="none" stroke="var(--agua)" stroke-width="2.5" stroke-linecap="round"/><path d="M56 40c5-6 9-14 11-22 5 7 8 14 9 22z" fill="var(--brand)"/></svg><b>Mar calmo por aqui</b><span>Nenhum gasto de Lazer no débito em novembro.</span></div></div><figcaption><b>Estado vazio</b>A barbatana em água parada. Um toque de humor, sem piada.</figcaption></figure>
+      </div>
+    </section>
+
+    <section>
+      <h2>Tokens de movimento</h2>
+      <p>Três molas, resolvidas pela equação da mola e entregues ao CSS como <code>linear()</code>. Toque em cada uma para ver. Com "Reduzir movimento" ligado, tudo vira troca de opacidade de 150 ms.</p>
+      <div class="molas" id="molas"></div>
+    </section>
+
+    <section>
+        <h2>Cada animação</h2>
+        <p>Um momento ensaiado ao abrir (a água sobe, o saldo conta, a barra se desenha). O resto só responde ao seu toque. Com "Reduzir movimento" ligado, tudo vira uma troca de opacidade de 150 ms e a onda fica parada.</p>
+        <div class="tabela"><table>
+          <tr><th>Animação</th><th>Duração</th><th>Curva</th><th>Gatilho</th></tr>
+          <tr><td>Água sobe</td><td>1100 ms</td><td>Mola viva (rigidez 260, amortecimento 18)</td><td>Abrir o Início ou trocar o mês</td></tr>
+          <tr><td>Saldo contando</td><td>900 ms</td><td>Desaceleração cúbica</td><td>Junto com a água</td></tr>
+          <tr><td>Barra de categorias</td><td>430 ms, 55 ms entre fatias</td><td>Mola ágil (380, 32)</td><td>250 ms depois de abrir</td></tr>
+          <tr><td>Lente da aba</td><td>770 ms no meio; 620 ms nas pontas</td><td>Mola viva no meio. Nas pontas, mola calma sem passar da borda: a lente bate e amassa 16% por 520 ms</td><td>Tocar numa aba</td></tr>
+          <tr><td>Troca de tela</td><td>430 ms</td><td>Mola ágil, desliza 28 pt no sentido da aba</td><td>Tocar numa aba</td></tr>
+          <tr><td>Menu do mês</td><td>770 ms; opacidade 160 ms</td><td>Mola viva, cresce a partir do botão</td><td>Tocar em "nov"</td></tr>
+          <tr><td>Extrato (Débito, Crédito, VR)</td><td>430 ms</td><td>Mola ágil no polegar</td><td>Tocar numa aba do extrato</td></tr>
+          <tr><td>Gráfico de investimentos</td><td>1000 ms; área 500 ms depois</td><td>Desaceleração</td><td>Abrir Investir</td></tr>
+          <tr><td>Detalhe do investimento</td><td>620 ms</td><td>Mola calma</td><td>Tocar no investimento</td></tr>
+          <tr><td>Interruptor</td><td>770 ms</td><td>Mola viva</td><td>Tocar na linha</td></tr>
+          <tr><td>Folha de novo gasto</td><td>620 ms; véu 250 ms</td><td>Mola calma (170, 24)</td><td>Tocar no +, fechar ou lançar</td></tr>
+          <tr><td>Gasto lançado</td><td>770 ms</td><td>Mola viva: a linha chega, o saldo conta para baixo, a água desce</td><td>Tocar em Lançar gasto</td></tr>
+          <tr><td>Botão afunda</td><td>430 ms</td><td>Mola ágil, escala 0,94</td><td>Encostar o dedo</td></tr>
+          <tr><td>Olhinho</td><td>200 ms</td><td>Linear, desfoque e opacidade</td><td>Tocar no olhinho</td></tr>
+          <tr><td>Maré</td><td>10 s e 16 s, contínua</td><td>Linear</td><td>Sempre, exceto com movimento reduzido</td></tr>
+        <tr><td>Subtela de Ajustes</td><td>620 ms</td><td>Mola calma, entra 72 pt da direita</td><td>Tocar numa linha com seta; volta pelo botão</td></tr>
+          <tr><td>Passo (− e +)</td><td>260 ms</td><td>Desaceleração, o número cresce 25% e volta</td><td>Tocar em − ou +</td></tr>
+          <tr><td>Diálogo no Mac</td><td>770 ms; opacidade 180 ms</td><td>Mola viva, cresce de 92%</td><td>Novo gasto, editar, aportar</td></tr>
+          <tr><td>Carregando</td><td>1,6 s, contínua</td><td>Linear, brilho atravessa o esqueleto</td><td>Enquanto os dados chegam</td></tr>
+        </table></div>
+      </section>
+
+    <section>
+        <h2>Decisões que mudam o que estava registrado</h2>
+        <ul class="decisoes">
+          <li><b>Manrope sai, SF Pro entra.</b> É a fonte do sistema no iPhone e no Mac, então não baixa nada e respeita o tamanho de texto do aparelho.</li>
+          <li><b>A onda recortada no topo vira o nível de água.</b> A identidade BlueFin (barbatana, Abismo, Atum, Água) fica; a linha d'água passa a mostrar um dado.</li>
+          <li><b>Investimento passa de âmbar para Água,</b> e o âmbar fica só para alerta (fatura vencendo). Hoje os dois dividiriam a mesma cor.</li>
+          <li><b>O + sai do meio da barra</b> e vira um botão de vidro tingido ao lado dela, no padrão do iOS 26. Para as quatro abas caberem iguais, o rótulo desce para 9 pt.</li>
+          <li><b>As cores das categorias não mudam.</b> São as mesmas já validadas por script.</li>
+        </ul>
+      </section>
+  </div>
+</div>

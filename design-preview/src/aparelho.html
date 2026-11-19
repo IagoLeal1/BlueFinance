@@ -1,0 +1,227 @@
+<div class="iphone" id="iphone" data-forma="iphone">
+        <div class="ilha" aria-hidden="true"></div>
+        <div class="rolagem">
+          <div class="topo-fixo"><div>
+            <button class="redondo vidro vidro--claro pressiona" id="olho" aria-label="Esconder valores" aria-pressed="false"><svg class="i" data-i="olho"></svg></button>
+            <button class="pilula vidro vidro--claro pressiona" id="mes" aria-label="Trocar o mês" aria-haspopup="menu" aria-expanded="false"><span id="mes-rotulo">nov</span> <svg class="i" data-i="baixo"></svg></button>
+          </div></div>
+
+          <div class="tela" id="tela-inicio">
+          <h1 class="so-mac titulo-mac">Início</h1>
+          <section class="heroi" id="heroi" aria-label="Resumo de novembro">
+            <h1 id="titulo">Novembro</h1>
+            <p class="rotulo">Sobrou na conta</p>
+            <p class="valor"><small>R$</small><span id="sobrou" data-dinheiro>3.482,15</span></p>
+            <p class="depois" id="depois-linha">Depois da fatura do C6bank, dia 11: <b data-dinheiro id="depois">R$ 2.140,35</b></p>
+            <div class="fluxo">
+              <div><p><svg class="i entrou" data-i="entra"></svg>Entrou</p><strong data-dinheiro id="entrou">7.500</strong></div>
+              <div><p><svg class="i saiu" data-i="sai"></svg>Saiu</p><strong data-dinheiro id="saiu">3.218</strong></div>
+              <div><p><svg class="i" data-i="cresce" style="color:var(--investe)"></svg>Investiu</p><strong data-dinheiro id="investiu">800</strong></div>
+            </div>
+            <div class="agua" id="agua" style="--pct: 46">
+              <div class="marca-nivel"><span class="vidro vidro--claro etiqueta" id="pct">46% do que entrou</span>
+                <svg class="barbatana" viewBox="0 0 22 20" aria-hidden="true"><path d="M1 20C6 14 10 6 12 0c5 6 8 13 9 20z"/></svg>
+              </div>
+              <svg class="onda onda--fundo" viewBox="0 0 800 20" preserveAspectRatio="none" aria-hidden="true">
+                <path class="corpo" d="M0 10Q50 0 100 10T200 10T300 10T400 10T500 10T600 10T700 10T800 10V20H0z"/></svg>
+              <svg class="onda onda--frente" viewBox="0 0 800 20" preserveAspectRatio="none" aria-hidden="true">
+                <path class="corpo" d="M0 10Q50 2 100 10T200 10T300 10T400 10T500 10T600 10T700 10T800 10V20H0z"/>
+                <path class="crista" d="M0 10Q50 2 100 10T200 10T300 10T400 10T500 10T600 10T700 10T800 10"/></svg>
+            </div>
+          </section>
+
+          <div class="conteudo">
+
+            <div class="cartao vr" id="cartao-vr">
+              <span class="selo-cat" style="background:var(--cat-alimentacao-soft);color:var(--cat-alimentacao)"><svg class="i" data-i="garfo"></svg></span>
+              <span class="txt"><b>Vale-refeição</b><span>Cai R$ 880 no dia 30</span></span>
+              <strong data-dinheiro id="vrsaldo">R$ 412,60</strong>
+            </div>
+
+            <div class="cartao bloco" id="cartao-c6">
+              <div class="linha-titulo"><h2>C6bank</h2><a href="#" class="link" id="ver-fatura">Ver fatura</a></div>
+              <div class="fatura">
+                <div><p>Fechada</p><strong data-dinheiro>R$ 1.341,80</strong>
+                  <span class="aviso"><svg class="i" data-i="alerta"></svg>Vence em 3 dias</span></div>
+                <div><p>Aberta</p><strong data-dinheiro id="aberta">R$ 286,50</strong>
+                  <p style="margin-top:6px">Fecha dia 4</p></div>
+              </div>
+            </div>
+
+            <div class="cartao bloco" id="cartao-cats">
+              <div class="linha-titulo"><h2>Gastos por categoria</h2></div>
+              <div class="barra" id="barra" role="img" aria-label="Moradia 50%, Mercado 22%, Alimentação 13%, Transporte 7%, Lazer 6%, Saúde 3%"></div>
+              <div class="cats" id="cats"></div>
+            </div>
+
+            <div class="cartao bloco" style="padding-bottom:4px" id="cartao-ultimos">
+              <div class="linha-titulo"><h2>Últimos</h2><a href="#" class="link" id="ver-todos">Ver todos</a></div>
+              <div style="margin-top:6px" id="ultimos">
+                <div class="mov"><span class="selo-cat" style="background:var(--cat-mercado-soft);color:var(--cat-mercado)"><svg class="i" data-i="carrinho"></svg></span>
+                  <span class="txt"><b>Mercado do bairro</b><span>Mercado, conferido no banco</span></span>
+                  <span class="dir"><strong class="saiu">−32,90</strong><span>Hoje</span></span></div>
+                <div class="mov"><span class="selo-cat" style="background:var(--cat-transporte-soft);color:var(--cat-transporte)"><svg class="i" data-i="carro"></svg></span>
+                  <span class="txt"><b>Uber</b><span>Transporte</span></span>
+                  <span class="dir"><strong class="saiu">−18,40</strong><span>Hoje</span></span></div>
+                <div class="mov"><span class="selo-cat" style="background:var(--receita-soft);color:var(--receita)"><svg class="i" data-i="nota"></svg></span>
+                  <span class="txt"><b>Salário</b><span>Receita</span></span>
+                  <span class="dir"><strong class="entrou">+7.500,00</strong><span>5 nov</span></span></div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          <div class="tela" id="tela-lancamentos" hidden>
+            <header class="cabeca-tela"><h1>Lançamentos</h1><p id="lanc-mes">Novembro</p></header>
+            <div class="conteudo solto">
+              <div class="cartao bloco" id="conferir">
+                <div class="linha-titulo"><h2>Para conferir</h2><span class="aviso" style="margin:0"><svg class="i" data-i="alerta"></svg>1 veio do banco</span></div>
+                <div class="mov"><span class="selo-cat" style="background:var(--cat-alimentacao-soft);color:var(--cat-alimentacao)"><svg class="i" data-i="garfo"></svg></span>
+                  <span class="txt"><b>Padaria Real</b><span>Sugestão: Alimentação</span></span>
+                  <span class="dir"><strong class="saiu">−18,40</strong><span>Ontem</span></span></div>
+                <div class="dupla"><button class="botao-2 pressiona" id="ignorar">Ignorar</button><button class="botao-1 pressiona" id="confirmar">Lançar</button></div>
+              </div>
+              <div class="seg seg--abas" id="extratos" role="group" aria-label="Extrato"><span class="polegar" aria-hidden="true"></span><button>Débito</button><button>Crédito</button><button>VR</button></div>
+              <div class="chips" id="filtro" role="group" aria-label="Filtrar por categoria"></div>
+              <div class="cartao bloco resumo-aba"><p id="aba-rotulo"></p><strong id="aba-valor" data-dinheiro></strong></div>
+              <div id="lista"></div>
+            </div>
+          </div>
+
+          <div class="tela" id="tela-investir" hidden>
+            <header class="cabeca-tela"><h1>Investir</h1></header>
+            <div class="conteudo solto">
+              <div class="cartao bloco">
+                <p class="apoio">Investido hoje, valor bruto</p>
+                <p class="valor-grande" data-dinheiro id="inv-total">R$ 12.846,32</p>
+                <span class="selo-bom"><svg class="i" data-i="sai"></svg><span data-dinheiro>+R$ 96,18</span> de rendimento em novembro</span>
+                <svg class="grafico" id="grafico" viewBox="0 0 320 92" preserveAspectRatio="none" role="img" aria-label="O total investido cresceu de 9,1 mil em junho para 12,8 mil em novembro">
+                  <defs><linearGradient id="g-inv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--investe);stop-opacity:.32"/><stop offset="1" style="stop-color:var(--investe);stop-opacity:0"/></linearGradient></defs>
+                  <path class="area" fill="url(#g-inv)" d="M0 74C30 70 40 64 64 62S110 52 128 49S170 44 192 42S236 32 256 29S300 16 320 12V92H0z"/>
+                  <path class="traco" pathLength="1" d="M0 74C30 70 40 64 64 62S110 52 128 49S170 44 192 42S236 32 256 29S300 16 320 12"/>
+                </svg>
+                <div class="eixo" aria-hidden="true"><span>jun</span><span>jul</span><span>ago</span><span>set</span><span>out</span><span>nov</span></div>
+              </div>
+              <div id="inv-lista"></div>
+              <button class="botao-2 pressiona" id="novo-inv" style="width:100%">Novo investimento</button>
+            </div>
+          </div>
+
+          <div class="tela" id="tela-ajustes" hidden>
+            <header class="cabeca-tela"><h1>Ajustes</h1></header>
+            <div class="conteudo solto">
+              <div class="cartao lista-aj">
+                <button class="aj" data-sub="cartoes"><span class="selo-cat"><svg class="i" data-i="cartao"></svg></span><span class="txt"><b>Cartões</b><span>C6bank, fecha dia 4 e vence dia 11</span></span><svg class="i" data-i="direita"></svg></button>
+                <button class="aj" data-sub="vr"><span class="selo-cat"><svg class="i" data-i="garfo"></svg></span><span class="txt"><b>Vale-refeição</b><span>R$ 880 todo dia 30</span></span><svg class="i" data-i="direita"></svg></button>
+              </div>
+              <p class="grupo-rotulo">Lançar sozinho</p>
+              <div class="cartao lista-aj">
+                <button class="aj" data-sub="banco"><span class="selo-cat"><svg class="i" data-i="banco"></svg></span><span class="txt"><b>Banco</b><span>Conectado, buscou hoje às 7h</span></span><svg class="i" data-i="direita"></svg></button>
+                <button class="aj" data-sub="applepay"><span class="selo-cat"><svg class="i" data-i="toque"></svg></span><span class="txt"><b>Apple Pay</b><span>3 cartões da Carteira</span></span><svg class="i" data-i="direita"></svg></button>
+                <button class="aj" data-sub="atalho"><span class="selo-cat"><svg class="i" data-i="raio"></svg></span><span class="txt"><b>Atalho do iPhone</b><span>Token ativo</span></span><svg class="i" data-i="direita"></svg></button>
+              </div>
+              <p class="grupo-rotulo">Neste iPhone</p>
+              <div class="cartao lista-aj">
+                <button class="aj" role="switch" aria-checked="true" id="sw-aviso"><span class="selo-cat"><svg class="i" data-i="sino"></svg></span><span class="txt"><b>Aviso da fatura</b><span>Na véspera e no dia, às 9h</span></span><span class="interruptor"></span></button>
+                <button class="aj" role="switch" aria-checked="true" id="sw-tema"><span class="selo-cat"><svg class="i" data-i="lua"></svg></span><span class="txt"><b>Tema escuro</b><span>O claro também é validado</span></span><span class="interruptor"></span></button>
+              </div>
+              <div class="cartao lista-aj"><button class="aj sair" id="sair">Sair da conta</button></div>
+              <div class="rodape"><svg class="barbatana" viewBox="0 0 22 20" aria-hidden="true" style="fill:var(--brand);margin:0"><path d="M1 20C6 14 10 6 12 0c5 6 8 13 9 20z"/></svg>BlueFin</div>
+            </div>
+          </div>
+        </div>
+
+          <div class="tela" id="tela-sub" hidden>
+            <header class="cabeca-sub"><button class="redondo vidro pressiona" id="voltar" aria-label="Voltar para Ajustes"><svg class="i" data-i="esquerda"></svg></button><h1 id="sub-titulo"></h1></header>
+            <div class="conteudo solto" id="sub-corpo"></div>
+          </div>
+        <div class="abas">
+          <div class="lado-topo"><div class="semaforo" aria-hidden="true"><i></i><i></i><i></i></div><p class="logotipo">blue<span>fin</span></p></div>
+          <nav class="vidro" aria-label="Principal">
+            <span class="lente" aria-hidden="true"></span>
+            <button aria-current="page"><svg class="i" data-i="casa"></svg>Início</button>
+            <button><svg class="i" data-i="lista"></svg>Lançamentos</button>
+            <button><svg class="i" data-i="cresce"></svg>Investir</button>
+            <button><svg class="i" data-i="ajustes"></svg>Ajustes</button>
+          </nav>
+          <button class="mais vidro vidro--tinta pressiona" id="mais" aria-label="Lançar gasto"><svg class="i" data-i="mais" style="stroke-width:2.4"></svg><span>Novo gasto</span></button>
+        </div>
+        <div class="menu vidro vidro--forte" id="menu" role="menu" aria-label="Mês" inert>
+          <button role="menuitemradio" data-mes="out" aria-checked="false">Outubro <svg class="i" data-i="certo"></svg></button>
+          <button role="menuitemradio" data-mes="nov" aria-checked="true">Novembro <svg class="i" data-i="certo"></svg></button>
+        </div>
+        <div class="veu" id="veu"></div>
+        <section class="folha vidro vidro--forte" id="folha" role="dialog" aria-modal="true" aria-label="Novo gasto" inert>
+          <div class="pega" aria-hidden="true"></div>
+          <div class="folha-topo"><h2 id="f-titulo">Novo gasto</h2><span class="folha-acoes"><button class="botao-apagar pressiona" id="f-apagar" hidden>Apagar</button><button class="redondo pressiona" id="fechar" aria-label="Fechar"><svg class="i" data-i="fecha"></svg></button></span></div>
+          <p class="folha-valor vazio" id="fvalor" aria-live="polite">R$ 0,00</p>
+          <input class="campo" id="f-nome" aria-label="Com o quê" placeholder="Com o quê? (opcional)" autocomplete="off">
+          <div class="chips" id="chips" role="group" aria-label="Categoria"></div>
+          <div class="seg seg--cheio" id="formas" role="group" aria-label="Como pagou"></div>
+          <div class="linha-campo" id="f-parcelas" hidden><span><b>Em quantas vezes</b><span id="f-parcela-txt">À vista</span></span><div class="passo" id="f-vezes" data-min="1" data-max="24" data-v="1" data-suf="x"><button data-d="-1" aria-label="Menos">−</button><output>1x</output><button data-d="1" aria-label="Mais">+</button></div></div>
+          <div class="seg seg--cheio tres" id="f-quando" data-escolha role="group" aria-label="Quando" hidden><button aria-pressed="true">Hoje</button><button aria-pressed="false">Ontem</button><button aria-pressed="false">Anteontem</button></div>
+          <div class="seg seg--cheio tres" id="f-tipo" data-escolha role="group" aria-label="Tipo" hidden><button aria-pressed="true">CDB</button><button aria-pressed="false">LCI</button><button aria-pressed="false">LCA</button></div>
+          <div class="linha-campo" id="f-cdi" hidden><span><b>Quanto rende</b><span>Em % do CDI</span></span><div class="passo" id="f-cdi-passo" data-min="80" data-max="130" data-v="100" data-suf="%"><button data-d="-1" aria-label="Menos">−</button><output>100%</output><button data-d="1" aria-label="Mais">+</button></div></div>
+          <div class="teclado" id="teclado"></div>
+          <button class="lancar vidro vidro--tinta pressiona" id="lancar" disabled>Lançar gasto</button>
+        </section>
+        <div class="entrar" id="tela-entrar" hidden>
+          <div class="agua" style="height:24%"><svg class="onda onda--fundo" viewBox="0 0 800 20" preserveAspectRatio="none" aria-hidden="true"><path class="corpo" d="M0 10Q50 0 100 10T200 10T300 10T400 10T500 10T600 10T700 10T800 10V20H0z"/></svg>
+            <svg class="onda onda--frente" viewBox="0 0 800 20" preserveAspectRatio="none" aria-hidden="true"><path class="corpo" d="M0 10Q50 2 100 10T200 10T300 10T400 10T500 10T600 10T700 10T800 10V20H0z"/><path class="crista" d="M0 10Q50 2 100 10T200 10T300 10T400 10T500 10T600 10T700 10T800 10"/></svg></div>
+          <form id="form-entrar" novalidate>
+            <svg class="barbatana" viewBox="0 0 22 20" aria-hidden="true" style="width:44px;height:40px;margin:0"><path d="M1 20C6 14 10 6 12 0c5 6 8 13 9 20z"/></svg>
+            <p class="logotipo grande">blue<span>fin</span></p>
+            <p class="entrar-frase">Seu dinheiro, na linha d'água.</p>
+            <label>E-mail<input class="campo-vidro" type="email" autocomplete="off" placeholder="voce@exemplo.com"></label>
+            <label>Senha<input class="campo-vidro" type="password" autocomplete="off"></label>
+            <button class="entrar-botao pressiona">Entrar</button>
+          </form>
+        </div>
+
+        <template id="sub-cartoes">
+          <div class="cartao bloco">
+            <div class="linha-titulo"><h2>C6bank</h2><span class="selo-bom" style="margin:0">Em uso</span></div>
+            <div class="linha-campo"><span><b>Fecha no dia</b><span>Compra a partir daí vai para a fatura seguinte</span></span><div class="passo" data-min="1" data-max="31" data-v="4" data-suf=""><button data-d="-1" aria-label="Menos">−</button><output>4</output><button data-d="1" aria-label="Mais">+</button></div></div>
+            <div class="linha-campo"><span><b>Vence no dia</b><span>É quando o dinheiro sai da conta</span></span><div class="passo" data-min="1" data-max="31" data-v="11" data-suf=""><button data-d="-1" aria-label="Menos">−</button><output>11</output><button data-d="1" aria-label="Mais">+</button></div></div>
+          </div>
+          <button class="botao-2 pressiona" data-acao="cartao" style="width:100%">Adicionar cartão</button>
+        </template>
+        <template id="sub-vr">
+          <div class="cartao bloco">
+            <div class="linha-campo"><span><b>Cai por mês</b><span>O previsto; cada depósito pode ser acertado no extrato</span></span><strong class="valor-linha" data-dinheiro>R$ 880,00</strong></div>
+            <div class="linha-campo"><span><b>No dia</b><span>Em mês curto, cai no último dia</span></span><div class="passo" data-min="1" data-max="31" data-v="30" data-suf=""><button data-d="-1" aria-label="Menos">−</button><output>30</output><button data-d="1" aria-label="Mais">+</button></div></div>
+            <div class="linha-campo"><span><b>Saldo de hoje</b><span>Mudou? A diferença vira um acerto no extrato</span></span><strong class="valor-linha" data-dinheiro id="sub-vr-saldo">R$ 412,60</strong></div>
+          </div>
+          <button class="botao-2 pressiona" data-acao="saldo-vr" style="width:100%">Corrigir o saldo de hoje</button>
+        </template>
+        <template id="sub-banco">
+          <div class="cartao bloco">
+            <div class="linha-titulo"><h2>Meu Pluggy</h2><span class="selo-bom" style="margin:0">Conectado</span></div>
+            <p class="apoio" style="margin-top:6px" data-status>Buscou hoje às 7h e trouxe 2 lançamentos.</p>
+            <button class="botao-1 pressiona" data-acao="buscar" style="width:100%;margin-top:12px">Buscar agora</button>
+          </div>
+          <div class="cartao bloco">
+            <div class="linha-campo"><span><b>Importa desde</b><span>O que já estava no app não é tocado</span></span><strong class="valor-linha">17 nov</strong></div>
+            <div class="linha-campo"><span><b>Autorização</b><span>Só leitura, renovada uma vez por ano</span></span><strong class="valor-linha">até nov 2027</strong></div>
+          </div>
+        </template>
+        <template id="sub-applepay">
+          <div class="cartao bloco">
+            <p class="apoio">Cada cartão da Carteira entra aqui no primeiro pagamento. Diga como ele deve ser lançado.</p>
+            <div class="pilha"><b>C6 Débito</b><div class="seg seg--cheio tres" data-escolha><button aria-pressed="true">Débito</button><button aria-pressed="false">Crédito</button><button aria-pressed="false">VR</button></div></div>
+            <div class="pilha"><b>C6 Crédito</b><div class="seg seg--cheio tres" data-escolha><button aria-pressed="false">Débito</button><button aria-pressed="true">Crédito</button><button aria-pressed="false">VR</button></div></div>
+            <div class="pilha"><b>Alelo Refeição</b><div class="seg seg--cheio tres" data-escolha><button aria-pressed="false">Débito</button><button aria-pressed="false">Crédito</button><button aria-pressed="true">VR</button></div></div>
+          </div>
+          <p class="nota">Lugar novo entra em Outros, marcado "a confirmar". Confirmar ensina o lugar.</p>
+        </template>
+        <template id="sub-atalho">
+          <div class="cartao bloco">
+            <div class="linha-titulo"><h2>Token pessoal</h2><span class="selo-bom" style="margin:0">Ativo</span></div>
+            <p class="apoio" style="margin-top:6px">Fica no primeiro passo do Atalho. Gerar outro desliga o anterior.</p>
+            <div class="token" hidden><code>bf_exemplo_9F2K7QX4</code><span>Aparece só esta vez. Copie agora.</span></div>
+            <button class="botao-2 pressiona" data-acao="token" style="width:100%;margin-top:12px">Gerar outro token</button>
+          </div>
+          <div class="cartao bloco faixa-alerta"><svg class="i" data-i="alerta"></svg><p>Não compartilhe o Atalho como está. Duplique, apague o token da cópia e compartilhe a cópia.</p></div>
+        </template>
+        <div class="home-ind" aria-hidden="true"></div>
+      </div>
