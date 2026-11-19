@@ -16,14 +16,15 @@ test.describe('trocar de mês', () => {
     await expect(page.getByText('Nenhum lançamento ainda.')).toBeVisible(); // mês atual vazio
 
     await page.getByRole('button', { name: 'Trocar mês' }).click();
-    await page.getByRole('dialog', { name: 'Escolher mês' }).getByRole('link', { name: new RegExp(`^${nome}`) }).click();
+    await page.getByRole('menu', { name: 'Escolher mês' }).getByRole('menuitem', { name: new RegExp(`^${nome}`) }).click();
 
     await expect(page.getByRole('heading', { level: 1 })).toContainText(nome);
     await expect(page.getByRole('region', { name: /^Resumo de / }).getByRole('group', { name: 'Saiu' })).toContainText('R$ 120');
     await expect(page.getByRole('region', { name: 'Últimos' })).toContainText('Show');
 
     await page.getByRole('region', { name: 'Últimos' }).getByRole('link', { name: 'Ver todos' }).click();
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(`Lançamentos · ${nome}`);
+    await expect(page.getByRole('heading', { level: 1, name: 'Lançamentos' })).toBeVisible();
+    await expect(page.locator('main header')).toContainText(nome);
     await expect(page.getByRole('listitem').filter({ hasText: 'Show' })).toContainText('− R$ 120,00');
   });
 
@@ -39,14 +40,15 @@ test.describe('trocar de mês', () => {
     await expect(page.getByRole('heading', { level: 1, name: 'Lançamentos' })).toBeVisible();
 
     await page.getByRole('button', { name: 'Trocar mês' }).click();
-    await page.getByRole('dialog', { name: 'Escolher mês' }).getByRole('link', { name: `${nome} de ${futuro.slice(0, 4)}` }).click();
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(`Lançamentos · ${nome}`);
+    await page.getByRole('menu', { name: 'Escolher mês' }).getByRole('menuitem', { name: `${nome} de ${futuro.slice(0, 4)}` }).click();
+    await expect(page.getByRole('heading', { level: 1, name: 'Lançamentos' })).toBeVisible();
+    await expect(page.locator('main header')).toContainText(nome);
     await page.getByRole('radiogroup', { name: 'Extrato' }).getByText('Crédito', { exact: true }).click();
     await expect(page.getByRole('region', { name: 'Fatura Nubank' }).getByRole('listitem').filter({ hasText: 'Viagem' })).toContainText('3/3');
 
     // O mês atual continua levando para a página sem ?mes.
     await page.getByRole('button', { name: 'Trocar mês' }).click();
-    await page.getByRole('dialog', { name: 'Escolher mês' }).getByRole('link', { name: new RegExp(`^${capitalizar(nomeDoMes(mesAtual()))}`) }).click();
+    await page.getByRole('menu', { name: 'Escolher mês' }).getByRole('menuitem', { name: new RegExp(`^${capitalizar(nomeDoMes(mesAtual()))}`) }).click();
     await expect(page).toHaveURL(/\/lancamentos$/);
   });
 });

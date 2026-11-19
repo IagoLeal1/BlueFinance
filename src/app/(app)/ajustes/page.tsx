@@ -1,3 +1,4 @@
+import { CabecaTela } from '@/components/app/cabeca-tela';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { ApplePayAjustes } from '@/components/app/apple-pay-ajustes';
@@ -22,7 +23,7 @@ const dataHora = new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo
 export default function Ajustes() {
   return (
     <>
-      <h1 className="mt-2 text-[28px] leading-[34px] font-extrabold tracking-tight">Ajustes</h1>
+      <CabecaTela titulo="Ajustes" />
       <Suspense fallback={null}>
         <CartoesDoUsuario />
       </Suspense>

@@ -3,6 +3,8 @@ import { connection } from 'next/server';
 import { Suspense } from 'react';
 import { Landmark } from 'lucide-react';
 import { BotaoOlho } from '@/components/app/botao-olho';
+import { CabecaTela } from '@/components/app/cabeca-tela';
+import { TopoFlutuante } from '@/components/app/topo-flutuante';
 import { EsqueletoCarteira } from '@/components/app/esqueleto';
 import { LinhaInvestimento } from '@/components/app/linha-investimento';
 import { NovoInvestimento } from '@/components/app/novo-investimento';
@@ -19,10 +21,10 @@ export const metadata: Metadata = { title: 'Investimentos · BlueFinance' };
 export default function Investimentos() {
   return (
     <>
-      <div className="mt-2 flex items-center justify-between">
-        <h1 className="text-[28px] leading-[34px] font-extrabold tracking-tight">Investimentos</h1>
+      <TopoFlutuante>
         <BotaoOlho />
-      </div>
+      </TopoFlutuante>
+      <CabecaTela titulo="Investimentos" />
       <Suspense fallback={<EsqueletoCarteira />}>
         <Carteira />
       </Suspense>

@@ -163,6 +163,38 @@
   }
 }
 
+/* Menu de vidro forte (o do mês): abre a partir do botão com a mola viva. */
+@utility menu-vidro {
+  @apply vidro-forte;
+  position: relative;
+  width: 220px;
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+  padding: 6px;
+  border-radius: 24px;
+  transform-origin: var(--transform-origin);
+  transition: scale var(--t-viva) var(--ease-viva), opacity 160ms linear;
+  outline: none;
+  &[data-starting-style],
+  &[data-ending-style] {
+    scale: 0.55;
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity 150ms linear;
+    &[data-starting-style],
+    &[data-ending-style] {
+      scale: 1;
+    }
+  }
+}
+
+/* A lente da barra de abas: uma gota de vidro tingido sob a aba ativa. */
+@utility lente-aba {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 30%, transparent), color-mix(in srgb, var(--brand) 10%, transparent));
+  box-shadow: inset 0 1px 0 var(--glass-shine), inset 0 -1px 0 rgb(255 255 255 / 0.14), inset 0 0 0 0.5px var(--glass-edge), 0 3px 12px rgb(0 0 0 / 0.2);
+}
+
 /* Toque: afunda um pouco e volta com a mola ágil. Com "reduzir movimento", só esmaece. */
 @utility pressiona {
   transition: transform var(--t-agil) var(--ease-agil), opacity 150ms linear;

@@ -12,12 +12,12 @@ export default function AppLayout({ children }: LayoutProps<'/'>) {
     <FeedbackProvider>
       <AvisoSemInternet />
       <ReenviarFila />
-      <main className="mx-auto flex w-full max-w-[480px] flex-1 flex-col gap-3 px-4 pt-[max(env(safe-area-inset-top),16px)] pb-[100px]">
+      <main className="mx-auto flex w-full max-w-[480px] flex-1 flex-col gap-3 px-4 pt-[max(env(safe-area-inset-top),16px)] pb-[calc(env(safe-area-inset-bottom)+104px)]">
         {children}
       </main>
       <TabBar
-        centro={
-          <Suspense fallback={<div className="-mt-[18px] size-14 rounded-full bg-hero/40 ring-4 ring-water/40" />}>
+        mais={
+          <Suspense fallback={<div aria-hidden className="vidro-tinta relative size-[58px] shrink-0 rounded-full opacity-60" />}>
             <BotaoNovoLancamento />
           </Suspense>
         }

@@ -15,6 +15,11 @@ export function nomeDoMes(mes: string): string {
 const diaSP = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit' });
 const MESES_CURTOS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 
+/** Mês curto de "2026-11": "nov". */
+export function mesCurto(mes: string): string {
+  return MESES_CURTOS[Number(mes.slice(5, 7)) - 1]!;
+}
+
 /** Dia em São Paulo no formato "2026-11-07". */
 export function diaDe(data: string | Date): string {
   return diaSP.format(new Date(data));

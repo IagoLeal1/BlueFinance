@@ -10,6 +10,7 @@ import { SpendingBar } from '@/components/app/spending-bar';
 import { TransactionRow } from '@/components/app/transaction-row';
 import { diaDe, mesAtual, mesDaUrl, nomeDoMes, opcoesDeMes, rotuloDoDia, tituloDoMes } from '@/domain/datas';
 import { MesPicker } from '@/components/app/mes-picker';
+import { TopoFlutuante } from '@/components/app/topo-flutuante';
 import { summarizeMonth } from '@/domain/summary';
 import { listarCartoes, resumoDosCartoes } from '@/server/cartoes';
 import { ordemDasCategorias } from '@/server/categorias';
@@ -59,19 +60,15 @@ async function ResumoDoMes({ searchParams }: { searchParams: PageProps<'/'>['sea
 
   return (
     <>
+      <TopoFlutuante sobreODegrade>
+        <BotaoOlho />
+        <MesPicker base="/" atual={mes} meses={opcoesDeMes(agora, ultimaParcela)} />
+      </TopoFlutuante>
       <BalanceCard
         resumo={resumo}
         nomeMes={nome}
         depois={depois}
-        topo={
-          <div className="flex items-center justify-between">
-            <h1 className="text-[28px] leading-[34px] font-extrabold tracking-tight">{tituloDoMes(mes, agora)}</h1>
-            <div className="flex gap-2">
-              <BotaoOlho sobreODegrade />
-              <MesPicker base="/" atual={mes} meses={opcoesDeMes(agora, ultimaParcela)} sobreODegrade />
-            </div>
-          </div>
-        }
+        topo={<h1 className="pr-[150px] text-[34px] leading-[41px] font-bold tracking-[-0.02em]">{tituloDoMes(mes, agora)}</h1>}
       />
       {noMesAtual && vr && <CartaoVr vr={vr} />}
       {cartao && cartao.cartoes.length > 0 && <CartaoCredito resumos={cartao.cartoes} aVir={cartao.aVir} assinaturas={cartao.assinaturas} mesAtual={mesAtual(agora)} />}

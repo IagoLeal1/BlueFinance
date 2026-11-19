@@ -2,9 +2,8 @@
 
 import { useSyncExternalStore } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-
 import { CHAVE_PRIVADO } from './privado';
+import { VIDRO_DO_TOPO } from './topo-flutuante';
 
 const MUDOU = 'bf:privado';
 
@@ -26,7 +25,7 @@ function assinar(avisar: () => void) {
 }
 
 /** O olhinho: esconde ou mostra os valores com dinheiro do Início e do Investir. */
-export function BotaoOlho({ sobreODegrade = false }: { sobreODegrade?: boolean }) {
+export function BotaoOlho() {
   const fechado = useSyncExternalStore(assinar, escondido, () => false);
 
   function alternar() {
@@ -42,14 +41,13 @@ export function BotaoOlho({ sobreODegrade = false }: { sobreODegrade?: boolean }
   }
 
   return (
-    <Button
-      size="icon"
-      variant="ghost"
+    <button
+      type="button"
       aria-label={fechado ? 'Mostrar valores' : 'Esconder valores'}
       onClick={alternar}
-      className={sobreODegrade ? 'bg-white/15 text-on-hero hover:bg-white/25' : undefined}
+      className={`${VIDRO_DO_TOPO} grid size-11 place-items-center rounded-full`}
     >
-      {fechado ? <EyeOff aria-hidden /> : <Eye aria-hidden />}
-    </Button>
+      {fechado ? <EyeOff className="size-5" aria-hidden /> : <Eye className="size-5" aria-hidden />}
+    </button>
   );
 }

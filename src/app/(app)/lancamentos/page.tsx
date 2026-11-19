@@ -4,6 +4,8 @@ import { Suspense } from 'react';
 import { EsqueletoLista } from '@/components/app/esqueleto';
 import { ListaLancamentos, type DiaDeLancamentos, type Fatura, type PagamentoFatura } from '@/components/app/lista-lancamentos';
 import { MesPicker } from '@/components/app/mes-picker';
+import { CabecaTela } from '@/components/app/cabeca-tela';
+import { TopoFlutuante } from '@/components/app/topo-flutuante';
 import { diaDe, mesAtual, mesDaUrl, nomeDoMes, opcoesDeMes, rotuloDoDia, somarMeses, tituloDoMes } from '@/domain/datas';
 import { diaDoFechamento, faturasDoCartao } from '@/domain/parcelas';
 import { noMes } from '@/domain/summary';
@@ -112,13 +114,12 @@ async function ListaDoMes({ searchParams }: { searchParams: PageProps<'/lancamen
       semCompras: { cartao: { id: c.id, nome: c.nome }, mes, fechou },
     });
   }
-  const titulo = mes === mesAtual(agora) ? 'Lançamentos' : `Lançamentos · ${tituloDoMes(mes, agora)}`;
   return (
     <>
-      <div className="mt-2 flex items-center justify-between">
-        <h1 className="text-[28px] leading-[34px] font-extrabold tracking-tight">{titulo}</h1>
+      <TopoFlutuante>
         <MesPicker base="/lancamentos" atual={mes} meses={opcoesDeMes(agora, ultimaParcela)} />
-      </div>
+      </TopoFlutuante>
+      <CabecaTela titulo="Lançamentos" subtitulo={tituloDoMes(mes, agora)} />
       <ListaLancamentos
         key={`${mes}-${extrato}-${categoria ?? ''}`}
         extratoInicial={extrato}

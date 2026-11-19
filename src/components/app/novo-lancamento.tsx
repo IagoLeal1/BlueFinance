@@ -180,9 +180,9 @@ export function NovoLancamento({
         <button
           type="button"
           aria-label="Novo lançamento"
-          className="-mt-[18px] grid size-14 place-items-center rounded-full bg-hero text-on-hero shadow-sheet ring-4 ring-water focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="vidro-tinta pressiona relative grid size-[58px] shrink-0 place-items-center rounded-full focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-ring"
         >
-          <Plus className="size-7" strokeWidth={2.5} aria-hidden />
+          <Plus className="size-[27px]" strokeWidth={2.4} aria-hidden />
         </button>
       }
     >

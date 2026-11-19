@@ -41,3 +41,49 @@ test.describe('redesenho: base (Liquid Glass)', () => {
     for (const m of ['agil', 'viva', 'calma']) expect(await token(page, `--ease-${m}`)).toMatch(/^linear\(0, /);
   });
 });
+
+test.describe('redesenho: barra de abas e topo', () => {
+  test('quatro abas de largura igual, rótulo de 9 pt, lente sob a aba ativa e o + redondo à direita', async ({ page, usuario }) => {
+    await entrar(page, usuario);
+    const nav = page.getByRole('navigation', { name: 'Principal' });
+    const abas = nav.getByRole('link');
+    await expect(abas).toHaveCount(4);
+    const larguras = await abas.evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().width)));
+    expect(new Set(larguras).size).toBe(1);
+    expect(await css(abas.first(), 'font-size')).toBe('9px');
+
+    const mais = page.getByRole('button', { name: 'Novo lançamento' });
+    const [caixaNav, caixaMais] = [await nav.boundingBox(), await mais.boundingBox()];
+    expect(caixaMais!.x).toBeGreaterThan(caixaNav!.x + caixaNav!.width - 1);
+    expect(caixaMais!.width).toBeGreaterThanOrEqual(44);
+    expect(await css(mais, 'border-radius')).toMatch(/px/);
+    expect(await css(mais, '-webkit-backdrop-filter')).toContain('blur');
+
+    // A lente acompanha a aba: vai para Investir ao tocar.
+    const lente = nav.locator('.lente-aba');
+    await nav.getByRole('link', { name: 'Investir' }).click();
+    await expect(page).toHaveURL('/investimentos');
+    await expect(async () => {
+      const [l, a] = [await lente.boundingBox(), await nav.getByRole('link', { name: 'Investir' }).boundingBox()];
+      expect(Math.abs(l!.x + l!.width / 2 - (a!.x + a!.width / 2))).toBeLessThan(2);
+    }).toPass();
+  });
+
+  test('olhinho e mês flutuam no topo em vidro; o mês abre um menu', async ({ page, usuario }) => {
+    await entrar(page, usuario);
+    const olho = page.getByRole('button', { name: 'Esconder valores' });
+    const caixa = await olho.boundingBox();
+    expect(caixa!.width).toBeGreaterThanOrEqual(44);
+    expect(caixa!.height).toBeGreaterThanOrEqual(44);
+    // Sobre o degradê, vidro claro com ícone branco.
+    expect(await css(olho, 'color')).toBe('rgb(255, 255, 255)');
+
+    const mes = page.getByRole('button', { name: /^Trocar mês/ });
+    await expect(mes).toHaveText(/^[a-z]{3}$/);
+    await mes.click();
+    const menu = page.getByRole('menu', { name: 'Escolher mês' });
+    await expect(menu).toBeVisible();
+    expect(await css(menu, '-webkit-backdrop-filter')).toContain('blur');
+    await expect(menu.locator('[role="menuitem"][aria-current="page"]')).toHaveCount(1);
+  });
+});
