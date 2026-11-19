@@ -64,45 +64,52 @@ async function ResumoDoMes({ searchParams }: { searchParams: PageProps<'/'>['sea
         <BotaoOlho />
         <MesPicker base="/" atual={mes} meses={opcoesDeMes(agora, ultimaParcela)} />
       </TopoFlutuante>
-      <BalanceCard
-        resumo={resumo}
-        nomeMes={nome}
-        depois={depois}
-        topo={<h1 className="pr-[150px] text-[34px] leading-[41px] font-bold tracking-[-0.02em]">{tituloDoMes(mes, agora)}</h1>}
-      />
-      {noMesAtual && vr && <CartaoVr vr={vr} />}
-      {cartao && cartao.cartoes.length > 0 && <CartaoCredito resumos={cartao.cartoes} aVir={cartao.aVir} assinaturas={cartao.assinaturas} mesAtual={mesAtual(agora)} />}
-      <SpendingBar
-        gastos={resumo.porCategoria}
-        ordemPorNome={ordem}
-        hrefDe={(c) => `/lancamentos?categoria=${encodeURIComponent(c)}${noMesAtual ? '' : `&mes=${mes}`}`}
-      />
-      {lancamentos.length > 0 && (
-        <section aria-label="Últimos" className="cartao px-4 pt-3 pb-1">
-          <div className="flex items-center justify-between">
-            <h2 className="text-[17px] leading-[22px] font-semibold">Últimos</h2>
-            <Link href={listaDoMes} className="text-[15px] font-medium text-primary">
-              Ver todos
+      {/* No Mac: o topo à esquerda, VR, cartão e últimos à direita, as categorias embaixo de ponta a ponta. */}
+      <div data-largo className="grid gap-3 lg:grid-flow-row-dense lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-start lg:gap-3.5">
+        <p aria-hidden className="hidden text-[34px] leading-[41px] font-bold tracking-[-0.02em] lg:col-span-2 lg:block">
+          Início
+        </p>
+        <BalanceCard
+          resumo={resumo}
+          nomeMes={nome}
+          depois={depois}
+          topo={<h1 className="pr-[150px] text-[34px] leading-[41px] font-bold tracking-[-0.02em] lg:pr-0 lg:text-[22px] lg:leading-7">{tituloDoMes(mes, agora)}</h1>}
+        />
+        {noMesAtual && vr && <CartaoVr vr={vr} />}
+        {cartao && cartao.cartoes.length > 0 && <CartaoCredito resumos={cartao.cartoes} aVir={cartao.aVir} assinaturas={cartao.assinaturas} mesAtual={mesAtual(agora)} />}
+        <SpendingBar
+          gastos={resumo.porCategoria}
+          ordemPorNome={ordem}
+          hrefDe={(c) => `/lancamentos?categoria=${encodeURIComponent(c)}${noMesAtual ? '' : `&mes=${mes}`}`}
+          className="lg:col-span-2"
+        />
+        {lancamentos.length > 0 && (
+          <section aria-label="Últimos" className="cartao px-4 pt-3 pb-1">
+            <div className="flex items-center justify-between">
+              <h2 className="text-[17px] leading-[22px] font-semibold">Últimos</h2>
+              <Link href={listaDoMes} className="text-[15px] font-medium text-primary">
+                Ver todos
+              </Link>
+            </div>
+            <ul>
+              {lancamentos.slice(0, 3).map((l) => (
+                <TransactionRow key={l.id} l={l} meta={`${rotuloDoDia(l.data, agora).split(' · ')[0]} · ${l.categoria}`} />
+              ))}
+            </ul>
+          </section>
+        )}
+        {lancamentos.length === 0 && (
+          <section className="cartao p-5 text-center">
+            <p className="text-[17px] font-semibold">Nenhum lançamento ainda.</p>
+            <p className="mt-1 text-[13px] leading-[18px] text-muted-foreground">
+              Toque em + ou aperte o Botão de Ação do iPhone para lançar sem abrir o app.
+            </p>
+            <Link href="/ajustes" className="mt-2 inline-block text-[15px] font-medium text-primary">
+              Como configurar o Botão de Ação
             </Link>
-          </div>
-          <ul>
-            {lancamentos.slice(0, 3).map((l) => (
-              <TransactionRow key={l.id} l={l} meta={`${rotuloDoDia(l.data, agora).split(' · ')[0]} · ${l.categoria}`} />
-            ))}
-          </ul>
-        </section>
-      )}
-      {lancamentos.length === 0 && (
-        <section className="cartao p-5 text-center">
-          <p className="text-[17px] font-semibold">Nenhum lançamento ainda.</p>
-          <p className="mt-1 text-[13px] leading-[18px] text-muted-foreground">
-            Toque em + ou aperte o Botão de Ação do iPhone para lançar sem abrir o app.
-          </p>
-          <Link href="/ajustes" className="mt-2 inline-block text-[15px] font-medium text-primary">
-            Como configurar o Botão de Ação
-          </Link>
-        </section>
-      )}
+          </section>
+        )}
+      </div>
     </>
   );
 }

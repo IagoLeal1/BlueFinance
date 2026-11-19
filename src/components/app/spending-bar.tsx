@@ -21,17 +21,19 @@ export function SpendingBar({
   ordemPorNome,
   maxLegenda = Infinity,
   hrefDe,
+  className,
 }: {
   gastos: GastoPorCategoria[];
   ordemPorNome: Map<string, number>;
   maxLegenda?: number;
   /** Tocar numa categoria abre Lançamentos filtrado nela (design kit: TelaFiltroCategoria). */
   hrefDe?: (categoria: string) => string;
+  className?: string;
 }) {
   if (gastos.length === 0) return null;
   const descricao = gastos.map((g) => `${g.categoria} ${g.percentual}%`).join(', ');
   return (
-    <section aria-label="Gastos por categoria" className="cartao p-4">
+    <section aria-label="Gastos por categoria" className={`cartao p-4 ${className ?? ''}`}>
       <h2 className="text-[17px] leading-[22px] font-semibold">Gastos por categoria</h2>
       <div role="img" aria-label={descricao} className="mt-3.5 flex h-3.5 gap-[3px]">
         {gastos.map((g, n) => (
@@ -43,9 +45,9 @@ export function SpendingBar({
           />
         ))}
       </div>
-      <ul className="mt-2">
+      <ul className="mt-2 lg:grid lg:grid-cols-2 lg:gap-x-9">
         {gastos.slice(0, maxLegenda).map((g) => (
-          <li key={g.categoria} className="not-first:border-t not-first:border-border">
+          <li key={g.categoria} className="not-first:border-t not-first:border-border lg:border-t lg:border-border">
             <Legenda href={hrefDe?.(g.categoria)}>
               <span className="size-2.5 rounded-[3px]" style={{ background: corDaCategoria(g.categoria, ordemPorNome) }} />
               <span className="font-medium">{g.categoria}</span>

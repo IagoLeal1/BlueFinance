@@ -1,13 +1,19 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
+import { LARGURA_MAC } from './use-mac';
 
 /** Até onde a tela rola com o degradê do topo do Início ainda atrás dos botões. */
 const FIM_DO_DEGRADE = 300;
 
 function assinar(avisar: () => void) {
+  const mac = matchMedia(LARGURA_MAC);
   window.addEventListener('scroll', avisar, { passive: true });
-  return () => window.removeEventListener('scroll', avisar);
+  mac.addEventListener('change', avisar);
+  return () => {
+    window.removeEventListener('scroll', avisar);
+    mac.removeEventListener('change', avisar);
+  };
 }
 
 /**
@@ -18,14 +24,15 @@ function assinar(avisar: () => void) {
 export function TopoFlutuante({ sobreODegrade = false, children }: { sobreODegrade?: boolean; children: React.ReactNode }) {
   const claro = useSyncExternalStore(
     assinar,
-    () => sobreODegrade && window.scrollY < FIM_DO_DEGRADE,
+    // No Mac os botões ficam sobre a coluna da direita, fora do degradê.
+    () => sobreODegrade && window.scrollY < FIM_DO_DEGRADE && !matchMedia(LARGURA_MAC).matches,
     () => sobreODegrade,
   );
   return (
-    <div className="sticky top-0 z-30 -mb-3 h-0">
+    <div data-topo className="sticky top-0 z-30 -mb-3 h-0 lg:top-6">
       <div
         data-claro={claro || undefined}
-        className="group/topo absolute top-[calc(max(env(safe-area-inset-top),16px)+2px)] right-0 flex gap-2"
+        className="group/topo absolute top-[calc(max(env(safe-area-inset-top),16px)+2px)] right-0 flex gap-2 lg:top-0"
       >
         {children}
       </div>

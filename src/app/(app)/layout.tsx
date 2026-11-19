@@ -12,12 +12,12 @@ export default function AppLayout({ children }: LayoutProps<'/'>) {
     <FeedbackProvider>
       <AvisoSemInternet />
       <ReenviarFila />
-      <main className="mx-auto flex w-full max-w-[480px] flex-1 flex-col gap-3 px-4 pt-[max(env(safe-area-inset-top),16px)] pb-[calc(env(safe-area-inset-bottom)+104px)]">
+      <main className="coluna-mac mx-auto flex w-full max-w-[480px] flex-1 flex-col gap-3 px-4 pt-[max(env(safe-area-inset-top),16px)] pb-[calc(env(safe-area-inset-bottom)+104px)] lg:mx-0 lg:max-w-[1180px] lg:pt-6 lg:pr-6 lg:pb-8 lg:pl-[256px]">
         {children}
       </main>
       <TabBar
         mais={
-          <Suspense fallback={<div aria-hidden className="vidro-tinta relative size-[58px] shrink-0 rounded-full opacity-60" />}>
+          <Suspense fallback={<div aria-hidden className="vidro-tinta relative size-[58px] shrink-0 rounded-full opacity-60 lg:mt-auto lg:h-[46px] lg:w-full" />}>
             <BotaoNovoLancamento />
           </Suspense>
         }

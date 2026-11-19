@@ -247,6 +247,56 @@
   }
 }
 
+/* A folha no Mac: diálogo central de vidro forte que cresce com a mola viva. */
+@utility dialogo-vidro {
+  @apply vidro-forte;
+  position: fixed;
+  z-index: 50;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: min(400px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: 32px;
+  outline: none;
+  transition: scale var(--t-viva) var(--ease-viva), opacity 180ms linear;
+  &[data-starting-style],
+  &[data-ending-style] {
+    scale: 0.92;
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity 150ms linear;
+    &[data-starting-style],
+    &[data-ending-style] {
+      scale: 1;
+    }
+  }
+}
+
+/* No Mac, o conteúdo das telas de lista fica numa coluna de leitura; o Início (data-largo) usa a largura toda. */
+@utility coluna-mac {
+  @media (width >= 1024px) {
+    & > :not([data-largo], [data-topo]) {
+      width: 100%;
+      max-width: 760px;
+    }
+  }
+}
+
+/* Tira o vidro de um elemento (a barra de abas no Mac: o vidro passa para a barra lateral inteira). */
+@utility sem-vidro {
+  background-color: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  &::before {
+    display: none;
+  }
+}
+
 /* A lente da barra de abas: uma gota de vidro tingido sob a aba ativa. */
 @utility lente-aba {
   background: linear-gradient(180deg, color-mix(in srgb, var(--brand) 30%, transparent), color-mix(in srgb, var(--brand) 10%, transparent));

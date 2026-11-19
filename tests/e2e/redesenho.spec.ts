@@ -207,3 +207,30 @@ test.describe('redesenho: Entrar e avisos', () => {
     await expect.poll(async () => (await aviso.getByRole('button', { name: 'Desfazer' }).boundingBox())!.height).toBeGreaterThanOrEqual(44);
   });
 });
+
+test.describe('redesenho: Mac', () => {
+  test.use({ viewport: { width: 1280, height: 800 }, isMobile: false, hasTouch: false });
+
+  test('a barra de abas vira barra lateral, o Início fica em duas colunas e a folha é um diálogo central', async ({ page, usuario }) => {
+    await semearLancamentos(usuario, [{ valor: 3290, categoria: 'Mercado', descricao: 'Feira' }]);
+    await entrar(page, usuario);
+    const nav = page.getByRole('navigation', { name: 'Principal' });
+    const caixas = await nav.getByRole('link').evaluateAll((els) => els.map((e) => e.getBoundingClientRect().toJSON() as DOMRect));
+    expect(new Set(caixas.map((c) => Math.round(c.x))).size).toBe(1); // uma embaixo da outra
+    expect(caixas[1]!.y).toBeGreaterThan(caixas[0]!.y);
+    await expect(page.getByRole('button', { name: 'Novo lançamento' })).toContainText('Novo lançamento');
+
+    const topo = (await page.getByRole('region', { name: /^Resumo de / }).boundingBox())!;
+    const ultimos = (await page.getByRole('region', { name: 'Últimos' }).boundingBox())!;
+    expect(ultimos.x).toBeGreaterThan(topo.x + topo.width);
+    expect(topo.x).toBeGreaterThan(caixas[0]!.x + caixas[0]!.width);
+
+    await page.getByRole('button', { name: 'Novo lançamento' }).click();
+    const folha = page.getByRole('dialog', { name: 'Novo lançamento' });
+    await expect(folha).toBeVisible();
+    await expect.poll(async () => {
+      const f = (await folha.boundingBox())!;
+      return Math.round(f.x + f.width / 2);
+    }).toBe(640);
+  });
+});

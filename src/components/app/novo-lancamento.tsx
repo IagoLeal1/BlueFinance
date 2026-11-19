@@ -180,9 +180,12 @@ export function NovoLancamento({
         <button
           type="button"
           aria-label="Novo lançamento"
-          className="vidro-tinta pressiona relative grid size-[58px] shrink-0 place-items-center rounded-full focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-ring"
+          className="vidro-tinta pressiona relative grid size-[58px] shrink-0 place-items-center rounded-full focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-ring lg:mt-auto lg:flex lg:h-[46px] lg:w-full lg:gap-2 lg:rounded-[23px]"
         >
-          <Plus className="size-[27px]" strokeWidth={2.4} aria-hidden />
+          <Plus className="size-[27px] lg:size-5" strokeWidth={2.4} aria-hidden />
+          <span aria-hidden className="hidden text-[15px] font-semibold lg:inline">
+            Novo lançamento
+          </span>
         </button>
       }
     >

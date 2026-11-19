@@ -37,7 +37,7 @@ export function BalanceCard({
   return (
     <section
       aria-label={`Resumo de ${nomeMes}`}
-      className="relative -mx-4 -mt-[max(env(safe-area-inset-top),16px)] min-h-[calc(max(env(safe-area-inset-top),16px)+372px)] overflow-hidden rounded-b-xl bg-[linear-gradient(160deg,var(--hero)_10%,var(--hero-end))] px-5 pt-[calc(max(env(safe-area-inset-top),16px)+6px)] pb-[88px] text-on-hero"
+      className="relative -mx-4 -mt-[max(env(safe-area-inset-top),16px)] min-h-[calc(max(env(safe-area-inset-top),16px)+372px)] overflow-hidden rounded-b-xl bg-[linear-gradient(160deg,var(--hero)_10%,var(--hero-end))] px-5 pt-[calc(max(env(safe-area-inset-top),16px)+6px)] pb-[88px] text-on-hero lg:col-start-1 lg:row-span-3 lg:mx-0 lg:mt-0 lg:min-h-[420px] lg:self-stretch lg:rounded-[28px] lg:px-6 lg:pt-[26px]"
     >
       <div className="relative z-[2]">
         {topo}
