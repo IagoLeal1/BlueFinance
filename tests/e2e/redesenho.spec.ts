@@ -117,3 +117,33 @@ test.describe('redesenho: Início', () => {
     expect(await css(segmento, 'animation-name')).toBe('desenha');
   });
 });
+
+test.describe('redesenho: folhas', () => {
+  test('a folha de novo gasto é de vidro forte, solta das bordas, e o valor se digita pelo teclado dela', async ({ page, usuario }) => {
+    await entrar(page, usuario);
+    await page.getByRole('button', { name: 'Novo lançamento' }).click();
+    const folha = page.getByRole('dialog', { name: 'Novo lançamento' });
+    await expect(folha).toBeVisible();
+    expect(await css(folha, '-webkit-backdrop-filter')).toContain('blur');
+    expect(await css(folha, 'border-top-left-radius')).toBe('44px');
+    const caixa = (await folha.boundingBox())!;
+    expect(caixa.x).toBeGreaterThanOrEqual(8);
+
+    const valor = folha.getByLabel('Valor');
+    await expect(valor).toHaveAttribute('inputmode', 'none'); // o teclado do iPhone não cobre a folha
+    const teclado = folha.getByRole('group', { name: 'Teclado' });
+    for (const t of ['3', '2', '9', '0']) await teclado.getByRole('button', { name: t, exact: true }).click();
+    await expect(valor).toHaveValue('R$ 32,90');
+    await teclado.getByRole('button', { name: 'Apagar dígito' }).click();
+    await teclado.getByRole('button', { name: '00', exact: true }).click();
+    await expect(valor).toHaveValue('R$ 329,00');
+    const fechar = (await folha.getByRole('button', { name: 'Fechar' }).boundingBox())!;
+    expect(fechar.width).toBeGreaterThanOrEqual(44);
+
+    await folha.getByRole('button', { name: 'Mercado' }).click();
+    await folha.getByLabel('Com o quê').fill('Feira');
+    await folha.getByRole('button', { name: /^Salvar/ }).click();
+    await expect(folha).toBeHidden();
+    await expect(page.getByRole('region', { name: 'Últimos' })).toContainText('Feira');
+  });
+});

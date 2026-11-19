@@ -10,11 +10,11 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { diaDe } from '@/domain/datas';
 import type { Cartao } from '@/server/cartoes';
 import type { LancamentoListado } from '@/server/lancamentos';
-import { AmountInput } from './amount-input';
+import { AmountInput, Teclado } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { CampoQuando, dataDoDia } from './campo-quando';
 import { CamposCredito, cartaoInicial, formasCom, type Forma } from './campos-credito';
-import { CHIP } from './estilos';
+import { CHIP, FILEIRA_CHIPS } from './estilos';
 import { IconeCategoria } from './icone-categoria';
 import { metaDe } from './meta';
 import { Segmented } from './segmented';
@@ -47,7 +47,7 @@ export function ChipsDeCategoria({
         aria-labelledby={`rotulo-cat-${id}`}
         value={valor}
         onValueChange={(v) => onChange(v as string[])}
-        className="flex w-full flex-wrap gap-2"
+        className={FILEIRA_CHIPS}
       >
         {opcoes.map((c) => (
           <ToggleGroupItem key={c.id} value={c.id} className={CHIP}>
@@ -122,7 +122,7 @@ export function LinhaEditavel({
       >
         <form action={salvar} className="grid gap-4">
           <input type="hidden" name="id" value={l.id} />
-          <AmountInput nome="valor_centavos" centavos={centavos} onChange={setCentavos} />
+          <AmountInput teclado nome="valor_centavos" centavos={centavos} onChange={setCentavos} />
           <CampoQuando id={l.id} dia={dia} onChange={setDia} />
           <ChipsDeCategoria id={l.id} opcoes={opcoes} valor={categoria} onChange={setCategoria} />
           {l.tipo === 'despesa' && (
@@ -163,6 +163,7 @@ export function LinhaEditavel({
               {erro}
             </p>
           )}
+          <Teclado centavos={centavos} onChange={setCentavos} />
           <Button type="submit" disabled={salvando} className="w-full">
             <Check aria-hidden />
             Salvar alterações

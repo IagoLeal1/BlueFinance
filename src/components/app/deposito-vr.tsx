@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { diaDe, nomeDoMes } from '@/domain/datas';
 import { formatBRL } from '@/domain/money';
 import type { LancamentoListado } from '@/server/lancamentos';
-import { AmountInput } from './amount-input';
+import { AmountInput, Teclado } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { metaDe } from './meta';
 import { TransactionRow } from './transaction-row';
@@ -51,7 +51,7 @@ export function LinhaDepositoVr({ l, previsto }: { l: LancamentoListado; previst
             <p aria-hidden className="text-center text-[13px] leading-[18px] font-bold text-muted-foreground">
               Quanto caiu
             </p>
-            <AmountInput nome="valor_centavos" rotulo="Quanto caiu" centavos={centavos} onChange={setCentavos} />
+            <AmountInput teclado nome="valor_centavos" rotulo="Quanto caiu" centavos={centavos} onChange={setCentavos} />
           </div>
           <p className="flex gap-2 rounded-md bg-muted px-3 py-2.5 text-[13px] leading-[18px] text-muted-foreground">
             <Info className="mt-px size-4 shrink-0" aria-hidden />
@@ -69,6 +69,7 @@ export function LinhaDepositoVr({ l, previsto }: { l: LancamentoListado; previst
               {estado.erro}
             </p>
           )}
+          <Teclado centavos={centavos} onChange={setCentavos} />
           <Button type="submit" disabled={salvando} className="w-full">
             <Check aria-hidden />
             Salvar depósito

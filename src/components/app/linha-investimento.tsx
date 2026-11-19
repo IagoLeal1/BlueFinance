@@ -15,7 +15,7 @@ import { formatBRL, formatRendimento } from '@/domain/money';
 import { comecaARender, percentualDoCdi, type LoteRendendo, type RendimentoCdi } from '@/domain/rendimento';
 import type { Investimento } from '@/server/investimentos';
 import { cn } from '@/lib/utils';
-import { AmountInput } from './amount-input';
+import { AmountInput, Teclado } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { CamposInvestimento, type ValoresInvestimento } from './campos-investimento';
 import { NotaAporte } from './nota-aporte';
@@ -207,9 +207,10 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
             <input type="hidden" name="tipo" value="investimento" />
             <input type="hidden" name="investimento_id" value={i.id} />
             <input type="hidden" name="descricao" value={i.nome} />
-            <AmountInput nome="valor_centavos" centavos={aporte} onChange={setAporte} />
+            <AmountInput teclado nome="valor_centavos" centavos={aporte} onChange={setAporte} />
             <NotaAporte nome={i.nome} instituicao={i.instituicao} percentual={i.cdi.percentual} />
             <Erro estado={estadoAporte} />
+            <Teclado centavos={aporte} onChange={setAporte} />
             <Button type="submit" disabled={salvandoAporte} className="w-full">
               <Check aria-hidden />
               Salvar aporte
@@ -221,8 +222,9 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
             <p className="text-[13px] leading-[18px] text-muted-foreground">
               Digite o valor que o app do banco mostra. A diferença ({formatBRL(Math.abs(centavos - i.valorAtual))}) vira rendimento e rende junto dali em diante.
             </p>
-            <AmountInput nome="valor_banco" rotulo="Valor no app do banco" centavos={centavos} onChange={setCentavos} />
+            <AmountInput teclado nome="valor_banco" rotulo="Valor no app do banco" centavos={centavos} onChange={setCentavos} />
             <Erro estado={estadoAjuste} />
+            <Teclado centavos={centavos} onChange={setCentavos} />
             <Button type="submit" disabled={salvandoAjuste} className="w-full">
               <Check aria-hidden />
               Salvar ajuste

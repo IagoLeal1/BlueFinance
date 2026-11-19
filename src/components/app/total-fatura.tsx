@@ -5,7 +5,7 @@ import { Check, Plus } from 'lucide-react';
 import { lancarTotalFatura, type EstadoLancamento } from '@/app/(app)/actions';
 import { Button } from '@/components/ui/button';
 import { nomeDoMes } from '@/domain/datas';
-import { AmountInput } from './amount-input';
+import { AmountInput, Teclado } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { ChipsDeCategoria, type CategoriaEditavel } from './editar-lancamento';
 
@@ -59,13 +59,14 @@ export function LancarTotalFatura({
         <p className="text-center text-xs font-semibold text-muted-foreground">
           {cartao.nome} · fatura de {nomeDoMes(mes)} (fechou dia {fechou})
         </p>
-        <AmountInput nome="valor_centavos" centavos={centavos} onChange={setCentavos} />
+        <AmountInput teclado nome="valor_centavos" centavos={centavos} onChange={setCentavos} />
         <ChipsDeCategoria id={`total-${cartao.id}`} opcoes={opcoes} valor={categoria} onChange={setCategoria} />
         {estado.erro && (
           <p role="alert" className="text-sm font-semibold text-negative">
             {estado.erro}
           </p>
         )}
+        <Teclado centavos={centavos} onChange={setCentavos} />
         <Button type="submit" disabled={salvando} className="w-full">
           <Check aria-hidden />
           Salvar total

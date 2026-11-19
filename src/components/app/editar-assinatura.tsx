@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { LancamentoListado } from '@/server/lancamentos';
-import { AmountInput } from './amount-input';
+import { AmountInput, Teclado } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { ChipsDeCategoria, type CategoriaEditavel } from './editar-lancamento';
 import { metaDe } from './meta';
@@ -59,7 +59,7 @@ export function LinhaAssinatura({ l, categorias }: { l: LancamentoListado; categ
           <p className="text-center text-xs font-semibold text-muted-foreground">
             Todo mês{l.cartao ? ` · ${l.cartao.nome}` : ''} · o valor novo vale desta fatura em diante
           </p>
-          <AmountInput nome="valor_centavos" centavos={centavos} onChange={setCentavos} />
+          <AmountInput teclado nome="valor_centavos" centavos={centavos} onChange={setCentavos} />
           <ChipsDeCategoria id={l.id} opcoes={opcoes} valor={categoria} onChange={setCategoria} />
           <div className="grid gap-2">
             <Label htmlFor={`descricao-${l.id}`}>Com o quê</Label>
@@ -70,6 +70,7 @@ export function LinhaAssinatura({ l, categorias }: { l: LancamentoListado; categ
               {erro}
             </p>
           )}
+          <Teclado centavos={centavos} onChange={setCentavos} />
           <Button type="submit" disabled={salvando} className="w-full">
             <Check aria-hidden />
             Salvar alterações

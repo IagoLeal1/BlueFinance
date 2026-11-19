@@ -55,7 +55,7 @@
   --alert: #855700;
   --alert-soft: #faefd6;
   --focus: #1846c8;
-  --scrim: rgba(8, 12, 20, 0.45);
+  --scrim: rgba(3, 8, 20, 0.42);
   --chart-1: #2a78d6;
   --chart-2: #eb6834;
   --chart-3: #1baf7a;
@@ -120,7 +120,7 @@
     --alert: #f0b54a;
     --alert-soft: #30240c;
     --focus: #8db1ff;
-    --scrim: rgba(0, 0, 0, 0.6);
+    --scrim: rgba(0, 0, 0, 0.55);
     --chart-1: #3987e5;
     --chart-2: #d95926;
     --chart-3: #199e70;

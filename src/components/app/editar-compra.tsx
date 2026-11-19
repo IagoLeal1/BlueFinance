@@ -12,7 +12,7 @@ import { dividirParcelas, mesDaFatura, mesesDasParcelas } from '@/domain/parcela
 import { mesDe } from '@/domain/summary';
 import type { Cartao } from '@/server/cartoes';
 import type { LancamentoListado } from '@/server/lancamentos';
-import { AmountInput } from './amount-input';
+import { AmountInput, Teclado } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { CampoQuando, dataDoDia } from './campo-quando';
 import { CamposCredito, formasCom, type Forma } from './campos-credito';
@@ -97,7 +97,7 @@ export function LinhaCompra({
         <form action={salvar} className="grid gap-4">
           <input type="hidden" name="compra_id" value={l.compraId ?? ''} />
           <p className="text-center text-xs font-semibold text-muted-foreground">Valor total</p>
-          <AmountInput nome="valor_centavos" centavos={centavos} onChange={setCentavos} />
+          <AmountInput teclado nome="valor_centavos" centavos={centavos} onChange={setCentavos} />
           <CampoQuando id={l.id} dia={dia} onChange={setDia} />
           <div className="grid gap-2">
             <Label>Como pagou</Label>
@@ -147,6 +147,7 @@ export function LinhaCompra({
               {erro}
             </p>
           )}
+          <Teclado centavos={centavos} onChange={setCentavos} />
           <Button type="submit" disabled={salvando} className="w-full">
             <Check aria-hidden />
             Salvar alterações

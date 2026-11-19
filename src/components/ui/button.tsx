@@ -3,28 +3,29 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  // BlueFinance: altura control-h (52px), radius-md (14px), rótulo em negrito, foco com anel sólido de 2px.
-  "group/button inline-flex shrink-0 items-center justify-center rounded-md border border-transparent bg-clip-padding text-base font-bold whitespace-nowrap transition-all outline-none select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring active:not-aria-[haspopup]:scale-[0.98] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  // BlueFinance (design-preview): pílula, rótulo semibold, alvo de 44 pt ou mais, foco com anel sólido de 3px e o toque com a mola ágil.
+  "group/button pressiona relative inline-flex shrink-0 items-center justify-center rounded-full border border-transparent bg-clip-padding text-[15px] font-semibold whitespace-nowrap outline-none select-none focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-brand-pressed active:bg-brand-pressed",
+        // A ação principal é vidro tingido (design-preview: .lancar).
+        default: "vidro-tinta disabled:opacity-45",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+          "bg-foreground/9 text-foreground hover:bg-foreground/12 aria-expanded:bg-foreground/12",
         ghost:
-          "text-primary hover:bg-muted aria-expanded:bg-muted",
+          "text-primary hover:bg-foreground/8 aria-expanded:bg-foreground/8",
         destructive:
-          "bg-transparent text-destructive shadow-[inset_0_0_0_1.5px_var(--destructive)] hover:bg-negative-soft",
+          "bg-negative-soft text-negative hover:bg-negative-soft/80",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-[52px] gap-2 px-5 [&_svg:not([class*='size-'])]:size-5",
+        default: "h-[54px] gap-2 px-5 text-[17px] [&_svg:not([class*='size-'])]:size-5",
         xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+        sm: "h-11 gap-1.5 px-4 [&_svg:not([class*='size-'])]:size-4",
         lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        icon: "size-11 rounded-full bg-muted text-foreground [&_svg:not([class*='size-'])]:size-5",
+        icon: "size-11 rounded-full bg-foreground/9 text-foreground [&_svg:not([class*='size-'])]:size-5",
         "icon-xs":
           "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
         "icon-sm":

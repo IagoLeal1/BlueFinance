@@ -15,13 +15,13 @@ export function Segmented<T extends string>({
   onChange: (v: T) => void;
 }) {
   return (
-    <div role="radiogroup" aria-label={rotulo} className="grid auto-cols-fr grid-flow-col gap-0.5 rounded-md bg-muted p-[3px]">
+    <div role="radiogroup" aria-label={rotulo} className="grid auto-cols-fr grid-flow-col gap-0.5 rounded-full bg-foreground/9 p-[3px]">
       {opcoes.map((o) => (
         <label
           key={o.valor}
           className={cn(
-            'grid min-h-10 cursor-pointer place-items-center rounded-[11px] text-sm font-bold text-muted-foreground has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring',
-            valor === o.valor && 'bg-popover text-foreground shadow-[0_1px_3px_rgba(12,18,32,0.12)]',
+            'grid min-h-11 cursor-pointer place-items-center rounded-full px-2 text-[15px] font-semibold text-muted-foreground transition-[background-color,color] duration-200 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring',
+            valor === o.valor && 'bg-surface text-foreground shadow-[inset_0_1px_0_var(--glass-shine),0_2px_8px_rgb(4_12_32/0.18)]',
           )}
         >
           <input
