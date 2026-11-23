@@ -144,3 +144,18 @@ test.describe('Open Finance (Meu Pluggy)', () => {
     expect((await clienteDe(usuario).from('regras_banco').select('estabelecimento')).data).toEqual([]);
   });
 });
+
+test.describe('Para conferir no desenho novo', () => {
+  test('nome comprido do banco fica numa linha com reticências, dentro do cartão', async ({ page, usuario }) => {
+    const nome = 'PAGAMENTO COMPRA ESTABELECIMENTO COMERCIAL MUITO COMPRIDO LTDA SAO PAULO BR';
+    await semearParaConferir(usuario, [{ descricao: nome, nome, valor: 4590, forma: 'debito', sugestao: 'Outros' }]);
+    await entrar(page, usuario);
+    await page.getByRole('navigation', { name: 'Principal' }).getByRole('link', { name: 'Lançamentos' }).click();
+    const cartao = (await paraConferir(page).boundingBox())!;
+    const linha = linhaDoBanco(page, nome);
+    await expect(linha).toBeVisible();
+    const caixa = (await linha.boundingBox())!;
+    expect(caixa.x + caixa.width).toBeLessThanOrEqual(cartao.x + cartao.width);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(await page.evaluate(() => innerWidth));
+  });
+});

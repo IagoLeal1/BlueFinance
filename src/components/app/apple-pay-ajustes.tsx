@@ -14,7 +14,7 @@ function CartaoDaCarteiraLinha({ c, opcoes }: { c: CartaoDaCarteira; opcoes: { v
   const [erro, setErro] = useState<string | null>(null);
   const [, iniciar] = useTransition();
   return (
-    <li className="grid gap-2 py-3 not-first:border-t not-first:border-border">
+    <li className="grid grid-cols-[minmax(0,1fr)] gap-2 py-3 not-first:border-t not-first:border-border">
       <div className="flex items-center gap-3">
         <span className="grid size-10 shrink-0 place-items-center rounded-[12px] bg-muted text-muted-foreground">
           <CreditCard className="size-5" aria-hidden />

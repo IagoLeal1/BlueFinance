@@ -85,7 +85,7 @@ function LinhaDoApplePay({ l, categorias }: { l: ApplePayAConfirmar; categorias:
   const meta = [rotuloDoDia(l.data).split(' · ')[0], FORMA[l.forma], 'Apple Pay', 'já conta no mês'].join(' · ');
 
   return (
-    <li className="grid gap-2 py-3 not-first:border-t not-first:border-border">
+    <li className="grid grid-cols-[minmax(0,1fr)] gap-2 py-3 not-first:border-t not-first:border-border">
       <BottomSheet
         titulo="Do Apple Pay"
         aberto={aberto}
@@ -144,7 +144,7 @@ function LinhaDoApplePay({ l, categorias }: { l: ApplePayAConfirmar; categorias:
       </BottomSheet>
 
       <div className="flex items-center gap-2">
-        <button type="button" onClick={() => setAberto(true)} className={cn(CHIP, 'inline-flex min-w-0 items-center px-3 text-[13px]')}>
+        <button type="button" onClick={() => setAberto(true)} className={cn(CHIP, 'inline-flex min-w-0 shrink items-center px-3 text-[13px]')}>
           {l.categoria ? (
             <>
               <IconeCategoria nome={l.categoria.icone} className="size-4" />
@@ -201,7 +201,7 @@ function LinhaDoBanco({ t, categorias }: { t: ItemDoBanco; categorias: Categoria
   );
 
   return (
-    <li className="grid gap-2 py-3 not-first:border-t not-first:border-border">
+    <li className="grid grid-cols-[minmax(0,1fr)] gap-2 py-3 not-first:border-t not-first:border-border">
       <BottomSheet
         titulo="Do banco"
         aberto={aberto}
@@ -270,7 +270,7 @@ function LinhaDoBanco({ t, categorias }: { t: ItemDoBanco; categorias: Categoria
       </BottomSheet>
 
       <div className="flex items-center gap-2">
-        <button type="button" onClick={() => setAberto(true)} className={cn(CHIP, 'inline-flex min-w-0 items-center px-3 text-[13px]')}>
+        <button type="button" onClick={() => setAberto(true)} className={cn(CHIP, 'inline-flex min-w-0 shrink items-center px-3 text-[13px]')}>
           {t.sugestao ? (
             <>
               <IconeCategoria nome={t.sugestao.icone} className="size-4" />
