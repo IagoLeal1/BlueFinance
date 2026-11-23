@@ -247,3 +247,44 @@ test.describe('redesenho: o motor do Safari', () => {
     expect(suporte).toEqual({ linear: true, vidro: true, colorMix: true, maskComposite: true });
   });
 });
+
+test.describe('redesenho: o teclado abre no valor', () => {
+  test('na edição o teclado começa fechado, abre logo abaixo do valor ao tocar nele e fecha ao ir para outro campo', async ({ page, usuario }) => {
+    await semearLancamentos(usuario, [{ valor: 3290, categoria: 'Mercado', descricao: 'Feira' }]);
+    await entrar(page, usuario);
+    await page.getByRole('navigation', { name: 'Principal' }).getByRole('link', { name: 'Lançamentos' }).click();
+    await page.getByRole('button', { name: /Feira/ }).click();
+    const folha = page.getByRole('dialog', { name: 'Editar lançamento' });
+    const valor = folha.getByLabel('Valor');
+    const teclado = folha.getByRole('group', { name: 'Teclado' });
+    await expect(teclado).toBeHidden();
+    await expect(folha.getByText('Toque no valor para mudar')).toBeVisible();
+
+    await valor.click();
+    await expect(teclado).toBeVisible();
+    // Logo abaixo do valor: nada entre os dois.
+    await expect.poll(async () => {
+      const [v, t] = [(await valor.boundingBox())!, (await teclado.boundingBox())!];
+      return Math.round(t.y - (v.y + v.height));
+    }).toBeLessThan(40);
+    for (const t of ['4', '5']) await teclado.getByRole('button', { name: t, exact: true }).click();
+    await expect(valor).toHaveValue('R$ 3.290,45');
+
+    await folha.getByRole('button', { name: 'Pronto' }).click();
+    await expect(teclado).toBeHidden();
+    await valor.click();
+    await expect(teclado).toBeVisible();
+    await folha.getByLabel('Com o quê').click();
+    await expect(teclado).toBeHidden();
+  });
+
+  test('no novo lançamento o teclado já vem aberto, embaixo do valor', async ({ page, usuario }) => {
+    await entrar(page, usuario);
+    await page.getByRole('button', { name: 'Novo lançamento' }).click();
+    const folha = page.getByRole('dialog', { name: 'Novo lançamento' });
+    const teclado = folha.getByRole('group', { name: 'Teclado' });
+    await expect(teclado).toBeVisible();
+    const [v, t] = [(await folha.getByLabel('Valor').boundingBox())!, (await teclado.boundingBox())!];
+    expect(t.y - (v.y + v.height)).toBeLessThan(40);
+  });
+});

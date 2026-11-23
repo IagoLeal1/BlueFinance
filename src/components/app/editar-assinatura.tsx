@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { LancamentoListado } from '@/server/lancamentos';
-import { AmountInput, Teclado } from './amount-input';
+import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { ChipsDeCategoria, type CategoriaEditavel } from './editar-lancamento';
 import { metaDe } from './meta';
@@ -70,7 +70,6 @@ export function LinhaAssinatura({ l, categorias }: { l: LancamentoListado; categ
               {erro}
             </p>
           )}
-          <Teclado centavos={centavos} onChange={setCentavos} />
           <Button type="submit" disabled={salvando} className="w-full">
             <Check aria-hidden />
             Salvar alterações

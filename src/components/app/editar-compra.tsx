@@ -12,7 +12,7 @@ import { dividirParcelas, mesDaFatura, mesesDasParcelas } from '@/domain/parcela
 import { mesDe } from '@/domain/summary';
 import type { Cartao } from '@/server/cartoes';
 import type { LancamentoListado } from '@/server/lancamentos';
-import { AmountInput, Teclado } from './amount-input';
+import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { CampoQuando, dataDoDia } from './campo-quando';
 import { CamposCredito, formasCom, type Forma } from './campos-credito';
@@ -147,7 +147,6 @@ export function LinhaCompra({
               {erro}
             </p>
           )}
-          <Teclado centavos={centavos} onChange={setCentavos} />
           <Button type="submit" disabled={salvando} className="w-full">
             <Check aria-hidden />
             Salvar alterações

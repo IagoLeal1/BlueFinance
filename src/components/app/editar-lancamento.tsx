@@ -10,7 +10,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { diaDe } from '@/domain/datas';
 import type { Cartao } from '@/server/cartoes';
 import type { LancamentoListado } from '@/server/lancamentos';
-import { AmountInput, Teclado } from './amount-input';
+import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { CampoQuando, dataDoDia } from './campo-quando';
 import { CamposCredito, cartaoInicial, formasCom, type Forma } from './campos-credito';
@@ -163,7 +163,6 @@ export function LinhaEditavel({
               {erro}
             </p>
           )}
-          <Teclado centavos={centavos} onChange={setCentavos} />
           <Button type="submit" disabled={salvando} className="w-full">
             <Check aria-hidden />
             Salvar alterações

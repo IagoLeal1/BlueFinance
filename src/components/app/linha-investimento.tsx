@@ -15,7 +15,7 @@ import { formatBRL, formatRendimento } from '@/domain/money';
 import { comecaARender, percentualDoCdi, type LoteRendendo, type RendimentoCdi } from '@/domain/rendimento';
 import type { Investimento } from '@/server/investimentos';
 import { cn } from '@/lib/utils';
-import { AmountInput, Teclado } from './amount-input';
+import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { CamposInvestimento, type ValoresInvestimento } from './campos-investimento';
 import { NotaAporte } from './nota-aporte';
@@ -210,7 +210,6 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
             <AmountInput teclado nome="valor_centavos" centavos={aporte} onChange={setAporte} />
             <NotaAporte nome={i.nome} instituicao={i.instituicao} percentual={i.cdi.percentual} />
             <Erro estado={estadoAporte} />
-            <Teclado centavos={aporte} onChange={setAporte} />
             <Button type="submit" disabled={salvandoAporte} className="w-full">
               <Check aria-hidden />
               Salvar aporte
@@ -224,7 +223,6 @@ export function LinhaInvestimento({ i }: { i: Investimento }) {
             </p>
             <AmountInput teclado nome="valor_banco" rotulo="Valor no app do banco" centavos={centavos} onChange={setCentavos} />
             <Erro estado={estadoAjuste} />
-            <Teclado centavos={centavos} onChange={setCentavos} />
             <Button type="submit" disabled={salvandoAjuste} className="w-full">
               <Check aria-hidden />
               Salvar ajuste

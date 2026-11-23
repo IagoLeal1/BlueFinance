@@ -79,6 +79,10 @@ Referência visual e de movimento: `design-preview/prototipo.html` e `design-pre
   pílula ("nov") que abre um menu.
 - **Folhas** de vidro forte, soltas das bordas, com o valor grande e um teclado numérico próprio (1 a 9, 00, 0,
   apagar); o teclado do iPhone não sobe por cima. As categorias ficam numa fileira que rola para o lado.
+- **O teclado abre no valor** (pedido do dono em 23/11/2026, depois de usar): ele fica logo abaixo do valor, não no
+  pé da folha. Tocar no valor abre; "Pronto", tocar de novo no valor ou ir para outro campo fecha. No novo
+  lançamento já abre aberto; na edição, no depósito do VR, no aportar, no ajustar valor e no total da fatura começa
+  fechado, com "Toque no valor para mudar".
 - **Lançamentos:** os extratos têm um polegar que desliza; o vazio é "Mar calmo por aqui".
 - **Investir:** o gráfico do total pelo CDI no fim de cada mês (últimos 6) e o selo do rendimento do mês, calculados
   com a mesma conta do rendimento (`evolucaoCdi`); investimentos sem CDI não entram no gráfico.

@@ -5,7 +5,7 @@ import { Check, Plus } from 'lucide-react';
 import { lancarTotalFatura, type EstadoLancamento } from '@/app/(app)/actions';
 import { Button } from '@/components/ui/button';
 import { nomeDoMes } from '@/domain/datas';
-import { AmountInput, Teclado } from './amount-input';
+import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { ChipsDeCategoria, type CategoriaEditavel } from './editar-lancamento';
 
@@ -66,7 +66,6 @@ export function LancarTotalFatura({
             {estado.erro}
           </p>
         )}
-        <Teclado centavos={centavos} onChange={setCentavos} />
         <Button type="submit" disabled={salvando} className="w-full">
           <Check aria-hidden />
           Salvar total

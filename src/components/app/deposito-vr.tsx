@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { diaDe, nomeDoMes } from '@/domain/datas';
 import { formatBRL } from '@/domain/money';
 import type { LancamentoListado } from '@/server/lancamentos';
-import { AmountInput, Teclado } from './amount-input';
+import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { metaDe } from './meta';
 import { TransactionRow } from './transaction-row';
@@ -69,7 +69,6 @@ export function LinhaDepositoVr({ l, previsto }: { l: LancamentoListado; previst
               {estado.erro}
             </p>
           )}
-          <Teclado centavos={centavos} onChange={setCentavos} />
           <Button type="submit" disabled={salvando} className="w-full">
             <Check aria-hidden />
             Salvar depósito

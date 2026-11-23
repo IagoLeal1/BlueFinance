@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { formatBRL, formatSigned, type TipoLancamento } from '@/domain/money';
 import type { Cartao } from '@/server/cartoes';
-import { AmountInput, Teclado } from './amount-input';
+import { AmountInput } from './amount-input';
 import { BottomSheet } from './bottom-sheet';
 import { CHAVE_CARTAO, CamposCredito, cartaoInicial, formasCom, rotuloParcelas, type Forma } from './campos-credito';
 import { CHIP, FILEIRA_CHIPS } from './estilos';
@@ -201,7 +201,7 @@ export function NovoLancamento({
             }}
           />
 
-          <AmountInput teclado nome="valor_centavos" centavos={centavos} onChange={setCentavos} />
+          <AmountInput teclado tecladoAberto nome="valor_centavos" centavos={centavos} onChange={setCentavos} />
 
           {tipo === 'investimento' && opcoes.length === 0 && (
             <p className="text-[13px] font-semibold text-muted-foreground">Cadastre um investimento na aba Investir para registrar aportes.</p>
@@ -285,7 +285,6 @@ export function NovoLancamento({
             </p>
           )}
 
-          <Teclado centavos={centavos} onChange={setCentavos} />
           <Button type="submit" className="w-full">
             <Check aria-hidden />
             {SALVAR[tipo]}

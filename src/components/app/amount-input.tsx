@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useId, useRef, useState } from 'react';
 import { Delete } from 'lucide-react';
 import { formatBRL } from '@/domain/money';
 
@@ -9,7 +10,9 @@ const MAXIMO = 10 ** MAX_DIGITOS - 1;
 /**
  * Valor em reais digitado como em caixa de banco (design-preview: .folha-valor):
  * cada dígito entra pela direita; apagar tira o último. Guarda centavos inteiros.
- * Com `teclado`, o valor se digita pelo teclado da folha (<Teclado>) e o do iPhone não sobe por cima.
+ * Com `teclado`, o valor se digita pelo teclado da folha, que abre logo abaixo do valor ao tocar nele
+ * (o do iPhone não sobe por cima) e fecha em "Pronto", tocando de novo no valor ou indo para outro campo.
+ * `tecladoAberto`: já abre aberto (o novo lançamento, onde o valor é a primeira coisa a digitar).
  */
 export function AmountInput({
   centavos,
@@ -17,15 +20,39 @@ export function AmountInput({
   nome,
   rotulo = 'Valor',
   teclado = false,
+  tecladoAberto = false,
 }: {
   centavos: number;
   onChange: (c: number) => void;
   nome: string;
   rotulo?: string;
   teclado?: boolean;
+  tecladoAberto?: boolean;
 }) {
+  const [aberto, setAberto] = useState(tecladoAberto);
+  const caixa = useRef<HTMLDivElement>(null);
+  const idTeclado = useId();
+
+  // Ir para outro campo (tocar ou focar fora do valor e do teclado) recolhe o teclado.
+  useEffect(() => {
+    if (!teclado || !aberto) return;
+    const fora = (e: Event) => {
+      if (e.target instanceof Node && !caixa.current?.contains(e.target)) setAberto(false);
+    };
+    // Só foco num outro campo conta: no Safari, tocar numa tecla devolve o foco para a própria folha.
+    const focoFora = (e: FocusEvent) => {
+      if (e.target instanceof Element && e.target.matches('input, textarea, select, button, a[href]')) fora(e);
+    };
+    document.addEventListener('pointerdown', fora);
+    document.addEventListener('focusin', focoFora);
+    return () => {
+      document.removeEventListener('pointerdown', fora);
+      document.removeEventListener('focusin', focoFora);
+    };
+  }, [teclado, aberto]);
+
   return (
-    <div className="grid justify-items-center gap-1 py-1">
+    <div ref={caixa} className="grid justify-items-center gap-1 py-1">
       <input
         id={nome}
         aria-label={rotulo}
@@ -33,6 +60,8 @@ export function AmountInput({
         autoComplete="off"
         value={formatBRL(centavos)}
         aria-live={teclado ? 'polite' : undefined}
+        aria-controls={teclado ? idTeclado : undefined}
+        onClick={teclado ? () => setAberto((v) => !v) : undefined}
         // O cursor fica sempre no fim: cada dígito entra pela direita, como na maquininha.
         onSelect={(e) => {
           const el = e.currentTarget;
@@ -43,10 +72,33 @@ export function AmountInput({
           const digitos = e.target.value.replace(/\D/g, '').replace(/^0+/, '').slice(0, MAX_DIGITOS);
           onChange(Number(digitos || '0'));
         }}
-        className="w-full rounded-md bg-transparent text-center font-valor text-[46px] leading-[52px] font-bold tracking-[-0.02em] tabular-nums caret-transparent outline-none focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring data-[vazio=true]:text-muted-foreground"
+        className="w-full cursor-pointer rounded-[20px] bg-transparent text-center font-valor text-[46px] leading-[52px] font-bold tracking-[-0.02em] tabular-nums caret-transparent transition-colors outline-none focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring data-[aberto=true]:bg-foreground/6 data-[vazio=true]:text-muted-foreground"
         data-vazio={centavos === 0}
+        data-aberto={teclado && aberto}
       />
       <input type="hidden" name={nome} value={centavos} />
+      {teclado && !aberto && <p className="text-[13px] leading-[18px] text-muted-foreground">Toque no valor para mudar</p>}
+      {teclado && (
+        // Abre e fecha com a mola calma (a altura vai de 0 ao conteúdo); fechado, sai do foco e do leitor de tela.
+        <div
+          id={idTeclado}
+          className="grid w-full grid-rows-[0fr] transition-[grid-template-rows] duration-(--t-calma) ease-calma data-[aberto=true]:grid-rows-[1fr] motion-reduce:transition-none"
+          data-aberto={aberto}
+        >
+          <div inert={!aberto} className={`overflow-hidden transition-[visibility] duration-(--t-calma) motion-reduce:transition-none ${aberto ? '' : 'invisible'}`}>
+            <div className="grid gap-2 pt-2">
+              <Teclado centavos={centavos} onChange={onChange} />
+              <button
+                type="button"
+                onClick={() => setAberto(false)}
+                className="pressiona h-11 rounded-full bg-foreground/9 text-[15px] font-semibold focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                Pronto
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
